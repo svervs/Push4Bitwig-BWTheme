@@ -386,6 +386,7 @@ function exit()
 function flush ()
 {
 	updateDisplay ();
+	push.display.flush ();
 	push.redrawGrid ();
 }
 
@@ -427,19 +428,19 @@ function updateDisplay ()
 	switch (currentMode)
 	{
 		case MODE_MASTER:
-			push.sendRow (0, PARAM_NAMES_MASTER);
-			push.sendRow (1, 
+			push.display.sendRow (0, PARAM_NAMES_MASTER);
+			push.display.sendRow (1, 
 				pad (master.volumeStr, 8, ' ') + ' ' +
 				pad (master.panStr, 8, ' ') +
 				pad ('', 17, ' ') +
 				pad ('', 34, ' '));
-			push.sendRow (2, 
+			push.display.sendRow (2, 
 				formatVolume (master.volume, 8) + ' ' +
 				formatPan (master.pan, 8) +
 				pad ('', 17, ' ') +
 				pad ('', 34, ' '));
 			
-			push.sendRow (3, pad (master.name, 34, ' ') + pad ('', 34, ' '));
+			push.display.sendRow (3, pad (master.name, 34, ' ') + pad ('', 34, ' '));
 			for (var i = 0; i < 8; i++)
 			{
 				push.setButton (20 + i, PUSH_COLOR_BLACK);
@@ -448,16 +449,16 @@ function updateDisplay ()
 			return;
 	
 		case MODE_TRACK:
-			push.sendRow (0, PARAM_NAMES_TRACK);
+			push.display.sendRow (0, PARAM_NAMES_TRACK);
 			
 			if (t == null)
 			{
-				push.clearRow (1);
-				push.clearRow (2);
+				push.display.clearRow (1);
+				push.display.clearRow (2);
 			}
 			else
 			{
-				push.sendRow (1, 
+				push.display.sendRow (1, 
 					pad (t.volumeStr, 8, ' ') + ' ' +
 					pad (t.panStr, 8, ' ') +
 					pad (t.sends[0].volumeStr, 8, ' ') + ' ' +
@@ -467,7 +468,7 @@ function updateDisplay ()
 					pad (t.sends[4].volumeStr, 8, ' ') + ' ' +
 					pad (t.sends[5].volumeStr, 8, ' '));
 			
-				push.sendRow (2, 
+				push.display.sendRow (2, 
 					formatVolume (t.volume, 8) + ' ' +
 					formatPan (t.pan, 8) +
 					formatVolume (t.sends[0].volume) + ' ' +
@@ -480,7 +481,7 @@ function updateDisplay ()
 			break;
 
 		case MODE_VOLUME:
-			push.sendRow (0, PARAM_NAMES_VOLUME);
+			push.display.sendRow (0, PARAM_NAMES_VOLUME);
 			var volumeValues = '';
 			var volumeBars = '';
 			for (var i = 0; i < 8; i++)
@@ -490,12 +491,12 @@ function updateDisplay ()
 				if (i % 2 == 0)
 					volumeBars += ' ';
 			}
-			push.sendRow (1, volumeValues);
-			push.sendRow (2, volumeBars);
+			push.display.sendRow (1, volumeValues);
+			push.display.sendRow (2, volumeBars);
 			break;
 			
 		case MODE_PAN:
-			push.sendRow (0, PARAM_NAMES_PAN);
+			push.display.sendRow (0, PARAM_NAMES_PAN);
 			var panValues = '';
 			var panBars = '';
 			for (var i = 0; i < 8; i++)
@@ -505,8 +506,8 @@ function updateDisplay ()
 				if (i % 2 == 0)
 					panBars += ' ';
 			}
-			push.sendRow (1, panValues);
-			push.sendRow (2, panBars);
+			push.display.sendRow (1, panValues);
+			push.display.sendRow (2, panBars);
 			break;
 
 		case MODE_SEND1:
@@ -516,7 +517,7 @@ function updateDisplay ()
 		case MODE_SEND5:
 		case MODE_SEND6:
 			var sendNo = currentMode - MODE_SEND1;
-			push.sendRow (0, PARAM_NAMES_SEND[sendNo]);
+			push.display.sendRow (0, PARAM_NAMES_SEND[sendNo]);
 			var sendValues = '';
 			var sendBars = '';
 			for (var i = 0; i < 8; i++)
@@ -526,8 +527,8 @@ function updateDisplay ()
 				if (i % 2 == 0)
 					sendBars += ' ';
 			}
-			push.sendRow (1, sendValues);
-			push.sendRow (2, sendBars);
+			push.display.sendRow (1, sendValues);
+			push.display.sendRow (2, sendBars);
 			break;
 			
 		case MODE_DEVICE:
@@ -551,26 +552,26 @@ function updateDisplay ()
 				push.setButton (20 + i, i == 7 && selectedDevice.enabled ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
 				push.setButton (102 + i, PUSH_COLOR_BLACK);
 			}
-			push.sendRow (0, row0);
-			push.sendRow (1, row1);
-			push.sendRow (2, row2);
-			push.sendRow (3, 'Selected Device: ' + pad (selectedDevice.name, 34, ' ') + '         ' + (selectedDevice.enabled ? 'Enabled ' : 'Disabled'));
+			push.display.sendRow (0, row0);
+			push.display.sendRow (1, row1);
+			push.display.sendRow (2, row2);
+			push.display.sendRow (3, 'Selected Device: ' + pad (selectedDevice.name, 34, ' ') + '         ' + (selectedDevice.enabled ? 'Enabled ' : 'Disabled'));
 			break;
 			
 		case MODE_SCALES:
 			var o = 2 + currentOctave;
 			var noteName = NOTE_NAMES[SCALE_OFFSETS[currentScaleOffset]];
-			push.sendRow (0, 
+			push.display.sendRow (0, 
 				pad (RIGHT_ARROW + SCALES[currentScale].name, 17, ' ') +
 				'                 ' +
 				'                 ' +
 				pad (noteName + o + ' to ' + noteName + (o + 4), 17, ' '));
-			push.sendRow (1,
+			push.display.sendRow (1,
 				(currentScale + 1 < SCALES.length ? pad (' ' + SCALES[currentScale + 1].name, 17, ' ') : '                 ') +
 				'                 ' +
 				'                 ' +
 				'                 ');
-			push.sendRow (2, 
+			push.display.sendRow (2, 
 				(currentScale + 2 < SCALES.length ? pad (' ' + SCALES[currentScale + 2].name, 8, ' ') : '        ') +
 				'   ' +
 				(currentScaleOffset == 0 ? RIGHT_ARROW : ' ') + 'C      ' +
@@ -579,7 +580,7 @@ function updateDisplay ()
 				(currentScaleOffset == 3 ? RIGHT_ARROW : ' ') + 'A       ' +
 				(currentScaleOffset == 4 ? RIGHT_ARROW : ' ') + 'E      ' + 
 				(currentScaleOffset == 5 ? RIGHT_ARROW : ' ') + 'B             ');
-			push.sendRow (3, 
+			push.display.sendRow (3, 
 				(currentScale + 3 < SCALES.length ? pad (' ' + SCALES[currentScale + 3].name, 8, ' ') : '        ') +
 				'   ' +
 				(currentScaleOffset == 6 ? RIGHT_ARROW : ' ') + 'F      ' +
@@ -635,7 +636,7 @@ function updateDisplay ()
 		else
 			push.setButton (102 + i, tracks[i].recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
 	}
-	push.sendRow (3, row);
+	push.display.sendRow (3, row);
 }
 
 function formatVolume (volume)

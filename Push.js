@@ -3,6 +3,7 @@
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
 load ('PadMatrix.js');
+load ('PushDisplay.js');
 
 var PUSH_BUTTON_TAP				= 3;
 var PUSH_BUTTON_CLICK           = 9;
@@ -58,19 +59,12 @@ var PUSH_BUTTON_STATE_OFF = 0;
 var PUSH_BUTTON_STATE_ON  = 1;
 var PUSH_BUTTON_STATE_HI  = 4;
 
-// Push character codes for value bars
-var BARS_NON = String.fromCharCode (6);
-var BARS_ONE = String.fromCharCode (3);
-var BARS_TWO = String.fromCharCode (5);
-var BARS_ONE_L = String.fromCharCode (4);
-var NON_4 = BARS_NON + BARS_NON + BARS_NON + BARS_NON;
-var RIGHT_ARROW = String.fromCharCode (127);
-
 
 function Push (output)
 {
 	this.output = output;
 	this.pads = new PadMatrix (output);
+	this.display = new PushDisplay (output);
 
 	this.activeView = -1;
 	this.views = [];
@@ -125,7 +119,7 @@ Push.prototype.turnOff = function ()
 {
 	// Clear display
 	for (var i = 0; i < 4; i++)
-		this.clearRow (i);
+		this.display.clearRow (i);
 
 	// Turn off all buttons
 	for (var i = 0; i < this.buttons.length; i++)
@@ -173,19 +167,6 @@ Push.prototype.addView = function (viewId, view)
 {
 	view.attachTo (this);
 	this.views[viewId] = view;
-};
-
-Push.prototype.sendRow = function (row, str)
-{
-	var array = [];
-	for (var i = 0; i < str.length; i++)
-		array[i] = str.charCodeAt(i);
-	this.output.sendSysex ("F0 47 7F 15 " + toHexStr ([24 + row]) + "00 45 00 " + toHexStr (array) + "F7");
-};
-
-Push.prototype.clearRow = function (row)
-{
-	this.output.sendSysex ("F0 47 7F 15 " + toHexStr ([28 + row]) + "00 00 F7");
 };
 
 Push.prototype.isShiftPressed = function ()
