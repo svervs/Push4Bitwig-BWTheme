@@ -84,6 +84,11 @@ BaseView.prototype.onSmallKnob1 = function (increase)
 	transport.getTempo ().set (tempo, TEMPO_RESOLUTION);
 };
 
+BaseView.prototype.onSmallKnob1Touch = function (isTouched)
+{
+	transport.getTempo ().setIndication (isTouched);
+};
+
 // Change time (play position)
 BaseView.prototype.onSmallKnob2 = function (increase)
 {
@@ -230,10 +235,89 @@ BaseView.prototype.onValueKnob = function (index, value)
 	}
 };
 
+BaseView.prototype.onValueKnobTouch = function (index, isTouched)
+{
+	switch (currentMode)
+	{
+		case MODE_MASTER:
+			if (index == 0)
+			{
+				// Volume
+				masterTrack.getVolume ().setIndication (isTouched);
+			}
+			else if (index == 1)
+			{
+				// Pan
+				masterTrack.getPan ().setIndication (isTouched);
+			}
+			break;
+	
+		case MODE_TRACK:
+			var selectedTrack = getSelectedTrack ();
+			if (selectedTrack == null)
+				return;
+				
+			var t = trackBank.getTrack (selectedTrack.index);
+			if (index == 0)
+			{
+				// Volume
+				t.getVolume ().setIndication (isTouched);
+			}
+			else if (index == 1)
+			{
+				// Pan
+				t.getPan ().setIndication (isTouched);
+			}
+			else
+			{
+				// Send 1-6 Volume
+				var sel = index - 2;
+				var send = selectedTrack.sends[sel];
+				t.getSend (send.index).setIndication (isTouched);
+			}
+			break;
+		
+		case MODE_VOLUME:
+			var t = tracks[index];
+			trackBank.getTrack (t.index).getVolume ().setIndication (isTouched);
+			break;
+			
+		case MODE_PAN:
+			var t = tracks[index];
+			trackBank.getTrack (t.index).getPan ().setIndication (isTouched);
+			break;
+			
+		case MODE_SEND1:
+		case MODE_SEND2:
+		case MODE_SEND3:
+		case MODE_SEND4:
+		case MODE_SEND5:
+		case MODE_SEND6:
+			var sendNo = currentMode - MODE_SEND1;
+			var t = tracks[index];
+			var send = t.sends[sendNo];
+			trackBank.getTrack (t.index).getSend (sendNo).setIndication (isTouched);
+			break;
+		
+		case MODE_DEVICE:
+			device.getParameter (index).setIndication (isTouched);
+			break;
+			
+		case MODE_SCALES:
+			// Not used
+			break;
+	}
+};
+
 // Master Volume
 BaseView.prototype.onValueKnob9 = function (value)
 {
 	masterTrack.getVolume ().inc (value <= 61 ? 1 : -1, 128);
+};
+
+BaseView.prototype.onValueKnob9Touch = function (isTouched)
+{
+	masterTrack.getVolume ().setIndication (isTouched);
 };
 
 BaseView.prototype.onFirstRow = function (index)

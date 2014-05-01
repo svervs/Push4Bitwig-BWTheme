@@ -78,3 +78,8 @@ View.prototype.onUp = function () {};
 View.prototype.onDown = function () {};
 View.prototype.onLeft = function () {};
 View.prototype.onRight = function () {};
+
+View.prototype.onValueKnobTouch = function (knob, isTouched) {};
+View.prototype.onValueKnob9Touch = function (isTouched) {};
+View.prototype.onSmallKnob1Touch = function (isTouched) {};
+View.prototype.onSmallKnob1Touch = function (isTouched) {};

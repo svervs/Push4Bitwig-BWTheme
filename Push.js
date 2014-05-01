@@ -55,6 +55,18 @@ var PUSH_BUTTON_SCENE6          = 41;
 var PUSH_BUTTON_SCENE7          = 42;
 var PUSH_BUTTON_SCENE8          = 43;	// 1/32T
 
+var PUSH_KNOB1_TOUCH       = 0;
+var PUSH_KNOB2_TOUCH       = 1;
+var PUSH_KNOB3_TOUCH       = 2;
+var PUSH_KNOB4_TOUCH       = 3;
+var PUSH_KNOB5_TOUCH       = 4;
+var PUSH_KNOB6_TOUCH       = 5;
+var PUSH_KNOB7_TOUCH       = 6;
+var PUSH_KNOB8_TOUCH       = 7;
+var PUSH_KNOB9_TOUCH       = 8;
+var PUSH_SMALL_KNOB1_TOUCH = 10;
+var PUSH_SMALL_KNOB2_TOUCH = 9;
+
 var PUSH_BUTTON_STATE_OFF = 0;
 var PUSH_BUTTON_STATE_ON  = 1;
 var PUSH_BUTTON_STATE_HI  = 4;
@@ -196,6 +208,8 @@ Push.prototype.handleMidi = function (status, data1, data2)
 		case 0x90:
 			if (data1 >= 36 && data1 < 100)
 				this.handleGrid (data1, data2);
+			else
+				this.handleTouch (data1, data2);
 			break;
 
 		case 0xB0:
@@ -525,6 +539,39 @@ Push.prototype.handleCC = function (cc, value)
 			
 		default:
 			println (cc);
+			break;
+	}
+};
+
+Push.prototype.handleTouch = function (knob, value)
+{
+	var view = this.getActiveView ();
+	if (view == null)
+		return;
+		
+	switch (knob)
+	{
+		case PUSH_KNOB1_TOUCH:
+		case PUSH_KNOB2_TOUCH:
+		case PUSH_KNOB3_TOUCH:
+		case PUSH_KNOB4_TOUCH:
+		case PUSH_KNOB5_TOUCH:
+		case PUSH_KNOB6_TOUCH:
+		case PUSH_KNOB7_TOUCH:
+		case PUSH_KNOB8_TOUCH:
+			view.onValueKnobTouch (knob, value == 127);
+			break;
+
+		case PUSH_KNOB9_TOUCH:
+			view.onValueKnob9Touch (value == 127);
+			break;
+			
+		case PUSH_SMALL_KNOB1_TOUCH:
+			view.onSmallKnob1Touch (value == 127);
+			break;
+			
+		case PUSH_SMALL_KNOB2_TOUCH:
+			view.onSmallKnob1Touch (value == 127);
 			break;
 	}
 };
