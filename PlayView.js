@@ -21,8 +21,9 @@ PlayView.prototype.updateNoteMapping = function ()
 			noteMap[note] = n < 0 || n > 127 ? -1 : n;
 		}
 	}
-	// TODO: Restarting the script dies with that call:
-	noteInput.setKeyTranslationTable (noteMap);
+	// Workaround by teotigraphix for
+	// https://github.com/git-moss/Push4Bitwig/issues/7
+	host.scheduleTask (function () { noteInput.setKeyTranslationTable (noteMap); }, null, 100);
 };
 
 PlayView.prototype.onActivate = function ()
