@@ -2,14 +2,6 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-// NOT POSSIBLE?
-// - Add Effect
-// - Add Track
-// - Quantize
-// - Toggle Monitor
-// TODOs
-// - Drum View
-
 // Display Modes
 var MODE_TRACK  = 0;
 var MODE_VOLUME = 1;
@@ -155,11 +147,11 @@ function init()
 	output = new MidiOutput ();
 	push = new Push (output);
 	playView = new PlayView ();
-//	sessionView = new SessionView ();
-//	sequencerView = new SequencerView ();
+	sessionView = new SessionView ();
+	sequencerView = new SequencerView ();
 	push.addView (VIEW_PLAY, playView);
-//	push.addView (VIEW_SESSION, sessionView);
-//	push.addView (VIEW_SEQUENCER, sequencerView);
+	push.addView (VIEW_SESSION, sessionView);
+	push.addView (VIEW_SEQUENCER, sequencerView);
 
 	
 	// Click
