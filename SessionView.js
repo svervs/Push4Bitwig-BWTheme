@@ -36,6 +36,15 @@ function SessionView ()
 }
 SessionView.prototype = new BaseView ();
 
+SessionView.prototype.onFirstRow = function (index)
+{
+	if (!this.push.isShiftPressed()) {
+		BaseView.prototype.onFirstRow.call(this, index);
+	} else {
+		trackBank.getTrack(index).returnToArrangement();
+	}
+};
+
 SessionView.prototype.updateNoteMapping = function ()
 {
 	noteInput.setKeyTranslationTable (initArray (-1, 128));
