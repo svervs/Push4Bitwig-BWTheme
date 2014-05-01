@@ -157,17 +157,17 @@ function init()
 	// Click
 	transport.addClickObserver (function (isOn)
 	{
-		output.sendCC (9, isOn ? BUTTON_ON : BUTTON_OFF);
+		push.setButton (PUSH_BUTTON_CLICK, isOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	});
 	// Play
 	transport.addIsPlayingObserver (function (isPlaying)
 	{
-		output.sendCC (85, isPlaying ? BUTTON_ON : BUTTON_OFF);
+		push.setButton (PUSH_BUTTON_PLAY, isPlaying ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	});
 	// Record
 	transport.addIsRecordingObserver (function (isRecording)
 	{
-		output.sendCC (86, isRecording ? BUTTON_ON : BUTTON_OFF);
+		push.setButton (PUSH_BUTTON_RECORD, isRecording ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	});
 	// Tempo
 	transport.getTempo ().addValueObserver(TEMPO_RESOLUTION, function (value)
@@ -412,12 +412,12 @@ function getSelectedSlot (track)
 
 function updateMode ()
 {
-	output.sendCC (PUSH_BUTTON_MASTER, currentMode == MODE_MASTER ? BUTTON_ON : BUTTON_OFF);
-	output.sendCC (PUSH_BUTTON_SCALES, currentMode == MODE_SCALES ? BUTTON_ON : BUTTON_OFF);
-	output.sendCC (PUSH_BUTTON_DEVICE, currentMode == MODE_DEVICE ? BUTTON_ON : BUTTON_OFF);
-	output.sendCC (PUSH_BUTTON_TRACK, currentMode == MODE_TRACK ? BUTTON_ON : BUTTON_OFF);
-	output.sendCC (PUSH_BUTTON_VOLUME, currentMode == MODE_VOLUME ? BUTTON_ON : BUTTON_OFF);
-	output.sendCC (PUSH_BUTTON_PAN_SEND, currentMode >= MODE_PAN && currentMode <= MODE_SEND6 ? BUTTON_ON : BUTTON_OFF);
+	push.setButton (PUSH_BUTTON_MASTER, currentMode == MODE_MASTER ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_SCALES, currentMode == MODE_SCALES ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_DEVICE, currentMode == MODE_DEVICE ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_TRACK, currentMode == MODE_TRACK ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_VOLUME, currentMode == MODE_VOLUME ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_PAN_SEND, currentMode >= MODE_PAN && currentMode <= MODE_SEND6 ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 }
 
 function updateDisplay ()
@@ -442,8 +442,8 @@ function updateDisplay ()
 			push.sendRow (3, pad (master.name, 34, ' ') + pad ('', 34, ' '));
 			for (var i = 0; i < 8; i++)
 			{
-				output.sendCC (20 + i, BLACK);
-				output.sendCC (102 + i, BLACK);
+				push.setButton (20 + i, PUSH_COLOR_BLACK);
+				push.setButton (102 + i, PUSH_COLOR_BLACK);
 			}
 			return;
 	
@@ -548,8 +548,8 @@ function updateDisplay ()
 				}
 				
 				// Light up fx selection buttons
-				output.sendCC (20 + i, i == 7 && selectedDevice.enabled ? GREEN_LO - 4 : BLACK);
-				output.sendCC (102 + i, BLACK);
+				push.setButton (20 + i, i == 7 && selectedDevice.enabled ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
+				push.setButton (102 + i, PUSH_COLOR_BLACK);
 			}
 			push.sendRow (0, row0);
 			push.sendRow (1, row1);
@@ -591,8 +591,8 @@ function updateDisplay ()
 
 			for (var i = 0; i < 8; i++)
 			{
-				output.sendCC (20 + i, i == 0 || i == 7 ? ORANGE_LO : GREEN_LO-4);
-				output.sendCC (102 + i, i == 0 || i == 7 ? ORANGE_LO : GREEN_LO);
+				push.setButton (20 + i, i == 0 || i == 7 ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_GREEN_LO-4);
+				push.setButton (102 + i, i == 0 || i == 7 ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_GREEN_LO);
 			}
 			break;
 	}
@@ -603,15 +603,15 @@ function updateDisplay ()
 	// Send, Mute, Automation
 	if (t == null)
 	{
-		output.sendCC (60, BLACK);
-		output.sendCC (61, BLACK);
-		output.sendCC (89, BLACK);
+		push.setButton (PUSH_BUTTON_MUTE, PUSH_BUTTON_STATE_OFF);
+		push.setButton (PUSH_BUTTON_SOLO, PUSH_BUTTON_STATE_OFF);
+		push.setButton (PUSH_BUTTON_AUTOMATION, PUSH_BUTTON_STATE_OFF);
 	}
 	else
 	{
-		output.sendCC (60, t.mute ? BUTTON_ON : BUTTON_OFF);
-		output.sendCC (61, t.solo ? BUTTON_ON : BUTTON_OFF);
-		output.sendCC (89, t.autowrite ? BUTTON_ON : BUTTON_OFF);
+		push.setButton (PUSH_BUTTON_MUTE, t.mute ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+		push.setButton (PUSH_BUTTON_SOLO, t.solo ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+		push.setButton (PUSH_BUTTON_AUTOMATION, t.autowrite ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	}
 
 	// Format track names
@@ -629,11 +629,11 @@ function updateDisplay ()
 			row += ' ';
 		
 		// Light up selection and record/monitor buttons
-		output.sendCC (20 + i, isSel ? ORANGE_LO : BLACK);
+		push.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
 		if (push.isShiftPressed ())
-			output.sendCC (102 + i, tracks[i].monitor ? GREEN_LO : BLACK);
+			push.setButton (102 + i, tracks[i].monitor ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
 		else
-			output.sendCC (102 + i, tracks[i].recarm ? RED_LO : BLACK);
+			push.setButton (102 + i, tracks[i].recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
 	}
 	push.sendRow (3, row);
 }

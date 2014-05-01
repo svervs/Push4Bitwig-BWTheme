@@ -43,22 +43,22 @@ SessionView.prototype.updateNoteMapping = function ()
 
 SessionView.prototype.updateArrows = function ()
 {
-	output.sendCC (PUSH_BUTTON_LEFT, this.canScrollLeft ? BUTTON_ON : BLACK);
-	output.sendCC (PUSH_BUTTON_RIGHT, this.canScrollRight ? BUTTON_ON : BLACK);
-	output.sendCC (PUSH_BUTTON_UP, this.canScrollUp ? BUTTON_ON : BLACK);
-	output.sendCC (PUSH_BUTTON_DOWN, this.canScrollDown ? BUTTON_ON : BLACK);
+	push.setButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	push.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	push.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	push.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
 };
 
 SessionView.prototype.onActivate = function ()
 {
-	output.sendCC (PUSH_BUTTON_NOTE, BUTTON_OFF);
-	output.sendCC (PUSH_BUTTON_SESSION, BUTTON_ON);
+	push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
 	this.updateNoteMapping ();
 	for (var i = 0; i < 8; i++)
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (true);
 	this.updateArrows ();
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-		output.sendCC (i, 19);
+		push.setButton (i, 19);
 	updateMode ();
 };
 
@@ -156,31 +156,23 @@ SessionView.prototype.onStop = function ()
 	trackBank.getClipLauncherScenes ().stop ();
 };
 
-SessionView.prototype.drawGrid = function (x, y)
+SessionView.prototype.drawGrid = function ()
 {
-	var port = host.getMidiOutPort (0);
-	if (x && y)
-		this.drawPad (port, tracks[x].slots[y], x, y, tracks[x].recarm);
-	else
+	for (var i = 0; i < 8; i++)
 	{
-		for (var i = 0; i < 8; i++)
-		{
-			var t = tracks[i];
-			for (var j = 0; j < 8; j++)
-				this.drawPad (port, t.slots[j], i, j, t.recarm);
-		}
+		var t = tracks[i];
+		for (var j = 0; j < 8; j++)
+			this.drawPad (t.slots[j], i, j, t.recarm);
 	}
 };
 
-SessionView.prototype.drawPad = function (port, slot, x, y, isArmed)
+SessionView.prototype.drawPad = function (slot, x, y, isArmed)
 {
-	var color = slot.hasContent ? (slot.color ? slot.color : ORANGE_HI) : (isArmed ? RED_LO : BLACK);
+	var color = slot.isRecording ? PUSH_COLOR_RED_HI : 
+					(slot.hasContent ? 
+						(slot.color ? slot.color : PUSH_COLOR_ORANGE_HI) : 
+						(isArmed ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK));
 	var n = 92 + x - 8 * y;
-	port.sendMidi (0x90, n, color);
-	if (slot.isQueued)
-		port.sendMidi (0x90 + 14, n, slot.isRecording ? RED_HI : GREEN_HI);
-	else if (slot.isPlaying)
-		port.sendMidi (0x90 + 10, n, GREEN_HI);
-	else if (slot.isRecording)
-		port.sendMidi (0x90, n, RED_HI);
+	push.pads.light (n, color);
+	push.pads.blink (n, (slot.isQueued || slot.isPlaying) ? (slot.isRecording ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : PUSH_COLOR_BLACK, slot.isQueued);
 };

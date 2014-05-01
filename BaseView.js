@@ -347,7 +347,7 @@ BaseView.prototype.onMute = function ()
 		return;
 	selectedTrack.mute = toggleValue (selectedTrack.mute);
 	trackBank.getTrack (selectedTrack.index).getMute ().set (selectedTrack.mute);
-	output.sendCC (60, selectedTrack.mute ? BUTTON_ON : BUTTON_OFF);
+	push.setButton (PUSH_BUTTON_MUTE, selectedTrack.mute ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 BaseView.prototype.onSolo = function ()
@@ -357,7 +357,7 @@ BaseView.prototype.onSolo = function ()
 		return;
 	selectedTrack.solo = toggleValue (selectedTrack.solo);
 	trackBank.getTrack (selectedTrack.index).getSolo ().set (selectedTrack.solo);
-	output.sendCC (61, selectedTrack.solo ? BUTTON_ON : BUTTON_OFF);
+	push.setButton (PUSH_BUTTON_SOLO, selectedTrack.solo ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 BaseView.prototype.onScales = function (isDown)

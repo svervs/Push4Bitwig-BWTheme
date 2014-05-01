@@ -2,27 +2,7 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-// Push Colors
-var BLACK     = 0;
-var WHITE_HI  = 3;
-var WHITE_LO  = 1;
-var RED_HI    = 120;
-var RED_LO    = 7;
-var ORANGE_HI = 60;
-var ORANGE_LO = 10;
-var YELLOW_HI = 13;
-var YELLOW_LO = 15;
-var GREEN_HI  = 21;
-var GREEN_LO  = 23;
-var CYAN_HI   = 33;
-var CYAN_LO   = 35;
-var BLUE_LGHT = 41;
-var BLUE_HI   = 45;
-var BLUE_LO   = 47;
-var INDIGO_HI = 49;
-var INDIGO_LO = 51;
-var VIOLET_HI = 53;
-var VIOLET_LO = 55;
+load ('PadMatrix.js');
 
 var PUSH_BUTTON_TAP				= 3;
 var PUSH_BUTTON_CLICK           = 9;
@@ -74,8 +54,9 @@ var PUSH_BUTTON_SCENE6          = 41;
 var PUSH_BUTTON_SCENE7          = 42;
 var PUSH_BUTTON_SCENE8          = 43;	// 1/32T
 
-var BUTTON_OFF = 1;
-var BUTTON_ON  = 4;
+var PUSH_BUTTON_STATE_OFF = 0;
+var PUSH_BUTTON_STATE_ON  = 1;
+var PUSH_BUTTON_STATE_HI  = 4;
 
 // Push character codes for value bars
 var BARS_NON = String.fromCharCode (6);
@@ -89,6 +70,7 @@ var RIGHT_ARROW = String.fromCharCode (127);
 function Push (output)
 {
 	this.output = output;
+	this.pads = new PadMatrix (output);
 
 	this.activeView = -1;
 	this.views = [];
@@ -147,15 +129,14 @@ Push.prototype.turnOff = function ()
 
 	// Turn off all buttons
 	for (var i = 0; i < this.buttons.length; i++)
-		this.output.sendCC (this.buttons[i], BLACK);
+		this.setButton (this.buttons[i], PUSH_BUTTON_STATE_OFF);
 
 	for (var i = 20; i < 27; i++)
-		this.output.sendCC (i, BLACK);
+		this.setButton (i, PUSH_BUTTON_STATE_OFF);
 	for (var i = 102; i < 110; i++)
-		this.output.sendCC (i, BLACK);
+		this.setButton (i, PUSH_BUTTON_STATE_OFF);
 		
-	for (var i = 36; i < 100; i++)
-		this.output.sendNote (i, BLACK);
+	this.pads.turnOff ();
 };
 
 Push.prototype.setActiveView = function (viewId)
@@ -170,9 +151,17 @@ Push.prototype.setActiveView = function (viewId)
 	}
 	
 	for (var i = 0; i < this.buttons.length; i++)
-		this.output.sendCC (this.buttons[i], view.usesButton (this.buttons[i]) ? BUTTON_OFF : BLACK);
+		this.setButton (this.buttons[i], view.usesButton (this.buttons[i]) ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
 	
 	view.onActivate ();
+};
+
+Push.prototype.getActiveView = function ()
+{
+	if (this.activeView < 0)
+		return null;
+	var view = this.views[this.activeView];
+	return view ? view : null;
 };
 
 Push.prototype.isActiveView = function (viewId)
@@ -184,14 +173,6 @@ Push.prototype.addView = function (viewId, view)
 {
 	view.attachTo (this);
 	this.views[viewId] = view;
-};
-
-Push.prototype.getActiveView = function ()
-{
-	if (this.activeView < 0)
-		return null;
-	var view = this.views[this.activeView];
-	return view ? view : null;
 };
 
 Push.prototype.sendRow = function (row, str)
@@ -207,16 +188,23 @@ Push.prototype.clearRow = function (row)
 	this.output.sendSysex ("F0 47 7F 15 " + toHexStr ([28 + row]) + "00 00 F7");
 };
 
-Push.prototype.redrawGrid = function (x, y)
-{
-	var view = this.getActiveView ();
-	if (view != null)
-		view.drawGrid (x, y);
-};
-
 Push.prototype.isShiftPressed = function ()
 {
 	return this.shiftPressed;
+};
+
+Push.prototype.setButton = function (button, state)
+{
+	this.output.sendCC (button, state);
+};
+
+Push.prototype.redrawGrid = function ()
+{
+	var view = this.getActiveView ();
+	if (view == null)
+		return;
+	view.drawGrid ();
+	this.pads.flush ();
 };
 
 Push.prototype.handleMidi = function (status, data1, data2)
@@ -251,13 +239,13 @@ Push.prototype.handleCC = function (cc, value)
 	switch (cc)
 	{
 		// Tap Tempo
-		case 3:
+		case PUSH_BUTTON_TAP:
 			if (value == 127)
 				view.onTapTempo ();
 			break;
 	
 		// Click
-		case 9:
+		case PUSH_BUTTON_CLICK:
 			if (value == 127)
 				view.onClick ();
 			break;
@@ -286,13 +274,13 @@ Push.prototype.handleCC = function (cc, value)
 			break;
 			
 		// Select Master track
-		case 28:
+		case PUSH_BUTTON_MASTER:
 			if (value == 127)
 				view.onMaster ();
 			break;
 
 		// Stop
-		case 29:
+		case PUSH_BUTTON_STOP:
 			if (value == 127)
 				view.onStop ();
 			break;
@@ -311,119 +299,119 @@ Push.prototype.handleCC = function (cc, value)
 			break;
 
 		// Left
-		case 44:
+		case PUSH_BUTTON_LEFT:
 			if (value == 127)
 				view.onLeft ();
 			break;
 			
 		// Right
-		case 45:
+		case PUSH_BUTTON_RIGHT:
 			if (value == 127)
 				view.onRight ();
 			break;
 
 		// Up
-		case 46:
+		case PUSH_BUTTON_UP:
 			if (value == 127)
 				view.onUp ();
 			break;
 
 		// Down
-		case 47:
+		case PUSH_BUTTON_DOWN:
 			if (value == 127)
 				view.onDown ();
 			break;
 
 		// Select
-		case 48:
+		case PUSH_BUTTON_SELECT:
 			if (value == 127)
 				view.onSelect ();
 			break;
 
 		// Shift Key
-		case 49:
+		case PUSH_BUTTON_SHIFT:
 			this.shiftPressed = value == 127;
-			this.output.sendCC (49, this.shiftPressed ? BUTTON_ON : BUTTON_OFF);
+			this.setButton (PUSH_BUTTON_SHIFT, this.shiftPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 			view.onShift (this.shiftPressed);
 			break;
 			
 		// Play Note Mode
-		case 50:
+		case PUSH_BUTTON_NOTE:
 			if (value == 127)
 				view.onNote ();
 			break;
 
 		// Play Session Mode
-		case 51:
+		case PUSH_BUTTON_SESSION:
 			if (value == 127)
 				view.onSession ();
 			break;
 
 		// Add FX
-		case 52:
+		case PUSH_BUTTON_ADD_EFFECT:
 			if (value == 127)
 				view.onAddFX ();
 			break;
 			
 		// Add Track
-		case 53:	
+		case PUSH_BUTTON_ADD_TRACK:
 			if (value == 127)
 				view.onAddTrack ();
 			break;
 
 		// Octave Down
-		case 54:
+		case PUSH_BUTTON_OCTAVE_DOWN:
 			if (value == 127)
 				view.onOctaveDown ();
 			break;
 			
 		// Octave Up
-		case 55:
+		case PUSH_BUTTON_OCTAVE_UP:
 			if (value == 127)
 				view.onOctaveUp ();
 			break;
 
 		// Repeat
-		case 56:
+		case PUSH_BUTTON_REPEAT:
 			view.onRepeat (value == 127);
 			break;
 
 		// Accent
-		case 57:
+		case PUSH_BUTTON_ACCENT:
 			view.onAccent (value == 127);
 			break;
 			
 		// Scales
-		case 58:
+		case PUSH_BUTTON_SCALES:
 			view.onScales (value == 127);
 			break;
 
 		// User Mode
-		case 59:
+		case PUSH_BUTTON_USER_MODE:
 			if (value == 127)
 				view.onUser ();
 			break;
 
 		// Mute
-		case 60:
+		case PUSH_BUTTON_MUTE:
 			if (value == 127)
 				view.onMute ();
 			break;
 			
 		// Solo
-		case 61:
+		case PUSH_BUTTON_SOLO:
 			if (value == 127)
 				view.onSolo ();
 			break;
 
 		// Decrease selected device
-		case 62:
+		case PUSH_BUTTON_DEVICE_LEFT:
 			if (value == 127)
 				view.onDeviceLeft ();
 			break;
 		
 		// Increase selected device
-		case 63:
+		case PUSH_BUTTON_DEVICE_RIGHT:
 			if (value == 127)
 				view.onDeviceRight ();
 			break;
@@ -446,37 +434,37 @@ Push.prototype.handleCC = function (cc, value)
 			break;
 			
 		// Play
-		case 85:
+		case PUSH_BUTTON_PLAY:
 			if (value == 127)
 				view.onPlay ();
 			break;
 			
 		// Record
-		case 86:
+		case PUSH_BUTTON_RECORD:
 			if (value == 127)
 				view.onRecord ();
 			break;
 			
 		// New
-		case 87:
+		case PUSH_BUTTON_NEW:
 			if (value == 127)
 				view.onNew ();
 			break;
 			
 		// Duplicate
-		case 88:
+		case PUSH_BUTTON_DUPLICATE:
 			if (value == 127)
 				view.onDuplicate ();
 			break;
 			
 		// Automation
-		case 89:
+		case PUSH_BUTTON_AUTOMATION:
 			if (value == 127)
 				view.onAutomation ();
 			break;
 			
 		// Fixed Length
-		case 90:
+		case PUSH_BUTTON_FIXED_LENGTH:
 			if (value == 127)
 				view.onFixedLength ();
 			break;
@@ -495,61 +483,61 @@ Push.prototype.handleCC = function (cc, value)
 			break;
 			
 		// Device Mode
-		case 110:
+		case PUSH_BUTTON_DEVICE:
 			if (value == 127)
 				view.onDevice ();
 			break;
 			
 		// Browse
-		case 111:
+		case PUSH_BUTTON_BROWSE:
 			if (value == 127)
 				view.onBrowse ();
 			break;
 			
 	 	// Track Mode
-		case 112:
+		case PUSH_BUTTON_TRACK:
 			if (value == 127)
 				view.onTrack ();
 			break;
 
 	 	// Clip Mode
-		case 113:
+		case PUSH_BUTTON_CLIP:
 			if (value == 127)
 				view.onClip ();
 			break;
 
 		// Volume Mode
-		case 114:
+		case PUSH_BUTTON_VOLUME:
 			if (value == 127)
 				view.onVolume ();
 			break;
 			
 		// Pan & Send Mode
-		case 115:
+		case PUSH_BUTTON_PAN_SEND:
 			if (value == 127)
 				view.onPanAndSend ();
 			break;
 		
 		// Quantize
-		case 116:
+		case PUSH_BUTTON_QUANTIZE:
 			if (value == 127)
 				view.onQuantize ();
 			break;
 
 		// Double
-		case 117:
+		case PUSH_BUTTON_DOUBLE:
 			if (value == 127)
 				view.onDouble ();
 			break;
 			
 		// Delete
-		case 118:
+		case PUSH_BUTTON_DELETE:
 			if (value == 127)
 				view.onDelete ();
 			break;
 			
 		// Undo
-		case 119:
+		case PUSH_BUTTON_UNDO:
 			if (value == 127)
 				view.onUndo ();
 			break;

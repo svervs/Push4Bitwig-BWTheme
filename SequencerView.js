@@ -3,7 +3,7 @@
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
 var NUM_ROWS = 128;
-var NUM_COLS = 8; //512;
+var NUM_COLS = 8;
 var NUM_DISPLAY_ROWS = 8;
 var NUM_DISPLAY_COLS = 8;
 var START_KEY = 32;
@@ -51,22 +51,22 @@ SequencerView.prototype.updateArrows = function ()
 	this.canScrollDown = this.offsetY - NUM_DISPLAY_ROWS >= 0;
 	this.canScrollLeft = this.offsetX > 0;
 
-	output.sendCC (PUSH_BUTTON_LEFT, this.canScrollLeft ? BUTTON_ON : BLACK);
-	output.sendCC (PUSH_BUTTON_RIGHT, this.canScrollRight ? BUTTON_ON : BLACK);
-	output.sendCC (PUSH_BUTTON_UP, this.canScrollUp ? BUTTON_ON : BLACK);
-	output.sendCC (PUSH_BUTTON_DOWN, this.canScrollDown ? BUTTON_ON : BLACK);
+	push.setButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	push.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	push.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	push.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
 };
 
 SequencerView.prototype.onActivate = function ()
 {
-	output.sendCC (PUSH_BUTTON_NOTE, BUTTON_ON);
-	output.sendCC (PUSH_BUTTON_SESSION, BUTTON_OFF);
+	push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
+	push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
 	this.updateNoteMapping ();
 	for (var i = 0; i < 8; i++)
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (false);
 	this.updateArrows ();
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-		output.sendCC (i, BLACK);
+		push.setButton (i, PUSH_COLOR_BLACK);
 	updateMode ();
 };
 
@@ -133,19 +133,16 @@ SequencerView.prototype.onDown = function ()
 
 SequencerView.prototype.drawGrid = function ()
 {
-	var port = host.getMidiOutPort (0);
 	var hiStep = this.isInXRange (this.step) ? this.step % NUM_DISPLAY_COLS : -1;
 	for (var x = 0; x < NUM_DISPLAY_COLS; x++)
 	{
 		for (var y = 0; y < NUM_DISPLAY_ROWS; y++)
-			this.drawPad (port, x, y, this.data[x][this.offsetY + y], x == hiStep);
+		{
+			var isSet = this.data[x][this.offsetY + y];
+			var hilite = x == hiStep;
+			push.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_RED_HI) : hilite ? PUSH_COLOR_GREEN_HI : PUSH_COLOR_BLACK);
+		}
 	}
-};
-
-SequencerView.prototype.drawPad = function (port, x, y, isSet, hilite)
-{
-	var n = 36 + x + NUM_DISPLAY_COLS * y;
-	port.sendMidi (0x90, n, isSet ? (hilite ? ORANGE_HI : RED_HI) : hilite ? GREEN_HI : BLACK);
 };
 
 SequencerView.prototype.isInXRange = function (x)

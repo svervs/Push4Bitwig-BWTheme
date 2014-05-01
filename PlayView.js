@@ -4,6 +4,7 @@
 
 function PlayView ()
 {
+	this.pressedKeys = initArray (0, 128);
 }
 PlayView.prototype = new BaseView ();
 
@@ -28,13 +29,13 @@ PlayView.prototype.updateNoteMapping = function ()
 
 PlayView.prototype.onActivate = function ()
 {
-	output.sendCC (PUSH_BUTTON_NOTE, BUTTON_ON);
-	output.sendCC (PUSH_BUTTON_SESSION, BUTTON_OFF);
+	push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
+	push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
 	this.updateNoteMapping ();
 	for (var i = 0; i < 8; i++)
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (false);
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-		output.sendCC (i, BLACK);
+		push.setButton (i, PUSH_COLOR_BLACK);
 	updateMode ();
 };
 
@@ -64,14 +65,14 @@ PlayView.prototype.drawGrid = function ()
 	var t = getSelectedTrack ();
 	var isKeyboardEnabled = t != null && t.canHoldNotes;
 	for (var i = 36; i < 100; i++)
-		output.sendNote (i, isKeyboardEnabled ? this.getScaleColor (i) : BLACK);
+		push.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ? PUSH_COLOR_GREEN_HI : this.getScaleColor (i)) : PUSH_COLOR_BLACK);
 };
 
 PlayView.prototype.getScaleColor = function (note)
 {
 	return currentScale == SCALE_CHROMATIC ? 
 		SCALE_CHROMATIC_COLORS[note - 36] :
-		SCALES[currentScale].matrix[note - 36] % 12 == 0 ? BLUE_LGHT : WHITE_HI;
+		SCALES[currentScale].matrix[note - 36] % 12 == 0 ? PUSH_COLOR_BLUE_LGHT : PUSH_COLOR_WHITE_HI;
 };
 
 PlayView.prototype.onGrid = function (note, velocity)
@@ -80,22 +81,15 @@ PlayView.prototype.onGrid = function (note, velocity)
 	if (t == null || !t.canHoldNotes)
 		return;
 
-	// Light the pad
-	output.sendNote (note, velocity == 0 ? this.getScaleColor (note) : GREEN_HI);
-	if (currentScale != SCALE_CHROMATIC)
-	{
-		var index = note - 36;
-		if (index % 8 > 2 && index + 5 < 64)
-		{
-			var upNote = note + 5;
-			output.sendNote (upNote, velocity == 0 ? this.getScaleColor (upNote) : GREEN_HI);
-		}
-		if (index % 8 < 5 && index - 5 > 0)
-		{
-			var downNote = note - 5;
-			output.sendNote (downNote, velocity == 0 ? this.getScaleColor (downNote) : GREEN_HI);
-		}
-	}
+	// Remember pressed pads
+	this.pressedKeys[note] = velocity;
+	if (currentScale == SCALE_CHROMATIC)
+		return;
+	var index = note - 36;
+	if (index % 8 > 2 && index + 5 < 64)
+		this.pressedKeys[Math.min (note + 5, 127)] = velocity;
+	if (index % 8 < 5 && index - 5 > 0)
+		this.pressedKeys[Math.max (note - 5, 0)] = velocity;
 };
 
 PlayView.prototype.onLeft = function ()

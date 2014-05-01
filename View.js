@@ -19,7 +19,7 @@ View.prototype.usesButton = function (buttonID)
 
 View.prototype.onActivate = function () {};
 
-View.prototype.drawGrid = function (x, y) {};
+View.prototype.drawGrid = function () {};
 View.prototype.onGrid = function (note, velocity) {};
 
 View.prototype.onPlay = function () {};
