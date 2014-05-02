@@ -8,7 +8,8 @@ function BaseView ()
 	this.canScrollRight = true;
 	this.canScrollUp = true;
 	this.canScrollDown = true;
-	
+
+	this.stopPressed = false;
 	this.newPressed = false;
 	this.newClipLength = 4;
 	
@@ -52,6 +53,17 @@ BaseView.prototype.onRecord = function ()
 		transport.toggleLauncherOverdub ();
 	else
 		transport.record ();
+};
+
+BaseView.prototype.onStop = function (isPressed)
+{
+	if (this.push.isShiftPressed ())
+	{
+		trackBank.getClipLauncherScenes ().stop ();
+		return;
+	}
+	this.stopPressed = isPressed;
+	push.setButton (PUSH_BUTTON_STOP, isPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 BaseView.prototype.onDuplicate = function ()
@@ -364,7 +376,10 @@ BaseView.prototype.onFirstRow = function (index)
 			break;
 			
 		default:
-			trackBank.getTrack (index).select ();
+			if (this.stopPressed)
+				trackBank.getTrack (index).stop ();
+			else
+				trackBank.getTrack (index).select ();
 			break;
 	}
 };

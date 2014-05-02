@@ -160,11 +160,6 @@ SessionView.prototype.onScene = function (scene)
 	trackBank.launchScene (scene);
 };
 
-SessionView.prototype.onStop = function ()
-{
-	trackBank.getClipLauncherScenes ().stop ();
-};
-
 SessionView.prototype.drawGrid = function ()
 {
 	for (var i = 0; i < 8; i++)

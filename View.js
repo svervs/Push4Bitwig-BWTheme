@@ -46,7 +46,7 @@ View.prototype.onFirstRow = function (index) {};
 View.prototype.onSecondRow = function (index) {};
 
 View.prototype.onMaster = function () {};
-View.prototype.onStop = function () {};
+View.prototype.onStop = function (isPressed) {};
 View.prototype.onScene = function (index) {};
 
 View.prototype.onVolume = function () {};

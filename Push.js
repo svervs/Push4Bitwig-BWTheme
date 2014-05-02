@@ -282,8 +282,7 @@ Push.prototype.handleCC = function (cc, value)
 
 		// Stop
 		case PUSH_BUTTON_STOP:
-			if (value == 127)
-				view.onStop ();
+			view.onStop (value == 127);
 			break;
 
 		// Scene buttons
