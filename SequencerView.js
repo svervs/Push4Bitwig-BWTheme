@@ -10,11 +10,6 @@ var START_KEY = 32;
 
 function SequencerView ()
 {
-	this.canScrollLeft = true;
-	this.canScrollRight = true;
-	this.canScrollUp = true;
-	this.canScrollDown = true;
-	
 	this.offsetX = 0;
 	this.offsetY = START_KEY;
 	this.step    = -1;
@@ -24,6 +19,8 @@ function SequencerView ()
 		this.data[y] = initArray (false, NUM_COLS);
 	
 	this.clip = host.createCursorClip (NUM_COLS, NUM_ROWS);
+	this.lengthInBeatTime = 16;
+	this.clip.setStepSize (this.lengthInBeatTime);
 	
 	this.clip.addPlayingStepObserver (doObject (this, function (step)
 	{
@@ -40,33 +37,24 @@ function SequencerView ()
 }
 SequencerView.prototype = new BaseView ();
 
-SequencerView.prototype.updateNoteMapping = function ()
-{
-	noteInput.setKeyTranslationTable (initArray (-1, 128));
-};
-
 SequencerView.prototype.updateArrows = function ()
 {
 	this.canScrollUp = this.offsetY + NUM_DISPLAY_ROWS <= NUM_ROWS - NUM_DISPLAY_ROWS;
 	this.canScrollDown = this.offsetY - NUM_DISPLAY_ROWS >= 0;
 	this.canScrollLeft = this.offsetX > 0;
-
-	push.setButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-	push.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-	push.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-	push.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	BaseView.prototype.updateArrows.call (this);
 };
 
 SequencerView.prototype.onActivate = function ()
 {
+	BaseView.prototype.onActivate.call (this);
+
 	push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
 	push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
-	this.updateNoteMapping ();
 	for (var i = 0; i < 8; i++)
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (false);
-	this.updateArrows ();
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-		push.setButton (i, PUSH_COLOR_BLACK);
+		push.setButton (i, i % 2 == 0 ? 19 : PUSH_COLOR_BLACK);
 	updateMode ();
 };
 
@@ -74,6 +62,7 @@ SequencerView.prototype.usesButton = function (buttonID)
 {
 	switch (buttonID)
 	{
+		case PUSH_BUTTON_NEW:
 		case PUSH_BUTTON_STOP:
 		case PUSH_BUTTON_CLIP:
 		case PUSH_BUTTON_SELECT:
@@ -87,6 +76,15 @@ SequencerView.prototype.usesButton = function (buttonID)
 			return false;
 	}
 	return true;
+};
+
+SequencerView.prototype.onScene = function (index)
+{
+	var button = 7 - index;
+	if (button % 2 != 0)
+		return;
+	this.lengthInBeatTime = Math.pow (0.5, button / 2);
+	this.clip.setStepSize (this.lengthInBeatTime);
 };
 
 SequencerView.prototype.onGrid = function (note, velocity)

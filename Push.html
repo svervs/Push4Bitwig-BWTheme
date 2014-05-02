@@ -44,6 +44,18 @@
 			<li>1.XX
 				<ul>
 					<li>Added indication on parameters if knobs are touched.</li>
+					<li>Shift+Record toggles launcher overdub.</li>
+					<li>Sequencer Mode:
+						<ul>
+							<li>Use the Scene buttons to change the grids resolution.</li>
+						</ul>
+					</li>
+					<li>Session Mode:
+						<ul>
+							<li>Hold New button and press an empty slot (pad) to create a new clip.</li>
+							<li>If Select is pressed when pressing a pad it is only selected and not started.</li>
+						</ul>
+					</li>
 					<li>Improved display and pad redraw performance.</li>
 					<li>Fixed lighting of Mute and Solo buttons.</li>
 					<li>Fixed hang after script restart.</li>
@@ -79,6 +91,7 @@
 			<tr><td>Play			</td><td>Start/Stop playback</td></tr>
 			<tr><td>Shift+Play		</td><td>Toggle repeat</td></tr>
 			<tr><td>Record			</td><td>Start/Stop recording</td></tr>
+			<tr><td>Shift+Record	</td><td>Toggle launcher overdub</td></tr>
 
 			<tr><td>Automation		</td><td>Toggle Automation Write of selected track</td></tr>
 			<!--<tr><td>Quantize		</td><td>Quantize notes in midi editor to grid</td></tr>-->
@@ -176,8 +189,11 @@
 		following exceptions:</p>
 		<ul>
 			<li>The buttons on the grid start/record the clips.</li>
+			<li>If Select is pressed when pressing a pad it is only selected and not started.</li>
 			<li>The 1/4 to 1/32t buttons start scenes.</li>
 			<li>The arrow keys scroll the grid.</li>
+			<li>Pressing Shift+1st row buttons returns to the arrangement for that track.</li>
+			<li>Hold New button and press an empty slot (pad) to create a new clip.</li>
 		</ul>
 		
 		
@@ -190,6 +206,7 @@
 			<li>Note that you can scroll past the end of the clip (to the right).</li>
 			<li>Press pads to enter/delete notes.</li>
 			<li>The velocity of the pressed key is set as well.</li>
+			<li>Use the Scene buttons to change the grids resolution.</li>
 		</ul>
 
 		

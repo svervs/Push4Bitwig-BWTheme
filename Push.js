@@ -81,6 +81,7 @@ function Push (output)
 	this.activeView = -1;
 	this.views = [];
 	this.shiftPressed = false;
+	this.selectPressed = false;
 	
 	this.buttons =
 	[
@@ -179,6 +180,11 @@ Push.prototype.addView = function (viewId, view)
 {
 	view.attachTo (this);
 	this.views[viewId] = view;
+};
+
+Push.prototype.isSelectPressed = function ()
+{
+	return this.selectPressed;
 };
 
 Push.prototype.isShiftPressed = function ()
@@ -319,8 +325,9 @@ Push.prototype.handleCC = function (cc, value)
 
 		// Select
 		case PUSH_BUTTON_SELECT:
-			if (value == 127)
-				view.onSelect ();
+			this.selectPressed = value == 127;
+			this.setButton (PUSH_BUTTON_SELECT, this.selectPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+			view.onSelect (this.selectPressed);
 			break;
 
 		// Shift Key
@@ -442,8 +449,7 @@ Push.prototype.handleCC = function (cc, value)
 			
 		// New
 		case PUSH_BUTTON_NEW:
-			if (value == 127)
-				view.onNew ();
+			view.onNew (value == 127);
 			break;
 			
 		// Duplicate

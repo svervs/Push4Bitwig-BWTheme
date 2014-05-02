@@ -38,34 +38,20 @@ SessionView.prototype = new BaseView ();
 
 SessionView.prototype.onFirstRow = function (index)
 {
-	if (!this.push.isShiftPressed()) {
-		BaseView.prototype.onFirstRow.call(this, index);
-	} else {
+	if (this.push.isShiftPressed())
 		trackBank.getTrack(index).returnToArrangement();
-	}
-};
-
-SessionView.prototype.updateNoteMapping = function ()
-{
-	noteInput.setKeyTranslationTable (initArray (-1, 128));
-};
-
-SessionView.prototype.updateArrows = function ()
-{
-	push.setButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-	push.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-	push.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-	push.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	else
+		BaseView.prototype.onFirstRow.call (this, index);
 };
 
 SessionView.prototype.onActivate = function ()
 {
+	BaseView.prototype.onActivate.call (this);
+
 	push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
-	this.updateNoteMapping ();
 	for (var i = 0; i < 8; i++)
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (true);
-	this.updateArrows ();
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
 		push.setButton (i, 19);
 	updateMode ();
@@ -75,7 +61,6 @@ SessionView.prototype.usesButton = function (buttonID)
 {
 	switch (buttonID)
 	{
-		case PUSH_BUTTON_SELECT:
 		case PUSH_BUTTON_ADD_EFFECT:
 		case PUSH_BUTTON_ADD_TRACK:
 		case PUSH_BUTTON_REPEAT:
@@ -86,6 +71,12 @@ SessionView.prototype.usesButton = function (buttonID)
 			return false;
 	}
 	return true;
+};
+
+SessionView.prototype.onNew = function (isPressed)
+{
+	this.newPressed = isPressed;
+	push.setButton (PUSH_BUTTON_NEW, isPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 SessionView.prototype.onGrid = function (note, velocity)
@@ -99,16 +90,25 @@ SessionView.prototype.onGrid = function (note, velocity)
 	
 	var slot = tracks[t].slots[s];
 	var slots = trackBank.getTrack (t).getClipLauncherSlots ();
-	if (tracks[t].recarm)
+	
+	if (this.newPressed)
 	{
-		if (slot.isRecording)
-			slots.launch (s);
-		else
-			slots.record (s);
+		// host.showPopupNotification ("Please select a slot.");
+		
+		if (!slot.hasContent)
+			slots.createEmptyClip (s, this.newClipLength);
 	}
-	else
+	else if (!this.push.isSelectPressed ())
 	{
-		slots.launch (s);
+		if (tracks[t].recarm)
+		{
+			if (slot.isRecording)
+				slots.launch (s);
+			else
+				slots.record (s);
+		}
+		else
+			slots.launch (s);
 	}
  	slots.select (s);
 };

@@ -4,6 +4,14 @@
 
 function BaseView ()
 {
+	this.canScrollLeft = true;
+	this.canScrollRight = true;
+	this.canScrollUp = true;
+	this.canScrollDown = true;
+	
+	this.newPressed = false;
+	this.newClipLength = 4;
+	
 	this.ttLastMillis = -1;
 	this.ttLastBPM = -1;
 	this.ttHistory = [];
@@ -11,12 +19,23 @@ function BaseView ()
 BaseView.prototype = new View ();
 BaseView.prototype.constructor = BaseView;
 
-BaseView.prototype.updateNoteMapping = function () {};
-
-BaseView.prototype.onNew = function ()
+BaseView.prototype.onActivate = function ()
 {
-	// TODO
-	host.showPopupNotification ("New: Function not supported (yet).");
+	this.updateNoteMapping ();
+	this.updateArrows ();
+};
+
+BaseView.prototype.updateNoteMapping = function ()
+{
+	noteInput.setKeyTranslationTable (initArray (-1, 128));
+};
+
+BaseView.prototype.updateArrows = function ()
+{
+	push.setButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	push.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	push.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	push.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
 };
 
 BaseView.prototype.onPlay = function ()
@@ -29,7 +48,10 @@ BaseView.prototype.onPlay = function ()
 
 BaseView.prototype.onRecord = function ()
 {
-	transport.record ();
+	if (this.push.isShiftPressed ())
+		transport.toggleLauncherOverdub ();
+	else
+		transport.record ();
 };
 
 BaseView.prototype.onDuplicate = function ()

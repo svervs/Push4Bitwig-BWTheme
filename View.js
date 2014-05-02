@@ -24,7 +24,7 @@ View.prototype.onGrid = function (note, velocity) {};
 
 View.prototype.onPlay = function () {};
 View.prototype.onRecord = function () {};
-View.prototype.onNew = function () {};
+View.prototype.onNew = function (isPressed) {};
 View.prototype.onDuplicate = function () {};
 View.prototype.onAutomation = function () {};
 View.prototype.onFixedLength = function () {};
@@ -71,7 +71,7 @@ View.prototype.onAddFX = function () {};
 View.prototype.onAddTrack = function () {};
 View.prototype.onNote = function () {};
 View.prototype.onSession = function () {};
-View.prototype.onSelect = function () {};
+View.prototype.onSelect = function (isSelectPressed) {};
 View.prototype.onShift = function (isShiftPressed) {};
 
 View.prototype.onUp = function () {};

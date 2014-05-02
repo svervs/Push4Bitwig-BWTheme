@@ -29,9 +29,10 @@ PlayView.prototype.updateNoteMapping = function ()
 
 PlayView.prototype.onActivate = function ()
 {
+	BaseView.prototype.onActivate.call (this);
+
 	push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
 	push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
-	this.updateNoteMapping ();
 	for (var i = 0; i < 8; i++)
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (false);
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
@@ -43,9 +44,8 @@ PlayView.prototype.usesButton = function (buttonID)
 {
 	switch (buttonID)
 	{
+		case PUSH_BUTTON_NEW:
 		case PUSH_BUTTON_STOP:
-		case PUSH_BUTTON_UP:
-		case PUSH_BUTTON_DOWN:
 		case PUSH_BUTTON_SELECT:
 		case PUSH_BUTTON_ADD_EFFECT:
 		case PUSH_BUTTON_ADD_TRACK:
@@ -73,6 +73,22 @@ PlayView.prototype.getScaleColor = function (note)
 	return currentScale == SCALE_CHROMATIC ? 
 		SCALE_CHROMATIC_COLORS[note - 36] :
 		SCALES[currentScale].matrix[note - 36] % 12 == 0 ? PUSH_COLOR_BLUE_LGHT : PUSH_COLOR_WHITE_HI;
+};
+
+PlayView.prototype.onUp = function ()
+{
+	if (this.push.isShiftPressed ())
+		application.arrowKeyLeft ();
+	else
+		application.arrowKeyUp ();
+};
+
+PlayView.prototype.onDown = function ()
+{
+	if (this.push.isShiftPressed ())
+		application.arrowKeyRight ();
+	else
+		application.arrowKeyDown ();
 };
 
 PlayView.prototype.onGrid = function (note, velocity)
