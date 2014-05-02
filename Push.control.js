@@ -15,6 +15,7 @@ var MODE_SEND4  = 8;
 var MODE_SEND5  = 9;
 var MODE_SEND6  = 10;
 var MODE_SCALES = 11;
+var MODE_MACRO = 12;
 
 // Static  Headers
 var PARAM_NAMES_MASTER = 'Volume   Pan                                                        ';
@@ -102,6 +103,7 @@ for (var i = 0; i < 8; i++)
 		slots: [{ index: 0 }, { index: 1 }, { index: 2 }, { index: 3 }, { index: 4 }, { index: 5 }, { index: 6 }, { index: 7 }]
 	};
 var fxparams = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
+var macros = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
 var selectedDevice =
 {
 	name: 'None',
@@ -370,6 +372,21 @@ function init()
 		{
 			fxparams[index].valueStr = value;
 		}));
+		
+		var m = device.getMacro (i);
+		m.addLabelObserver (8, '', doIndex (i, function (index, name)
+ 		{
+			macros[index].name = name;
+		}));
+		m.getAmount().addValueObserver (128, doIndex (i, function (index, value)
+		{
+			macros[index].value = value;
+		}));
+		// Macro value text
+		m.getAmount().addValueDisplayObserver (8, "",  doIndex (i, function (index, value)
+		{
+			macros[index].valueStr = value;
+		}));
 	}
 	
 	updateMode ();
@@ -413,6 +430,12 @@ function getSelectedSlot (track)
 
 function updateMode ()
 {
+	for ( var i = 0; i < 8; i++ )
+		device.getParameter (i).setIndication (currentMode == MODE_DEVICE);
+
+	for ( var i = 0; i < 8; i++ )
+		device.getMacro (i).getAmount ().setIndication (currentMode == MODE_MACRO);
+			
 	push.setButton (PUSH_BUTTON_MASTER, currentMode == MODE_MASTER ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_SCALES, currentMode == MODE_SCALES ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_DEVICE, currentMode == MODE_DEVICE ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
@@ -533,6 +556,20 @@ function updateDisplay ()
 			 .clearBlock (3, 2).clearCell (3, 6)
 			 .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
 			break;
+				
+		case MODE_MACRO:
+			for (var i = 0; i < 8; i++)
+			{
+				var isEmpty = macros[i].name.length == 0;
+				d.setCell (0, i, macros[i].name, PushDisplay.FORMAT_RAW)
+				 .setCell (1, i, isEmpty ? '' : macros[i].valueStr, PushDisplay.FORMAT_RAW);
+				if (isEmpty)
+					d.clearCell (2, i);
+				else				
+					d.setCell (2, i, macros[i].value, PushDisplay.FORMAT_VALUE);
+			}
+			d.done (0).done (1).done (2);
+			break;
 			
 		case MODE_SCALES:
 			var o = 2 + currentOctave;
@@ -590,7 +627,7 @@ function updateDisplay ()
 	{
 		var isSel = i == sel;
 		var n = optimizeName (tracks[i].name, isSel ? 7 : 8);
-		d.setCell (3, i, isSel ? RIGHT_ARROW + n : n, PushDisplay.FORMAT_RAW)
+		d.setCell (3, i, isSel ? RIGHT_ARROW + n : n, PushDisplay.FORMAT_RAW);
 		
 		// Light up selection and record/monitor buttons
 		push.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
