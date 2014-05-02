@@ -126,6 +126,9 @@ function Push (output)
 		PUSH_BUTTON_DELETE,
 		PUSH_BUTTON_UNDO
 	];
+	
+	// create the static scale matrices from scale intervals
+	Scales.createScales();
 }
 
 Push.prototype.turnOff = function ()
