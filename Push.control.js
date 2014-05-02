@@ -424,23 +424,26 @@ function updateMode ()
 function updateDisplay ()
 {
 	var t = getSelectedTrack ();
+	var d = push.display;
 	
 	switch (currentMode)
 	{
 		case MODE_MASTER:
-			push.display.sendRow (0, PARAM_NAMES_MASTER);
-			push.display.sendRow (1, 
-				pad (master.volumeStr, 8, ' ') + ' ' +
-				pad (master.panStr, 8, ' ') +
-				pad ('', 17, ' ') +
-				pad ('', 34, ' '));
-			push.display.sendRow (2, 
-				formatVolume (master.volume, 8) + ' ' +
-				formatPan (master.pan, 8) +
-				pad ('', 17, ' ') +
-				pad ('', 34, ' '));
+			d.setRow (0, PARAM_NAMES_MASTER)
+			 .setCell (1, 0, master.volumeStr, PushDisplay.FORMAT_RAW)
+			 .setCell (1, 1, master.panStr, PushDisplay.FORMAT_RAW)
+			 .clearCell (1, 2).clearCell (1, 3).clearCell (1, 4).clearCell (1, 5)
+			 .clearCell (1, 6).clearCell (1, 7).done (1)
 			
-			push.display.sendRow (3, pad (master.name, 34, ' ') + pad ('', 34, ' '));
+			 .setCell (2, 0, master.volume, PushDisplay.FORMAT_VALUE)
+			 .setCell (2, 1, master.pan, PushDisplay.FORMAT_PAN)
+			 .clearCell (2, 2).clearCell (2, 3).clearCell (2, 4).clearCell (2, 5)
+			 .clearCell (2, 6).clearCell (2, 7).done (2)
+			
+			 .setCell (3, 0, master.name, PushDisplay.FORMAT_RAW)
+			 .clearCell (3, 1).clearCell (3, 2).clearCell (3, 3).clearCell (3, 4).clearCell (3, 5)
+			 .clearCell (3, 6).clearCell (3, 7).done (3);
+
 			for (var i = 0; i < 8; i++)
 			{
 				push.setButton (20 + i, PUSH_COLOR_BLACK);
@@ -449,65 +452,49 @@ function updateDisplay ()
 			return;
 	
 		case MODE_TRACK:
-			push.display.sendRow (0, PARAM_NAMES_TRACK);
-			
+			d.setRow (0, PARAM_NAMES_TRACK);
 			if (t == null)
-			{
-				push.display.clearRow (1);
-				push.display.clearRow (2);
-			}
+				d.clearRow (1).clearRow (2);
 			else
 			{
-				push.display.sendRow (1, 
-					pad (t.volumeStr, 8, ' ') + ' ' +
-					pad (t.panStr, 8, ' ') +
-					pad (t.sends[0].volumeStr, 8, ' ') + ' ' +
-					pad (t.sends[1].volumeStr, 8, ' ') +
-					pad (t.sends[2].volumeStr, 8, ' ') + ' ' +
-					pad (t.sends[3].volumeStr, 8, ' ') +
-					pad (t.sends[4].volumeStr, 8, ' ') + ' ' +
-					pad (t.sends[5].volumeStr, 8, ' '));
-			
-				push.display.sendRow (2, 
-					formatVolume (t.volume, 8) + ' ' +
-					formatPan (t.pan, 8) +
-					formatVolume (t.sends[0].volume) + ' ' +
-					formatVolume (t.sends[1].volume) +
-					formatVolume (t.sends[2].volume) + ' ' +
-					formatVolume (t.sends[3].volume) +
-					formatVolume (t.sends[4].volume) + ' ' +
-					formatVolume (t.sends[5].volume));
+				d.setCell (1, 0, t.volumeStr, PushDisplay.FORMAT_RAW)
+				 .setCell (1, 1, t.panStr, PushDisplay.FORMAT_RAW)
+				 .setCell (1, 2, t.sends[0].volumeStr, PushDisplay.FORMAT_RAW)
+				 .setCell (1, 3, t.sends[1].volumeStr, PushDisplay.FORMAT_RAW)
+				 .setCell (1, 4, t.sends[2].volumeStr, PushDisplay.FORMAT_RAW)
+				 .setCell (1, 5, t.sends[3].volumeStr, PushDisplay.FORMAT_RAW)
+				 .setCell (1, 6, t.sends[4].volumeStr, PushDisplay.FORMAT_RAW)
+				 .setCell (1, 7, t.sends[5].volumeStr, PushDisplay.FORMAT_RAW)
+				 .done (1)
+				
+				 .setCell (2, 0, t.volume, PushDisplay.FORMAT_VALUE)
+				 .setCell (2, 1, t.pan, PushDisplay.FORMAT_PAN)
+				 .setCell (2, 2, t.sends[0].volume, PushDisplay.FORMAT_VALUE)
+				 .setCell (2, 3, t.sends[1].volume, PushDisplay.FORMAT_VALUE)
+				 .setCell (2, 4, t.sends[2].volume, PushDisplay.FORMAT_VALUE)
+				 .setCell (2, 5, t.sends[3].volume, PushDisplay.FORMAT_VALUE)
+				 .setCell (2, 6, t.sends[4].volume, PushDisplay.FORMAT_VALUE)
+				 .setCell (2, 7, t.sends[5].volume, PushDisplay.FORMAT_VALUE)
+				 .done (2);
 			}
 			break;
 
 		case MODE_VOLUME:
-			push.display.sendRow (0, PARAM_NAMES_VOLUME);
-			var volumeValues = '';
-			var volumeBars = '';
 			for (var i = 0; i < 8; i++)
 			{
-				volumeValues += pad (tracks[i].volumeStr, i % 2 == 0 ? 9 : 8, ' ');
-				volumeBars += formatVolume (tracks[i].volume);
-				if (i % 2 == 0)
-					volumeBars += ' ';
+				d.setCell (1, i, tracks[i].volumeStr, PushDisplay.FORMAT_RAW)
+				 .setCell (2, i, tracks[i].volume, PushDisplay.FORMAT_VALUE);
 			}
-			push.display.sendRow (1, volumeValues);
-			push.display.sendRow (2, volumeBars);
+			d.setRow (0, PARAM_NAMES_VOLUME).done (1).done (2);
 			break;
 			
 		case MODE_PAN:
-			push.display.sendRow (0, PARAM_NAMES_PAN);
-			var panValues = '';
-			var panBars = '';
 			for (var i = 0; i < 8; i++)
 			{
-				panValues += pad (tracks[i].panStr, i % 2 == 0 ? 9 : 8, ' ');
-				panBars += formatPan (tracks[i].pan);
-				if (i % 2 == 0)
-					panBars += ' ';
+				d.setCell (1, i, tracks[i].panStr, PushDisplay.FORMAT_RAW)
+				 .setCell (2, i, tracks[i].pan, PushDisplay.FORMAT_PAN);
 			}
-			push.display.sendRow (1, panValues);
-			push.display.sendRow (2, panBars);
+			d.setRow (0, PARAM_NAMES_PAN).done (1).done (2);
 			break;
 
 		case MODE_SEND1:
@@ -517,78 +504,60 @@ function updateDisplay ()
 		case MODE_SEND5:
 		case MODE_SEND6:
 			var sendNo = currentMode - MODE_SEND1;
-			push.display.sendRow (0, PARAM_NAMES_SEND[sendNo]);
-			var sendValues = '';
-			var sendBars = '';
 			for (var i = 0; i < 8; i++)
 			{
-				sendValues += pad (tracks[i].sends[sendNo].volumeStr, i % 2 == 0 ? 9 : 8, ' ');
-				sendBars += formatVolume (tracks[i].sends[sendNo].volume);
-				if (i % 2 == 0)
-					sendBars += ' ';
+				d.setCell (1, i, tracks[i].sends[sendNo].volumeStr, PushDisplay.FORMAT_RAW)
+				 .setCell (2, i, tracks[i].sends[sendNo].volume, PushDisplay.FORMAT_VALUE);
 			}
-			push.display.sendRow (1, sendValues);
-			push.display.sendRow (2, sendBars);
+			d.setRow (0, PARAM_NAMES_SEND[sendNo]).done (1).done (2);
 			break;
 			
 		case MODE_DEVICE:
-			var row0 = '';
-			var row1 = '';
-			var row2 = '';
 			for (var i = 0; i < 8; i++)
 			{
 				var isEmpty = fxparams[i].name.length == 0;
-				row0 += pad (fxparams[i].name, 8, ' ');
-				row1 += pad (isEmpty ? '' : fxparams[i].valueStr, 8, ' ');
-				row2 += isEmpty ? '        ' : formatVolume (fxparams[i].value);
-				if (i % 2 == 0)
-				{
-					row0 += ' ';
-					row1 += ' ';
-					row2 += ' ';
-				}
-				
+				d.setCell (0, i, fxparams[i].name, PushDisplay.FORMAT_RAW)
+				 .setCell (1, i, isEmpty ? '' : fxparams[i].valueStr, PushDisplay.FORMAT_RAW);
+				if (isEmpty)
+					d.clearCell (2, i);
+				else				
+					d.setCell (2, i, fxparams[i].value, PushDisplay.FORMAT_VALUE);
+							
 				// Light up fx selection buttons
 				push.setButton (20 + i, i == 7 && selectedDevice.enabled ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
 				push.setButton (102 + i, PUSH_COLOR_BLACK);
 			}
-			push.display.sendRow (0, row0);
-			push.display.sendRow (1, row1);
-			push.display.sendRow (2, row2);
-			push.display.sendRow (3, 'Selected Device: ' + pad (selectedDevice.name, 34, ' ') + '         ' + (selectedDevice.enabled ? 'Enabled ' : 'Disabled'));
+			d.done (0).done (1).done (2)
+			 .setCell (3, 0, 'Selected', PushDisplay.FORMAT_RAW).setCell (3, 1, 'Device: ', PushDisplay.FORMAT_RAW)
+			 .setBlock (3, 1, selectedDevice.name)
+			 .clearBlock (3, 2).clearCell (3, 6)
+			 .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
 			break;
 			
 		case MODE_SCALES:
 			var o = 2 + currentOctave;
 			var noteName = NOTE_NAMES[SCALE_OFFSETS[currentScaleOffset]];
-			push.display.sendRow (0, 
-				pad (RIGHT_ARROW + SCALES[currentScale].name, 17, ' ') +
-				'                 ' +
-				'                 ' +
-				pad (noteName + o + ' to ' + noteName + (o + 4), 17, ' '));
-			push.display.sendRow (1,
-				(currentScale + 1 < SCALES.length ? pad (' ' + SCALES[currentScale + 1].name, 17, ' ') : '                 ') +
-				'                 ' +
-				'                 ' +
-				'                 ');
-			push.display.sendRow (2, 
-				(currentScale + 2 < SCALES.length ? pad (' ' + SCALES[currentScale + 2].name, 8, ' ') : '        ') +
-				'   ' +
-				(currentScaleOffset == 0 ? RIGHT_ARROW : ' ') + 'C      ' +
-				(currentScaleOffset == 1 ? RIGHT_ARROW : ' ') + 'G       ' +
-				(currentScaleOffset == 2 ? RIGHT_ARROW : ' ') + 'D      ' +
-				(currentScaleOffset == 3 ? RIGHT_ARROW : ' ') + 'A       ' +
-				(currentScaleOffset == 4 ? RIGHT_ARROW : ' ') + 'E      ' + 
-				(currentScaleOffset == 5 ? RIGHT_ARROW : ' ') + 'B             ');
-			push.display.sendRow (3, 
-				(currentScale + 3 < SCALES.length ? pad (' ' + SCALES[currentScale + 3].name, 8, ' ') : '        ') +
-				'   ' +
-				(currentScaleOffset == 6 ? RIGHT_ARROW : ' ') + 'F      ' +
-				(currentScaleOffset == 7 ? RIGHT_ARROW : ' ') + 'Bb      ' +
-				(currentScaleOffset == 8 ? RIGHT_ARROW : ' ') + 'Eb     ' +
-				(currentScaleOffset == 9 ? RIGHT_ARROW : ' ') + 'Ab      ' +
-				(currentScaleOffset == 10 ? RIGHT_ARROW : ' ') + 'Db     ' +
-				(currentScaleOffset == 11 ? RIGHT_ARROW : ' ') + 'Gb            ');
+			d.setBlock (0, 0, RIGHT_ARROW + SCALES[currentScale].name)
+			 .clearBlock (0, 1)
+			 .clearBlock (0, 2)
+			 .setBlock (0, 3, noteName + o + ' to ' + noteName + (o + 4))
+			 .done (0);
+			 
+			d.setBlock (1, 0, currentScale + 1 < SCALES.length ? ' ' + SCALES[currentScale + 1].name : '')
+			 .clearBlock (1, 1)
+			 .clearBlock (1, 2)
+			 .clearBlock (1, 3)
+			 .done (1);
+			 
+			d.setCell (2, 0, currentScale + 2 < SCALES.length ? ' ' + SCALES[currentScale + 2].name : '');
+			for (var i = 0; i < 6; i++)
+				d.setCell (2, i + 1, '  ' + (currentScaleOffset == i ? RIGHT_ARROW : ' ') + SCALE_BASES[i]);
+			d.clearCell (2, 7).done (2);
+			 
+			d.setCell (3, 0, currentScale + 3 < SCALES.length ? ' ' + SCALES[currentScale + 3].name : '');
+			for (var i = 6; i < 12; i++)
+				d.setCell (3, i - 5, '  ' + (currentScaleOffset == i ? RIGHT_ARROW : ' ') + SCALE_BASES[i]);
+			d.clearCell (3, 7).done (3);
 
 			for (var i = 0; i < 8; i++)
 			{
@@ -617,17 +586,11 @@ function updateDisplay ()
 
 	// Format track names
 	var sel = t == null ? -1 : t.index;
-	var row = '';
 	for (var i = 0; i < 8; i++)
 	{
 		var isSel = i == sel;
 		var n = optimizeName (tracks[i].name, isSel ? 7 : 8);
-		// Add the selection arrow
-		if (isSel)
-			n = RIGHT_ARROW + n;
-		row += pad (n, 8, ' ');
-		if (i % 2 == 0)
-			row += ' ';
+		d.setCell (3, i, isSel ? RIGHT_ARROW + n : n, PushDisplay.FORMAT_RAW)
 		
 		// Light up selection and record/monitor buttons
 		push.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
@@ -636,45 +599,7 @@ function updateDisplay ()
 		else
 			push.setButton (102 + i, tracks[i].recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
 	}
-	push.display.sendRow (3, row);
-}
-
-function formatVolume (volume)
-{
-	var noOfBars = Math.round (16 * volume / 128);
-	var n = '';
-	for (var j = 0; j < Math.floor (noOfBars / 2); j++)
-		n += BARS_TWO;
-	if (noOfBars % 2 == 1)
-		n += BARS_ONE;
-	return pad (n, 8, BARS_NON);
-}
-
-function formatPan (pan)
-{
-	if (pan == 64)
-	 	return NON_4 + NON_4;
-	
-	var n = '';
-	
-	if (pan < 64)
-	{
-		var pos = 64 - pan;
-		var noOfBars = Math.round (16 * pos/128);
-		for (var j = 0; j < Math.floor (noOfBars / 2); j++)
-			n += BARS_TWO;
-		if (noOfBars % 2 == 1)
-			n += BARS_ONE_L;
-		return reverseStr (NON_4 + pad (n, 4, BARS_NON));
-	}	
-
-	var pos = pan - 64;
-	var noOfBars = Math.round (16 * pos/128);
-	for (var j = 0; j < Math.floor (noOfBars / 2); j++)
-		n += BARS_TWO;
-	if (noOfBars % 2 == 1)
-		n += BARS_ONE;
-	return NON_4 + pad (n, 4, BARS_NON);
+	d.done (3);
 }
 
 function getColorIndex (red, green, blue)
@@ -693,71 +618,4 @@ function getColorIndex (red, green, blue)
 function changeValue (control, value)
 {
 	return control <= 61 ? Math.min (value + INC_FRACTION_VALUE, 127) : Math.max (value - INC_FRACTION_VALUE, 0);
-}
-
-var SPACES =
-[
-	'',
-	' ',
-	'  ',
-	'   ',
-	'    ',
-	'     ',
-	'      ',
-	'       ',
-	'        ',
-	'         ',
-	'          ',
-	'           ',
-	'            ',
-	'             ',
-	'              ',
-	'               ',
-	'                ',
-	'                 ',
-	'                  ',
-	'                   ',
-	'                    ',
-	'                     ',
-	'                      ',
-	'                       ',
-	'                        ',
-	'                         ',
-	'                          ',
-	'                           ',
-	'                            ',
-	'                             ',
-	'                              ',
-	'                               ',
-	'                                ',
-	'                                 ',
-	'                                  '
-];
-var DASHES =
-[
-	'',
-	BARS_NON,
-	BARS_NON + BARS_NON,
-	BARS_NON + BARS_NON + BARS_NON,
-	BARS_NON + BARS_NON + BARS_NON + BARS_NON,
-	BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON,
-	BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON,
-	BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON,
-	BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON,
-	BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON + BARS_NON
-];
-function pad (str, length, character)
-{
-	if (typeof (str) == 'undefined')
-		str = '';
-	
-	var diff = length - str.length;
-	
-	if (diff < 0)
-		return str.substr (0, length);
-		
-	if (diff > 0)
-		return str + (character == ' ' ? SPACES[diff] : DASHES[diff]);
-
-	return str;
 }

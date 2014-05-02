@@ -20,7 +20,7 @@ var NOTE_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B
 
 //                    C  G  D  A  E   H  F  Bb  Eb Ab Db Gb
 var SCALE_OFFSETS = [ 0, 7, 2, 9, 4, 11, 5, 10, 3, 8, 1, 6 ];
-
+var SCALE_BASES = [ 'C', 'G', 'D', 'A', 'E', 'B', 'F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb' ];
 
 var SCALE_MAJOR_NOTES =
 [
