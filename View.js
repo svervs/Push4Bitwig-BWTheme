@@ -27,7 +27,7 @@ View.prototype.onRecord = function () {};
 View.prototype.onNew = function (isPressed) {};
 View.prototype.onDuplicate = function () {};
 View.prototype.onAutomation = function () {};
-View.prototype.onFixedLength = function () {};
+View.prototype.onFixedLength = function (isDown) {};
 
 View.prototype.onQuantize = function () {};
 View.prototype.onDouble = function () {};

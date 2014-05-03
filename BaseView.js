@@ -12,7 +12,6 @@ function BaseView ()
 
 	this.stopPressed = false;
 	this.newPressed = false;
-	this.newClipLength = 4;
 	
 	this.ttLastMillis = -1;
 	this.ttLastBPM = -1;
@@ -83,10 +82,9 @@ BaseView.prototype.onAutomation = function ()
 		transport.toggleWriteArrangerAutomation ();
 };
 
-BaseView.prototype.onFixedLength = function ()
+BaseView.prototype.onFixedLength = function (isDown)
 {
-	// TODO Not possible?
-	host.showPopupNotification ("Fixed Length: Function not supported (yet).");
+	setMode (isDown ? MODE_FIXED : previousMode);
 };
 
 BaseView.prototype.onQuantize = function ()
@@ -385,6 +383,10 @@ BaseView.prototype.onFirstRow = function (index)
 			this.updateNoteMapping ();
 			break;
 
+		case MODE_FIXED:
+			currentNewClipLength = index;
+			break;
+			
 		case MODE_MASTER:
 			// Not used
 			break;

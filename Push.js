@@ -468,8 +468,7 @@ Push.prototype.handleCC = function (cc, value)
 			
 		// Fixed Length
 		case PUSH_BUTTON_FIXED_LENGTH:
-			if (value == 127)
-				view.onFixedLength ();
+			view.onFixedLength (value == 127);
 			break;
 			
 		// 2nd button row below display

@@ -70,7 +70,6 @@ SequencerView.prototype.usesButton = function (buttonID)
 		case PUSH_BUTTON_ACCENT:
 		case PUSH_BUTTON_USER_MODE:
 		case PUSH_BUTTON_DUPLICATE:
-		case PUSH_BUTTON_FIXED_LENGTH:
 			return false;
 	}
 	return true;

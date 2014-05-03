@@ -74,7 +74,8 @@ PushDisplay.prototype.setRow = function (row, str)
 
 PushDisplay.prototype.clearRow = function (row)
 {
-	this.message[row] = null;
+	for (var i = 0; i < 4; i++)
+		this.clearBlock (row, i);
 	return this;
 };
 

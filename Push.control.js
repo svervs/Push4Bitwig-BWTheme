@@ -17,6 +17,7 @@ var MODE_SEND5  = 9;
 var MODE_SEND6  = 10;
 var MODE_SCALES = 11;
 var MODE_MACRO  = 12;
+var MODE_FIXED  = 13;
 
 // Static  Headers
 var PARAM_NAMES_MASTER = 'Volume   Pan                                                        ';
@@ -32,6 +33,7 @@ var PARAM_NAMES_SEND   =
 	'Send 5   Send 5  Send 5   Send 5  Send 5   Send 5  Send 5   Send 5  ',
 	'Send 6   Send 6  Send 6   Send 6  Send 6   Send 6  Send 6   Send 6  '
 ];
+var CLIP_LENGTHS = [ '1 Beat', '2 Beats', '1 Bar', '2 Bars', '4 Bars', '8 Bars', '16 Bars', '32 Bars' ];
 
 var BITWIG_COLORS =
 [
@@ -86,7 +88,7 @@ load("SequencerView.js");
 
 var displayScheduled = false;
 
-var previousMode = null;
+var previousMode = MODE_TRACK;
 var currentMode = MODE_TRACK;
 var tempo = 100;	// Note: For real BPM add 20
 var quarterNoteInMillis = calcQuarterNoteInMillis (tempo);
@@ -124,9 +126,10 @@ var noteInput = null;
 var canScrollTrackUp   = false;
 var canScrollTrackDown = false;
 
-var currentScaleOffset = 0; // C
-var currentScale       = 1;	// Major
-var currentOctave      = 0;
+var currentScaleOffset   = 0; // C
+var currentScale         = 1; // Major
+var currentOctave        = 0;
+var currentNewClipLength = 2; // 1 Bar
 
 var output        = null;
 var push          = null;
@@ -405,8 +408,10 @@ function exit()
 
 function flush ()
 {
-	if (!displayScheduled) {
-		host.scheduleTask(function (){
+	if (!displayScheduled)
+	{
+		host.scheduleTask (function ()
+		{
 			updateDisplay ();
 			push.display.flush ();
 			displayScheduled = false;
@@ -443,7 +448,7 @@ function setMode (mode)
 		mode = MODE_TRACK;
 	if (mode != currentMode)
 	{
-		if (mode != MODE_SCALES)
+		if (currentMode != MODE_SCALES && currentMode != MODE_FIXED)
 			previousMode = currentMode;
 		currentMode = mode;
 	}
@@ -460,6 +465,7 @@ function updateMode (mode)
 	var isDevice = mode == MODE_DEVICE;
 	var isMacro  = mode == MODE_MACRO;
 	var isScales = mode == MODE_SCALES;
+	var isFixed  = mode == MODE_FIXED;
 
 	masterTrack.getVolume ().setIndication (isMaster);
 	masterTrack.getPan ().setIndication (isMaster);
@@ -493,6 +499,7 @@ function updateMode (mode)
 	push.setButton (PUSH_BUTTON_PAN_SEND, mode >= MODE_PAN && mode <= MODE_SEND6 ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_DEVICE, isDevice || isMacro ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_SCALES, isScales ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_FIXED_LENGTH, isFixed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 }
 
 function updateDisplay ()
@@ -528,7 +535,7 @@ function updateDisplay ()
 		case MODE_TRACK:
 			d.setRow (0, PARAM_NAMES_TRACK);
 			if (t == null)
-				d.clearRow (1).clearRow (2);
+				d.clearRow (1).done (1).clearRow (2).done (2);
 			else
 			{
 				d.setCell (1, 0, t.volumeStr, PushDisplay.FORMAT_RAW)
@@ -654,9 +661,24 @@ function updateDisplay ()
 				push.setButton (102 + i, i == 0 || i == 7 ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_GREEN_LO);
 			}
 			break;
+			
+		case MODE_FIXED:
+			d.clearRow (0).done (0).clearRow (1).done (1)
+			 .setBlock (2, 0, 'New Clip Length:').clearBlock (2, 1).clearBlock (2, 2).clearBlock (2, 3)
+			 .done (2);
+			for (var i = 0; i < 8; i++)
+				d.setCell (3, i, (currentNewClipLength == i ? RIGHT_ARROW : ' ') + CLIP_LENGTHS[i]);
+			d.done (3);
+			
+			for (var i = 0; i < 8; i++)
+			{
+				push.setButton (20 + i, PUSH_COLOR_GREEN_LO-4);
+				push.setButton (102 + i, PUSH_COLOR_BLACK);
+			}
+			break;
 	}
 	
-	if (currentMode == MODE_DEVICE || currentMode == MODE_SCALES || currentMode == MODE_MASTER)
+	if (currentMode == MODE_DEVICE || currentMode == MODE_SCALES || currentMode == MODE_MASTER || currentMode == MODE_FIXED)
 		return;
 
 	// Send, Mute, Automation

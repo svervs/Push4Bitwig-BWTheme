@@ -66,7 +66,6 @@ SessionView.prototype.usesButton = function (buttonID)
 		case PUSH_BUTTON_ACCENT:
 		case PUSH_BUTTON_USER_MODE:
 		case PUSH_BUTTON_DUPLICATE:
-		case PUSH_BUTTON_FIXED_LENGTH:
 			return false;
 	}
 	return true;
@@ -92,10 +91,8 @@ SessionView.prototype.onGrid = function (note, velocity)
 	
 	if (this.newPressed)
 	{
-		// host.showPopupNotification ("Please select a slot.");
-		
 		if (!slot.hasContent)
-			slots.createEmptyClip (s, this.newClipLength);
+			slots.createEmptyClip (s, Math.pow (2, currentNewClipLength));
 	}
 	else if (!this.push.isSelectPressed ())
 	{
