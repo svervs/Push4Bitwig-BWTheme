@@ -84,6 +84,8 @@ load("PlayView.js");
 load("SessionView.js");
 load("SequencerView.js");
 
+var displayScheduled = false;
+
 var previousMode = null;
 var currentMode = MODE_TRACK;
 var tempo = 100;	// Note: For real BPM add 20
@@ -403,8 +405,14 @@ function exit()
 
 function flush ()
 {
-	updateDisplay ();
-	push.display.flush ();
+	if (!displayScheduled) {
+		host.scheduleTask(function (){
+			updateDisplay ();
+			push.display.flush ();
+			displayScheduled = false;
+		}, null, 5);
+		displayScheduled = true;
+	}
 	push.redrawGrid ();
 }
 
