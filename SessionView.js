@@ -54,7 +54,6 @@ SessionView.prototype.onActivate = function ()
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (true);
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
 		push.setButton (i, 19);
-	updateMode ();
 };
 
 SessionView.prototype.usesButton = function (buttonID)

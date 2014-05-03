@@ -1,4 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
+// Contributions by Michael Schmalle
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -24,6 +25,7 @@ BaseView.prototype.onActivate = function ()
 {
 	this.updateNoteMapping ();
 	this.updateArrows ();
+	setMode (currentMode);
 };
 
 BaseView.prototype.updateNoteMapping = function ()
@@ -276,6 +278,9 @@ BaseView.prototype.onValueKnob = function (index, value)
 
 BaseView.prototype.onValueKnobTouch = function (index, isTouched)
 {
+	// See https://github.com/git-moss/Push4Bitwig/issues/32
+	// We keep the code if an additional focus becomes available
+	/*
 	switch (currentMode)
 	{
 		case MODE_MASTER:
@@ -346,6 +351,7 @@ BaseView.prototype.onValueKnobTouch = function (index, isTouched)
 			// Not used
 			break;
 	}
+	*/
 };
 
 // Master Volume
@@ -412,38 +418,34 @@ BaseView.prototype.onSecondRow = function (index)
 
 BaseView.prototype.onMaster = function ()
 {
-	previousMode = currentMode;
-	currentMode = MODE_MASTER;
+	setMode (MODE_MASTER);
 	masterTrack.select ();
 };
 
 BaseView.prototype.onVolume = function ()
 {
-	currentMode = MODE_VOLUME;
-	updateMode ();
+	setMode (MODE_VOLUME);
 };
 
 BaseView.prototype.onPanAndSend = function ()
 {
-	currentMode++;
-	if (currentMode < MODE_PAN || currentMode > MODE_SEND6)
-		currentMode = MODE_PAN;
-	updateMode ();
+	var mode = currentMode + 1;
+	if (mode < MODE_PAN || mode > MODE_SEND6)
+		mode = MODE_PAN;
+	setMode (mode);
 };
 
 BaseView.prototype.onTrack = function ()
 {
-	currentMode = MODE_TRACK;
-	updateMode ();
+	setMode (MODE_TRACK);
 };
 
 BaseView.prototype.onDevice = function ()
 {
 	if (currentMode == MODE_DEVICE)
-		currentMode = MODE_MACRO;
+		setMode (MODE_MACRO);
 	else
-		currentMode = MODE_DEVICE;
-	updateMode();
+		setMode (MODE_DEVICE);
 };
 
 BaseView.prototype.onBrowse = function ()
@@ -491,17 +493,7 @@ BaseView.prototype.onSolo = function ()
 
 BaseView.prototype.onScales = function (isDown)
 {
-	if (isDown)
-	{
-		previousMode = currentMode;
-		currentMode = MODE_SCALES;
-	}
-	else
-	{
-		currentMode = previousMode;
-		previousMode = null;
-	}
-	updateMode ();
+	setMode (isDown ? MODE_SCALES : previousMode);
 };
 
 BaseView.prototype.onOctaveDown = function ()

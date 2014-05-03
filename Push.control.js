@@ -1,4 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
+// Contributions by Michael Schmalle
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -15,7 +16,7 @@ var MODE_SEND4  = 8;
 var MODE_SEND5  = 9;
 var MODE_SEND6  = 10;
 var MODE_SCALES = 11;
-var MODE_MACRO = 12;
+var MODE_MACRO  = 12;
 
 // Static  Headers
 var PARAM_NAMES_MASTER = 'Volume   Pan                                                        ';
@@ -186,10 +187,7 @@ function init()
 	masterTrack.addIsSelectedObserver (function (isSelected)
 	{
 		master.selected = isSelected;
-		if (isSelected)
-			previousMode = currentMode;
-		currentMode = isSelected ? MODE_MASTER : (previousMode ? previousMode : MODE_TRACK);
-		updateMode ();
+		setMode (isSelected ? MODE_MASTER : previousMode);
 	});
 	
 	// Master Track Mute
@@ -214,7 +212,7 @@ function init()
 	{
 		master.volume = value;
 	});
-	v.addValueDisplayObserver (8, "", function (text)
+	v.addValueDisplayObserver (8, '', function (text)
 	{
 		master.volumeStr = text;
 	});
@@ -225,7 +223,7 @@ function init()
 	{
 		master.pan = value;
 	});
-	p.addValueDisplayObserver (8, "", function (text)
+	p.addValueDisplayObserver (8, '', function (text)
 	{
 		master.panStr = text;
 	});
@@ -244,16 +242,7 @@ function init()
 		{
 			tracks[index].selected = isSelected;
 			if (isSelected)
-			{
-				if (currentMode == MODE_MASTER)
-				{
-					if (previousMode != MODE_MASTER && previousMode != MODE_SCALES)
-						currentMode = previousMode;
-					else
-						currentMode = MODE_TRACK;
-				}
-				updateMode ();
-			}
+				setMode (MODE_TRACK);
 			if (push.isActiveView (VIEW_PLAY))
 				push.getActiveView ().updateNoteMapping ();
 		}));
@@ -280,7 +269,7 @@ function init()
 		{
 			tracks[index].volume = value;
 		}));
-		v.addValueDisplayObserver (8, "", doIndex (i, function (index, text)
+		v.addValueDisplayObserver (8, '', doIndex (i, function (index, text)
 		{
 			tracks[index].volumeStr = text;
 		}));
@@ -291,7 +280,7 @@ function init()
 		{
 			tracks[index].pan = value;
 		}));
-		p.addValueDisplayObserver (8, "", doIndex (i, function (index, text)
+		p.addValueDisplayObserver (8, '', doIndex (i, function (index, text)
 		{
 			tracks[index].panStr = text;
 		}));
@@ -337,7 +326,7 @@ function init()
 			{
 				tracks[index1].sends[index2].volume = value;
 			}));
-			s.addValueDisplayObserver (8, "", doDoubleIndex (i, j, function (index1, index2, text)
+			s.addValueDisplayObserver (8, '', doDoubleIndex (i, j, function (index1, index2, text)
 			{
 				tracks[index1].sends[index2].volumeStr = text;
 			}));
@@ -368,7 +357,7 @@ function init()
 			fxparams[index].value = value;
 		}));
 		// Parameter value text
-		p.addValueDisplayObserver (8, "",  doIndex (i, function (index, value)
+		p.addValueDisplayObserver (8, '',  doIndex (i, function (index, value)
 		{
 			fxparams[index].valueStr = value;
 		}));
@@ -383,13 +372,12 @@ function init()
 			macros[index].value = value;
 		}));
 		// Macro value text
-		m.getAmount().addValueDisplayObserver (8, "",  doIndex (i, function (index, value)
+		m.getAmount().addValueDisplayObserver (8, '',  doIndex (i, function (index, value)
 		{
 			macros[index].valueStr = value;
 		}));
 	}
 	
-	updateMode ();
 	push.setActiveView (VIEW_PLAY);
 	
 	println ("Initialized.");
@@ -428,20 +416,62 @@ function getSelectedSlot (track)
 	return -1;
 }
 
-function updateMode ()
+function setMode (mode)
 {
-	for ( var i = 0; i < 8; i++ )
-		device.getParameter (i).setIndication (currentMode == MODE_DEVICE);
+	if (mode == null)
+		mode = MODE_TRACK;
+	if (mode != currentMode)
+	{
+		if (mode != MODE_SCALES)
+			previousMode = currentMode;
+		currentMode = mode;
+	}
+	updateMode (-1);
+	updateMode (currentMode);
+}
 
-	for ( var i = 0; i < 8; i++ )
-		device.getMacro (i).getAmount ().setIndication (currentMode == MODE_MACRO);
+function updateMode (mode)
+{
+	var isMaster = mode == MODE_MASTER;
+	var isTrack  = mode == MODE_TRACK;
+	var isVolume = mode == MODE_VOLUME;
+	var isPan    = mode == MODE_PAN;
+	var isDevice = mode == MODE_DEVICE;
+	var isMacro  = mode == MODE_MACRO;
+	var isScales = mode == MODE_SCALES;
+
+	masterTrack.getVolume ().setIndication (isMaster);
+	masterTrack.getPan ().setIndication (isMaster);
+	
+	var selectedTrack = getSelectedTrack ();
+	for (var i = 0; i < 8; i++)
+	{
+		var t = trackBank.getTrack (i);
+		var hasTrackSel = selectedTrack != null && selectedTrack.index == i && mode == MODE_TRACK;
+		t.getVolume ().setIndication (isVolume || hasTrackSel);
+		t.getPan ().setIndication (isPan || hasTrackSel);
+		for (var j = 0; j < 6; j++)
+		{
+			isEnabled = mode == MODE_SEND1 && j == 0 ||
+			            mode == MODE_SEND2 && j == 1 ||
+			            mode == MODE_SEND3 && j == 2 ||
+			            mode == MODE_SEND4 && j == 3 ||
+			            mode == MODE_SEND5 && j == 4 ||
+			            mode == MODE_SEND6 && j == 5 || 
+						hasTrackSel;
+			t.getSend (j).setIndication (isEnabled);
+		}
+
+		device.getParameter (i).setIndication (isDevice);
+		device.getMacro (i).getAmount ().setIndication (isMacro);
+	}
 			
-	push.setButton (PUSH_BUTTON_MASTER, currentMode == MODE_MASTER ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_SCALES, currentMode == MODE_SCALES ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_DEVICE, currentMode == MODE_DEVICE ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_TRACK, currentMode == MODE_TRACK ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_VOLUME, currentMode == MODE_VOLUME ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_PAN_SEND, currentMode >= MODE_PAN && currentMode <= MODE_SEND6 ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_MASTER, isMaster ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_TRACK, isTrack ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_VOLUME, isVolume ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_PAN_SEND, mode >= MODE_PAN && mode <= MODE_SEND6 ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_DEVICE, isDevice || isMacro ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_SCALES, isScales ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 }
 
 function updateDisplay ()
@@ -560,13 +590,14 @@ function updateDisplay ()
 		case MODE_MACRO:
 			for (var i = 0; i < 8; i++)
 			{
-				var isEmpty = macros[i].name.length == 0;
-				d.setCell (0, i, macros[i].name, PushDisplay.FORMAT_RAW)
-				 .setCell (1, i, isEmpty ? '' : macros[i].valueStr, PushDisplay.FORMAT_RAW);
-				if (isEmpty)
-					d.clearCell (2, i);
+				if (macros[i].name.length == 0)
+					d.clearCell (0, i).clearCell (1, i).clearCell (2, i);
 				else				
-					d.setCell (2, i, macros[i].value, PushDisplay.FORMAT_VALUE);
+				{
+					d.setCell (0, i, macros[i].name, PushDisplay.FORMAT_RAW)
+					 .setCell (1, i, macros[i].valueStr, PushDisplay.FORMAT_RAW)
+					 .setCell (2, i, macros[i].value, PushDisplay.FORMAT_VALUE);
+				}
 			}
 			d.done (0).done (1).done (2);
 			break;

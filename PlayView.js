@@ -4,6 +4,7 @@
 
 function PlayView ()
 {
+	this.repeatPressed = false;
 	this.pressedKeys = initArray (0, 128);
 }
 PlayView.prototype = new BaseView ();
@@ -37,7 +38,6 @@ PlayView.prototype.onActivate = function ()
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (false);
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
 		push.setButton (i, PUSH_COLOR_BLACK);
-	updateMode ();
 };
 
 PlayView.prototype.usesButton = function (buttonID)
@@ -74,6 +74,31 @@ PlayView.prototype.getScaleColor = function (note)
 		SCALES[currentScale].matrix[note - 36] % 12 == 0 ? PUSH_COLOR_BLUE_LGHT : PUSH_COLOR_WHITE_HI;
 };
 
+PlayView.prototype.onRepeat = function (isDown)
+{
+	this.repeatPressed = isDown;
+};
+
+PlayView.prototype.onGrid = function (note, velocity)
+{
+	var t = getSelectedTrack ();
+	if (t == null || !t.canHoldNotes)
+		return;
+
+	// Remember pressed pads
+	this.pressedKeys[note] = velocity;
+	
+	// TODO this.repeatPressed
+	
+	if (currentScale == SCALE_CHROMATIC)
+		return;
+	var index = note - 36;
+	if (index % 8 > 2 && index + 5 < 64)
+		this.pressedKeys[Math.min (note + 5, 127)] = velocity;
+	if (index % 8 < 5 && index - 5 > 0)
+		this.pressedKeys[Math.max (note - 5, 0)] = velocity;
+};
+
 PlayView.prototype.onUp = function ()
 {
 	if (this.push.isShiftPressed ())
@@ -88,23 +113,6 @@ PlayView.prototype.onDown = function ()
 		application.arrowKeyRight ();
 	else
 		application.arrowKeyDown ();
-};
-
-PlayView.prototype.onGrid = function (note, velocity)
-{
-	var t = getSelectedTrack ();
-	if (t == null || !t.canHoldNotes)
-		return;
-
-	// Remember pressed pads
-	this.pressedKeys[note] = velocity;
-	if (currentScale == SCALE_CHROMATIC)
-		return;
-	var index = note - 36;
-	if (index % 8 > 2 && index + 5 < 64)
-		this.pressedKeys[Math.min (note + 5, 127)] = velocity;
-	if (index % 8 < 5 && index - 5 > 0)
-		this.pressedKeys[Math.max (note - 5, 0)] = velocity;
 };
 
 PlayView.prototype.onLeft = function ()
