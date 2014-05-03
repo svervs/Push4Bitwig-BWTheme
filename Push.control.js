@@ -86,7 +86,8 @@ load("SequencerView.js");
 
 var previousMode = null;
 var currentMode = MODE_TRACK;
-var tempo = 120;
+var tempo = 100;	// Note: For real BPM add 20
+var quarterNoteInMillis = calcQuarterNoteInMillis (tempo);
 var master =
 { 
 	selected: false,
@@ -178,6 +179,7 @@ function init()
 	transport.getTempo ().addValueObserver(TEMPO_RESOLUTION, function (value)
 	{
 		tempo = value;
+		quarterNoteInMillis = calcQuarterNoteInMillis (tempo);
 	});
 	
 	// Master Track name
@@ -697,4 +699,9 @@ function getColorIndex (red, green, blue)
 function changeValue (control, value)
 {
 	return control <= 61 ? Math.min (value + INC_FRACTION_VALUE, 127) : Math.max (value - INC_FRACTION_VALUE, 0);
+}
+
+function calcQuarterNoteInMillis (tempo)
+{
+	return 60000 / (tempo + 20);
 }

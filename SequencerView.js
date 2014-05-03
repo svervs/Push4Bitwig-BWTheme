@@ -54,7 +54,7 @@ SequencerView.prototype.onActivate = function ()
 	for (var i = 0; i < 8; i++)
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (false);
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-		push.setButton (i, i % 2 == 0 ? 19 : PUSH_COLOR_BLACK);
+		push.setButton (i, i % 2 == 0 ? PUSH_COLOR_SCENE_GREEN : PUSH_COLOR_BLACK);
 };
 
 SequencerView.prototype.usesButton = function (buttonID)

@@ -5,7 +5,19 @@
 function PlayView ()
 {
 	this.repeatPressed = false;
+	this.taskRunning = false;
 	this.pressedKeys = initArray (0, 128);
+	this.repeatLengths = [ 1, 2/3, 1/2, 1/3, 1/4, 1/6, 1/8, 1/12 ];
+	this.selectedRepeatLength = 4;
+	this.oldClock = -1;
+	this.oldDiff = 1;
+
+	// Experimental Repeat code - does not work with current API
+	/*transport.getPosition ().addRawValueObserver (doObject (this, function (value)
+	{
+		if (this.repeatPressed)
+			this.doRepeat (value);
+	}));*/
 }
 PlayView.prototype = new BaseView ();
 
@@ -36,19 +48,25 @@ PlayView.prototype.onActivate = function ()
 	push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
 	for (var i = 0; i < 8; i++)
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (false);
-	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-		push.setButton (i, PUSH_COLOR_BLACK);
+	this.updateSceneButtons ();
+};
+
+PlayView.prototype.updateSceneButtons = function (buttonID)
+{
+	for (var i = 0; i < 8; i++)
+		// push.setButton (PUSH_BUTTON_SCENE1 + i, i == this.selectedRepeatLength ? PUSH_COLOR_SCENE_GREEN : PUSH_COLOR_SCENE_YELLOW);
+		push.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_BLACK);
 };
 
 PlayView.prototype.usesButton = function (buttonID)
 {
 	switch (buttonID)
 	{
+		case PUSH_BUTTON_REPEAT:
 		case PUSH_BUTTON_NEW:
 		case PUSH_BUTTON_SELECT:
 		case PUSH_BUTTON_ADD_EFFECT:
 		case PUSH_BUTTON_ADD_TRACK:
-		case PUSH_BUTTON_REPEAT:
 		case PUSH_BUTTON_ACCENT:
 		case PUSH_BUTTON_USER_MODE:
 		case PUSH_BUTTON_DUPLICATE:
@@ -77,6 +95,7 @@ PlayView.prototype.getScaleColor = function (note)
 PlayView.prototype.onRepeat = function (isDown)
 {
 	this.repeatPressed = isDown;
+	// this.push.setButton (PUSH_BUTTON_REPEAT, this.repeatPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 PlayView.prototype.onGrid = function (note, velocity)
@@ -88,8 +107,6 @@ PlayView.prototype.onGrid = function (note, velocity)
 	// Remember pressed pads
 	this.pressedKeys[note] = velocity;
 	
-	// TODO this.repeatPressed
-	
 	if (currentScale == SCALE_CHROMATIC)
 		return;
 	var index = note - 36;
@@ -97,6 +114,12 @@ PlayView.prototype.onGrid = function (note, velocity)
 		this.pressedKeys[Math.min (note + 5, 127)] = velocity;
 	if (index % 8 < 5 && index - 5 > 0)
 		this.pressedKeys[Math.max (note - 5, 0)] = velocity;
+};
+
+PlayView.prototype.onScene = function (scene)
+{
+	this.selectedRepeatLength = 7 - scene;
+	this.updateSceneButtons ();
 };
 
 PlayView.prototype.onUp = function ()
@@ -153,3 +176,37 @@ PlayView.prototype.onRight = function ()
 		selectTrack (index);
 	}
 };
+
+PlayView.prototype.doRepeat = function (clock)
+{
+	if (this.oldClock == -1)
+	{
+		this.oldClock = clock;
+		return;
+	}
+
+	var diff = Math.abs (clock - this.oldClock - this.repeatLengths[this.selectedRepeatLength]);
+	if (diff > 0.01 && this.oldDiff > diff)
+	{
+		this.oldDiff = diff;
+		return;
+	}
+		
+	this.oldClock = clock;
+	this.oldDiff = this.repeatLengths[this.selectedRepeatLength];
+	
+	var sel = getSelectedTrack ();
+	if (sel == null)
+		return;
+	var t = trackBank.getTrack (sel.index);
+
+	for (var i = 36; i < 100; i++)
+	{
+		if (this.pressedKeys[i] <= 0)
+			continue;
+		var matrix = SCALES[currentScale].matrix;
+		var n = matrix[i - 36] + SCALE_OFFSETS[currentScaleOffset] + 36 + currentOctave * 12;
+		t.stopNote (n, 0);
+		t.startNote (n, this.pressedKeys[i]);
+	}
+}
