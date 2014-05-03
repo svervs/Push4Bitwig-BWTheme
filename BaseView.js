@@ -254,6 +254,11 @@ BaseView.prototype.onValueKnob = function (index, value)
 			fxparams[index].value = changeValue (value, fxparams[index].value);
 			device.getParameter (index).set (fxparams[index].value, 128);
 			break;
+		
+		case MODE_MACRO:
+			macros[index].value = changeValue (value, macros[index].value);
+			device.getMacro (index).getAmount ().set (macros[index].value, 128);
+			break;
 			
 		case MODE_SCALES:
 			if (index == 0)
@@ -434,8 +439,11 @@ BaseView.prototype.onTrack = function ()
 
 BaseView.prototype.onDevice = function ()
 {
-	currentMode = MODE_DEVICE;
-	updateMode ();
+	if (currentMode == MODE_DEVICE)
+		currentMode = MODE_MACRO;
+	else
+		currentMode = MODE_DEVICE;
+	updateMode();
 };
 
 BaseView.prototype.onBrowse = function ()
