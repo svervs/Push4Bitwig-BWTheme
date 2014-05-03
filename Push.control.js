@@ -116,8 +116,10 @@ var application = null;
 var device = null;
 var masterTrack = null;
 var trackBank = null;
-var cursorTrack = null;
 var noteInput = null;
+
+var canScrollTrackUp   = false;
+var canScrollTrackDown = false;
 
 var currentScaleOffset = 0; // C
 var currentScale       = 1;	// Major
@@ -226,6 +228,15 @@ function init()
 	p.addValueDisplayObserver (8, '', function (text)
 	{
 		master.panStr = text;
+	});
+	
+ 	trackBank.addCanScrollTracksDownObserver (function (canScroll)
+	{
+		canScrollTrackDown = canScroll;
+	});
+	trackBank.addCanScrollTracksUpObserver (function (canScroll)
+	{
+		canScrollTrackUp = canScroll;
 	});
 	
 	for (var i = 0; i < 8; i++)

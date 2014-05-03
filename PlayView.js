@@ -122,7 +122,16 @@ PlayView.prototype.onLeft = function ()
 	else
 	{
 		var sel = getSelectedTrack ();
-		trackBank.getTrack (sel == null ? 0 : Math.max (0, sel.index - 1)).select ();
+		var index = sel == null ? 0 : sel.index - 1;
+		if (index == -1)
+		{
+			if (!canScrollTrackUp)
+				return;
+			trackBank.scrollTracksPageUp ();
+			host.scheduleTask (selectTrack, [7], 100);
+			return;
+		}
+		selectTrack (index);
 	}
 };
 
@@ -133,8 +142,14 @@ PlayView.prototype.onRight = function ()
 	else
 	{
 		var sel = getSelectedTrack ();
-		var t = trackBank.getTrack (sel == null ? 0 : Math.min (8, sel.index + 1));
-		if (t != null)
-			t.select ();
+		var index = sel == null ? 0 : sel.index + 1;
+		if (index == 8)
+		{
+			if (!canScrollTrackDown)
+				return;
+			trackBank.scrollTracksPageDown ();
+			host.scheduleTask (selectTrack, [0], 100);
+		}
+		selectTrack (index);
 	}
 };

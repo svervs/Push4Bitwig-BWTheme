@@ -364,7 +364,8 @@ BaseView.prototype.onValueKnob9 = function (value)
 
 BaseView.prototype.onValueKnob9Touch = function (isTouched)
 {
-	masterTrack.getVolume ().setIndication (isTouched);
+	if (currentMode != MODE_MASTER)
+		masterTrack.getVolume ().setIndication (isTouched);
 };
 
 BaseView.prototype.onFirstRow = function (index)
@@ -459,18 +460,30 @@ BaseView.prototype.onBrowse = function ()
 BaseView.prototype.onDeviceLeft = function ()
 {
 	if (currentMode == MODE_DEVICE)
+	{
 		device.previousParameterPage ();
-	else
+		return;
+	}
+	if (canScrollTrackUp)
+	{
 		trackBank.scrollTracksPageUp ();
+		host.scheduleTask (selectTrack, [7], 100);
+	}
 };
 
 // Inc Track or Device Parameter Bank
 BaseView.prototype.onDeviceRight = function ()
 {
 	if (currentMode == MODE_DEVICE)
+	{
 		device.nextParameterPage ();
-	else
+		return;
+	}
+	if (canScrollTrackDown)
+	{
 		trackBank.scrollTracksPageDown ();
+		host.scheduleTask (selectTrack, [0], 100);
+	}
 };
 
 BaseView.prototype.onMute = function ()
@@ -536,3 +549,10 @@ BaseView.prototype.onSession = function ()
 	BaseView.lastNoteView = this.push.isActiveView (VIEW_PLAY) ? VIEW_PLAY : VIEW_SEQUENCER;
 	this.push.setActiveView (VIEW_SESSION);
 };
+
+function selectTrack (index)
+{
+	var t = trackBank.getTrack (index);
+	if (t != null)
+		t.select ();
+}
