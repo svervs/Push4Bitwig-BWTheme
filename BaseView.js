@@ -21,6 +21,8 @@ function BaseView ()
 BaseView.prototype = new View ();
 BaseView.prototype.constructor = BaseView;
 
+BaseView.lastNoteView = VIEW_PLAY;
+
 BaseView.prototype.onActivate = function ()
 {
 	this.updateNoteMapping ();
@@ -522,10 +524,15 @@ BaseView.prototype.onAddTrack = function ()
 
 BaseView.prototype.onNote = function ()
 {
-	if (this.push.isActiveView (VIEW_PLAY))
-		this.push.setActiveView (VIEW_SEQUENCER);
+	// TODO this feels quite hackish/brittle until some refactoring is done 
+	var nextView = -1;
+	if (!this.push.isActiveView (VIEW_PLAY) && !this.push.isActiveView (VIEW_SEQUENCER))
+		nextView = BaseView.lastNoteView;
 	else
-		this.push.setActiveView (VIEW_PLAY);
+		nextView = (this.push.isActiveView (VIEW_PLAY)) ? VIEW_SEQUENCER : VIEW_PLAY;
+	
+	BaseView.lastNoteView = nextView;
+	this.push.setActiveView (nextView);
 };
 
 BaseView.prototype.onSession = function ()
