@@ -524,18 +524,15 @@ BaseView.prototype.onAddTrack = function ()
 
 BaseView.prototype.onNote = function ()
 {
-	// TODO this feels quite hackish/brittle until some refactoring is done 
-	var nextView = -1;
-	if (!this.push.isActiveView (VIEW_PLAY) && !this.push.isActiveView (VIEW_SEQUENCER))
-		nextView = BaseView.lastNoteView;
-	else
-		nextView = (this.push.isActiveView (VIEW_PLAY)) ? VIEW_SEQUENCER : VIEW_PLAY;
-	
-	BaseView.lastNoteView = nextView;
-	this.push.setActiveView (nextView);
+	BaseView.lastNoteView = this.push.isActiveView (VIEW_SESSION) ? BaseView.lastNoteView :
+								(this.push.isActiveView (VIEW_PLAY) ? VIEW_SEQUENCER : VIEW_PLAY);
+	this.push.setActiveView (BaseView.lastNoteView);
 };
 
 BaseView.prototype.onSession = function ()
 {
+	if (this.push.isActiveView (VIEW_SESSION))
+		return;
+	BaseView.lastNoteView = this.push.isActiveView (VIEW_PLAY) ? VIEW_PLAY : VIEW_SEQUENCER;
 	this.push.setActiveView (VIEW_SESSION);
 };
