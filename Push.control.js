@@ -73,7 +73,7 @@ var TEMPO_RESOLUTION       = 647;
 var VIEW_PLAY      = 0;
 var VIEW_SESSION   = 1;
 var VIEW_SEQUENCER = 2;
-
+var VIEW_DRUM      = 3;
 
 loadAPI(1);
 load("Utilities.js");
@@ -85,6 +85,7 @@ load("Scales.js");
 load("PlayView.js");
 load("SessionView.js");
 load("SequencerView.js");
+load("DrumView.js");
 
 var displayScheduled = false;
 
@@ -136,6 +137,7 @@ var push          = null;
 var playView      = null;
 var sessionView   = null;
 var sequencerView = null;
+var drumView      = null;
 
 host.defineController ("Ableton", "Push", "1.0", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
 host.defineMidiPorts (1, 1);
@@ -150,7 +152,7 @@ function init()
 	noteInput.setShouldConsumeEvents (false);
 	
 	application = host.createApplication ();
-	device = host.createCursorDevice();
+	device = host.createCursorDevice ();
 	transport = host.createTransport ();
 	masterTrack = host.createMasterTrack (0);
 	trackBank = host.createMainTrackBankSection (8, 6, 8);
@@ -160,9 +162,11 @@ function init()
 	playView = new PlayView ();
 	sessionView = new SessionView ();
 	sequencerView = new SequencerView ();
+	drumView = new DrumView ();
 	push.addView (VIEW_PLAY, playView);
 	push.addView (VIEW_SESSION, sessionView);
 	push.addView (VIEW_SEQUENCER, sequencerView);
+	push.addView (VIEW_DRUM, drumView);
 
 	
 	// Click

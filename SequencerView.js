@@ -2,23 +2,23 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-var NUM_ROWS = 128;
-var NUM_COLS = 8;
-var NUM_DISPLAY_ROWS = 8;
-var NUM_DISPLAY_COLS = 8;
-var START_KEY = 32;
+var SEQ_NUM_ROWS = 128;
+var SEQ_NUM_COLS = 8;
+var SEQ_NUM_DISPLAY_ROWS = 8;
+var SEQ_NUM_DISPLAY_COLS = 8;
+var SEQ_START_KEY = 32;
 
 function SequencerView ()
 {
 	this.offsetX = 0;
-	this.offsetY = START_KEY;
+	this.offsetY = SEQ_START_KEY;
 	this.step    = -1;
 	
 	this.data = [];
-	for (var y = 0; y < NUM_ROWS; y++)
-		this.data[y] = initArray (false, NUM_COLS);
+	for (var y = 0; y < SEQ_NUM_ROWS; y++)
+		this.data[y] = initArray (false, SEQ_NUM_COLS);
 	
-	this.clip = host.createCursorClip (NUM_COLS, NUM_ROWS);
+	this.clip = host.createCursorClip (SEQ_NUM_COLS, SEQ_NUM_ROWS);
 	this.lengthInBeatTime = 16;
 	this.clip.setStepSize (this.lengthInBeatTime);
 	
@@ -32,15 +32,15 @@ function SequencerView ()
 		this.data[column][row] = state;
 	}));
 	
-	this.clip.scrollToKey (START_KEY);
+	this.clip.scrollToKey (SEQ_START_KEY);
 	this.clip.scrollToStep (0);
 }
 SequencerView.prototype = new BaseView ();
 
 SequencerView.prototype.updateArrows = function ()
 {
-	this.canScrollUp = this.offsetY + NUM_DISPLAY_ROWS <= NUM_ROWS - NUM_DISPLAY_ROWS;
-	this.canScrollDown = this.offsetY - NUM_DISPLAY_ROWS >= 0;
+	this.canScrollUp = this.offsetY + SEQ_NUM_DISPLAY_ROWS <= SEQ_NUM_ROWS - SEQ_NUM_DISPLAY_ROWS;
+	this.canScrollDown = this.offsetY - SEQ_NUM_DISPLAY_ROWS >= 0;
 	this.canScrollLeft = this.offsetX > 0;
 	BaseView.prototype.updateArrows.call (this);
 };
@@ -96,7 +96,7 @@ SequencerView.prototype.onGrid = function (note, velocity)
 
 SequencerView.prototype.onLeft = function ()
 {
-	var newOffset = this.offsetX - NUM_DISPLAY_COLS;
+	var newOffset = this.offsetX - SEQ_NUM_DISPLAY_COLS;
 	if (newOffset < 0)
 		this.offsetX = 0;
 	else
@@ -109,29 +109,29 @@ SequencerView.prototype.onLeft = function ()
 
 SequencerView.prototype.onRight = function ()
 {
-	this.offsetX = this.offsetX + NUM_DISPLAY_COLS;
+	this.offsetX = this.offsetX + SEQ_NUM_DISPLAY_COLS;
 	this.clip.scrollStepsPageForward ();
 	this.updateArrows ();
 };
 
 SequencerView.prototype.onUp = function ()
 {
-	this.offsetY = Math.min (NUM_ROWS - NUM_DISPLAY_ROWS, this.offsetY + NUM_DISPLAY_ROWS);
+	this.offsetY = Math.min (SEQ_NUM_ROWS - SEQ_NUM_DISPLAY_ROWS, this.offsetY + SEQ_NUM_DISPLAY_ROWS);
 	this.updateArrows ();
 };
 
 SequencerView.prototype.onDown = function ()
 {
-	this.offsetY = Math.max (0, this.offsetY - NUM_DISPLAY_ROWS);
+	this.offsetY = Math.max (0, this.offsetY - SEQ_NUM_DISPLAY_ROWS);
 	this.updateArrows ();
 };
 
 SequencerView.prototype.drawGrid = function ()
 {
-	var hiStep = this.isInXRange (this.step) ? this.step % NUM_DISPLAY_COLS : -1;
-	for (var x = 0; x < NUM_DISPLAY_COLS; x++)
+	var hiStep = this.isInXRange (this.step) ? this.step % SEQ_NUM_DISPLAY_COLS : -1;
+	for (var x = 0; x < SEQ_NUM_DISPLAY_COLS; x++)
 	{
-		for (var y = 0; y < NUM_DISPLAY_ROWS; y++)
+		for (var y = 0; y < SEQ_NUM_DISPLAY_ROWS; y++)
 		{
 			var isSet = this.data[x][this.offsetY + y];
 			var hilite = x == hiStep;
@@ -142,5 +142,5 @@ SequencerView.prototype.drawGrid = function ()
 
 SequencerView.prototype.isInXRange = function (x)
 {
-	return x >= this.offsetX && x < this.offsetX + NUM_DISPLAY_COLS;
+	return x >= this.offsetX && x < this.offsetX + SEQ_NUM_DISPLAY_COLS;
 };

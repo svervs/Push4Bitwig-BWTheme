@@ -31,7 +31,7 @@ PlayView.prototype.updateNoteMapping = function ()
 		var matrix = SCALES[currentScale].matrix;
 		for (var note = 36; note < 100; note++)
 		{
-			var n = (matrix[note - 36] + SCALE_OFFSETS[currentScaleOffset] + 36 + currentOctave * 12);
+			var n = matrix[note - 36] + SCALE_OFFSETS[currentScaleOffset] + 36 + currentOctave * 12;
 			noteMap[note] = n < 0 || n > 127 ? -1 : n;
 		}
 	}

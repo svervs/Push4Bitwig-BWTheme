@@ -328,7 +328,8 @@ Push.prototype.handleCC = function (cc, value)
 		// Select
 		case PUSH_BUTTON_SELECT:
 			this.selectPressed = value == 127;
-			this.setButton (PUSH_BUTTON_SELECT, this.selectPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+			if (view.usesButton (PUSH_BUTTON_SELECT))
+				this.setButton (PUSH_BUTTON_SELECT, this.selectPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 			view.onSelect (this.selectPressed);
 			break;
 
