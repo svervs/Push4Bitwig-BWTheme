@@ -208,4 +208,4 @@ PlayView.prototype.doRepeat = function (clock)
 		t.stopNote (n, 0);
 		t.startNote (n, this.pressedKeys[i]);
 	}
-}
+};
