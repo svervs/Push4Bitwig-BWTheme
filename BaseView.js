@@ -273,6 +273,10 @@ BaseView.prototype.onValueKnob = function (index, value)
 				this.updateNoteMapping ();
 			}
 			break;
+		
+		case MODE_PRESET:
+			presetMode.onValueKnob(index, value);
+			break;
 	}
 };
 
@@ -390,6 +394,10 @@ BaseView.prototype.onFirstRow = function (index)
 		case MODE_MASTER:
 			// Not used
 			break;
+		
+		case MODE_PRESET:
+			presetMode.onFirstRow (index);
+			break;
 			
 		default:
 			if (this.stopPressed)
@@ -411,6 +419,10 @@ BaseView.prototype.onSecondRow = function (index)
 			currentScaleOffset = index + 5;
 		this.updateNoteMapping ();
 	}
+	else if (currentMode == MODE_PRESET)
+	{
+		presetMode.onSecondRow (index);
+	}
 	else if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER)
 	{
 		var t = trackBank.getTrack (index);
@@ -418,7 +430,7 @@ BaseView.prototype.onSecondRow = function (index)
 			; // TODO Toggle monitor; Possible?
 		else
 			 t.getArm ().set (toggleValue (tracks[index].recarm));
-	}
+	} 
 };
 
 BaseView.prototype.onMaster = function ()
@@ -455,7 +467,10 @@ BaseView.prototype.onDevice = function ()
 
 BaseView.prototype.onBrowse = function ()
 {
-	application.toggleBrowserVisibility ();
+	if (currentMode == MODE_DEVICE)
+		setMode(MODE_PRESET);
+	else
+		application.toggleBrowserVisibility (); // Track
 };
 
 // Dec Track or Device Parameter Bank

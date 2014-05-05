@@ -18,6 +18,7 @@ var MODE_SEND6  = 10;
 var MODE_SCALES = 11;
 var MODE_MACRO  = 12;
 var MODE_FIXED  = 13;
+var MODE_PRESET  = 14;
 
 // Static  Headers
 var PARAM_NAMES_MASTER = 'Volume   Pan                                                        ';
@@ -85,6 +86,7 @@ load("Scales.js");
 load("PlayView.js");
 load("SessionView.js");
 load("SequencerView.js");
+load("PushModes.js");
 load("DrumView.js");
 
 var displayScheduled = false;
@@ -117,6 +119,7 @@ var selectedDevice =
 	hasPreviousDevice: false, 
 	hasNextDevice: false
 };
+
 var transport = null;
 var application = null;
 var device = null;
@@ -138,6 +141,8 @@ var playView      = null;
 var sessionView   = null;
 var sequencerView = null;
 var drumView      = null;
+
+var presetMode = null;
 
 host.defineController ("Ableton", "Push", "1.0", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
 host.defineMidiPorts (1, 1);
@@ -167,7 +172,9 @@ function init()
 	push.addView (VIEW_SESSION, sessionView);
 	push.addView (VIEW_SEQUENCER, sequencerView);
 	push.addView (VIEW_DRUM, drumView);
-
+	
+	presetMode = new PresetMode();
+	presetMode.init ();
 	
 	// Click
 	transport.addClickObserver (function (isOn)
@@ -470,6 +477,7 @@ function updateMode (mode)
 	var isMacro  = mode == MODE_MACRO;
 	var isScales = mode == MODE_SCALES;
 	var isFixed  = mode == MODE_FIXED;
+	var isPreset = mode == MODE_PRESET;
 
 	masterTrack.getVolume ().setIndication (isMaster);
 	masterTrack.getPan ().setIndication (isMaster);
@@ -504,6 +512,7 @@ function updateMode (mode)
 	push.setButton (PUSH_BUTTON_DEVICE, isDevice || isMacro ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_SCALES, isScales ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_FIXED_LENGTH, isFixed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_BROWSE, isPreset ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 }
 
 function updateDisplay ()
@@ -680,9 +689,13 @@ function updateDisplay ()
 				push.setButton (102 + i, PUSH_COLOR_BLACK);
 			}
 			break;
+			
+		case MODE_PRESET:
+			presetMode.updateDisplay ();
+			break;
 	}
 	
-	if (currentMode == MODE_DEVICE || currentMode == MODE_SCALES || currentMode == MODE_MASTER || currentMode == MODE_FIXED)
+	if (currentMode == MODE_DEVICE || currentMode == MODE_SCALES || currentMode == MODE_MASTER || currentMode == MODE_FIXED || currentMode == MODE_PRESET)
 		return;
 
 	// Send, Mute, Automation
