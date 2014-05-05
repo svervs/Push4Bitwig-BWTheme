@@ -74,6 +74,7 @@ var TEMPO_RESOLUTION       = 647;
 var VIEW_PLAY      = 0;
 var VIEW_SESSION   = 1;
 var VIEW_SEQUENCER = 2;
+var VIEW_DRUM      = 3;
 
 loadAPI(1);
 load("Utilities.js");
@@ -86,6 +87,7 @@ load("PlayView.js");
 load("SessionView.js");
 load("SequencerView.js");
 load("PushModes.js");
+load("DrumView.js");
 
 var displayScheduled = false;
 
@@ -138,6 +140,7 @@ var push          = null;
 var playView      = null;
 var sessionView   = null;
 var sequencerView = null;
+var drumView      = null;
 
 var presetMode = null;
 
@@ -154,7 +157,7 @@ function init()
 	noteInput.setShouldConsumeEvents (false);
 	
 	application = host.createApplication ();
-	device = host.createCursorDevice();
+	device = host.createCursorDevice ();
 	transport = host.createTransport ();
 	masterTrack = host.createMasterTrack (0);
 	trackBank = host.createMainTrackBankSection (8, 6, 8);
@@ -164,9 +167,11 @@ function init()
 	playView = new PlayView ();
 	sessionView = new SessionView ();
 	sequencerView = new SequencerView ();
+	drumView = new DrumView ();
 	push.addView (VIEW_PLAY, playView);
 	push.addView (VIEW_SESSION, sessionView);
 	push.addView (VIEW_SEQUENCER, sequencerView);
+	push.addView (VIEW_DRUM, drumView);
 	
 	presetMode = new PresetMode();
 	presetMode.init ();

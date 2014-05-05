@@ -37,6 +37,18 @@ var SCALE_CHROMATIC_NOTES =
 	56, 57, 58, 59, 60, 61, 62, 63
 ];
 
+var SCALE_DRUM_NOTES =
+[
+	0,   1,  2,  3, -1, -1, -1, -1, 
+	4,   5,  6,  7, -1, -1, -1, -1, 
+	8,   9, 10, 11, -1, -1, -1, -1, 
+	12, 13, 14, 15, -1, -1, -1, -1, 
+	-1, -1, -1, -1, -1, -1, -1, -1, 
+	-1, -1, -1, -1, -1, -1, -1, -1, 
+	-1, -1, -1, -1, -1, -1, -1, -1, 
+	-1, -1, -1, -1, -1, -1, -1, -1
+];
+
 var scaleIntervals = [
 	{ name: 'Major', notes: [0, 2, 4, 5, 7, 9, 11] },
 	{ name: 'Minor', notes: [0, 2, 3, 5, 7, 8, 10] },
@@ -71,14 +83,15 @@ function Scales()
 }
 
 // TODO eventually refactor all scales and constants into Scales class
-var SCALES = [
-    {name: 'Chromatic', matrix: SCALE_CHROMATIC_NOTES}
+var SCALES =
+[
+    { name: 'Chromatic', matrix: SCALE_CHROMATIC_NOTES }
 ];
 
 Scales.createScales = function()
 {
 	for (var i = 0; i < scaleIntervals.length; i++)
-		Scales.createScale(scaleIntervals[i]);
+		Scales.createScale (scaleIntervals[i]);
 };
 
 Scales.createScale = function(scale)
@@ -90,7 +103,7 @@ Scales.createScale = function(scale)
 		for (var column = 0; column < 8; column++)
 		{
 			var offset = row * 3 + column;
-			matrix.push((Math.floor(offset / len)) * 12 + scale.notes[offset % len]);			
+			matrix.push ((Math.floor(offset / len)) * 12 + scale.notes[offset % len]);			
 		}
 	}
 	SCALES.push({name:scale.name, matrix:matrix});
