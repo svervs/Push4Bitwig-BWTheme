@@ -79,6 +79,13 @@ PushDisplay.prototype.clearRow = function (row)
 	return this;
 };
 
+PushDisplay.prototype.clearColumn = function (column)
+{
+	for (var i = 0; i < 4; i++)
+		this.clearBlock (i, column);
+	return this;
+};
+
 PushDisplay.prototype.setBlock = function (row, block, value)
 {
 	var cell = 2 * block;
