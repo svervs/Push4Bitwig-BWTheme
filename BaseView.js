@@ -258,8 +258,7 @@ BaseView.prototype.onValueKnob = function (index, value)
 			break;
 		
 		case MODE_MACRO:
-			macros[index].value = changeValue (value, macros[index].value);
-			device.getMacro (index).getAmount ().set (macros[index].value, 128);
+			modeMacro.onValueKnob (index, value);
 			break;
 			
 		case MODE_SCALES:

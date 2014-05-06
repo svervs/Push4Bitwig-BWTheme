@@ -11,12 +11,88 @@ function BaseMode ()
 	this.id = null;
 }
 
-BaseMode.prototype.init = function () {};
+BaseMode.prototype.attachTo = function (aPush) {};
 BaseMode.prototype.getId = function () { return this.id; };
 BaseMode.prototype.onValueKnob = function (index, value) {};
 BaseMode.prototype.onFirstRow = function (index) {};
 BaseMode.prototype.onSecondRow = function (index) {};
 BaseMode.prototype.updateDisplay = function () {};
+
+
+//------------------------------------------------------------------------------
+// MacroMode
+//------------------------------------------------------------------------------
+
+function MacroMode ()
+{
+	this.id = MODE_FRAME;
+	this.bottomItems = [];
+}
+MacroMode.prototype = new BaseMode ();
+
+MacroMode.prototype.attachTo = function (aPush) 
+{
+	for (var i = 0; i < 8; i++)
+	{
+		var m = device.getMacro (i);
+		m.addLabelObserver (8, '', doIndex (i, function (index, name)
+ 		{
+			macros[index].name = name;
+		}));
+		m.getAmount().addValueObserver (128, doIndex (i, function (index, value)
+		{
+			macros[index].value = value;
+		}));
+		// Macro value text
+		m.getAmount().addValueDisplayObserver (8, '',  doIndex (i, function (index, value)
+		{
+			macros[index].valueStr = value;
+		}));
+	}
+};
+
+MacroMode.prototype.onValueKnob = function (index, value)
+{
+	macros[index].value = changeValue (value, macros[index].value);
+	device.getMacro (index).getAmount ().set (macros[index].value, 128);
+};
+
+MacroMode.prototype.updateDisplay = function () 
+{
+	var d = push.display;
+	
+	if (this.hasMacros())
+	{
+		for (var i = 0; i < 8; i++)
+		{
+			if (macros[i].name.length == 0)
+				d.clearCell (0, i).clearCell (1, i).clearCell (2, i);
+			else				
+			{
+				d.setCell (0, i, macros[i].name, PushDisplay.FORMAT_RAW)
+				 .setCell (1, i, macros[i].valueStr, PushDisplay.FORMAT_RAW)
+				 .setCell (2, i, macros[i].value, PushDisplay.FORMAT_VALUE);
+			}
+		}
+	}
+	else
+	{
+		d.clearRow (0).clearRow (1).clearRow (2)
+		 .setCell(1, 3, 'No Macro').setCell(1, 4, 'Assigned');
+	}
+
+	d.done (0).done (1).done (2);
+};
+
+MacroMode.prototype.hasMacros = function () 
+{
+	for (var i = 0; i < 8; i++)
+	{
+		if (macros[i].name.length != 0)
+			return true;
+	}
+	return false;
+};
 
 //------------------------------------------------------------------------------
 // FrameToggleMode
@@ -47,7 +123,7 @@ FrameToggleMode.prototype = new BaseMode ();
 
 FrameToggleMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO - 4;
 
-FrameToggleMode.prototype.init = function ()
+FrameToggleMode.prototype.attachTo = function (aPush)
 {
 	this.addFirstRowCommand ('Arrange ', function () { application.setPerspective('ARRANGE'); });
 	this.addFirstRowCommand ('  Mix   ', function () { application.setPerspective('MIX'); });
@@ -115,7 +191,7 @@ PresetMode.knobDuration = 150;
 PresetMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO-4;
 PresetMode.secondRowButtonColor = PUSH_COLOR_GREEN_LO;
 
-PresetMode.prototype.init = function ()
+PresetMode.prototype.attachTo = function (aPush)
 {
 	var self = this;
 	

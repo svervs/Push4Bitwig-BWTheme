@@ -80,6 +80,8 @@ function Push (output)
 
 	this.activeView = -1;
 	this.views = [];
+	this.modes = [];
+	
 	this.shiftPressed = false;
 	this.selectPressed = false;
 	this.deletePressed = false;
@@ -184,6 +186,13 @@ Push.prototype.addView = function (viewId, view)
 {
 	view.attachTo (this);
 	this.views[viewId] = view;
+};
+
+Push.prototype.addMode = function (modeId, mode)
+{
+	// TODO at the moment, just using for attachTo() and book keeping
+	mode.attachTo (this);
+	this.modes[modeId] = mode;
 };
 
 Push.prototype.isSelectPressed = function ()

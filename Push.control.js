@@ -143,6 +143,7 @@ var sessionView   = null;
 var sequencerView = null;
 var drumView      = null;
 
+var modeMacro = null;
 var modeFrameToggle = null;
 var modePreset = null;
 
@@ -166,6 +167,7 @@ function init()
 
 	output = new MidiOutput ();
 	push = new Push (output);
+	
 	playView = new PlayView ();
 	sessionView = new SessionView ();
 	sequencerView = new SequencerView ();
@@ -175,11 +177,12 @@ function init()
 	push.addView (VIEW_SEQUENCER, sequencerView);
 	push.addView (VIEW_DRUM, drumView);
 	
-	modeFrameToggle = new FrameToggleMode();
-	modePreset = new PresetMode();
-	
-	modeFrameToggle.init();
-	modePreset.init ();
+	modeMacro = new MacroMode ();
+	modeFrameToggle = new FrameToggleMode ();
+	modePreset = new PresetMode ();
+	push.addMode (MODE_MACRO, modeMacro);
+	push.addMode (MODE_FRAME, modeFrameToggle);
+	push.addMode (MODE_PRESET, modePreset);
 	
 	// Click
 	transport.addClickObserver (function (isOn)
@@ -394,21 +397,6 @@ function init()
 		p.addValueDisplayObserver (8, '',  doIndex (i, function (index, value)
 		{
 			fxparams[index].valueStr = value;
-		}));
-		
-		var m = device.getMacro (i);
-		m.addLabelObserver (8, '', doIndex (i, function (index, name)
- 		{
-			macros[index].name = name;
-		}));
-		m.getAmount().addValueObserver (128, doIndex (i, function (index, value)
-		{
-			macros[index].value = value;
-		}));
-		// Macro value text
-		m.getAmount().addValueDisplayObserver (8, '',  doIndex (i, function (index, value)
-		{
-			macros[index].valueStr = value;
 		}));
 	}
 	
@@ -635,18 +623,7 @@ function updateDisplay ()
 			break;
 				
 		case MODE_MACRO:
-			for (var i = 0; i < 8; i++)
-			{
-				if (macros[i].name.length == 0)
-					d.clearCell (0, i).clearCell (1, i).clearCell (2, i);
-				else				
-				{
-					d.setCell (0, i, macros[i].name, PushDisplay.FORMAT_RAW)
-					 .setCell (1, i, macros[i].valueStr, PushDisplay.FORMAT_RAW)
-					 .setCell (2, i, macros[i].value, PushDisplay.FORMAT_VALUE);
-				}
-			}
-			d.done (0).done (1).done (2);
+			modeMacro.updateDisplay ();
 			break;
 			
 		case MODE_SCALES:
