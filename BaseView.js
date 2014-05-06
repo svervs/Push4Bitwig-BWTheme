@@ -275,7 +275,7 @@ BaseView.prototype.onValueKnob = function (index, value)
 			break;
 		
 		case MODE_PRESET:
-			presetMode.onValueKnob(index, value);
+			modePreset.onValueKnob(index, value);
 			break;
 	}
 };
@@ -403,7 +403,7 @@ BaseView.prototype.onFirstRow = function (index)
 			break;
 		
 		case MODE_PRESET:
-			presetMode.onFirstRow (index);
+			modePreset.onFirstRow (index);
 			break;
 		
 		case MODE_FRAME:
@@ -432,7 +432,7 @@ BaseView.prototype.onSecondRow = function (index)
 	}
 	else if (currentMode == MODE_PRESET)
 	{
-		presetMode.onSecondRow (index);
+		modePreset.onSecondRow (index);
 	}
 	else if (currentMode == MODE_FRAME)
 	{

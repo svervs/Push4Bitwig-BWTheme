@@ -144,7 +144,7 @@ var sequencerView = null;
 var drumView      = null;
 
 var modeFrameToggle = null;
-var presetMode = null;
+var modePreset = null;
 
 host.defineController ("Ableton", "Push", "1.0", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
 host.defineMidiPorts (1, 1);
@@ -176,10 +176,10 @@ function init()
 	push.addView (VIEW_DRUM, drumView);
 	
 	modeFrameToggle = new FrameToggleMode();
-	presetMode = new PresetMode();
+	modePreset = new PresetMode();
 	
 	modeFrameToggle.init();
-	presetMode.init ();
+	modePreset.init ();
 	
 	// Click
 	transport.addClickObserver (function (isOn)
@@ -697,7 +697,7 @@ function updateDisplay ()
 			break;
 			
 		case MODE_PRESET:
-			presetMode.updateDisplay ();
+			modePreset.updateDisplay ();
 			break;
 			
 		case MODE_FRAME:
