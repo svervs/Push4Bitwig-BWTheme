@@ -356,6 +356,13 @@ BaseView.prototype.onValueKnobTouch = function (index, isTouched)
 			break;
 	}
 	*/
+	switch (currentMode)
+	{
+		case MODE_DEVICE:
+			if (push.isDeletePressed())
+				device.getParameter (index).reset ();
+			break;
+	}
 };
 
 // Master Volume

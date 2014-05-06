@@ -82,6 +82,7 @@ function Push (output)
 	this.views = [];
 	this.shiftPressed = false;
 	this.selectPressed = false;
+	this.deletePressed = false;
 	
 	this.buttons =
 	[
@@ -193,6 +194,11 @@ Push.prototype.isSelectPressed = function ()
 Push.prototype.isShiftPressed = function ()
 {
 	return this.shiftPressed;
+};
+
+Push.prototype.isDeletePressed = function ()
+{
+	return this.deletePressed;
 };
 
 Push.prototype.setButton = function (button, state)
@@ -535,6 +541,7 @@ Push.prototype.handleCC = function (cc, value)
 			
 		// Delete
 		case PUSH_BUTTON_DELETE:
+			this.deletePressed = value == 127;
 			if (value == 127)
 				view.onDelete ();
 			break;
