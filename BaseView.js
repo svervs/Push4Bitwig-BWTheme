@@ -253,8 +253,7 @@ BaseView.prototype.onValueKnob = function (index, value)
 			break;
 		
 		case MODE_DEVICE:
-			fxparams[index].value = changeValue (value, fxparams[index].value);
-			device.getParameter (index).set (fxparams[index].value, 128);
+			modeDevice.onValueKnob (index, value);
 			break;
 		
 		case MODE_MACRO:
@@ -358,8 +357,7 @@ BaseView.prototype.onValueKnobTouch = function (index, isTouched)
 	switch (currentMode)
 	{
 		case MODE_DEVICE:
-			if (push.isDeletePressed())
-				device.getParameter (index).reset ();
+			modeDevice.onValueKnobTouch (index, isTouched);
 			break;
 	}
 };
@@ -406,7 +404,7 @@ BaseView.prototype.onFirstRow = function (index)
 			break;
 		
 		case MODE_FRAME:
-			modeFrameToggle.onFirstRow (index);
+			modeFrame.onFirstRow (index);
 			break;
 			
 		default:
@@ -435,7 +433,7 @@ BaseView.prototype.onSecondRow = function (index)
 	}
 	else if (currentMode == MODE_FRAME)
 	{
-		modeFrameToggle.onSecondRow (index);
+		modeFrame.onSecondRow (index);
 	}
 	else if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER)
 	{

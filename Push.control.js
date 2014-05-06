@@ -143,8 +143,9 @@ var sessionView   = null;
 var sequencerView = null;
 var drumView      = null;
 
+var modeDevice = null;
 var modeMacro = null;
-var modeFrameToggle = null;
+var modeFrame = null;
 var modePreset = null;
 
 host.defineController ("Ableton", "Push", "1.0", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
@@ -177,11 +178,13 @@ function init()
 	push.addView (VIEW_SEQUENCER, sequencerView);
 	push.addView (VIEW_DRUM, drumView);
 	
+	modeDevice = new DeviceMode ();
 	modeMacro = new MacroMode ();
-	modeFrameToggle = new FrameToggleMode ();
+	modeFrame = new FrameMode ();
 	modePreset = new PresetMode ();
+	push.addMode (MODE_DEVICE, modeDevice);
 	push.addMode (MODE_MACRO, modeMacro);
-	push.addMode (MODE_FRAME, modeFrameToggle);
+	push.addMode (MODE_FRAME, modeFrame);
 	push.addMode (MODE_PRESET, modePreset);
 	
 	// Click
@@ -368,36 +371,6 @@ function init()
 				tracks[index1].sends[index2].volumeStr = text;
 			}));
 		}
-	}
-	
-	// Device
-	device.addIsEnabledObserver (function (isEnabled)
-	{
-		selectedDevice.enabled = isEnabled;
-	});
-	device.addNameObserver (34, 'None', function (name)
-	{
-		selectedDevice.name = name;
-	});
-	
-	for (var i = 0; i < 8; i++)
-	{
-		var p = device.getParameter (i);
-		
-		// Parameter name
-		p.addNameObserver (8, '', doIndex (i, function (index, name)
-		{
-			fxparams[index].name = name;
-		}));
-		p.addValueObserver (128, doIndex (i, function (index, value)
-		{
-			fxparams[index].value = value;
-		}));
-		// Parameter value text
-		p.addValueDisplayObserver (8, '',  doIndex (i, function (index, value)
-		{
-			fxparams[index].valueStr = value;
-		}));
 	}
 	
 	push.setActiveView (VIEW_PLAY);
@@ -601,25 +574,7 @@ function updateDisplay ()
 			break;
 			
 		case MODE_DEVICE:
-			for (var i = 0; i < 8; i++)
-			{
-				var isEmpty = fxparams[i].name.length == 0;
-				d.setCell (0, i, fxparams[i].name, PushDisplay.FORMAT_RAW)
-				 .setCell (1, i, isEmpty ? '' : fxparams[i].valueStr, PushDisplay.FORMAT_RAW);
-				if (isEmpty)
-					d.clearCell (2, i);
-				else				
-					d.setCell (2, i, fxparams[i].value, PushDisplay.FORMAT_VALUE);
-							
-				// Light up fx selection buttons
-				push.setButton (20 + i, i == 7 && selectedDevice.enabled ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
-				push.setButton (102 + i, PUSH_COLOR_BLACK);
-			}
-			d.done (0).done (1).done (2)
-			 .setCell (3, 0, 'Selected', PushDisplay.FORMAT_RAW).setCell (3, 1, 'Device: ', PushDisplay.FORMAT_RAW)
-			 .setBlock (3, 1, selectedDevice.name)
-			 .clearBlock (3, 2).clearCell (3, 6)
-			 .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
+			modeDevice.updateDisplay ();
 			break;
 				
 		case MODE_MACRO:
@@ -678,7 +633,7 @@ function updateDisplay ()
 			break;
 			
 		case MODE_FRAME:
-			modeFrameToggle.updateDisplay ();
+			modeFrame.updateDisplay ();
 			break;
 	}
 	

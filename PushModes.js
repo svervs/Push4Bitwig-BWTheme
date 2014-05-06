@@ -3,7 +3,7 @@
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
 //--------------------------------------
-// PresetMode
+// BaseMode
 //--------------------------------------
 
 function BaseMode ()
@@ -14,9 +14,93 @@ function BaseMode ()
 BaseMode.prototype.attachTo = function (aPush) {};
 BaseMode.prototype.getId = function () { return this.id; };
 BaseMode.prototype.onValueKnob = function (index, value) {};
+BaseView.prototype.onValueKnobTouch = function (index, isTouched) {};
 BaseMode.prototype.onFirstRow = function (index) {};
 BaseMode.prototype.onSecondRow = function (index) {};
 BaseMode.prototype.updateDisplay = function () {};
+
+//------------------------------------------------------------------------------
+// DeviceMode
+//------------------------------------------------------------------------------
+
+function DeviceMode ()
+{
+	this.id = MODE_DEVICE;
+}
+DeviceMode.prototype = new BaseMode ();
+
+DeviceMode.prototype.attachTo = function (aPush) 
+{
+	device.addIsEnabledObserver (function (isEnabled)
+	{
+		selectedDevice.enabled = isEnabled;
+	});
+	device.addNameObserver (34, 'None', function (name)
+	{
+		selectedDevice.name = name;
+	});
+	
+	for (var i = 0; i < 8; i++)
+	{
+		var p = device.getParameter (i);
+		
+		// Parameter name
+		p.addNameObserver (8, '', doIndex (i, function (index, name)
+		{
+			fxparams[index].name = name;
+		}));
+		p.addValueObserver (128, doIndex (i, function (index, value)
+		{
+			fxparams[index].value = value;
+		}));
+		// Parameter value text
+		p.addValueDisplayObserver (8, '',  doIndex (i, function (index, value)
+		{
+			fxparams[index].valueStr = value;
+		}));
+	}
+};
+
+DeviceMode.prototype.onValueKnob = function (index, value)
+{
+	fxparams[index].value = changeValue (value, fxparams[index].value);
+	device.getParameter (index).set (fxparams[index].value, 128);
+};
+
+DeviceMode.prototype.onValueKnobTouch = function (index, isTouched) 
+{
+	if (push.isDeletePressed ())
+		device.getParameter (index).reset ();
+};
+
+DeviceMode.prototype.updateDisplay = function () 
+{
+	var d = push.display;
+	
+	for (var i = 0; i < 8; i++)
+	{
+		var isEmpty = fxparams[i].name.length == 0;
+		d.setCell (0, i, fxparams[i].name, PushDisplay.FORMAT_RAW)
+		 .setCell (1, i, isEmpty ? '' : fxparams[i].valueStr, PushDisplay.FORMAT_RAW);
+		if (isEmpty)
+			d.clearCell (2, i);
+		else				
+			d.setCell (2, i, fxparams[i].value, PushDisplay.FORMAT_VALUE);
+					
+		// Light up fx selection buttons
+		push.setButton (20 + i, i == 7 && selectedDevice.enabled ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
+		push.setButton (102 + i, PUSH_COLOR_BLACK);
+	}
+	
+	if (selectedDevice.name == 'None')
+		d.setBlock(1, 1, '    Please select').setBlock(1, 2, 'a Device...    ');
+	
+	d.done (0).done (1).done (2)
+	 .setCell (3, 0, 'Selected', PushDisplay.FORMAT_RAW).setCell (3, 1, 'Device: ', PushDisplay.FORMAT_RAW)
+	 .setBlock (3, 1, selectedDevice.name)
+	 .clearBlock (3, 2).clearCell (3, 6)
+	 .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
+};
 
 
 //------------------------------------------------------------------------------
@@ -95,7 +179,7 @@ MacroMode.prototype.hasMacros = function ()
 };
 
 //------------------------------------------------------------------------------
-// FrameToggleMode
+// FrameMode
 //------------------------------------------------------------------------------
 
 function FrameToggleCommand (label, command)
@@ -114,16 +198,16 @@ FrameToggleCommand.prototype.execute = function ()
 	this.command.call(this);
 };
 
-function FrameToggleMode ()
+function FrameMode ()
 {
 	this.id = MODE_FRAME;
 	this.bottomItems = [];
 }
-FrameToggleMode.prototype = new BaseMode ();
+FrameMode.prototype = new BaseMode ();
 
-FrameToggleMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO - 4;
+FrameMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO - 4;
 
-FrameToggleMode.prototype.attachTo = function (aPush)
+FrameMode.prototype.attachTo = function (aPush)
 {
 	this.addFirstRowCommand ('Arrange ', function () { application.setPerspective('ARRANGE'); });
 	this.addFirstRowCommand ('  Mix   ', function () { application.setPerspective('MIX'); });
@@ -135,20 +219,20 @@ FrameToggleMode.prototype.attachTo = function (aPush)
 	this.addFirstRowCommand ('  Full  ', function () { application.toggleFullScreen(); });
 };
 
-FrameToggleMode.prototype.onValueKnob = function (index, value)
+FrameMode.prototype.onValueKnob = function (index, value)
 {
 };
 
-FrameToggleMode.prototype.onFirstRow = function (index) 
+FrameMode.prototype.onFirstRow = function (index) 
 {
 	this.bottomItems[index].execute();
 };
 
-FrameToggleMode.prototype.onSecondRow = function (index) 
+FrameMode.prototype.onSecondRow = function (index) 
 {
 };
 
-FrameToggleMode.prototype.updateDisplay = function () 
+FrameMode.prototype.updateDisplay = function () 
 {
 	var d = push.display;
 
@@ -158,12 +242,12 @@ FrameToggleMode.prototype.updateDisplay = function ()
 		d.setCell (3, i, this.bottomItems[i].getLabel());
 	
 	for (var i = 20; i < 28; i++)
-		push.setButton (i, FrameToggleMode.firstRowButtonColor);
+		push.setButton (i, FrameMode.firstRowButtonColor);
 	
 	d.done (0).done (1).done (2).done (3);
 };
 
-FrameToggleMode.prototype.addFirstRowCommand = function (label, command)
+FrameMode.prototype.addFirstRowCommand = function (label, command)
 {
 	this.bottomItems.push(new FrameToggleCommand(label, command));
 };
