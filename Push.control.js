@@ -18,7 +18,8 @@ var MODE_SEND6  = 10;
 var MODE_SCALES = 11;
 var MODE_MACRO  = 12;
 var MODE_FIXED  = 13;
-var MODE_PRESET  = 14;
+var MODE_PRESET = 14;
+var MODE_FRAME  = 15;
 
 // Static  Headers
 var PARAM_NAMES_MASTER = 'Volume   Pan                                                        ';
@@ -142,6 +143,7 @@ var sessionView   = null;
 var sequencerView = null;
 var drumView      = null;
 
+var modeFrameToggle = null;
 var presetMode = null;
 
 host.defineController ("Ableton", "Push", "1.0", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
@@ -173,7 +175,10 @@ function init()
 	push.addView (VIEW_SEQUENCER, sequencerView);
 	push.addView (VIEW_DRUM, drumView);
 	
+	modeFrameToggle = new FrameToggleMode();
 	presetMode = new PresetMode();
+	
+	modeFrameToggle.init();
 	presetMode.init ();
 	
 	// Click
@@ -478,7 +483,8 @@ function updateMode (mode)
 	var isScales = mode == MODE_SCALES;
 	var isFixed  = mode == MODE_FIXED;
 	var isPreset = mode == MODE_PRESET;
-
+	var isFrame  = mode == MODE_FRAME;
+	
 	masterTrack.getVolume ().setIndication (isMaster);
 	masterTrack.getPan ().setIndication (isMaster);
 	
@@ -505,7 +511,7 @@ function updateMode (mode)
 		device.getMacro (i).getAmount ().setIndication (isMacro);
 	}
 			
-	push.setButton (PUSH_BUTTON_MASTER, isMaster ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_TRACK, isTrack ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_VOLUME, isVolume ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_PAN_SEND, mode >= MODE_PAN && mode <= MODE_SEND6 ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
@@ -693,9 +699,14 @@ function updateDisplay ()
 		case MODE_PRESET:
 			presetMode.updateDisplay ();
 			break;
+			
+		case MODE_FRAME:
+			modeFrameToggle.updateDisplay ();
+			break;
 	}
 	
-	if (currentMode == MODE_DEVICE || currentMode == MODE_SCALES || currentMode == MODE_MASTER || currentMode == MODE_FIXED || currentMode == MODE_PRESET)
+	if (currentMode == MODE_DEVICE || currentMode == MODE_SCALES || currentMode == MODE_MASTER || 
+			currentMode == MODE_FIXED || currentMode == MODE_PRESET || currentMode == MODE_FRAME)
 		return;
 
 	// Send, Mute, Automation

@@ -405,6 +405,10 @@ BaseView.prototype.onFirstRow = function (index)
 		case MODE_PRESET:
 			presetMode.onFirstRow (index);
 			break;
+		
+		case MODE_FRAME:
+			modeFrameToggle.onFirstRow (index);
+			break;
 			
 		default:
 			if (this.stopPressed)
@@ -430,6 +434,10 @@ BaseView.prototype.onSecondRow = function (index)
 	{
 		presetMode.onSecondRow (index);
 	}
+	else if (currentMode == MODE_FRAME)
+	{
+		modeFrameToggle.onSecondRow (index);
+	}
 	else if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER)
 	{
 		var t = trackBank.getTrack (index);
@@ -442,8 +450,15 @@ BaseView.prototype.onSecondRow = function (index)
 
 BaseView.prototype.onMaster = function ()
 {
-	setMode (MODE_MASTER);
-	masterTrack.select ();
+	if (!push.isShiftPressed())
+	{
+		setMode (MODE_MASTER);
+		masterTrack.select ();
+	}
+	else
+	{
+		setMode (MODE_FRAME);
+	}
 };
 
 BaseView.prototype.onVolume = function ()

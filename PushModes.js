@@ -6,8 +6,100 @@
 // PresetMode
 //--------------------------------------
 
+function BaseMode ()
+{
+	this.id = null;
+}
+
+BaseMode.prototype.init = function () {};
+BaseMode.prototype.getId = function () { return this.id; };
+BaseMode.prototype.onValueKnob = function (index, value) {};
+BaseMode.prototype.onFirstRow = function (index) {};
+BaseMode.prototype.onSecondRow = function (index) {};
+BaseMode.prototype.updateDisplay = function () {};
+
+//------------------------------------------------------------------------------
+// FrameToggleMode
+//------------------------------------------------------------------------------
+
+function FrameToggleCommand (label, command)
+{
+	this.label = label;
+	this.command = command;
+}
+
+FrameToggleCommand.prototype.getLabel = function ()
+{
+	return this.label;
+};
+
+FrameToggleCommand.prototype.execute = function ()
+{
+	this.command.call(this);
+};
+
+function FrameToggleMode ()
+{
+	this.id = MODE_FRAME;
+	this.bottomItems = [];
+}
+FrameToggleMode.prototype = new BaseMode ();
+
+FrameToggleMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO - 4;
+
+FrameToggleMode.prototype.init = function ()
+{
+	this.addFirstRowCommand ('Arrange ', function () { application.setPerspective('ARRANGE'); });
+	this.addFirstRowCommand ('  Mix   ', function () { application.setPerspective('MIX'); });
+	this.addFirstRowCommand ('  Edit  ', function () { application.setPerspective('EDIT'); });
+	this.addFirstRowCommand ('NoteEdit', function () { application.toggleNoteEditor(); });
+	this.addFirstRowCommand ('Automate', function () { application.toggleAutomationEditor(); });
+	this.addFirstRowCommand (' Device ', function () { application.toggleDevices(); });
+	this.addFirstRowCommand (' Mixer  ', function () { application.toggleMixer(); });
+	this.addFirstRowCommand ('  Full  ', function () { application.toggleFullScreen(); });
+};
+
+FrameToggleMode.prototype.onValueKnob = function (index, value)
+{
+};
+
+FrameToggleMode.prototype.onFirstRow = function (index) 
+{
+	this.bottomItems[index].execute();
+};
+
+FrameToggleMode.prototype.onSecondRow = function (index) 
+{
+};
+
+FrameToggleMode.prototype.updateDisplay = function () 
+{
+	var d = push.display;
+
+	d.clear ().setBlock (0, 0, "Perspectives:").setCell (0, 3, "Panels:");
+	
+	for (var i = 0; i < this.bottomItems.length; i++)
+		d.setCell (3, i, this.bottomItems[i].getLabel());
+	
+	for (var i = 20; i < 28; i++)
+		push.setButton (i, FrameToggleMode.firstRowButtonColor);
+	
+	d.done (0).done (1).done (2).done (3);
+};
+
+FrameToggleMode.prototype.addFirstRowCommand = function (label, command)
+{
+	this.bottomItems.push(new FrameToggleCommand(label, command));
+};
+
+//------------------------------------------------------------------------------
+// PresetMode
+//------------------------------------------------------------------------------
+
 function PresetMode ()
 {
+	this.id = MODE_PRESET;
+	
 	this.presetWidth = 16;
 	this.knobInvalidated = false;
 	
@@ -17,6 +109,7 @@ function PresetMode ()
 	
 	this.currentPreset = null;
 }
+PresetMode.prototype = new BaseMode ();
 
 PresetMode.knobDuration = 150;
 PresetMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO-4;
