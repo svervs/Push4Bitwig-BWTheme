@@ -58,15 +58,15 @@ BaseView.prototype.onRecord = function ()
 		transport.record ();
 };
 
-BaseView.prototype.onStop = function (isPressed)
+BaseView.prototype.onStop = function (buttonState)
 {
 	if (this.push.isShiftPressed ())
 	{
 		trackBank.getClipLauncherScenes ().stop ();
 		return;
 	}
-	this.stopPressed = isPressed;
-	push.setButton (PUSH_BUTTON_STOP, isPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	this.stopPressed = buttonState == BUTTON_STATE_DOWN;
+	push.setButton (PUSH_BUTTON_STOP, this.stopPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 BaseView.prototype.onDuplicate = function ()
@@ -445,16 +445,21 @@ BaseView.prototype.onSecondRow = function (index)
 	} 
 };
 
-BaseView.prototype.onMaster = function ()
+BaseView.prototype.onMaster = function (buttonState)
 {
-	if (!push.isShiftPressed())
+	switch (buttonState)
 	{
-		setMode (MODE_MASTER);
-		masterTrack.select ();
-	}
-	else
-	{
-		setMode (MODE_FRAME);
+		case BUTTON_STATE_UP:
+			if (currentMode == MODE_FRAME)
+				setMode (previousMode);
+			break;
+		case BUTTON_STATE_DOWN:
+			setMode (MODE_MASTER);
+			masterTrack.select ();
+			break;
+		case BUTTON_STATE_LONG:
+			setMode (MODE_FRAME);
+			break;
 	}
 };
 

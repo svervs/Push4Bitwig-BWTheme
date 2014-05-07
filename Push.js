@@ -5,6 +5,10 @@
 load ('PadMatrix.js');
 load ('PushDisplay.js');
 
+var BUTTON_STATE_DOWN = 0;
+var BUTTON_STATE_UP   = 1;
+var BUTTON_STATE_LONG = 2;
+
 var PUSH_BUTTON_TAP				= 3;
 var PUSH_BUTTON_CLICK           = 9;
 var PUSH_BUTTON_MASTER          = 28;
@@ -130,7 +134,11 @@ function Push (output)
 		PUSH_BUTTON_UNDO
 	];
 	
-	// create the static scale matrices from scale intervals
+	this.buttonStates = [];
+	for (var i = 0; i < this.buttons.length; i++)
+		this.buttonStates[this.buttons[i]] = BUTTON_STATE_UP;
+	
+	// Create the static scale matrices from scale intervals
 	Scales.createScales();
 }
 
@@ -251,6 +259,24 @@ Push.prototype.handleGrid = function (note, velocity)
 
 Push.prototype.handleCC = function (cc, value)
 {
+	if (typeof (this.buttonStates[cc]) != 'undefined')
+	{
+		this.buttonStates[cc] = value == 127 ? BUTTON_STATE_DOWN : BUTTON_STATE_UP;
+		if (this.buttonStates[cc] == BUTTON_STATE_DOWN)
+		{
+			host.scheduleTask (function (object, buttonID)
+			{
+				object.checkButtonState (buttonID);
+			}, [this, cc], 400);
+		}
+	}
+	
+	this.handleEvent (cc, value);
+}
+
+
+Push.prototype.handleEvent = function (cc, value)
+{
 	var view = this.getActiveView ();
 	if (view == null)
 		return;
@@ -294,13 +320,12 @@ Push.prototype.handleCC = function (cc, value)
 			
 		// Select Master track
 		case PUSH_BUTTON_MASTER:
-			if (value == 127)
-				view.onMaster ();
+			view.onMaster (this.buttonStates[cc]);
 			break;
 
 		// Stop
 		case PUSH_BUTTON_STOP:
-			view.onStop (value == 127);
+			view.onStop (this.buttonStates[cc]);
 			break;
 
 		// Scene buttons
@@ -599,3 +624,12 @@ Push.prototype.handleTouch = function (knob, value)
 			break;
 	}
 };
+
+Push.prototype.checkButtonState = function (buttonID)
+{
+	if (this.buttonStates[buttonID] != BUTTON_STATE_DOWN)
+		return;
+		
+	this.buttonStates[buttonID] = BUTTON_STATE_LONG;
+	this.handleEvent (buttonID, 127);
+}
