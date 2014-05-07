@@ -3,11 +3,263 @@
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
 //--------------------------------------
-// PresetMode
+// BaseMode
 //--------------------------------------
+
+function BaseMode ()
+{
+	this.id = null;
+}
+
+BaseMode.prototype.attachTo = function (aPush) {};
+BaseMode.prototype.getId = function () { return this.id; };
+BaseMode.prototype.onValueKnob = function (index, value) {};
+BaseView.prototype.onValueKnobTouch = function (index, isTouched) {};
+BaseMode.prototype.onFirstRow = function (index) {};
+BaseMode.prototype.onSecondRow = function (index) {};
+BaseMode.prototype.updateDisplay = function () {};
+
+//------------------------------------------------------------------------------
+// DeviceMode
+//------------------------------------------------------------------------------
+
+function DeviceMode ()
+{
+	this.id = MODE_DEVICE;
+}
+DeviceMode.prototype = new BaseMode ();
+
+DeviceMode.prototype.attachTo = function (aPush) 
+{
+	device.addIsEnabledObserver (function (isEnabled)
+	{
+		selectedDevice.enabled = isEnabled;
+	});
+	device.addNameObserver (34, 'None', function (name)
+	{
+		selectedDevice.name = name;
+	});
+	
+	for (var i = 0; i < 8; i++)
+	{
+		var p = device.getParameter (i);
+		
+		// Parameter name
+		p.addNameObserver (8, '', doIndex (i, function (index, name)
+		{
+			fxparams[index].name = name;
+		}));
+		p.addValueObserver (128, doIndex (i, function (index, value)
+		{
+			fxparams[index].value = value;
+		}));
+		// Parameter value text
+		p.addValueDisplayObserver (8, '',  doIndex (i, function (index, value)
+		{
+			fxparams[index].valueStr = value;
+		}));
+	}
+};
+
+DeviceMode.prototype.onValueKnob = function (index, value)
+{
+	fxparams[index].value = changeValue (value, fxparams[index].value);
+	device.getParameter (index).set (fxparams[index].value, 128);
+};
+
+DeviceMode.prototype.onValueKnobTouch = function (index, isTouched) 
+{
+	if (push.isDeletePressed ())
+		device.getParameter (index).reset ();
+};
+
+DeviceMode.prototype.updateDisplay = function () 
+{
+	var d = push.display;
+	
+	for (var i = 0; i < 8; i++)
+	{
+		var isEmpty = fxparams[i].name.length == 0;
+		d.setCell (0, i, fxparams[i].name, PushDisplay.FORMAT_RAW)
+		 .setCell (1, i, isEmpty ? '' : fxparams[i].valueStr, PushDisplay.FORMAT_RAW);
+		if (isEmpty)
+			d.clearCell (2, i);
+		else				
+			d.setCell (2, i, fxparams[i].value, PushDisplay.FORMAT_VALUE);
+					
+		// Light up fx selection buttons
+		push.setButton (20 + i, i == 7 && selectedDevice.enabled ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
+		push.setButton (102 + i, PUSH_COLOR_BLACK);
+	}
+	
+	if (selectedDevice.name == 'None')
+		d.setBlock(1, 1, '    Please select').setBlock(1, 2, 'a Device...    ');
+	
+	d.done (0).done (1).done (2)
+	 .setCell (3, 0, 'Selected', PushDisplay.FORMAT_RAW).setCell (3, 1, 'Device: ', PushDisplay.FORMAT_RAW)
+	 .setBlock (3, 1, selectedDevice.name)
+	 .clearBlock (3, 2).clearCell (3, 6)
+	 .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
+};
+
+
+//------------------------------------------------------------------------------
+// MacroMode
+//------------------------------------------------------------------------------
+
+function MacroMode ()
+{
+	this.id = MODE_FRAME;
+	this.bottomItems = [];
+}
+MacroMode.prototype = new BaseMode ();
+
+MacroMode.prototype.attachTo = function (aPush) 
+{
+	for (var i = 0; i < 8; i++)
+	{
+		var m = device.getMacro (i);
+		m.addLabelObserver (8, '', doIndex (i, function (index, name)
+ 		{
+			macros[index].name = name;
+		}));
+		m.getAmount().addValueObserver (128, doIndex (i, function (index, value)
+		{
+			macros[index].value = value;
+		}));
+		// Macro value text
+		m.getAmount().addValueDisplayObserver (8, '',  doIndex (i, function (index, value)
+		{
+			macros[index].valueStr = value;
+		}));
+	}
+};
+
+MacroMode.prototype.onValueKnob = function (index, value)
+{
+	macros[index].value = changeValue (value, macros[index].value);
+	device.getMacro (index).getAmount ().set (macros[index].value, 128);
+};
+
+MacroMode.prototype.updateDisplay = function () 
+{
+	var d = push.display;
+	
+	if (this.hasMacros())
+	{
+		for (var i = 0; i < 8; i++)
+		{
+			if (macros[i].name.length == 0)
+				d.clearCell (0, i).clearCell (1, i).clearCell (2, i);
+			else				
+			{
+				d.setCell (0, i, macros[i].name, PushDisplay.FORMAT_RAW)
+				 .setCell (1, i, macros[i].valueStr, PushDisplay.FORMAT_RAW)
+				 .setCell (2, i, macros[i].value, PushDisplay.FORMAT_VALUE);
+			}
+		}
+	}
+	else
+	{
+		d.clearRow (0).clearRow (1).clearRow (2)
+		 .setCell(1, 3, 'No Macro').setCell(1, 4, 'Assigned');
+	}
+
+	d.done (0).done (1).done (2);
+};
+
+MacroMode.prototype.hasMacros = function () 
+{
+	for (var i = 0; i < 8; i++)
+	{
+		if (macros[i].name.length != 0)
+			return true;
+	}
+	return false;
+};
+
+//------------------------------------------------------------------------------
+// FrameMode
+//------------------------------------------------------------------------------
+
+function FrameToggleCommand (label, command)
+{
+	this.label = label;
+	this.command = command;
+}
+
+FrameToggleCommand.prototype.getLabel = function ()
+{
+	return this.label;
+};
+
+FrameToggleCommand.prototype.execute = function ()
+{
+	this.command.call(this);
+};
+
+function FrameMode ()
+{
+	this.id = MODE_FRAME;
+	this.bottomItems = [];
+}
+FrameMode.prototype = new BaseMode ();
+
+FrameMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO - 4;
+
+FrameMode.prototype.attachTo = function (aPush)
+{
+	this.addFirstRowCommand ('Arrange ', function () { application.setPerspective('ARRANGE'); });
+	this.addFirstRowCommand ('  Mix   ', function () { application.setPerspective('MIX'); });
+	this.addFirstRowCommand ('  Edit  ', function () { application.setPerspective('EDIT'); });
+	this.addFirstRowCommand ('NoteEdit', function () { application.toggleNoteEditor(); });
+	this.addFirstRowCommand ('Automate', function () { application.toggleAutomationEditor(); });
+	this.addFirstRowCommand (' Device ', function () { application.toggleDevices(); });
+	this.addFirstRowCommand (' Mixer  ', function () { application.toggleMixer(); });
+	this.addFirstRowCommand ('  Full  ', function () { application.toggleFullScreen(); });
+};
+
+FrameMode.prototype.onValueKnob = function (index, value)
+{
+};
+
+FrameMode.prototype.onFirstRow = function (index) 
+{
+	this.bottomItems[index].execute();
+};
+
+FrameMode.prototype.onSecondRow = function (index) 
+{
+};
+
+FrameMode.prototype.updateDisplay = function () 
+{
+	var d = push.display;
+
+	d.clear ().setBlock (0, 0, "Perspectives:").setCell (0, 3, "Panels:");
+	
+	for (var i = 0; i < this.bottomItems.length; i++)
+		d.setCell (3, i, this.bottomItems[i].getLabel());
+	
+	for (var i = 20; i < 28; i++)
+		push.setButton (i, FrameMode.firstRowButtonColor);
+	
+	d.done (0).done (1).done (2).done (3);
+};
+
+FrameMode.prototype.addFirstRowCommand = function (label, command)
+{
+	this.bottomItems.push(new FrameToggleCommand(label, command));
+};
+
+//------------------------------------------------------------------------------
+// PresetMode
+//------------------------------------------------------------------------------
 
 function PresetMode ()
 {
+	this.id = MODE_PRESET;
+	
 	this.presetWidth = 16;
 	this.knobInvalidated = false;
 	
@@ -17,12 +269,13 @@ function PresetMode ()
 	
 	this.currentPreset = null;
 }
+PresetMode.prototype = new BaseMode ();
 
 PresetMode.knobDuration = 150;
 PresetMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO-4;
 PresetMode.secondRowButtonColor = PUSH_COLOR_GREEN_LO;
 
-PresetMode.prototype.init = function ()
+PresetMode.prototype.attachTo = function (aPush)
 {
 	var self = this;
 	

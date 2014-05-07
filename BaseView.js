@@ -253,13 +253,11 @@ BaseView.prototype.onValueKnob = function (index, value)
 			break;
 		
 		case MODE_DEVICE:
-			fxparams[index].value = changeValue (value, fxparams[index].value);
-			device.getParameter (index).set (fxparams[index].value, 128);
+			modeDevice.onValueKnob (index, value);
 			break;
 		
 		case MODE_MACRO:
-			macros[index].value = changeValue (value, macros[index].value);
-			device.getMacro (index).getAmount ().set (macros[index].value, 128);
+			modeMacro.onValueKnob (index, value);
 			break;
 			
 		case MODE_SCALES:
@@ -275,7 +273,7 @@ BaseView.prototype.onValueKnob = function (index, value)
 			break;
 		
 		case MODE_PRESET:
-			presetMode.onValueKnob(index, value);
+			modePreset.onValueKnob(index, value);
 			break;
 	}
 };
@@ -359,8 +357,7 @@ BaseView.prototype.onValueKnobTouch = function (index, isTouched)
 	switch (currentMode)
 	{
 		case MODE_DEVICE:
-			if (push.isDeletePressed())
-				device.getParameter (index).reset ();
+			modeDevice.onValueKnobTouch (index, isTouched);
 			break;
 	}
 };
@@ -403,7 +400,11 @@ BaseView.prototype.onFirstRow = function (index)
 			break;
 		
 		case MODE_PRESET:
-			presetMode.onFirstRow (index);
+			modePreset.onFirstRow (index);
+			break;
+		
+		case MODE_FRAME:
+			modeFrame.onFirstRow (index);
 			break;
 			
 		default:
@@ -428,7 +429,11 @@ BaseView.prototype.onSecondRow = function (index)
 	}
 	else if (currentMode == MODE_PRESET)
 	{
-		presetMode.onSecondRow (index);
+		modePreset.onSecondRow (index);
+	}
+	else if (currentMode == MODE_FRAME)
+	{
+		modeFrame.onSecondRow (index);
 	}
 	else if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER)
 	{
@@ -442,8 +447,15 @@ BaseView.prototype.onSecondRow = function (index)
 
 BaseView.prototype.onMaster = function ()
 {
-	setMode (MODE_MASTER);
-	masterTrack.select ();
+	if (!push.isShiftPressed())
+	{
+		setMode (MODE_MASTER);
+		masterTrack.select ();
+	}
+	else
+	{
+		setMode (MODE_FRAME);
+	}
 };
 
 BaseView.prototype.onVolume = function ()

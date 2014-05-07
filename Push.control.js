@@ -18,7 +18,8 @@ var MODE_SEND6  = 10;
 var MODE_SCALES = 11;
 var MODE_MACRO  = 12;
 var MODE_FIXED  = 13;
-var MODE_PRESET  = 14;
+var MODE_PRESET = 14;
+var MODE_FRAME  = 15;
 
 // Static  Headers
 var PARAM_NAMES_MASTER = 'Volume   Pan                                                        ';
@@ -142,7 +143,10 @@ var sessionView   = null;
 var sequencerView = null;
 var drumView      = null;
 
-var presetMode = null;
+var modeDevice = null;
+var modeMacro = null;
+var modeFrame = null;
+var modePreset = null;
 
 host.defineController ("Ableton", "Push", "1.0", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
 host.defineMidiPorts (1, 1);
@@ -164,6 +168,7 @@ function init()
 
 	output = new MidiOutput ();
 	push = new Push (output);
+	
 	playView = new PlayView ();
 	sessionView = new SessionView ();
 	sequencerView = new SequencerView ();
@@ -173,8 +178,14 @@ function init()
 	push.addView (VIEW_SEQUENCER, sequencerView);
 	push.addView (VIEW_DRUM, drumView);
 	
-	presetMode = new PresetMode();
-	presetMode.init ();
+	modeDevice = new DeviceMode ();
+	modeMacro = new MacroMode ();
+	modeFrame = new FrameMode ();
+	modePreset = new PresetMode ();
+	push.addMode (MODE_DEVICE, modeDevice);
+	push.addMode (MODE_MACRO, modeMacro);
+	push.addMode (MODE_FRAME, modeFrame);
+	push.addMode (MODE_PRESET, modePreset);
 	
 	// Click
 	transport.addClickObserver (function (isOn)
@@ -362,51 +373,6 @@ function init()
 		}
 	}
 	
-	// Device
-	device.addIsEnabledObserver (function (isEnabled)
-	{
-		selectedDevice.enabled = isEnabled;
-	});
-	device.addNameObserver (34, 'None', function (name)
-	{
-		selectedDevice.name = name;
-	});
-	
-	for (var i = 0; i < 8; i++)
-	{
-		var p = device.getParameter (i);
-		
-		// Parameter name
-		p.addNameObserver (8, '', doIndex (i, function (index, name)
-		{
-			fxparams[index].name = name;
-		}));
-		p.addValueObserver (128, doIndex (i, function (index, value)
-		{
-			fxparams[index].value = value;
-		}));
-		// Parameter value text
-		p.addValueDisplayObserver (8, '',  doIndex (i, function (index, value)
-		{
-			fxparams[index].valueStr = value;
-		}));
-		
-		var m = device.getMacro (i);
-		m.addLabelObserver (8, '', doIndex (i, function (index, name)
- 		{
-			macros[index].name = name;
-		}));
-		m.getAmount().addValueObserver (128, doIndex (i, function (index, value)
-		{
-			macros[index].value = value;
-		}));
-		// Macro value text
-		m.getAmount().addValueDisplayObserver (8, '',  doIndex (i, function (index, value)
-		{
-			macros[index].valueStr = value;
-		}));
-	}
-	
 	push.setActiveView (VIEW_PLAY);
 	
 	println ("Initialized.");
@@ -478,7 +444,8 @@ function updateMode (mode)
 	var isScales = mode == MODE_SCALES;
 	var isFixed  = mode == MODE_FIXED;
 	var isPreset = mode == MODE_PRESET;
-
+	var isFrame  = mode == MODE_FRAME;
+	
 	masterTrack.getVolume ().setIndication (isMaster);
 	masterTrack.getPan ().setIndication (isMaster);
 	
@@ -505,7 +472,7 @@ function updateMode (mode)
 		device.getMacro (i).getAmount ().setIndication (isMacro);
 	}
 			
-	push.setButton (PUSH_BUTTON_MASTER, isMaster ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_TRACK, isTrack ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_VOLUME, isVolume ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_PAN_SEND, mode >= MODE_PAN && mode <= MODE_SEND6 ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
@@ -607,40 +574,11 @@ function updateDisplay ()
 			break;
 			
 		case MODE_DEVICE:
-			for (var i = 0; i < 8; i++)
-			{
-				var isEmpty = fxparams[i].name.length == 0;
-				d.setCell (0, i, fxparams[i].name, PushDisplay.FORMAT_RAW)
-				 .setCell (1, i, isEmpty ? '' : fxparams[i].valueStr, PushDisplay.FORMAT_RAW);
-				if (isEmpty)
-					d.clearCell (2, i);
-				else				
-					d.setCell (2, i, fxparams[i].value, PushDisplay.FORMAT_VALUE);
-							
-				// Light up fx selection buttons
-				push.setButton (20 + i, i == 7 && selectedDevice.enabled ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
-				push.setButton (102 + i, PUSH_COLOR_BLACK);
-			}
-			d.done (0).done (1).done (2)
-			 .setCell (3, 0, 'Selected', PushDisplay.FORMAT_RAW).setCell (3, 1, 'Device: ', PushDisplay.FORMAT_RAW)
-			 .setBlock (3, 1, selectedDevice.name)
-			 .clearBlock (3, 2).clearCell (3, 6)
-			 .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
+			modeDevice.updateDisplay ();
 			break;
 				
 		case MODE_MACRO:
-			for (var i = 0; i < 8; i++)
-			{
-				if (macros[i].name.length == 0)
-					d.clearCell (0, i).clearCell (1, i).clearCell (2, i);
-				else				
-				{
-					d.setCell (0, i, macros[i].name, PushDisplay.FORMAT_RAW)
-					 .setCell (1, i, macros[i].valueStr, PushDisplay.FORMAT_RAW)
-					 .setCell (2, i, macros[i].value, PushDisplay.FORMAT_VALUE);
-				}
-			}
-			d.done (0).done (1).done (2);
+			modeMacro.updateDisplay ();
 			break;
 			
 		case MODE_SCALES:
@@ -691,11 +629,16 @@ function updateDisplay ()
 			break;
 			
 		case MODE_PRESET:
-			presetMode.updateDisplay ();
+			modePreset.updateDisplay ();
+			break;
+			
+		case MODE_FRAME:
+			modeFrame.updateDisplay ();
 			break;
 	}
 	
-	if (currentMode == MODE_DEVICE || currentMode == MODE_SCALES || currentMode == MODE_MASTER || currentMode == MODE_FIXED || currentMode == MODE_PRESET)
+	if (currentMode == MODE_DEVICE || currentMode == MODE_SCALES || currentMode == MODE_MASTER || 
+			currentMode == MODE_FIXED || currentMode == MODE_PRESET || currentMode == MODE_FRAME)
 		return;
 
 	// Send, Mute, Automation
