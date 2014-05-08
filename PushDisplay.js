@@ -1,3 +1,8 @@
+// Written by Jürgen Moßgraber - mossgrabers.de
+// Contributions by Michael Schmalle - teotigraphix.com
+// (c) 2014
+// Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
+
 // Push character codes for value bars
 var BARS_NON = String.fromCharCode (6);
 var BARS_ONE = String.fromCharCode (3);

@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// Contributions by Michael Schmalle
+// Contributions by Michael Schmalle - teotigraphix.com
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -179,107 +179,19 @@ BaseView.prototype.onTapTempo = function ()
 	}
 };
 
-var SKIPPER = false;
 BaseView.prototype.onValueKnob = function (index, value)
 {
-	switch (currentMode)
-	{
-		case MODE_MASTER:
-			if (index == 0)
-			{
-				// Volume
-				master.volume = changeValue (value, master.volume);
-				masterTrack.getVolume ().set (master.volume, 128);
-			}
-			else if (index == 1)
-			{
-				// Pan
-				master.pan = changeValue (value, master.pan);
-				masterTrack.getPan ().set (master.pan, 128);
-			}
-			break;
-	
-		case MODE_TRACK:
-			var selectedTrack = getSelectedTrack ();
-			if (selectedTrack == null)
-				return;
-				
-			var t = trackBank.getTrack (selectedTrack.index);
-			if (index == 0)
-			{
-				// Volume
-				selectedTrack.volume = changeValue (value, selectedTrack.volume);
-				t.getVolume ().set (selectedTrack.volume, 128);
-			}
-			else if (index == 1)
-			{
-				// Pan
-				selectedTrack.pan = changeValue (value, selectedTrack.pan);
-				t.getPan ().set (selectedTrack.pan, 128);
-			}
-			else
-			{
-				// Send 1-6 Volume
-				var sel = index - 2;
-				var send = selectedTrack.sends[sel];
-				send.volume = changeValue (value, send.volume);
-				t.getSend (send.index).set (send.volume, 128);
-			}
-			break;
-		
-		case MODE_VOLUME:
-			var t = tracks[index];
-			t.volume = changeValue (value, t.volume);
-			trackBank.getTrack (t.index).getVolume ().set (t.volume, 128);
-			break;
-			
-		case MODE_PAN:
-			var t = tracks[index];
-			t.pan = changeValue (value, t.pan);
-			trackBank.getTrack (t.index).getPan ().set (t.pan, 128);
-			break;
-			
-		case MODE_SEND1:
-		case MODE_SEND2:
-		case MODE_SEND3:
-		case MODE_SEND4:
-		case MODE_SEND5:
-		case MODE_SEND6:
-			var sendNo = currentMode - MODE_SEND1;
-			var t = tracks[index];
-			var send = t.sends[sendNo];
-			send.volume = changeValue (value, send.volume);
-			trackBank.getTrack (t.index).getSend (sendNo).set (send.volume, 128);
-			break;
-		
-		case MODE_DEVICE:
-			modeDevice.onValueKnob (index, value);
-			break;
-		
-		case MODE_MACRO:
-			modeMacro.onValueKnob (index, value);
-			break;
-			
-		case MODE_SCALES:
-			if (index == 0)
-			{
-				// Slow down scrolling
-				SKIPPER = !SKIPPER;
-				if (SKIPPER)
-					return;
-				currentScale = value <= 61 ? Math.min (currentScale + 1, SCALES.length - 1) : Math.max (currentScale - 1, 0);
-				this.updateNoteMapping ();
-			}
-			break;
-		
-		case MODE_PRESET:
-			modePreset.onValueKnob(index, value);
-			break;
-	}
+	var m = push.getActiveMode ();
+	if (m != null)
+		m.onValueKnob (index, value);
 };
 
 BaseView.prototype.onValueKnobTouch = function (index, isTouched)
 {
+	var m = push.getActiveMode ();
+	if (m != null)
+		m.onValueKnobTouch (index, isTouched);
+	
 	// See https://github.com/git-moss/Push4Bitwig/issues/32
 	// We keep the code if an additional focus becomes available
 	/*
@@ -354,12 +266,6 @@ BaseView.prototype.onValueKnobTouch = function (index, isTouched)
 			break;
 	}
 	*/
-	switch (currentMode)
-	{
-		case MODE_DEVICE:
-			modeDevice.onValueKnobTouch (index, isTouched);
-			break;
-	}
 };
 
 // Master Volume
@@ -376,66 +282,31 @@ BaseView.prototype.onValueKnob9Touch = function (isTouched)
 
 BaseView.prototype.onFirstRow = function (index)
 {
-	switch (currentMode)
-	{
-		case MODE_DEVICE:
-			if (index == 7)
-				device.toggleEnabledState ();
-			break;
+	var m = push.getActiveMode ();
+	if (m != null)
+		m.onFirstRow (index);
 	
-		case MODE_SCALES:
-			if (index == 0)
-				currentScale = Math.max (currentScale - 1, 0);
-			else if (index > 0 && index < 7)
-				currentScaleOffset = index - 1;
-			this.updateNoteMapping ();
-			break;
-
-		case MODE_FIXED:
-			currentNewClipLength = index;
-			break;
-			
-		case MODE_MASTER:
-			// Not used
-			break;
-		
-		case MODE_PRESET:
-			modePreset.onFirstRow (index);
-			break;
-		
-		case MODE_FRAME:
-			modeFrame.onFirstRow (index);
-			break;
-			
-		default:
-			if (this.stopPressed)
-				trackBank.getTrack (index).stop ();
-			else
-				trackBank.getTrack (index).select ();
-			break;
+	// TODO (mschmalle) This only seems right if we have a contract with
+	// Push that 'Not In Full Display' means we will always have track toggles
+	// for the first row, is the correct?
+	if (!push.isFullDisplayMode(currentMode)) 
+	{
+		if (this.stopPressed)
+			trackBank.getTrack (index).stop ();
+		else
+			trackBank.getTrack (index).select ();
 	}
 };
 
 // Rec arm / enable monitor buttons
 BaseView.prototype.onSecondRow = function (index)
 {
-	if (currentMode == MODE_SCALES)
-	{
-		if (index == 0)
-			currentScale = Math.min (currentScale + 1, SCALES.length - 1);
-		else if (index != 7)
-			currentScaleOffset = index + 5;
-		this.updateNoteMapping ();
-	}
-	else if (currentMode == MODE_PRESET)
-	{
-		modePreset.onSecondRow (index);
-	}
-	else if (currentMode == MODE_FRAME)
-	{
-		modeFrame.onSecondRow (index);
-	}
-	else if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER)
+	var m = push.getActiveMode ();
+	if (m != null)
+		m.onSecondRow (index);
+	
+	// TODO (mschmalle) Can we do this better now that we have more abstraction with modes?
+	if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER)
 	{
 		var t = trackBank.getTrack (index);
 		if (this.push.isShiftPressed ())

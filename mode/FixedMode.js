@@ -1,0 +1,37 @@
+// Written by Jürgen Moßgraber - mossgrabers.de
+// Contributions by Michael Schmalle - teotigraphix.com
+// (c) 2014
+// Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
+
+function FixedMode ()
+{
+	this.id = MODE_FIXED;
+}
+FixedMode.prototype = new BaseMode ();
+
+FixedMode.prototype.attachTo = function (aPush) 
+{
+};
+
+FixedMode.prototype.onFirstRow = function (index)
+{
+	currentNewClipLength = index;
+};
+
+FixedMode.prototype.updateDisplay = function ()
+{
+	var d = push.display;
+	
+	d.clearRow (0).done (0).clearRow (1).done (1)
+	 .setBlock (2, 0, 'New Clip Length:').clearBlock (2, 1).clearBlock (2, 2).clearBlock (2, 3)
+	 .done (2);
+	for (var i = 0; i < 8; i++)
+		d.setCell (3, i, (currentNewClipLength == i ? RIGHT_ARROW : ' ') + CLIP_LENGTHS[i]);
+	d.done (3);
+	
+	for (var i = 0; i < 8; i++)
+	{
+		push.setButton (20 + i, PUSH_COLOR_GREEN_LO-4);
+		push.setButton (102 + i, PUSH_COLOR_BLACK);
+	}	
+};

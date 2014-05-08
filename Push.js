@@ -1,4 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
+// Contributions by Michael Schmalle - teotigraphix.com
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -84,6 +85,7 @@ function Push (output)
 
 	this.activeView = -1;
 	this.views = [];
+	this.activeModeId = -1;
 	this.modes = [];
 	
 	this.shiftPressed = false;
@@ -198,9 +200,41 @@ Push.prototype.addView = function (viewId, view)
 
 Push.prototype.addMode = function (modeId, mode)
 {
-	// TODO at the moment, just using for attachTo() and book keeping
 	mode.attachTo (this);
 	this.modes[modeId] = mode;
+};
+
+Push.prototype.getActiveMode = function ()
+{
+	if (this.activeModeId < 0)
+		return null;
+	var mode = this.modes[this.activeModeId];
+	return mode ? mode : null;
+};
+
+Push.prototype.setActiveMode = function (modeId)
+{
+	this.activeModeId = modeId;
+};
+
+Push.prototype.isActiveMode = function (modeId)
+{
+	return this.activeModeId == modeId;
+};
+
+Push.prototype.isFullDisplayMode = function (modeId)
+{
+	switch (modeId)
+	{
+		case MODE_MASTER:
+		case MODE_FRAME:
+		case MODE_DEVICE:
+		case MODE_PRESET:
+		case MODE_SCALES:
+		case MODE_FIXED:
+			return true;
+	}
+	return false;
 };
 
 Push.prototype.isSelectPressed = function ()
@@ -272,7 +306,7 @@ Push.prototype.handleCC = function (cc, value)
 	}
 	
 	this.handleEvent (cc, value);
-}
+};
 
 
 Push.prototype.handleEvent = function (cc, value)
@@ -632,4 +666,4 @@ Push.prototype.checkButtonState = function (buttonID)
 		
 	this.buttonStates[buttonID] = BUTTON_STATE_LONG;
 	this.handleEvent (buttonID, 127);
-}
+};
