@@ -161,7 +161,7 @@ Push.prototype.init = function ()
 	this.addMode (MODE_PAN, new PanMode ());
 	var modeSend = new SendMode ();
 	this.addMode (MODE_SEND1, modeSend);
-	push.addMode (MODE_SEND2, modeSend);
+	this.addMode (MODE_SEND2, modeSend);
 	this.addMode (MODE_SEND3, modeSend);
 	this.addMode (MODE_SEND4, modeSend);
 	this.addMode (MODE_SEND5, modeSend);
