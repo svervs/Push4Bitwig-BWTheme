@@ -132,6 +132,9 @@ function init()
 	output = new MidiOutput ();
 	push = new Push (output);
 	
+	// TODO (mschmalle) This needs to be put some where that makes sense and could 
+	// possibly in the future configure different transport actions, since its not a mode
+	// it's still here (IE Shift + Record, Record, etc.) so Like PushTransport class?
 	// Click
 	transport.addClickObserver (function (isOn)
 	{
@@ -153,16 +156,7 @@ function init()
 		tempo = value;
 		quarterNoteInMillis = calcQuarterNoteInMillis (tempo);
 	});
-	
- 	trackBank.addCanScrollTracksDownObserver (function (canScroll)
-	{
-		canScrollTrackDown = canScroll;
-	});
-	trackBank.addCanScrollTracksUpObserver (function (canScroll)
-	{
-		canScrollTrackUp = canScroll;
-	});
-	
+
 	push.init ();
 	
 	push.setActiveView (VIEW_PLAY);
