@@ -8,9 +8,10 @@ function BaseMode ()
 }
 
 BaseMode.prototype.attachTo = function (aPush) {};
+BaseMode.prototype.onActivate = function () {};
 BaseMode.prototype.getId = function () { return this.id; };
 BaseMode.prototype.onValueKnob = function (index, value) {};
-BaseView.prototype.onValueKnobTouch = function (index, isTouched) {};
+BaseMode.prototype.onValueKnobTouch = function (index, isTouched) {};
 BaseMode.prototype.onFirstRow = function (index) {};
 BaseMode.prototype.onSecondRow = function (index) {};
 BaseMode.prototype.updateDisplay = function () {};

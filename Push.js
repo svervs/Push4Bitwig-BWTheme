@@ -83,7 +83,7 @@ function Push (output)
 	this.pads = new PadMatrix (output);
 	this.display = new PushDisplay (output);
 
-	this.activeView = -1;
+	this.activeViewId = -1;
 	this.views = [];
 	this.activeModeId = -1;
 	this.modes = [];
@@ -139,10 +139,42 @@ function Push (output)
 	this.buttonStates = [];
 	for (var i = 0; i < this.buttons.length; i++)
 		this.buttonStates[this.buttons[i]] = BUTTON_STATE_UP;
-	
+}
+
+Push.prototype.init = function ()
+{
 	// Create the static scale matrices from scale intervals
 	Scales.createScales();
-}
+	
+	// Note: with the current abstractions, there is no need for any
+	// global variables dealing with View and Mode, all state can be kept
+	// in the Push instance for encapsulation
+	
+	// Create Push View impls
+	this.addView (VIEW_PLAY, new PlayView ());
+	this.addView (VIEW_SESSION, new SessionView ());
+	this.addView (VIEW_SEQUENCER, new SequencerView ());
+	this.addView (VIEW_DRUM, new DrumView ());
+	
+	// Create Push Mode impls
+	this.addMode (MODE_VOLUME, new VolumeMode ());
+	this.addMode (MODE_PAN, new PanMode ());
+	var modeSend = new SendMode ();
+	this.addMode (MODE_SEND1, modeSend);
+	push.addMode (MODE_SEND2, modeSend);
+	this.addMode (MODE_SEND3, modeSend);
+	this.addMode (MODE_SEND4, modeSend);
+	this.addMode (MODE_SEND5, modeSend);
+	this.addMode (MODE_SEND6, modeSend);
+	this.addMode (MODE_MASTER, new MasterMode ());
+	this.addMode (MODE_TRACK, new TrackMode ());
+	this.addMode (MODE_DEVICE, new DeviceMode ());
+	this.addMode (MODE_MACRO, new MacroMode ());
+	this.addMode (MODE_FRAME, new FrameMode ());
+	this.addMode (MODE_PRESET, new PresetMode ());
+	this.addMode (MODE_SCALES, new ScalesMode ());
+	this.addMode (MODE_FIXED, new FixedMode ());
+};
 
 Push.prototype.turnOff = function ()
 {
@@ -164,7 +196,7 @@ Push.prototype.turnOff = function ()
 
 Push.prototype.setActiveView = function (viewId)
 {
-	this.activeView = viewId;
+	this.activeViewId = viewId;
 	
 	var view = this.getActiveView ();
 	if (view == null)
@@ -181,15 +213,15 @@ Push.prototype.setActiveView = function (viewId)
 
 Push.prototype.getActiveView = function ()
 {
-	if (this.activeView < 0)
+	if (this.activeViewId < 0)
 		return null;
-	var view = this.views[this.activeView];
+	var view = this.views[this.activeViewId];
 	return view ? view : null;
 };
 
 Push.prototype.isActiveView = function (viewId)
 {
-	return this.activeView == viewId;
+	return this.activeViewId == viewId;
 };
 
 Push.prototype.addView = function (viewId, view)
@@ -215,6 +247,12 @@ Push.prototype.getActiveMode = function ()
 Push.prototype.setActiveMode = function (modeId)
 {
 	this.activeModeId = modeId;
+	
+	var mode = this.getActiveMode ();
+	if (mode == null)
+		return;
+	
+	mode.onActivate ();
 };
 
 Push.prototype.isActiveMode = function (modeId)

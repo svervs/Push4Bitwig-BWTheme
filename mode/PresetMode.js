@@ -14,6 +14,16 @@ function PresetMode ()
 	//this.presetProvider = new PresetProvider(PresetProvider.Kind.PRESET);
 	
 	this.currentPreset = null;
+	
+	this.firstRowButtons = [];
+	this.firstRowButtons[22] = {};
+	this.firstRowButtons[24] = {};
+	this.firstRowButtons[26] = {};
+	
+	this.secondRowButtons = [];
+	this.secondRowButtons[104] = {};
+	this.secondRowButtons[106] = {};
+	this.secondRowButtons[108] = {};
 }
 PresetMode.prototype = new BaseMode ();
 
@@ -68,6 +78,10 @@ PresetMode.prototype.attachTo = function (aPush)
 	});
 };
 
+PresetMode.prototype.onActivate = function ()
+{
+};
+
 PresetMode.prototype.onValueKnob = function (index, value)
 {
 	if (this.knobInvalidated)
@@ -88,27 +102,34 @@ PresetMode.prototype.onValueKnob = function (index, value)
 
 PresetMode.prototype.onFirstRow = function (index)
 {
-	if (index == 2 || index == 3)
+	if (index == 2)
 		device.switchToPreviousPresetCategory();
-	else if (index == 4 || index == 5)
+	else if (index == 4)
 		device.switchToPreviousPresetCreator();
-	else if (index == 6 || index == 7)
+	else if (index == 6)
 		device.switchToPreviousPreset();
 };
 
 PresetMode.prototype.onSecondRow = function (index)
 {
-	if (index == 2 || index == 3)
+	if (index == 2)
 		device.switchToNextPresetCategory();
-	else if (index == 4 || index == 5)
+	else if (index == 4)
 		device.switchToNextPresetCreator();
-	else if (index == 6 || index == 7)
+	else if (index == 6)
 		device.switchToNextPreset();
 };
 
 PresetMode.prototype.updateDisplay = function ()
 {
 	var d = push.display;
+	
+	if (selectedDevice.name == 'None')
+	{
+		d.clear()
+		 .setBlock(1, 1, '    Please select').setBlock(1, 2, 'a Device...    ');
+		return;
+	}		
 	
 	d.clearColumn (0).setBlock( 0, 0, "Select Preset:").setBlock (3, 0,"Device: " + selectedDevice.name);
 	
@@ -134,11 +155,11 @@ PresetMode.prototype.updateDisplay = function ()
 
 	d.clearColumn(3).setBlock (0, 3, RIGHT_ARROW + this.currentPreset).done (0).done (1).done (2).done (3);
 	
-	for (var i = 22; i < 28; i++)
-		push.setButton (i, PresetMode.firstRowButtonColor);
-
+	for (var i = 20; i < 28; i++)
+		push.setButton (i, this.firstRowButtons[i] != null ? PresetMode.firstRowButtonColor : PUSH_COLOR_BLACK);
+	
 	for (var i = 104; i < 110; i++)
-		push.setButton (i, PresetMode.secondRowButtonColor);
+		push.setButton (i, this.secondRowButtons[i] != null ? PresetMode.secondRowButtonColor : PUSH_COLOR_BLACK);
 };
 
 function PresetProvider (kind)

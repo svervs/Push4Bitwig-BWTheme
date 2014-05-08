@@ -54,23 +54,13 @@ var INC_FRACTION_TIME      = 1.0;	    // 1 beat
 var INC_FRACTION_TIME_SLOW = 1.0 / 20;	// 1/20th of a beat
 var TEMPO_RESOLUTION       = 647;
 
-var VIEW_PLAY      = 0;
-var VIEW_SESSION   = 1;
-var VIEW_SEQUENCER = 2;
-var VIEW_DRUM      = 3;
-
 loadAPI(1);
 load("Utilities.js");
 load("MidiOutput.js");
-load("View.js");
-load("BaseView.js");
 load("Push.js");
+load("PushViews.js");
 load("PushModes.js");
 load("Scales.js");
-load("PlayView.js");
-load("SessionView.js");
-load("SequencerView.js");
-load("DrumView.js");
 
 var displayScheduled = false;
 
@@ -118,12 +108,8 @@ var currentScale         = 1; // Major
 var currentOctave        = 0;
 var currentNewClipLength = 2; // 1 Bar
 
-var output        = null;
-var push          = null;
-var playView      = null;
-var sessionView   = null;
-var sequencerView = null;
-var drumView      = null;
+var output = null;
+var push   = null;
 
 host.defineController ("Ableton", "Push", "1.0", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
 host.defineMidiPorts (1, 1);
@@ -145,33 +131,6 @@ function init()
 
 	output = new MidiOutput ();
 	push = new Push (output);
-	
-	playView = new PlayView ();
-	sessionView = new SessionView ();
-	sequencerView = new SequencerView ();
-	drumView = new DrumView ();
-	push.addView (VIEW_PLAY, playView);
-	push.addView (VIEW_SESSION, sessionView);
-	push.addView (VIEW_SEQUENCER, sequencerView);
-	push.addView (VIEW_DRUM, drumView);
-
-	push.addMode (MODE_VOLUME, new VolumeMode ());
-	push.addMode (MODE_PAN, new PanMode ());
-	var modeSend = new SendMode ();
-	push.addMode (MODE_SEND1, modeSend);
-	push.addMode (MODE_SEND2, modeSend);
-	push.addMode (MODE_SEND3, modeSend);
-	push.addMode (MODE_SEND4, modeSend);
-	push.addMode (MODE_SEND5, modeSend);
-	push.addMode (MODE_SEND6, modeSend);
-	push.addMode (MODE_MASTER, new MasterMode ());
-	push.addMode (MODE_TRACK, new TrackMode ());
-	push.addMode (MODE_DEVICE, new DeviceMode ());
-	push.addMode (MODE_MACRO, new MacroMode ());
-	push.addMode (MODE_FRAME, new FrameMode ());
-	push.addMode (MODE_PRESET, new PresetMode ());
-	push.addMode (MODE_SCALES, new ScalesMode ());
-	push.addMode (MODE_FIXED, new FixedMode ());
 	
 	// Click
 	transport.addClickObserver (function (isOn)
@@ -203,6 +162,8 @@ function init()
 	{
 		canScrollTrackUp = canScroll;
 	});
+	
+	push.init ();
 	
 	push.setActiveView (VIEW_PLAY);
 	push.setActiveMode (MODE_TRACK);
