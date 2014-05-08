@@ -83,7 +83,7 @@ function Push (output)
 	this.pads = new PadMatrix (output);
 	this.display = new PushDisplay (output);
 
-	this.activeView = -1;
+	this.activeViewId = -1;
 	this.views = [];
 	this.activeModeId = -1;
 	this.modes = [];
@@ -164,7 +164,7 @@ Push.prototype.turnOff = function ()
 
 Push.prototype.setActiveView = function (viewId)
 {
-	this.activeView = viewId;
+	this.activeViewId = viewId;
 	
 	var view = this.getActiveView ();
 	if (view == null)
@@ -181,15 +181,15 @@ Push.prototype.setActiveView = function (viewId)
 
 Push.prototype.getActiveView = function ()
 {
-	if (this.activeView < 0)
+	if (this.activeViewId < 0)
 		return null;
-	var view = this.views[this.activeView];
+	var view = this.views[this.activeViewId];
 	return view ? view : null;
 };
 
 Push.prototype.isActiveView = function (viewId)
 {
-	return this.activeView == viewId;
+	return this.activeViewId == viewId;
 };
 
 Push.prototype.addView = function (viewId, view)
@@ -215,6 +215,12 @@ Push.prototype.getActiveMode = function ()
 Push.prototype.setActiveMode = function (modeId)
 {
 	this.activeModeId = modeId;
+	
+	var mode = this.getActiveMode ();
+	if (mode == null)
+		return;
+	
+	mode.onActivate ();
 };
 
 Push.prototype.isActiveMode = function (modeId)
