@@ -81,7 +81,7 @@ var SCALES =
 Scales.createScales = function()
 {
 	for (var i = 0; i < scaleIntervals.length; i++)
-		Scales.createScale (scaleIntervals[i]);
+		SCALES.push(Scales.createScale (scaleIntervals[i]));
 };
 
 Scales.createScale = function(scale)
@@ -96,7 +96,7 @@ Scales.createScale = function(scale)
 			matrix.push ((Math.floor(offset / len)) * 12 + scale.notes[offset % len]);			
 		}
 	}
-	SCALES.push({name:scale.name, matrix:matrix});
+	return {name:scale.name, matrix:matrix};
 };
 
 //for (var i = 0; i < scaleIntervals.length; i++) {
