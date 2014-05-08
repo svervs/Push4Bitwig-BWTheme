@@ -84,6 +84,7 @@ function Push (output)
 
 	this.activeView = -1;
 	this.views = [];
+	this.activeModeId = -1;
 	this.modes = [];
 	
 	this.shiftPressed = false;
@@ -213,6 +214,26 @@ Push.prototype.getActiveMode = function ()
 Push.prototype.setActiveMode = function (modeId)
 {
 	this.activeModeId = modeId;
+};
+
+Push.prototype.isActiveMode = function (modeId)
+{
+	return this.activeModeId == modeId;
+};
+
+Push.prototype.isFullDisplayMode = function (modeId)
+{
+	switch (modeId)
+	{
+		case MODE_MASTER:
+		case MODE_FRAME:
+		case MODE_DEVICE:
+		case MODE_PRESET:
+		case MODE_SCALES:
+		case MODE_FIXED:
+			return true;
+	}
+	return false;
 };
 
 Push.prototype.isSelectPressed = function ()

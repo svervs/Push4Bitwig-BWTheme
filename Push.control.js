@@ -227,6 +227,7 @@ function init()
 	});
 	
 	push.setActiveView (VIEW_PLAY);
+	push.setActiveMode (MODE_TRACK);
 	
 	println ("Initialized.");
 }
@@ -236,6 +237,8 @@ function exit()
 	this.push.turnOff ();
 }
 
+// TODO The is some callback in an observer or something that is making flush()
+//   run in a continuous loop
 function flush ()
 {
 	if (!displayScheduled)
@@ -349,8 +352,7 @@ function updateDisplay ()
 		//println("m = " + m);
 	}
 
-	if (currentMode == MODE_DEVICE || currentMode == MODE_SCALES || currentMode == MODE_MASTER || 
-			currentMode == MODE_FIXED || currentMode == MODE_PRESET || currentMode == MODE_FRAME)
+	if (push.isFullDisplayMode(currentMode))
 		return;
 
 	// Send, Mute, Automation
