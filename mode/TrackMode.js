@@ -11,6 +11,17 @@ TrackMode.prototype = new BaseMode ();
 
 TrackMode.prototype.attachTo = function (aPush) 
 {
+	// TODO (mschmalle) This is kind of weird since track mode is present in a couple other modes
+	// dealing with row buttons, really need to think about getting rid of the global variables now
+ 	trackBank.addCanScrollTracksDownObserver (function (canScroll)
+	{
+		canScrollTrackDown = canScroll;
+	});
+	trackBank.addCanScrollTracksUpObserver (function (canScroll)
+	{
+		canScrollTrackUp = canScroll;
+	});
+	
 	for (var i = 0; i < 8; i++)
 	{
 		var t = trackBank.getTrack (i);
