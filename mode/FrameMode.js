@@ -2,22 +2,6 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function FrameToggleCommand (label, command)
-{
-	this.label = label;
-	this.command = command;
-}
-
-FrameToggleCommand.prototype.getLabel = function ()
-{
-	return this.label;
-};
-
-FrameToggleCommand.prototype.execute = function ()
-{
-	this.command.call(this);
-};
-
 function FrameMode ()
 {
 	this.id = MODE_FRAME;
@@ -71,3 +55,20 @@ FrameMode.prototype.addFirstRowCommand = function (label, command)
 {
 	this.bottomItems.push(new FrameToggleCommand(label, command));
 };
+
+function FrameToggleCommand (label, command)
+{
+	this.label = label;
+	this.command = command;
+}
+
+FrameToggleCommand.prototype.getLabel = function ()
+{
+	return this.label;
+};
+
+FrameToggleCommand.prototype.execute = function ()
+{
+	this.command.call(this);
+};
+
