@@ -3,24 +3,6 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-// Display Modes
-var MODE_TRACK  = 0;
-var MODE_VOLUME = 1;
-var MODE_DEVICE = 2;
-var MODE_MASTER = 3;
-var MODE_PAN    = 4;
-var MODE_SEND1  = 5;
-var MODE_SEND2  = 6;
-var MODE_SEND3  = 7;
-var MODE_SEND4  = 8;
-var MODE_SEND5  = 9;
-var MODE_SEND6  = 10;
-var MODE_SCALES = 11;
-var MODE_MACRO  = 12;
-var MODE_FIXED  = 13;
-var MODE_PRESET = 14;
-var MODE_FRAME  = 15;
-
 // Static  Headers
 var PARAM_NAMES_MASTER = 'Volume   Pan                                                        ';
 var PARAM_NAMES_TRACK  = 'Volume   Pan     Send 1   Send 2  Send 3   Send 4  Send 5   Send 6  ';
@@ -83,11 +65,11 @@ load("MidiOutput.js");
 load("View.js");
 load("BaseView.js");
 load("Push.js");
+load("PushModes.js");
 load("Scales.js");
 load("PlayView.js");
 load("SessionView.js");
 load("SequencerView.js");
-load("PushModes.js");
 load("DrumView.js");
 
 var displayScheduled = false;
@@ -143,10 +125,17 @@ var sessionView   = null;
 var sequencerView = null;
 var drumView      = null;
 
+var modeVolume = null;
+var modePan = null;
+var modeSend = null;
+var modeMaster = null;
+var modeTrack = null;
 var modeDevice = null;
 var modeMacro = null;
 var modeFrame = null;
 var modePreset = null;
+var modeScales = null;
+var modeFixed = null;
 
 host.defineController ("Ableton", "Push", "1.0", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
 host.defineMidiPorts (1, 1);
@@ -178,14 +167,28 @@ function init()
 	push.addView (VIEW_SEQUENCER, sequencerView);
 	push.addView (VIEW_DRUM, drumView);
 	
+	modeVolume = new VolumeMode ();
+	modePan = new PanMode ();
+	modeSend = new SendMode ();
+	modeMaster = new MasterMode ();
+	modeTrack = new TrackMode ();
 	modeDevice = new DeviceMode ();
 	modeMacro = new MacroMode ();
 	modeFrame = new FrameMode ();
 	modePreset = new PresetMode ();
+	modeScales = new ScalesMode ();
+	modeFixed = new FixedMode ();
+	push.addMode (MODE_VOLUME, modeVolume);
+	push.addMode (MODE_PAN, modePan);
+	push.addMode (MODE_SEND, modeSend);
+	push.addMode (MODE_MASTER, modeMaster);
+	push.addMode (MODE_TRACK, modeTrack);
 	push.addMode (MODE_DEVICE, modeDevice);
 	push.addMode (MODE_MACRO, modeMacro);
 	push.addMode (MODE_FRAME, modeFrame);
 	push.addMode (MODE_PRESET, modePreset);
+	push.addMode (MODE_SCALES, modeScales);
+	push.addMode (MODE_FIXED, modeFixed);
 	
 	// Click
 	transport.addClickObserver (function (isOn)
@@ -209,56 +212,6 @@ function init()
 		quarterNoteInMillis = calcQuarterNoteInMillis (tempo);
 	});
 	
-	// Master Track name
-	masterTrack.addNameObserver (8, '', function (name)
-	{
-		master.name = name;
-	});
-	// Master Track selection
-	masterTrack.addIsSelectedObserver (function (isSelected)
-	{
-		master.selected = isSelected;
-		setMode (isSelected ? MODE_MASTER : previousMode);
-	});
-	
-	// Master Track Mute
-	masterTrack.getMute ().addValueObserver (function (isMuted)
-	{
-		master.mute = isMuted;
-	});
-	// Master Track Solo
-	masterTrack.getSolo ().addValueObserver (function (isSoloed)
-	{
-		master.solo = isSoloed;
-	});
-	// Master Track Arm
-	masterTrack.getArm ().addValueObserver (function (isArmed)
-	{
-		master.recarm = isArmed;
-	});
-	
-	// Master Track volume value & text
-	var v = masterTrack.getVolume ();
-	v.addValueObserver (128, function (value)
-	{
-		master.volume = value;
-	});
-	v.addValueDisplayObserver (8, '', function (text)
-	{
-		master.volumeStr = text;
-	});
-	
-	// Master Track Pan value & text
-	var p = masterTrack.getPan ();
-	p.addValueObserver (128, function (value)
-	{
-		master.pan = value;
-	});
-	p.addValueDisplayObserver (8, '', function (text)
-	{
-		master.panStr = text;
-	});
-	
  	trackBank.addCanScrollTracksDownObserver (function (canScroll)
 	{
 		canScrollTrackDown = canScroll;
@@ -267,111 +220,6 @@ function init()
 	{
 		canScrollTrackUp = canScroll;
 	});
-	
-	for (var i = 0; i < 8; i++)
-	{
-		var t = trackBank.getTrack (i);
-		
-		// Track name
-		t.addNameObserver (8, '', doIndex (i, function (index, name)
-		{
-			tracks[index].name = name;
-		}));
-		// Track selection
-		t.addIsSelectedObserver (doIndex (i, function (index, isSelected)
-		{
-			tracks[index].selected = isSelected;
-			if (isSelected)
-				setMode (MODE_TRACK);
-			if (push.isActiveView (VIEW_PLAY))
-				push.getActiveView ().updateNoteMapping ();
-		}));
-		
-		// Track Mute
-		t.getMute ().addValueObserver (doIndex (i, function (index, isMuted)
-		{
-			tracks[index].mute = isMuted;
-		}));
-		// Track Solo
-		t.getSolo ().addValueObserver (doIndex (i, function (index, isSoloed)
-		{
-			tracks[index].solo = isSoloed;
-		}));
-		// Track Arm
-		t.getArm ().addValueObserver (doIndex (i, function (index, isArmed)
-		{
-			tracks[index].recarm = isArmed;
-		}));
-		
-		// Track volume value & text
-		var v = t.getVolume ();
-		v.addValueObserver (128, doIndex (i, function (index, value)
-		{
-			tracks[index].volume = value;
-		}));
-		v.addValueDisplayObserver (8, '', doIndex (i, function (index, text)
-		{
-			tracks[index].volumeStr = text;
-		}));
-		
-		// Track Pan value & text
-		var p = t.getPan ();
-		p.addValueObserver (128, doIndex (i, function (index, value)
-		{
-			tracks[index].pan = value;
-		}));
-		p.addValueDisplayObserver (8, '', doIndex (i, function (index, text)
-		{
-			tracks[index].panStr = text;
-		}));
-
-		// Can hold note data?
-		t.getCanHoldNoteData ().addValueObserver (doIndex (i, function (index, canHoldNotes)
-		{
-			tracks[index].canHoldNotes = canHoldNotes;
-		}));
-		
-		// Slot content changes
-		var cs = t.getClipLauncherSlots ();
-		cs.addIsSelectedObserver (doIndex (i, function (index, slot, isSelected)
-		{
-			tracks[index].slots[slot].isSelected = isSelected;
-		}));
-		cs.addHasContentObserver (doIndex (i, function (index, slot, hasContent)
-		{
-			tracks[index].slots[slot].hasContent = hasContent;
-		}));
-		cs.addColorObserver (doIndex (i, function (index, slot, red, green, blue)
-		{
-			tracks[index].slots[slot].color = getColorIndex (red, green, blue);
-		}));
-		cs.addIsPlayingObserver (doIndex (i, function (index, slot, isPlaying)
-		{
-			tracks[index].slots[slot].isPlaying = isPlaying;
-		}));
-		cs.addIsRecordingObserver (doIndex (i, function (index, slot, isRecording)
-		{
-			tracks[index].slots[slot].isRecording = isRecording;
-		}));
-		cs.addIsQueuedObserver (doIndex (i, function (index, slot, isQueued)
-		{
-			tracks[index].slots[slot].isQueued = isQueued;
-		}));
-		
-		// 6 Sends values & texts
-		for (var j = 0; j < 6; j++)
-		{
-			var s = t.getSend (j);
-			s.addValueObserver (128, doDoubleIndex (i, j, function (index1, index2, value)
-			{
-				tracks[index1].sends[index2].volume = value;
-			}));
-			s.addValueDisplayObserver (8, '', doDoubleIndex (i, j, function (index1, index2, text)
-			{
-				tracks[index1].sends[index2].volumeStr = text;
-			}));
-		}
-	}
 	
 	push.setActiveView (VIEW_PLAY);
 	
@@ -490,72 +338,19 @@ function updateDisplay ()
 	switch (currentMode)
 	{
 		case MODE_MASTER:
-			d.setRow (0, PARAM_NAMES_MASTER)
-			 .setCell (1, 0, master.volumeStr, PushDisplay.FORMAT_RAW)
-			 .setCell (1, 1, master.panStr, PushDisplay.FORMAT_RAW)
-			 .clearCell (1, 2).clearCell (1, 3).clearCell (1, 4).clearCell (1, 5)
-			 .clearCell (1, 6).clearCell (1, 7).done (1)
-			
-			 .setCell (2, 0, master.volume, PushDisplay.FORMAT_VALUE)
-			 .setCell (2, 1, master.pan, PushDisplay.FORMAT_PAN)
-			 .clearCell (2, 2).clearCell (2, 3).clearCell (2, 4).clearCell (2, 5)
-			 .clearCell (2, 6).clearCell (2, 7).done (2)
-			
-			 .setCell (3, 0, master.name, PushDisplay.FORMAT_RAW)
-			 .clearCell (3, 1).clearCell (3, 2).clearCell (3, 3).clearCell (3, 4).clearCell (3, 5)
-			 .clearCell (3, 6).clearCell (3, 7).done (3);
-
-			for (var i = 0; i < 8; i++)
-			{
-				push.setButton (20 + i, PUSH_COLOR_BLACK);
-				push.setButton (102 + i, PUSH_COLOR_BLACK);
-			}
+			modeMaster.updateDisplay ();
 			return;
 	
 		case MODE_TRACK:
-			d.setRow (0, PARAM_NAMES_TRACK);
-			if (t == null)
-				d.clearRow (1).done (1).clearRow (2).done (2);
-			else
-			{
-				d.setCell (1, 0, t.volumeStr, PushDisplay.FORMAT_RAW)
-				 .setCell (1, 1, t.panStr, PushDisplay.FORMAT_RAW)
-				 .setCell (1, 2, t.sends[0].volumeStr, PushDisplay.FORMAT_RAW)
-				 .setCell (1, 3, t.sends[1].volumeStr, PushDisplay.FORMAT_RAW)
-				 .setCell (1, 4, t.sends[2].volumeStr, PushDisplay.FORMAT_RAW)
-				 .setCell (1, 5, t.sends[3].volumeStr, PushDisplay.FORMAT_RAW)
-				 .setCell (1, 6, t.sends[4].volumeStr, PushDisplay.FORMAT_RAW)
-				 .setCell (1, 7, t.sends[5].volumeStr, PushDisplay.FORMAT_RAW)
-				 .done (1)
-				
-				 .setCell (2, 0, t.volume, PushDisplay.FORMAT_VALUE)
-				 .setCell (2, 1, t.pan, PushDisplay.FORMAT_PAN)
-				 .setCell (2, 2, t.sends[0].volume, PushDisplay.FORMAT_VALUE)
-				 .setCell (2, 3, t.sends[1].volume, PushDisplay.FORMAT_VALUE)
-				 .setCell (2, 4, t.sends[2].volume, PushDisplay.FORMAT_VALUE)
-				 .setCell (2, 5, t.sends[3].volume, PushDisplay.FORMAT_VALUE)
-				 .setCell (2, 6, t.sends[4].volume, PushDisplay.FORMAT_VALUE)
-				 .setCell (2, 7, t.sends[5].volume, PushDisplay.FORMAT_VALUE)
-				 .done (2);
-			}
+			modeTrack.updateDisplay ();
 			break;
 
 		case MODE_VOLUME:
-			for (var i = 0; i < 8; i++)
-			{
-				d.setCell (1, i, tracks[i].volumeStr, PushDisplay.FORMAT_RAW)
-				 .setCell (2, i, tracks[i].volume, PushDisplay.FORMAT_VALUE);
-			}
-			d.setRow (0, PARAM_NAMES_VOLUME).done (1).done (2);
+			modeVolume.updateDisplay ();
 			break;
 			
 		case MODE_PAN:
-			for (var i = 0; i < 8; i++)
-			{
-				d.setCell (1, i, tracks[i].panStr, PushDisplay.FORMAT_RAW)
-				 .setCell (2, i, tracks[i].pan, PushDisplay.FORMAT_PAN);
-			}
-			d.setRow (0, PARAM_NAMES_PAN).done (1).done (2);
+			modePan.updateDisplay ();
 			break;
 
 		case MODE_SEND1:
@@ -564,13 +359,7 @@ function updateDisplay ()
 		case MODE_SEND4:
 		case MODE_SEND5:
 		case MODE_SEND6:
-			var sendNo = currentMode - MODE_SEND1;
-			for (var i = 0; i < 8; i++)
-			{
-				d.setCell (1, i, tracks[i].sends[sendNo].volumeStr, PushDisplay.FORMAT_RAW)
-				 .setCell (2, i, tracks[i].sends[sendNo].volume, PushDisplay.FORMAT_VALUE);
-			}
-			d.setRow (0, PARAM_NAMES_SEND[sendNo]).done (1).done (2);
+			modeSend.updateDisplay ();
 			break;
 			
 		case MODE_DEVICE:
@@ -582,50 +371,11 @@ function updateDisplay ()
 			break;
 			
 		case MODE_SCALES:
-			var o = 2 + currentOctave;
-			var noteName = NOTE_NAMES[SCALE_OFFSETS[currentScaleOffset]];
-			d.setBlock (0, 0, RIGHT_ARROW + SCALES[currentScale].name)
-			 .clearBlock (0, 1)
-			 .clearBlock (0, 2)
-			 .setBlock (0, 3, noteName + o + ' to ' + noteName + (o + 4))
-			 .done (0);
-			 
-			d.setBlock (1, 0, currentScale + 1 < SCALES.length ? ' ' + SCALES[currentScale + 1].name : '')
-			 .clearBlock (1, 1)
-			 .clearBlock (1, 2)
-			 .clearBlock (1, 3)
-			 .done (1);
-			 
-			d.setCell (2, 0, currentScale + 2 < SCALES.length ? ' ' + SCALES[currentScale + 2].name : '');
-			for (var i = 0; i < 6; i++)
-				d.setCell (2, i + 1, '  ' + (currentScaleOffset == i ? RIGHT_ARROW : ' ') + SCALE_BASES[i]);
-			d.clearCell (2, 7).done (2);
-			 
-			d.setCell (3, 0, currentScale + 3 < SCALES.length ? ' ' + SCALES[currentScale + 3].name : '');
-			for (var i = 6; i < 12; i++)
-				d.setCell (3, i - 5, '  ' + (currentScaleOffset == i ? RIGHT_ARROW : ' ') + SCALE_BASES[i]);
-			d.clearCell (3, 7).done (3);
-
-			for (var i = 0; i < 8; i++)
-			{
-				push.setButton (20 + i, i == 0 || i == 7 ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_GREEN_LO-4);
-				push.setButton (102 + i, i == 0 || i == 7 ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_GREEN_LO);
-			}
+			modeScales.updateDisplay ();
 			break;
 			
 		case MODE_FIXED:
-			d.clearRow (0).done (0).clearRow (1).done (1)
-			 .setBlock (2, 0, 'New Clip Length:').clearBlock (2, 1).clearBlock (2, 2).clearBlock (2, 3)
-			 .done (2);
-			for (var i = 0; i < 8; i++)
-				d.setCell (3, i, (currentNewClipLength == i ? RIGHT_ARROW : ' ') + CLIP_LENGTHS[i]);
-			d.done (3);
-			
-			for (var i = 0; i < 8; i++)
-			{
-				push.setButton (20 + i, PUSH_COLOR_GREEN_LO-4);
-				push.setButton (102 + i, PUSH_COLOR_BLACK);
-			}
+			modeFixed.updateDisplay ();
 			break;
 			
 		case MODE_PRESET:
