@@ -4,7 +4,7 @@
 
 function MacroMode ()
 {
-	this.id = MODE_FRAME;
+	this.id = MODE_MACRO;
 	this.bottomItems = [];
 }
 MacroMode.prototype = new BaseMode ();
