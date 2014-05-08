@@ -1,3 +1,7 @@
+// Written by Jürgen Moßgraber - mossgrabers.de
+// (c) 2014
+// Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
+
 // Push Colors
 var PUSH_COLOR_BLACK     = 0;
 var PUSH_COLOR_WHITE_HI  = 3;
