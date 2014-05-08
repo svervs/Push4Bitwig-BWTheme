@@ -23,6 +23,13 @@ PanMode.prototype.attachTo = function (aPush)
 	});
 };
 
+PanMode.prototype.onValueKnob = function (index, value)
+{
+	var t = tracks[index];
+	t.pan = changeValue (value, t.pan);
+	trackBank.getTrack (t.index).getPan ().set (t.pan, 128);
+};
+
 PanMode.prototype.updateDisplay = function ()
 {
 	var d = push.display;

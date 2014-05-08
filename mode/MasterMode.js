@@ -40,6 +40,22 @@ MasterMode.prototype.attachTo = function (aPush)
 	});
 };
 
+MasterMode.prototype.onValueKnob = function (index, value)
+{
+	if (index == 0)
+	{
+		// Volume
+		master.volume = changeValue (value, master.volume);
+		masterTrack.getVolume ().set (master.volume, 128);
+	}
+	else if (index == 1)
+	{
+		// Pan
+		master.pan = changeValue (value, master.pan);
+		masterTrack.getPan ().set (master.pan, 128);
+	}
+};
+
 MasterMode.prototype.updateDisplay = function ()
 {
 	var d = push.display;

@@ -117,6 +117,35 @@ TrackMode.prototype.attachTo = function (aPush)
 	}
 };
 
+TrackMode.prototype.onValueKnob = function (index, value)
+{
+	var selectedTrack = getSelectedTrack ();
+	if (selectedTrack == null)
+		return;
+		
+	var t = trackBank.getTrack (selectedTrack.index);
+	if (index == 0)
+	{
+		// Volume
+		selectedTrack.volume = changeValue (value, selectedTrack.volume);
+		t.getVolume ().set (selectedTrack.volume, 128);
+	}
+	else if (index == 1)
+	{
+		// Pan
+		selectedTrack.pan = changeValue (value, selectedTrack.pan);
+		t.getPan ().set (selectedTrack.pan, 128);
+	}
+	else
+	{
+		// Send 1-6 Volume
+		var sel = index - 2;
+		var send = selectedTrack.sends[sel];
+		send.volume = changeValue (value, send.volume);
+		t.getSend (send.index).set (send.volume, 128);
+	}
+};
+
 TrackMode.prototype.updateDisplay = function ()
 {
 	var t = getSelectedTrack ();

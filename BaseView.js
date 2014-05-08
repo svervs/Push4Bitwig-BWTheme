@@ -179,103 +179,11 @@ BaseView.prototype.onTapTempo = function ()
 	}
 };
 
-var SKIPPER = false;
 BaseView.prototype.onValueKnob = function (index, value)
 {
-	switch (currentMode)
-	{
-		case MODE_MASTER:
-			if (index == 0)
-			{
-				// Volume
-				master.volume = changeValue (value, master.volume);
-				masterTrack.getVolume ().set (master.volume, 128);
-			}
-			else if (index == 1)
-			{
-				// Pan
-				master.pan = changeValue (value, master.pan);
-				masterTrack.getPan ().set (master.pan, 128);
-			}
-			break;
-	
-		case MODE_TRACK:
-			var selectedTrack = getSelectedTrack ();
-			if (selectedTrack == null)
-				return;
-				
-			var t = trackBank.getTrack (selectedTrack.index);
-			if (index == 0)
-			{
-				// Volume
-				selectedTrack.volume = changeValue (value, selectedTrack.volume);
-				t.getVolume ().set (selectedTrack.volume, 128);
-			}
-			else if (index == 1)
-			{
-				// Pan
-				selectedTrack.pan = changeValue (value, selectedTrack.pan);
-				t.getPan ().set (selectedTrack.pan, 128);
-			}
-			else
-			{
-				// Send 1-6 Volume
-				var sel = index - 2;
-				var send = selectedTrack.sends[sel];
-				send.volume = changeValue (value, send.volume);
-				t.getSend (send.index).set (send.volume, 128);
-			}
-			break;
-		
-		case MODE_VOLUME:
-			var t = tracks[index];
-			t.volume = changeValue (value, t.volume);
-			trackBank.getTrack (t.index).getVolume ().set (t.volume, 128);
-			break;
-			
-		case MODE_PAN:
-			var t = tracks[index];
-			t.pan = changeValue (value, t.pan);
-			trackBank.getTrack (t.index).getPan ().set (t.pan, 128);
-			break;
-			
-		case MODE_SEND1:
-		case MODE_SEND2:
-		case MODE_SEND3:
-		case MODE_SEND4:
-		case MODE_SEND5:
-		case MODE_SEND6:
-			var sendNo = currentMode - MODE_SEND1;
-			var t = tracks[index];
-			var send = t.sends[sendNo];
-			send.volume = changeValue (value, send.volume);
-			trackBank.getTrack (t.index).getSend (sendNo).set (send.volume, 128);
-			break;
-		
-		case MODE_DEVICE:
-			modeDevice.onValueKnob (index, value);
-			break;
-		
-		case MODE_MACRO:
-			modeMacro.onValueKnob (index, value);
-			break;
-			
-		case MODE_SCALES:
-			if (index == 0)
-			{
-				// Slow down scrolling
-				SKIPPER = !SKIPPER;
-				if (SKIPPER)
-					return;
-				currentScale = value <= 61 ? Math.min (currentScale + 1, SCALES.length - 1) : Math.max (currentScale - 1, 0);
-				this.updateNoteMapping ();
-			}
-			break;
-		
-		case MODE_PRESET:
-			modePreset.onValueKnob(index, value);
-			break;
-	}
+	var m = push.getActiveMode ();
+	if (m != null)
+		m.onValueKnob (index, value);
 };
 
 BaseView.prototype.onValueKnobTouch = function (index, isTouched)

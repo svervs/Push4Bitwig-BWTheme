@@ -23,6 +23,13 @@ VolumeMode.prototype.attachTo = function (aPush)
 	});
 };
 
+VolumeMode.prototype.onValueKnob = function (index, value)
+{
+	var t = tracks[index];
+	t.volume = changeValue (value, t.volume);
+	trackBank.getTrack (t.index).getVolume ().set (t.volume, 128);
+};
+
 VolumeMode.prototype.updateDisplay = function ()
 {
 	var d = push.display;

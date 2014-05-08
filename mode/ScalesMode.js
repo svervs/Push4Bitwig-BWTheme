@@ -13,6 +13,20 @@ ScalesMode.prototype.attachTo = function (aPush)
 {
 };
 
+var SKIPPER = false;
+ScalesMode.prototype.onValueKnob = function (index, value)
+{
+	if (index == 0)
+	{
+		// Slow down scrolling
+		SKIPPER = !SKIPPER;
+		if (SKIPPER)
+			return;
+		currentScale = value <= 61 ? Math.min (currentScale + 1, SCALES.length - 1) : Math.max (currentScale - 1, 0);
+		this.updateNoteMapping ();
+	}
+};
+
 ScalesMode.prototype.updateDisplay = function ()
 {
 	var d = push.display;
