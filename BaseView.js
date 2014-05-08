@@ -188,6 +188,10 @@ BaseView.prototype.onValueKnob = function (index, value)
 
 BaseView.prototype.onValueKnobTouch = function (index, isTouched)
 {
+	var m = push.getActiveMode ();
+	if (m != null)
+		m.onValueKnobTouch (index, isTouched);
+	
 	// See https://github.com/git-moss/Push4Bitwig/issues/32
 	// We keep the code if an additional focus becomes available
 	/*
@@ -262,12 +266,6 @@ BaseView.prototype.onValueKnobTouch = function (index, isTouched)
 			break;
 	}
 	*/
-	switch (currentMode)
-	{
-		case MODE_DEVICE:
-			modeDevice.onValueKnobTouch (index, isTouched);
-			break;
-	}
 };
 
 // Master Volume
@@ -284,66 +282,31 @@ BaseView.prototype.onValueKnob9Touch = function (isTouched)
 
 BaseView.prototype.onFirstRow = function (index)
 {
-	switch (currentMode)
-	{
-		case MODE_DEVICE:
-			if (index == 7)
-				device.toggleEnabledState ();
-			break;
+	var m = push.getActiveMode ();
+	if (m != null)
+		m.onFirstRow (index);
 	
-		case MODE_SCALES:
-			if (index == 0)
-				currentScale = Math.max (currentScale - 1, 0);
-			else if (index > 0 && index < 7)
-				currentScaleOffset = index - 1;
-			this.updateNoteMapping ();
-			break;
-
-		case MODE_FIXED:
-			currentNewClipLength = index;
-			break;
-			
-		case MODE_MASTER:
-			// Not used
-			break;
-		
-		case MODE_PRESET:
-			modePreset.onFirstRow (index);
-			break;
-		
-		case MODE_FRAME:
-			modeFrame.onFirstRow (index);
-			break;
-			
-		default:
-			if (this.stopPressed)
-				trackBank.getTrack (index).stop ();
-			else
-				trackBank.getTrack (index).select ();
-			break;
+	// TODO (mschmalle) This only seems right if we have a contract with
+	// Push that 'Not In Full Display' means we will always have track toggles
+	// for the first row, is the correct?
+	if (!push.isFullDisplayMode(currentMode)) 
+	{
+		if (this.stopPressed)
+			trackBank.getTrack (index).stop ();
+		else
+			trackBank.getTrack (index).select ();
 	}
 };
 
 // Rec arm / enable monitor buttons
 BaseView.prototype.onSecondRow = function (index)
 {
-	if (currentMode == MODE_SCALES)
-	{
-		if (index == 0)
-			currentScale = Math.min (currentScale + 1, SCALES.length - 1);
-		else if (index != 7)
-			currentScaleOffset = index + 5;
-		this.updateNoteMapping ();
-	}
-	else if (currentMode == MODE_PRESET)
-	{
-		modePreset.onSecondRow (index);
-	}
-	else if (currentMode == MODE_FRAME)
-	{
-		modeFrame.onSecondRow (index);
-	}
-	else if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER)
+	var m = push.getActiveMode ();
+	if (m != null)
+		m.onSecondRow (index);
+	
+	// TODO (mschmalle) Can we do this better now that we have more abstraction with modes?
+	if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER)
 	{
 		var t = trackBank.getTrack (index);
 		if (this.push.isShiftPressed ())

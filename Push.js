@@ -305,7 +305,7 @@ Push.prototype.handleCC = function (cc, value)
 	}
 	
 	this.handleEvent (cc, value);
-}
+};
 
 
 Push.prototype.handleEvent = function (cc, value)
@@ -665,4 +665,4 @@ Push.prototype.checkButtonState = function (buttonID)
 		
 	this.buttonStates[buttonID] = BUTTON_STATE_LONG;
 	this.handleEvent (buttonID, 127);
-}
+};

@@ -23,8 +23,26 @@ ScalesMode.prototype.onValueKnob = function (index, value)
 		if (SKIPPER)
 			return;
 		currentScale = value <= 61 ? Math.min (currentScale + 1, SCALES.length - 1) : Math.max (currentScale - 1, 0);
-		this.updateNoteMapping ();
+		push.getActiveView().updateNoteMapping ();
 	}
+};
+
+ScalesMode.prototype.onFirstRow = function (index)
+{
+	if (index == 0)
+		currentScale = Math.max (currentScale - 1, 0);
+	else if (index > 0 && index < 7)
+		currentScaleOffset = index - 1;
+	push.getActiveView().updateNoteMapping ();
+};
+
+ScalesMode.prototype.onSecondRow = function (index)
+{
+	if (index == 0)
+		currentScale = Math.min (currentScale + 1, SCALES.length - 1);
+	else if (index != 7)
+		currentScaleOffset = index + 5;
+	push.getActiveView().updateNoteMapping ();
 };
 
 ScalesMode.prototype.updateDisplay = function ()

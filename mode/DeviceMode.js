@@ -53,6 +53,12 @@ DeviceMode.prototype.onValueKnobTouch = function (index, isTouched)
 		device.getParameter (index).reset ();
 };
 
+DeviceMode.prototype.onFirstRow = function (index)
+{
+	if (index == 7)
+		device.toggleEnabledState ();
+};
+
 DeviceMode.prototype.updateDisplay = function () 
 {
 	var d = push.display;

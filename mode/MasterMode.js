@@ -56,6 +56,11 @@ MasterMode.prototype.onValueKnob = function (index, value)
 	}
 };
 
+MasterMode.prototype.onFirstRow = function (index)
+{
+	// Not Implemented
+};
+
 MasterMode.prototype.updateDisplay = function ()
 {
 	var d = push.display;

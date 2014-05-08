@@ -13,6 +13,11 @@ FixedMode.prototype.attachTo = function (aPush)
 {
 };
 
+FixedMode.prototype.onFirstRow = function (index)
+{
+	currentNewClipLength = index;
+};
+
 FixedMode.prototype.updateDisplay = function ()
 {
 	var d = push.display;

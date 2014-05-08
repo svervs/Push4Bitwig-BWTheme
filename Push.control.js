@@ -346,11 +346,8 @@ function updateDisplay ()
 	
 	var m = push.getActiveMode ();
 
-	if (m != null) {
+	if (m != null)
 		m.updateDisplay ();
-	} else {
-		//println("m = " + m);
-	}
 
 	if (push.isFullDisplayMode(currentMode))
 		return;
