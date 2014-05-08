@@ -180,7 +180,12 @@ function init()
 	modeFixed = new FixedMode ();
 	push.addMode (MODE_VOLUME, modeVolume);
 	push.addMode (MODE_PAN, modePan);
-	push.addMode (MODE_SEND, modeSend);
+	push.addMode (MODE_SEND1, modeSend);
+	push.addMode (MODE_SEND2, modeSend);
+	push.addMode (MODE_SEND3, modeSend);
+	push.addMode (MODE_SEND4, modeSend);
+	push.addMode (MODE_SEND5, modeSend);
+	push.addMode (MODE_SEND6, modeSend);
 	push.addMode (MODE_MASTER, modeMaster);
 	push.addMode (MODE_TRACK, modeTrack);
 	push.addMode (MODE_DEVICE, modeDevice);
@@ -276,6 +281,7 @@ function setMode (mode)
 		if (currentMode != MODE_SCALES && currentMode != MODE_FIXED)
 			previousMode = currentMode;
 		currentMode = mode;
+		push.setActiveMode(currentMode);
 	}
 	updateMode (-1);
 	updateMode (currentMode);
@@ -335,58 +341,14 @@ function updateDisplay ()
 	var t = getSelectedTrack ();
 	var d = push.display;
 	
-	switch (currentMode)
-	{
-		case MODE_MASTER:
-			modeMaster.updateDisplay ();
-			return;
-	
-		case MODE_TRACK:
-			modeTrack.updateDisplay ();
-			break;
+	var m = push.getActiveMode ();
 
-		case MODE_VOLUME:
-			modeVolume.updateDisplay ();
-			break;
-			
-		case MODE_PAN:
-			modePan.updateDisplay ();
-			break;
-
-		case MODE_SEND1:
-		case MODE_SEND2:
-		case MODE_SEND3:
-		case MODE_SEND4:
-		case MODE_SEND5:
-		case MODE_SEND6:
-			modeSend.updateDisplay ();
-			break;
-			
-		case MODE_DEVICE:
-			modeDevice.updateDisplay ();
-			break;
-				
-		case MODE_MACRO:
-			modeMacro.updateDisplay ();
-			break;
-			
-		case MODE_SCALES:
-			modeScales.updateDisplay ();
-			break;
-			
-		case MODE_FIXED:
-			modeFixed.updateDisplay ();
-			break;
-			
-		case MODE_PRESET:
-			modePreset.updateDisplay ();
-			break;
-			
-		case MODE_FRAME:
-			modeFrame.updateDisplay ();
-			break;
+	if (m != null) {
+		m.updateDisplay ();
+	} else {
+		//println("m = " + m);
 	}
-	
+
 	if (currentMode == MODE_DEVICE || currentMode == MODE_SCALES || currentMode == MODE_MASTER || 
 			currentMode == MODE_FIXED || currentMode == MODE_PRESET || currentMode == MODE_FRAME)
 		return;

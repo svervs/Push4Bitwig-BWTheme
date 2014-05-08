@@ -19,7 +19,7 @@ var MODE_MACRO  = 12;
 var MODE_FIXED  = 13;
 var MODE_PRESET = 14;
 var MODE_FRAME  = 15;
-var MODE_SEND  = 16; // TODO move this
+var MODE_SEND  = 16;
 
 load("mode/BaseMode.js");
 load("mode/VolumeMode.js");

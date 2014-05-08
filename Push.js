@@ -198,9 +198,21 @@ Push.prototype.addView = function (viewId, view)
 
 Push.prototype.addMode = function (modeId, mode)
 {
-	// TODO at the moment, just using for attachTo() and book keeping
 	mode.attachTo (this);
 	this.modes[modeId] = mode;
+};
+
+Push.prototype.getActiveMode = function ()
+{
+	if (this.activeModeId < 0)
+		return null;
+	var mode = this.modes[this.activeModeId];
+	return mode ? mode : null;
+};
+
+Push.prototype.setActiveMode = function (modeId)
+{
+	this.activeModeId = modeId;
 };
 
 Push.prototype.isSelectPressed = function ()
