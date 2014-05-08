@@ -125,18 +125,6 @@ var sessionView   = null;
 var sequencerView = null;
 var drumView      = null;
 
-var modeVolume = null;
-var modePan = null;
-var modeSend = null;
-var modeMaster = null;
-var modeTrack = null;
-var modeDevice = null;
-var modeMacro = null;
-var modeFrame = null;
-var modePreset = null;
-var modeScales = null;
-var modeFixed = null;
-
 host.defineController ("Ableton", "Push", "1.0", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
 host.defineMidiPorts (1, 1);
 host.addDeviceNameBasedDiscoveryPair (["MIDIIN2 (Ableton Push)"], ["MIDIOUT2 (Ableton Push)"]);
@@ -166,34 +154,24 @@ function init()
 	push.addView (VIEW_SESSION, sessionView);
 	push.addView (VIEW_SEQUENCER, sequencerView);
 	push.addView (VIEW_DRUM, drumView);
-	
-	modeVolume = new VolumeMode ();
-	modePan = new PanMode ();
-	modeSend = new SendMode ();
-	modeMaster = new MasterMode ();
-	modeTrack = new TrackMode ();
-	modeDevice = new DeviceMode ();
-	modeMacro = new MacroMode ();
-	modeFrame = new FrameMode ();
-	modePreset = new PresetMode ();
-	modeScales = new ScalesMode ();
-	modeFixed = new FixedMode ();
-	push.addMode (MODE_VOLUME, modeVolume);
-	push.addMode (MODE_PAN, modePan);
+
+	push.addMode (MODE_VOLUME, new VolumeMode ());
+	push.addMode (MODE_PAN, new PanMode ());
+	var modeSend = new SendMode ();
 	push.addMode (MODE_SEND1, modeSend);
 	push.addMode (MODE_SEND2, modeSend);
 	push.addMode (MODE_SEND3, modeSend);
 	push.addMode (MODE_SEND4, modeSend);
 	push.addMode (MODE_SEND5, modeSend);
 	push.addMode (MODE_SEND6, modeSend);
-	push.addMode (MODE_MASTER, modeMaster);
-	push.addMode (MODE_TRACK, modeTrack);
-	push.addMode (MODE_DEVICE, modeDevice);
-	push.addMode (MODE_MACRO, modeMacro);
-	push.addMode (MODE_FRAME, modeFrame);
-	push.addMode (MODE_PRESET, modePreset);
-	push.addMode (MODE_SCALES, modeScales);
-	push.addMode (MODE_FIXED, modeFixed);
+	push.addMode (MODE_MASTER, new MasterMode ());
+	push.addMode (MODE_TRACK, new TrackMode ());
+	push.addMode (MODE_DEVICE, new DeviceMode ());
+	push.addMode (MODE_MACRO, new MacroMode ());
+	push.addMode (MODE_FRAME, new FrameMode ());
+	push.addMode (MODE_PRESET, new PresetMode ());
+	push.addMode (MODE_SCALES, new ScalesMode ());
+	push.addMode (MODE_FIXED, new FixedMode ());
 	
 	// Click
 	transport.addClickObserver (function (isOn)
