@@ -3,8 +3,9 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function FrameMode ()
+function FrameMode (model)
 {
+	BaseMode.call (this, model);
 	this.id = MODE_FRAME;
 	this.bottomItems = [];
 }
@@ -14,14 +15,14 @@ FrameMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO - 4;
 
 FrameMode.prototype.attachTo = function (aPush)
 {
-	this.addFirstRowCommand ('Arrange ', function () { application.setPerspective('ARRANGE'); });
-	this.addFirstRowCommand ('  Mix   ', function () { application.setPerspective('MIX'); });
-	this.addFirstRowCommand ('  Edit  ', function () { application.setPerspective('EDIT'); });
-	this.addFirstRowCommand ('NoteEdit', function () { application.toggleNoteEditor(); });
-	this.addFirstRowCommand ('Automate', function () { application.toggleAutomationEditor(); });
-	this.addFirstRowCommand (' Device ', function () { application.toggleDevices(); });
-	this.addFirstRowCommand (' Mixer  ', function () { application.toggleMixer(); });
-	this.addFirstRowCommand ('  Full  ', function () { application.toggleFullScreen(); });
+	this.addFirstRowCommand ('Arrange ', doObject (this, function () { this.model.getApplication ().setPerspective('ARRANGE'); }));
+	this.addFirstRowCommand ('  Mix   ', doObject (this, function () { this.model.getApplication ().setPerspective('MIX'); }));
+	this.addFirstRowCommand ('  Edit  ', doObject (this, function () { this.model.getApplication ().setPerspective('EDIT'); }));
+	this.addFirstRowCommand ('NoteEdit', doObject (this, function () { this.model.getApplication ().toggleNoteEditor(); }));
+	this.addFirstRowCommand ('Automate', doObject (this, function () { this.model.getApplication ().toggleAutomationEditor(); }));
+	this.addFirstRowCommand (' Device ', doObject (this, function () { this.model.getApplication ().toggleDevices(); }));
+	this.addFirstRowCommand (' Mixer  ', doObject (this, function () { this.model.getApplication ().toggleMixer(); }));
+	this.addFirstRowCommand ('  Full  ', doObject (this, function () { this.model.getApplication ().toggleFullScreen(); }));
 };
 
 FrameMode.prototype.onFirstRow = function (index) 
@@ -62,5 +63,5 @@ FrameToggleCommand.prototype.getLabel = function ()
 
 FrameToggleCommand.prototype.execute = function ()
 {
-	this.command.call(this);
+	this.command.call (this);
 };

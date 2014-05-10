@@ -6,45 +6,16 @@
 MasterMode.PARAM_NAMES = 'Volume   Pan                                                        ';
 
 
-function MasterMode ()
+function MasterMode (model)
 {
+	BaseMode.call (this, model);
 	this.id = MODE_MASTER;
 }
 MasterMode.prototype = new BaseMode ();
 
-MasterMode.prototype.attachTo = function (aPush) 
-{
-	// Master Track name
-	masterTrack.addNameObserver (8, '', function (name)
-	{
-		master.name = name;
-	});
-	// Master Track selection
-	masterTrack.addIsSelectedObserver (function (isSelected)
-	{
-		master.selected = isSelected;
-		setMode (isSelected ? MODE_MASTER : previousMode);
-	});
-	
-	// Master Track Mute
-	masterTrack.getMute ().addValueObserver (function (isMuted)
-	{
-		master.mute = isMuted;
-	});
-	// Master Track Solo
-	masterTrack.getSolo ().addValueObserver (function (isSoloed)
-	{
-		master.solo = isSoloed;
-	});
-	// Master Track Arm
-	masterTrack.getArm ().addValueObserver (function (isArmed)
-	{
-		master.recarm = isArmed;
-	});
-};
-
 MasterMode.prototype.onValueKnob = function (index, value)
 {
+	var master = this.model.getMaster ();
 	if (index == 0)
 	{
 		// Volume
@@ -62,6 +33,7 @@ MasterMode.prototype.onValueKnob = function (index, value)
 MasterMode.prototype.updateDisplay = function ()
 {
 	var d = push.display;
+	var master = this.model.getMaster ();
 	
 	d.setRow (0, MasterMode.PARAM_NAMES)
 	 .setCell (1, 0, master.volumeStr, Display.FORMAT_RAW)

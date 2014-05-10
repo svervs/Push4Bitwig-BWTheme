@@ -18,22 +18,7 @@ var previousMode = MODE_TRACK;
 var currentMode = MODE_TRACK;
 var tempo = 100;	// Note: For real BPM add 20
 var quarterNoteInMillis = calcQuarterNoteInMillis (tempo);
-var master =
-{ 
-	selected: false,
-	canHoldNotes: false,
-	sends: [{ index: 0 }, { index: 1 }, { index: 2 }, { index: 3 }, { index: 4 }, { index: 5 }],
-};
 
-var tracks = [];
-for (var i = 0; i < 8; i++)
-	tracks[i] = 
-	{ 
-		index: i,
-		selected: false,
-		sends: [{ index: 0 }, { index: 1 }, { index: 2 }, { index: 3 }, { index: 4 }, { index: 5 }],
-		slots: [{ index: 0 }, { index: 1 }, { index: 2 }, { index: 3 }, { index: 4 }, { index: 5 }, { index: 6 }, { index: 7 }]
-	};
 var fxparams = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
 var macros = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
 var selectedDevice =
@@ -44,7 +29,6 @@ var selectedDevice =
 };
 
 var transport = null;
-var application = null;
 var device = null;
 var masterTrack = null;
 var trackBank = null;
@@ -55,8 +39,7 @@ var canScrollTrackDown = false;
 
 var currentNewClipLength = 2; // 1 Bar
 
-var output = null;
-var push   = null;
+var push = null;
 
 host.defineController ("Ableton", "Push", "1.0", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
 host.defineMidiPorts (1, 1);
@@ -70,19 +53,14 @@ function init()
 	noteInput = port.createNoteInput ("Ableton Push", "80????", "90????", "E0????");
 	noteInput.setShouldConsumeEvents (false);
 	
-	application = host.createApplication ();
 	device = host.createCursorDevice ();
 	transport = host.createTransport ();
 	masterTrack = host.createMasterTrack (0);
 	trackBank = host.createMainTrackBankSection (8, 6, 8);
 
-	output = new MidiOutput ();
+	var output = new MidiOutput ();
 	push = new Push (output);
 	
-	// TODO (mschmalle) This needs to be put some where that makes sense and could 
-	// possibly in the future configure different transport actions, since its not a mode
-	// it's still here (IE Shift + Record, Record, etc.) so Like PushTransport class?
-	// Click
 	transport.addClickObserver (function (isOn)
 	{
 		push.setButton (PUSH_BUTTON_CLICK, isOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
@@ -105,7 +83,6 @@ function init()
 	});
 
 	push.init ();
-	
 	push.setActiveView (VIEW_PLAY);
 	push.setActiveMode (MODE_TRACK);
 	
@@ -114,7 +91,7 @@ function init()
 
 function exit()
 {
-	this.push.turnOff ();
+	push.turnOff ();
 }
 
 // TODO The is some callback in an observer or something that is making flush()
@@ -125,7 +102,7 @@ function flush ()
 	{
 		host.scheduleTask (function ()
 		{
-			updateDisplay ();
+			push.updateDisplay ();
 			push.display.flush ();
 			displayScheduled = false;
 		}, null, 5);
@@ -139,23 +116,6 @@ function onMidi (status, data1, data2)
 	push.handleMidi (status, data1, data2);
 }
 
-function getSelectedTrack ()
-{
-	for (var i = 0; i < 8; i++)
-		if (tracks[i].selected)
-			return tracks[i];
-	return null;
-}
-
-function getSelectedSlot (track)
-{
-	for (var i = 0; i < track.slots.length; i++)
-		if (track.slots[i].isSelected)
-			return i;
-	return -1;
-}
-
-// TODO Move to Push.js incl. currentMode, previousMode
 function setMode (mode)
 {
 	if (mode == null)
@@ -187,7 +147,7 @@ function updateMode (mode)
 	masterTrack.getVolume ().setIndication (isMaster);
 	masterTrack.getPan ().setIndication (isMaster);
 	
-	var selectedTrack = getSelectedTrack ();
+	var selectedTrack = push.model.getSelectedTrack ();
 	for (var i = 0; i < 8; i++)
 	{
 		var t = trackBank.getTrack (i);
@@ -218,51 +178,6 @@ function updateMode (mode)
 	push.setButton (PUSH_BUTTON_SCALES, isScales ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_FIXED_LENGTH, isFixed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_BROWSE, isPreset ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-}
-
-function updateDisplay ()
-{
-	var t = getSelectedTrack ();
-	var d = push.display;
-	
-	var m = push.getActiveMode ();
-
-	if (m != null)
-		m.updateDisplay ();
-
-	if (push.isFullDisplayMode(currentMode))
-		return;
-
-	// Send, Mute, Automation
-	if (t == null)
-	{
-		push.setButton (PUSH_BUTTON_MUTE, PUSH_BUTTON_STATE_OFF);
-		push.setButton (PUSH_BUTTON_SOLO, PUSH_BUTTON_STATE_OFF);
-		push.setButton (PUSH_BUTTON_AUTOMATION, PUSH_BUTTON_STATE_OFF);
-	}
-	else
-	{
-		push.setButton (PUSH_BUTTON_MUTE, t.mute ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-		push.setButton (PUSH_BUTTON_SOLO, t.solo ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-		push.setButton (PUSH_BUTTON_AUTOMATION, t.autowrite ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	}
-
-	// Format track names
-	var sel = t == null ? -1 : t.index;
-	for (var i = 0; i < 8; i++)
-	{
-		var isSel = i == sel;
-		var n = optimizeName (tracks[i].name, isSel ? 7 : 8);
-		d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
-		
-		// Light up selection and record/monitor buttons
-		push.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
-		if (push.isShiftPressed ())
-			push.setButton (102 + i, tracks[i].monitor ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
-		else
-			push.setButton (102 + i, tracks[i].recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
-	}
-	d.done (3);
 }
 
 function calcQuarterNoteInMillis (tempo)

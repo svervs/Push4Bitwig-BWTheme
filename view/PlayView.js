@@ -3,8 +3,9 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function PlayView (scales)
+function PlayView (model, scales)
 {
+	BaseView.call (this, model);
 	this.scales = scales;
 	this.pressedKeys = initArray (0, 128);
 }
@@ -12,7 +13,7 @@ PlayView.prototype = new BaseView ();
 
 PlayView.prototype.updateNoteMapping = function ()
 {
-	var t = getSelectedTrack ();
+	var t = this.model.getSelectedTrack ();
 	var noteMap = t != null && t.canHoldNotes ? this.scales.getNoteMatrix () : this.scales.getEmptyMatrix ();
 	// Workaround: https://github.com/git-moss/Push4Bitwig/issues/7
 	host.scheduleTask (function () { noteInput.setKeyTranslationTable (noteMap); }, null, 100);
@@ -55,7 +56,7 @@ PlayView.prototype.usesButton = function (buttonID)
 
 PlayView.prototype.drawGrid = function ()
 {
-	var t = getSelectedTrack ();
+	var t = this.model.getSelectedTrack ();
 	var isKeyboardEnabled = t != null && t.canHoldNotes;
 	for (var i = 36; i < 100; i++)
 		this.push.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ? PUSH_COLOR_GREEN_HI : this.scales.getColor (i)) : PUSH_COLOR_BLACK);
@@ -63,7 +64,7 @@ PlayView.prototype.drawGrid = function ()
 
 PlayView.prototype.onGrid = function (note, velocity)
 {
-	var t = getSelectedTrack ();
+	var t = this.model.getSelectedTrack ();
 	if (t == null || !t.canHoldNotes)
 		return;
 
@@ -98,9 +99,9 @@ PlayView.prototype.onUp = function (event)
 	if (!event.isDown ())
 		return;
 	if (this.push.isShiftPressed ())
-		application.arrowKeyLeft ();
+		this.model.getApplication ().arrowKeyLeft ();
 	else
-		application.arrowKeyUp ();
+		this.model.getApplication ().arrowKeyUp ();
 };
 
 PlayView.prototype.onDown = function (event)
@@ -108,9 +109,9 @@ PlayView.prototype.onDown = function (event)
 	if (!event.isDown ())
 		return;
 	if (this.push.isShiftPressed ())
-		application.arrowKeyRight ();
+		this.model.getApplication ().arrowKeyRight ();
 	else
-		application.arrowKeyDown ();
+		this.model.getApplication ().arrowKeyDown ();
 };
 
 PlayView.prototype.onLeft = function (event)
@@ -122,7 +123,7 @@ PlayView.prototype.onLeft = function (event)
 		device.selectPrevious ();
 	else
 	{
-		var sel = getSelectedTrack ();
+		var sel = this.model.getSelectedTrack ();
 		var index = sel == null ? 0 : sel.index - 1;
 		if (index == -1)
 		{
@@ -145,7 +146,7 @@ PlayView.prototype.onRight = function (event)
 		device.selectNext ();
 	else
 	{
-		var sel = getSelectedTrack ();
+		var sel = this.model.getSelectedTrack ();
 		var index = sel == null ? 0 : sel.index + 1;
 		if (index == 8)
 		{

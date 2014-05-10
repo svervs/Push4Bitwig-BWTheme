@@ -5,8 +5,9 @@
 
 BaseMode.INC_FRACTION_VALUE = 1;
 
-function BaseMode ()
+function BaseMode (model)
 {
+	this.model = model;
 	this.id = null;
 }
 

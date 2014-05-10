@@ -6,8 +6,9 @@
 FixedMode.CLIP_LENGTHS = [ '1 Beat', '2 Beats', '1 Bar', '2 Bars', '4 Bars', '8 Bars', '16 Bars', '32 Bars' ];
 
 
-function FixedMode ()
+function FixedMode (model)
 {
+	BaseMode.call (this, model);
 	this.id = MODE_FIXED;
 }
 FixedMode.prototype = new BaseMode ();

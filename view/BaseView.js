@@ -7,8 +7,10 @@ BaseView.INC_FRACTION_TIME      = 1.0;	    // 1 beat
 BaseView.INC_FRACTION_TIME_SLOW = 1.0 / 20;	// 1/20th of a beat
 
 
-function BaseView ()
+function BaseView (model)
 {
+	this.model = model;
+
 	this.canScrollLeft = true;
 	this.canScrollRight = true;
 	this.canScrollUp = true;
@@ -88,7 +90,7 @@ BaseView.prototype.onAutomation = function (event)
 {
 	if (!event.isDown ())
 		return;
-	var selectedTrack = getSelectedTrack ();
+	var selectedTrack = this.model.getSelectedTrack ();
 	if (selectedTrack != null)
 		transport.toggleWriteArrangerAutomation ();
 };
@@ -109,7 +111,7 @@ BaseView.prototype.onQuantize = function (event)
 BaseView.prototype.onDouble = function (event)
 {
 	if (event.isDown ())
-		application.duplicate ();
+		this.model.getApplication ().duplicate ();
 };
 
 BaseView.prototype.onDelete = function (event)
@@ -117,8 +119,9 @@ BaseView.prototype.onDelete = function (event)
 	if (!event.isDown ())
 		return;
 	// Weird workaround as 'delete' is a reserved word in JS
-	var deleteFunction = application['delete'];
-	deleteFunction.call (application);
+	var app = this.model.getApplication ();
+	var deleteFunction = app['delete'];
+	deleteFunction.call (app);
 };
 
 BaseView.prototype.onUndo = function (event)
@@ -126,9 +129,9 @@ BaseView.prototype.onUndo = function (event)
 	if (!event.isDown ())
 		return;
 	if (this.push.isShiftPressed ())
-		application.redo ();
+		this.model.getApplication ().redo ();
 	else
-		application.undo ();
+		this.model.getApplication ().undo ();
 };
 
 // Set tempo
@@ -208,88 +211,6 @@ BaseView.prototype.onValueKnob = function (index, value)
 		m.onValueKnob (index, value);
 };
 
-BaseView.prototype.onValueKnobTouch = function (index, isTouched)
-{
-	var m = this.push.getActiveMode ();
-	if (m != null)
-		m.onValueKnobTouch (index, isTouched);
-	
-	// See https://github.com/git-moss/Push4Bitwig/issues/32
-	// We keep the code if an additional focus becomes available
-	/*
-	switch (currentMode)
-	{
-		case MODE_MASTER:
-			if (index == 0)
-			{
-				// Volume
-				masterTrack.getVolume ().setIndication (isTouched);
-			}
-			else if (index == 1)
-			{
-				// Pan
-				masterTrack.getPan ().setIndication (isTouched);
-			}
-			break;
-	
-		case MODE_TRACK:
-			var selectedTrack = getSelectedTrack ();
-			if (selectedTrack == null)
-				return;
-				
-			var t = trackBank.getTrack (selectedTrack.index);
-			if (index == 0)
-			{
-				// Volume
-				t.getVolume ().setIndication (isTouched);
-			}
-			else if (index == 1)
-			{
-				// Pan
-				t.getPan ().setIndication (isTouched);
-			}
-			else
-			{
-				// Send 1-6 Volume
-				var sel = index - 2;
-				var send = selectedTrack.sends[sel];
-				t.getSend (send.index).setIndication (isTouched);
-			}
-			break;
-		
-		case MODE_VOLUME:
-			var t = tracks[index];
-			trackBank.getTrack (t.index).getVolume ().setIndication (isTouched);
-			break;
-			
-		case MODE_PAN:
-			var t = tracks[index];
-			trackBank.getTrack (t.index).getPan ().setIndication (isTouched);
-			break;
-			
-		case MODE_SEND1:
-		case MODE_SEND2:
-		case MODE_SEND3:
-		case MODE_SEND4:
-		case MODE_SEND5:
-		case MODE_SEND6:
-			var sendNo = currentMode - MODE_SEND1;
-			var t = tracks[index];
-			var send = t.sends[sendNo];
-			trackBank.getTrack (t.index).getSend (sendNo).setIndication (isTouched);
-			break;
-		
-		case MODE_DEVICE:
-			device.getParameter (index).setIndication (isTouched);
-			break;
-			
-		case MODE_SCALES:
-			// Not used
-			break;
-	}
-	*/
-};
-
 // Master Volume
 BaseView.prototype.onValueKnob9 = function (value)
 {
@@ -328,13 +249,13 @@ BaseView.prototype.onSecondRow = function (index)
 		m.onSecondRow (index);
 	
 	// TODO (mschmalle) Can we do this better now that we have more abstraction with modes?
-	if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER && currentMode != MODE_SCALES)
+	if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER && currentMode != MODE_SCALES && currentMode != MODE_PRESET)
 	{
 		var t = trackBank.getTrack (index);
 		if (this.push.isShiftPressed ())
 			; // Toggle monitor: Currently not possible
 		else
-			 t.getArm ().set (toggleValue (tracks[index].recarm));
+			t.getArm ().set (toggleValue (this.model.getTrack (index).recarm));
 	} 
 };
 
@@ -395,7 +316,7 @@ BaseView.prototype.onBrowse = function (event)
 	if (currentMode == MODE_DEVICE)
 		setMode(MODE_PRESET);
 	else
-		application.toggleBrowserVisibility (); // Track
+		this.model.getApplication ().toggleBrowserVisibility (); // Track
 };
 
 // Dec Track or Device Parameter Bank
@@ -436,7 +357,7 @@ BaseView.prototype.onMute = function (event)
 {
 	if (!event.isDown ())
 		return;
-	var selectedTrack = getSelectedTrack ();
+	var selectedTrack = this.model.getSelectedTrack ();
 	if (selectedTrack == null)
 		return;
 	selectedTrack.mute = toggleValue (selectedTrack.mute);
@@ -448,7 +369,7 @@ BaseView.prototype.onSolo = function (event)
 {
 	if (!event.isDown ())
 		return;
-	var selectedTrack = getSelectedTrack ();
+	var selectedTrack = this.model.getSelectedTrack ();
 	if (selectedTrack == null)
 		return;
 	selectedTrack.solo = toggleValue (selectedTrack.solo);

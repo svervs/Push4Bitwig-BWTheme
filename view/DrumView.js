@@ -5,9 +5,9 @@
 DrumView.NUM_DISPLAY_COLS = 32;
 DrumView.DRUM_START_KEY = 36;
 
-function DrumView (scales)
+function DrumView (model, scales)
 {
-	AbstractSequencerView.call (this, scales, 128, 32);
+	AbstractSequencerView.call (this, model, scales, 128, 32);
 	this.pads = initArray ({ exists: false, solo: false, mute: false }, 16);
 	this.selectedPad = 0;
 	this.offsetY = DrumView.DRUM_START_KEY;
@@ -24,7 +24,7 @@ DrumView.prototype.updateArrows = function ()
 
 DrumView.prototype.updateNoteMapping = function ()
 {
-	var t = getSelectedTrack ();
+	var t = this.model.getSelectedTrack ();
 	var noteMap = t != null && t.canHoldNotes ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
 	noteInput.setKeyTranslationTable (noteMap);
 };

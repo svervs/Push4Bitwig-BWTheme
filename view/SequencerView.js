@@ -6,9 +6,9 @@ SequencerView.NUM_DISPLAY_ROWS = 8;
 SequencerView.NUM_DISPLAY_COLS = 8;
 SequencerView.START_KEY = 32;
 
-function SequencerView (scales)
+function SequencerView (model, scales)
 {
-	AbstractSequencerView.call (this, scales, 128, 8);
+	AbstractSequencerView.call (this, model, scales, 128, 8);
 	this.offsetY = SequencerView.START_KEY;
 	this.clip.scrollToKey (SequencerView.START_KEY);
 	this.clip.scrollToStep (0);

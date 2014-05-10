@@ -3,16 +3,17 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function PresetMode ()
+function PresetMode (model)
 {
+	BaseMode.call (this, model);
 	this.id = MODE_PRESET;
 	
 	this.presetWidth = 16;
 	this.knobInvalidated = false;
 	
-	this.categoryProvider = new PresetProvider(PresetProvider.Kind.CATEGORY);
-	this.creatorProvider = new PresetProvider(PresetProvider.Kind.CREATOR);
-	//this.presetProvider = new PresetProvider(PresetProvider.Kind.PRESET);
+	this.categoryProvider = new PresetProvider (PresetProvider.Kind.CATEGORY);
+	this.creatorProvider = new PresetProvider (PresetProvider.Kind.CREATOR);
+	//this.presetProvider = new PresetProvider (PresetProvider.Kind.PRESET);
 	
 	this.currentPreset = null;
 	
@@ -114,11 +115,11 @@ PresetMode.prototype.onFirstRow = function (index)
 PresetMode.prototype.onSecondRow = function (index)
 {
 	if (index == 2)
-		device.switchToNextPresetCategory();
+		device.switchToNextPresetCategory ();
 	else if (index == 4)
-		device.switchToNextPresetCreator();
+		device.switchToNextPresetCreator ();
 	else if (index == 6)
-		device.switchToNextPreset();
+		device.switchToNextPreset ();
 };
 
 PresetMode.prototype.updateDisplay = function ()
@@ -127,12 +128,12 @@ PresetMode.prototype.updateDisplay = function ()
 	
 	if (selectedDevice.name == 'None')
 	{
-		d.clear()
-		 .setBlock(1, 1, '    Please select').setBlock(1, 2, 'a Device...    ');
+		d.clear ()
+		 .setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ');
 		return;
 	}		
 	
-	d.clearColumn (0).setBlock( 0, 0, "Select Preset:").setBlock (3, 0, "Device: " + selectedDevice.name);
+	d.clearColumn (0).setBlock ( 0, 0, "Select Preset:").setBlock (3, 0, "Device: " + selectedDevice.name);
 	
 	var view = this.categoryProvider.getView (4);
 	for (var i = 0; i < 4; i++)
@@ -141,7 +142,7 @@ PresetMode.prototype.updateDisplay = function ()
 		if (i == 0)
 			d.setBlock (i, 1, Display.RIGHT_ARROW + value);
 		else
-			d.setBlock (i, 1, value);
+			d.setBlock (i, 1, ' ' + value);
 	}
 	
 	var view = this.creatorProvider.getView (4);
@@ -151,7 +152,7 @@ PresetMode.prototype.updateDisplay = function ()
 		if (i == 0)
 			d.setBlock (i, 2, Display.RIGHT_ARROW + value);
 		else
-			d.setBlock (i, 2, value);
+			d.setBlock (i, 2, ' ' + value);
 	}
 
 	d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.currentPreset).done (0).done (1).done (2).done (3);

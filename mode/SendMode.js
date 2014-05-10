@@ -14,8 +14,9 @@ SendMode.PARAM_NAMES   =
 ];
 
 
-function SendMode ()
+function SendMode (model)
 {
+	BaseMode.call (this, model);
 	this.id = MODE_SEND;
 }
 SendMode.prototype = new BaseMode ();
@@ -23,7 +24,7 @@ SendMode.prototype = new BaseMode ();
 SendMode.prototype.onValueKnob = function (index, value)
 {
 	var sendNo = currentMode - MODE_SEND1;
-	var t = tracks[index];
+	var t = this.model.getTrack (index);
 	var send = t.sends[sendNo];
 	send.volume = this.changeValue (value, send.volume);
 	trackBank.getTrack (t.index).getSend (sendNo).set (send.volume, 128);
@@ -35,8 +36,9 @@ SendMode.prototype.updateDisplay = function ()
 	var sendNo = currentMode - MODE_SEND1;
 	for (var i = 0; i < 8; i++)
 	{
-		d.setCell (1, i, tracks[i].sends[sendNo].volumeStr, Display.FORMAT_RAW)
-		 .setCell (2, i, tracks[i].sends[sendNo].volume, Display.FORMAT_VALUE);
+		var t = this.model.getTrack (i);
+		d.setCell (1, i, t.sends[sendNo].volumeStr, Display.FORMAT_RAW)
+		 .setCell (2, i, t.sends[sendNo].volume, Display.FORMAT_VALUE);
 	}
 	d.setRow (0, SendMode.PARAM_NAMES[sendNo]).done (1).done (2);
 };

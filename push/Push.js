@@ -132,32 +132,33 @@ function Push (output)
 
 Push.prototype.init = function ()
 {
+	this.model = new Model ();
 	this.scales = new Scales ();
 	
 	// Create Push Views
-	this.addView (VIEW_PLAY, new PlayView (this.scales));
-	this.addView (VIEW_SESSION, new SessionView ());
-	this.addView (VIEW_SEQUENCER, new SequencerView (this.scales));
-	this.addView (VIEW_DRUM, new DrumView (this.scales));
+	this.addView (VIEW_PLAY, new PlayView (this.model, this.scales));
+	this.addView (VIEW_SESSION, new SessionView (this.model));
+	this.addView (VIEW_SEQUENCER, new SequencerView (this.model, this.scales));
+	this.addView (VIEW_DRUM, new DrumView (this.model, this.scales));
 	
 	// Create Push Mode impls
-	this.addMode (MODE_VOLUME, new VolumeMode ());
-	this.addMode (MODE_PAN, new PanMode ());
-	var modeSend = new SendMode ();
+	this.addMode (MODE_VOLUME, new VolumeMode (this.model));
+	this.addMode (MODE_PAN, new PanMode (this.model));
+	var modeSend = new SendMode (this.model);
 	this.addMode (MODE_SEND1, modeSend);
 	this.addMode (MODE_SEND2, modeSend);
 	this.addMode (MODE_SEND3, modeSend);
 	this.addMode (MODE_SEND4, modeSend);
 	this.addMode (MODE_SEND5, modeSend);
 	this.addMode (MODE_SEND6, modeSend);
-	this.addMode (MODE_MASTER, new MasterMode ());
-	this.addMode (MODE_TRACK, new TrackMode ());
-	this.addMode (MODE_DEVICE, new DeviceMode ());
-	this.addMode (MODE_MACRO, new MacroMode ());
-	this.addMode (MODE_FRAME, new FrameMode ());
-	this.addMode (MODE_PRESET, new PresetMode ());
-	this.addMode (MODE_SCALES, new ScalesMode (this.scales));
-	this.addMode (MODE_FIXED, new FixedMode ());
+	this.addMode (MODE_MASTER, new MasterMode (this.model));
+	this.addMode (MODE_TRACK, new TrackMode (this.model));
+	this.addMode (MODE_DEVICE, new DeviceMode (this.model));
+	this.addMode (MODE_MACRO, new MacroMode (this.model));
+	this.addMode (MODE_FRAME, new FrameMode (this.model));
+	this.addMode (MODE_PRESET, new PresetMode (this.model));
+	this.addMode (MODE_SCALES, new ScalesMode (this.model, this.scales));
+	this.addMode (MODE_FIXED, new FixedMode (this.model));
 };
 
 Push.prototype.turnOff = function ()
@@ -292,6 +293,51 @@ Push.prototype.redrawGrid = function ()
 	view.drawGrid ();
 	this.pads.flush ();
 };
+
+Push.prototype.updateDisplay = function ()
+{
+	var t = this.model.getSelectedTrack ();
+	var d = this.display;
+	
+	var m = this.getActiveMode ();
+	if (m != null)
+		m.updateDisplay ();
+
+	if (this.isFullDisplayMode (currentMode))
+		return;
+
+	// Send, Mute, Automation
+	if (t == null)
+	{
+		this.setButton (PUSH_BUTTON_MUTE, PUSH_BUTTON_STATE_OFF);
+		this.setButton (PUSH_BUTTON_SOLO, PUSH_BUTTON_STATE_OFF);
+		this.setButton (PUSH_BUTTON_AUTOMATION, PUSH_BUTTON_STATE_OFF);
+	}
+	else
+	{
+		this.setButton (PUSH_BUTTON_MUTE, t.mute ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+		this.setButton (PUSH_BUTTON_SOLO, t.solo ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+		this.setButton (PUSH_BUTTON_AUTOMATION, t.autowrite ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	}
+
+	// Format track names
+	var sel = t == null ? -1 : t.index;
+	for (var i = 0; i < 8; i++)
+	{
+		var isSel = i == sel;
+		var t = this.model.getTrack (i);
+		var n = optimizeName (t.name, isSel ? 7 : 8);
+		d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
+		
+		// Light up selection and record/monitor buttons
+		this.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
+		if (this.isShiftPressed ())
+			this.setButton (102 + i, t.monitor ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
+		else
+			this.setButton (102 + i, t.recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
+	}
+	d.done (3);
+}
 
 Push.prototype.handleMidi = function (status, data1, data2)
 {
