@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// Contributions by Michael Schmalle - teotigraphix.com
+//            Michael Schmalle - teotigraphix.com
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -33,7 +33,6 @@ VolumeMode.prototype.onValueKnob = function (index, value)
 VolumeMode.prototype.updateDisplay = function ()
 {
 	var d = push.display;
-	
 	for (var i = 0; i < 8; i++)
 	{
 		d.setCell (1, i, tracks[i].volumeStr, PushDisplay.FORMAT_RAW)

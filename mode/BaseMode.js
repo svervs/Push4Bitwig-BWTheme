@@ -7,7 +7,7 @@ function BaseMode ()
 	this.id = null;
 }
 
-BaseMode.prototype.attachTo = function (aPush) {};
+BaseMode.prototype.attachTo = function (push) {};
 BaseMode.prototype.onActivate = function () {};
 BaseMode.prototype.getId = function () { return this.id; };
 BaseMode.prototype.onValueKnob = function (index, value) {};

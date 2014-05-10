@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// Contributions by Michael Schmalle - teotigraphix.com
+//            Michael Schmalle - teotigraphix.com
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -36,77 +36,93 @@ BaseView.prototype.updateNoteMapping = function ()
 
 BaseView.prototype.updateArrows = function ()
 {
-	push.setButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-	push.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-	push.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-	push.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	this.push.setButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	this.push.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	this.push.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	this.push.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
 };
 
-BaseView.prototype.onPlay = function ()
+BaseView.prototype.onPlay = function (event)
 {
+	if (!event.isDown ())
+		return;
 	if (this.push.isShiftPressed ())
 		transport.toggleLoop ();
 	else
 		transport.play ();
 };
 
-BaseView.prototype.onRecord = function ()
+BaseView.prototype.onRecord = function (event)
 {
+	if (!event.isDown ())
+		return;
 	if (this.push.isShiftPressed ())
 		transport.toggleLauncherOverdub ();
 	else
 		transport.record ();
 };
 
-BaseView.prototype.onStop = function (buttonState)
+BaseView.prototype.onStop = function (event)
 {
 	if (this.push.isShiftPressed ())
 	{
 		trackBank.getClipLauncherScenes ().stop ();
 		return;
 	}
-	this.stopPressed = buttonState == BUTTON_STATE_DOWN;
-	push.setButton (PUSH_BUTTON_STOP, this.stopPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	this.stopPressed = event.isDown ();
+	this.push.setButton (PUSH_BUTTON_STOP, this.stopPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
-BaseView.prototype.onDuplicate = function ()
+BaseView.prototype.onDuplicate = function (event)
 {
+	if (!event.isDown ())
+		return;
 	// TODO Not possible?
 	host.showPopupNotification ("Duplicate: Function not supported (yet).");
 };
 
-BaseView.prototype.onAutomation = function ()
+BaseView.prototype.onAutomation = function (event)
 {
+	if (!event.isDown ())
+		return;
 	var selectedTrack = getSelectedTrack ();
 	if (selectedTrack != null)
 		transport.toggleWriteArrangerAutomation ();
 };
 
-BaseView.prototype.onFixedLength = function (isDown)
+BaseView.prototype.onFixedLength = function (event)
 {
-	setMode (isDown ? MODE_FIXED : previousMode);
+	if (!event.isLong ())
+		setMode (event.isDown () ? MODE_FIXED : previousMode);
 };
 
-BaseView.prototype.onQuantize = function ()
+BaseView.prototype.onQuantize = function (event)
 {
+	if (!event.isDown ())
+		return;
 	// TODO Not possible?
 	host.showPopupNotification ("Quantize: Function not supported (yet).");
 };
 
-BaseView.prototype.onDouble = function ()
+BaseView.prototype.onDouble = function (event)
 {
-	application.duplicate ();
+	if (event.isDown ())
+		application.duplicate ();
 };
 
-BaseView.prototype.onDelete = function ()
+BaseView.prototype.onDelete = function (event)
 {
+	if (!event.isDown ())
+		return;
 	// Weird workaround as 'delete' is a reserved word in JS
 	var deleteFunction = application['delete'];
 	deleteFunction.call (application);
 };
 
-BaseView.prototype.onUndo = function ()
+BaseView.prototype.onUndo = function (event)
 {
+	if (!event.isDown ())
+		return;
 	if (this.push.isShiftPressed ())
 		application.redo ();
 	else
@@ -132,13 +148,17 @@ BaseView.prototype.onSmallKnob2 = function (increase)
 	transport.incPosition (delta = increase ? frac : -frac, false);			
 };
 
-BaseView.prototype.onClick = function ()
+BaseView.prototype.onClick = function (event)
 {
-	transport.toggleClick ();
+	if (event.isDown ())
+		transport.toggleClick ();
 };
 
-BaseView.prototype.onTapTempo = function ()
+BaseView.prototype.onTapTempo = function (event)
 {
+	if (!event.isDown ())
+		return;
+
 	var millis = new Date ().getTime ();
 	
 	// First press?
@@ -181,14 +201,14 @@ BaseView.prototype.onTapTempo = function ()
 
 BaseView.prototype.onValueKnob = function (index, value)
 {
-	var m = push.getActiveMode ();
+	var m = this.push.getActiveMode ();
 	if (m != null)
 		m.onValueKnob (index, value);
 };
 
 BaseView.prototype.onValueKnobTouch = function (index, isTouched)
 {
-	var m = push.getActiveMode ();
+	var m = this.push.getActiveMode ();
 	if (m != null)
 		m.onValueKnobTouch (index, isTouched);
 	
@@ -282,14 +302,14 @@ BaseView.prototype.onValueKnob9Touch = function (isTouched)
 
 BaseView.prototype.onFirstRow = function (index)
 {
-	var m = push.getActiveMode ();
+	var m = this.push.getActiveMode ();
 	if (m != null)
 		m.onFirstRow (index);
 	
 	// TODO (mschmalle) This only seems right if we have a contract with
 	// Push that 'Not In Full Display' means we will always have track toggles
 	// for the first row, is the correct?
-	if (!push.isFullDisplayMode(currentMode)) 
+	if (!this.push.isFullDisplayMode (currentMode)) 
 	{
 		if (this.stopPressed)
 			trackBank.getTrack (index).stop ();
@@ -301,12 +321,12 @@ BaseView.prototype.onFirstRow = function (index)
 // Rec arm / enable monitor buttons
 BaseView.prototype.onSecondRow = function (index)
 {
-	var m = push.getActiveMode ();
+	var m = this.push.getActiveMode ();
 	if (m != null)
 		m.onSecondRow (index);
 	
 	// TODO (mschmalle) Can we do this better now that we have more abstraction with modes?
-	if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER)
+	if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER && currentMode != MODE_SCALES)
 	{
 		var t = trackBank.getTrack (index);
 		if (this.push.isShiftPressed ())
@@ -316,9 +336,9 @@ BaseView.prototype.onSecondRow = function (index)
 	} 
 };
 
-BaseView.prototype.onMaster = function (buttonState)
+BaseView.prototype.onMaster = function (event)
 {
-	switch (buttonState)
+	switch (event.getState ())
 	{
 		case BUTTON_STATE_UP:
 			if (currentMode == MODE_FRAME)
@@ -334,34 +354,42 @@ BaseView.prototype.onMaster = function (buttonState)
 	}
 };
 
-BaseView.prototype.onVolume = function ()
+BaseView.prototype.onVolume = function (event)
 {
-	setMode (MODE_VOLUME);
+	if (event.isDown ())
+		setMode (MODE_VOLUME);
 };
 
-BaseView.prototype.onPanAndSend = function ()
+BaseView.prototype.onPanAndSend = function (event)
 {
+	if (!event.isDown ())
+		return;
 	var mode = currentMode + 1;
 	if (mode < MODE_PAN || mode > MODE_SEND6)
 		mode = MODE_PAN;
 	setMode (mode);
 };
 
-BaseView.prototype.onTrack = function ()
+BaseView.prototype.onTrack = function (event)
 {
-	setMode (MODE_TRACK);
+	if (event.isDown ())
+		setMode (MODE_TRACK);
 };
 
-BaseView.prototype.onDevice = function ()
+BaseView.prototype.onDevice = function (event)
 {
+	if (!event.isDown ())
+		return;
 	if (currentMode == MODE_DEVICE)
 		setMode (MODE_MACRO);
 	else
 		setMode (MODE_DEVICE);
 };
 
-BaseView.prototype.onBrowse = function ()
+BaseView.prototype.onBrowse = function (event)
 {
+	if (!event.isDown ())
+		return;
 	if (currentMode == MODE_DEVICE)
 		setMode(MODE_PRESET);
 	else
@@ -369,8 +397,10 @@ BaseView.prototype.onBrowse = function ()
 };
 
 // Dec Track or Device Parameter Bank
-BaseView.prototype.onDeviceLeft = function ()
+BaseView.prototype.onDeviceLeft = function (event)
 {
+	if (!event.isDown ())
+		return;
 	if (currentMode == MODE_DEVICE)
 	{
 		device.previousParameterPage ();
@@ -384,8 +414,10 @@ BaseView.prototype.onDeviceLeft = function ()
 };
 
 // Inc Track or Device Parameter Bank
-BaseView.prototype.onDeviceRight = function ()
+BaseView.prototype.onDeviceRight = function (event)
 {
+	if (!event.isDown ())
+		return;
 	if (currentMode == MODE_DEVICE)
 	{
 		device.nextParameterPage ();
@@ -398,68 +430,86 @@ BaseView.prototype.onDeviceRight = function ()
 	}
 };
 
-BaseView.prototype.onMute = function ()
+BaseView.prototype.onMute = function (event)
 {
+	if (!event.isDown ())
+		return;
 	var selectedTrack = getSelectedTrack ();
 	if (selectedTrack == null)
 		return;
 	selectedTrack.mute = toggleValue (selectedTrack.mute);
 	trackBank.getTrack (selectedTrack.index).getMute ().set (selectedTrack.mute);
-	push.setButton (PUSH_BUTTON_MUTE, selectedTrack.mute ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	this.push.setButton (PUSH_BUTTON_MUTE, selectedTrack.mute ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
-BaseView.prototype.onSolo = function ()
+BaseView.prototype.onSolo = function (event)
 {
+	if (!event.isDown ())
+		return;
 	var selectedTrack = getSelectedTrack ();
 	if (selectedTrack == null)
 		return;
 	selectedTrack.solo = toggleValue (selectedTrack.solo);
 	trackBank.getTrack (selectedTrack.index).getSolo ().set (selectedTrack.solo);
-	push.setButton (PUSH_BUTTON_SOLO, selectedTrack.solo ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	this.push.setButton (PUSH_BUTTON_SOLO, selectedTrack.solo ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
-BaseView.prototype.onScales = function (isDown)
+BaseView.prototype.onScales = function (event)
 {
-	setMode (isDown ? MODE_SCALES : previousMode);
+	switch (event.getState ())
+	{
+		case BUTTON_STATE_DOWN:
+			this.quitScalesMode = false;
+			setMode (currentMode == MODE_SCALES ? previousMode : MODE_SCALES);
+			break;
+		case BUTTON_STATE_LONG:
+			this.quitScalesMode = true;
+			break;
+		case BUTTON_STATE_UP:
+			if (this.quitScalesMode)
+				setMode (previousMode);
+			break;
+	}
 };
 
-BaseView.prototype.onOctaveDown = function ()
+BaseView.prototype.onAddFX = function (event)
 {
-	currentOctave = Math.max (-3, currentOctave - 1);
-	this.updateNoteMapping ();
-};
-
-BaseView.prototype.onOctaveUp = function ()
-{
-	currentOctave = Math.min (3, currentOctave + 1);
-	this.updateNoteMapping ();
-};
-
-BaseView.prototype.onAddFX = function ()
-{
+	if (!event.isDown ())
+		return;
 	// TODO Not possible?
 	host.showPopupNotification ("Add Effect: Function not supported (yet).");
 };
 
-BaseView.prototype.onAddTrack = function ()
+BaseView.prototype.onAddTrack = function (event)
 {
+	if (!event.isDown ())
+		return;
 	// TODO Not possible?
 	host.showPopupNotification ("Add Track: Function not supported (yet).");
 };
 
-BaseView.prototype.onNote = function ()
+BaseView.prototype.onNote = function (event)
 {
+	if (!event.isDown ())
+		return;
 	BaseView.lastNoteView = this.push.isActiveView (VIEW_SESSION) ? BaseView.lastNoteView :
 								(this.push.isShiftPressed () ? VIEW_DRUM : (this.push.isActiveView (VIEW_PLAY) ? VIEW_SEQUENCER : VIEW_PLAY));
 	this.push.setActiveView (BaseView.lastNoteView);
 };
 
-BaseView.prototype.onSession = function ()
+BaseView.prototype.onSession = function (event)
 {
+	if (!event.isDown ())
+		return;
 	if (this.push.isActiveView (VIEW_SESSION))
 		return;
 	BaseView.lastNoteView = this.push.isActiveView (VIEW_PLAY) ? VIEW_PLAY : (this.push.isActiveView (VIEW_DRUM) ? VIEW_DRUM : VIEW_SEQUENCER);
 	this.push.setActiveView (VIEW_SESSION);
+};
+
+BaseView.prototype.onShift = function (event)
+{
+	this.push.setButton (PUSH_BUTTON_SHIFT, event.isUp () ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_HI);
 };
 
 function selectTrack (index)

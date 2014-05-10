@@ -12,25 +12,25 @@ function SessionView ()
 	trackBank.addCanScrollScenesDownObserver (doObject (this, function (canScroll)
 	{
 		this.canScrollUp = canScroll;
-		if (push.isActiveView (VIEW_SESSION))
+		if (this.push.isActiveView (VIEW_SESSION))
 			this.updateArrows ();
 	}));
 	trackBank.addCanScrollScenesUpObserver (doObject (this, function (canScroll)
 	{
 		this.canScrollDown = canScroll;
-		if (push.isActiveView (VIEW_SESSION))
+		if (this.push.isActiveView (VIEW_SESSION))
 			this.updateArrows ();
 	}));
 	trackBank.addCanScrollTracksDownObserver (doObject (this, function (canScroll)
 	{
 		this.canScrollRight = canScroll;
-		if (push.isActiveView (VIEW_SESSION))
+		if (this.push.isActiveView (VIEW_SESSION))
 			this.updateArrows ();
 	}));
 	trackBank.addCanScrollTracksUpObserver (doObject (this, function (canScroll)
 	{
 		this.canScrollLeft = canScroll;
-		if (push.isActiveView (VIEW_SESSION))
+		if (this.push.isActiveView (VIEW_SESSION))
 			this.updateArrows ();
 	}));
 }
@@ -48,18 +48,20 @@ SessionView.prototype.onActivate = function ()
 {
 	BaseView.prototype.onActivate.call (this);
 
-	push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
+	this.push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
+	this.push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
 	for (var i = 0; i < 8; i++)
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (true);
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-		push.setButton (i, PUSH_COLOR_SCENE_GREEN);
+		this.push.setButton (i, PUSH_COLOR_SCENE_GREEN);
 };
 
 SessionView.prototype.usesButton = function (buttonID)
 {
 	switch (buttonID)
 	{
+		case PUSH_BUTTON_OCTAVE_DOWN:
+		case PUSH_BUTTON_OCTAVE_UP:
 		case PUSH_BUTTON_ADD_EFFECT:
 		case PUSH_BUTTON_ADD_TRACK:
 		case PUSH_BUTTON_REPEAT:
@@ -71,10 +73,10 @@ SessionView.prototype.usesButton = function (buttonID)
 	return true;
 };
 
-SessionView.prototype.onNew = function (isPressed)
+SessionView.prototype.onNew = function (event)
 {
-	this.newPressed = isPressed;
-	push.setButton (PUSH_BUTTON_NEW, isPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	this.newPressed = event.isDown () || event.isLong ();
+	this.push.setButton (PUSH_BUTTON_NEW, this.newPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 SessionView.prototype.onGrid = function (note, velocity)
@@ -109,8 +111,10 @@ SessionView.prototype.onGrid = function (note, velocity)
  	slots.select (s);
 };
 
-SessionView.prototype.onClip = function ()
+SessionView.prototype.onClip = function (event)
 {
+	if (!event.isDown ())
+		return;
 	var t = getSelectedTrack ();
 	if (t == null)
 		return;
@@ -119,32 +123,40 @@ SessionView.prototype.onClip = function ()
 		trackBank.getTrack (t.index).getClipLauncherSlots ().showInEditor (slot);
 };
 
-SessionView.prototype.onLeft = function ()
+SessionView.prototype.onLeft = function (event)
 {
+	if (!event.isDown ())
+		return;
 	if (this.push.isShiftPressed ())
 		trackBank.scrollTracksPageUp ();
 	else
 		trackBank.scrollTracksUp ();
 };
 
-SessionView.prototype.onRight = function ()
+SessionView.prototype.onRight = function (event)
 {
+	if (!event.isDown ())
+		return;
 	if (this.push.isShiftPressed ())
 		trackBank.scrollTracksPageDown ();
 	else
 		trackBank.scrollTracksDown ();
 };
 
-SessionView.prototype.onUp = function ()
+SessionView.prototype.onUp = function (event)
 {
+	if (!event.isDown ())
+		return;
 	if (this.push.isShiftPressed ())
 		trackBank.scrollScenesPageUp ();
 	else
 		trackBank.scrollScenesUp ();
 };
 
-SessionView.prototype.onDown = function ()
+SessionView.prototype.onDown = function (event)
 {
+	if (!event.isDown ())
+		return;
 	if (this.push.isShiftPressed ())
 		trackBank.scrollScenesPageDown ();
 	else
@@ -173,6 +185,6 @@ SessionView.prototype.drawPad = function (slot, x, y, isArmed)
 						(slot.color ? slot.color : PUSH_COLOR_ORANGE_HI) : 
 						(isArmed ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK));
 	var n = 92 + x - 8 * y;
-	push.pads.light (n, color);
-	push.pads.blink (n, (slot.isQueued || slot.isPlaying) ? (slot.isRecording ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : PUSH_COLOR_BLACK, slot.isQueued);
+	this.push.pads.light (n, color);
+	this.push.pads.blink (n, (slot.isQueued || slot.isPlaying) ? (slot.isRecording ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : PUSH_COLOR_BLACK, slot.isQueued);
 };

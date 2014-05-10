@@ -7,9 +7,9 @@ function View ()
 	this.push = null;
 }
 
-View.prototype.attachTo = function (aPush)
+View.prototype.attachTo = function (push)
 {
-	this.push = aPush;
+	this.push = push;
 };
 
 View.prototype.usesButton = function (buttonID)
@@ -22,62 +22,62 @@ View.prototype.onActivate = function () {};
 View.prototype.drawGrid = function () {};
 View.prototype.onGrid = function (note, velocity) {};
 
-View.prototype.onPlay = function () {};
-View.prototype.onRecord = function () {};
-View.prototype.onNew = function (isPressed) {};
-View.prototype.onDuplicate = function () {};
-View.prototype.onAutomation = function () {};
-View.prototype.onFixedLength = function (isDown) {};
+View.prototype.onPlay = function (event) {};
+View.prototype.onRecord = function (event) {};
+View.prototype.onNew = function (event) {};
+View.prototype.onDuplicate = function (event) {};
+View.prototype.onAutomation = function (event) {};
+View.prototype.onFixedLength = function (event) {};
 
-View.prototype.onQuantize = function () {};
-View.prototype.onDouble = function () {};
-View.prototype.onDelete = function () {};
-View.prototype.onUndo = function () {};
+View.prototype.onQuantize = function (event) {};
+View.prototype.onDouble = function (event) {};
+View.prototype.onDelete = function (event) {};
+View.prototype.onUndo = function (event) {};
 
 View.prototype.onSmallKnob1 = function (increase) {};
 View.prototype.onSmallKnob2 = function (increase) {};
 
-View.prototype.onClick = function () {};
-View.prototype.onTapTempo = function () {};
+View.prototype.onClick = function (event) {};
+View.prototype.onTapTempo = function (event) {};
 
 View.prototype.onValueKnob = function (index, value) {};
 View.prototype.onValueKnob9 = function (value) {};
 View.prototype.onFirstRow = function (index) {};
 View.prototype.onSecondRow = function (index) {};
 
-View.prototype.onMaster = function (buttonState) {};
-View.prototype.onStop = function (buttonState) {};
+View.prototype.onMaster = function (event) {};
+View.prototype.onStop = function (event) {};
 View.prototype.onScene = function (index) {};
 
 View.prototype.onVolume = function () {};
-View.prototype.onPanAndSend = function () {};
-View.prototype.onTrack = function () {};
-View.prototype.onClip = function () {};
-View.prototype.onDevice = function () {};
-View.prototype.onBrowse = function () {};
+View.prototype.onPanAndSend = function (event) {};
+View.prototype.onTrack = function (event) {};
+View.prototype.onClip = function (event) {};
+View.prototype.onDevice = function (event) {};
+View.prototype.onBrowse = function (event) {};
 
-View.prototype.onDeviceLeft = function () {};
-View.prototype.onDeviceRight = function () {};
-View.prototype.onMute = function () {};
-View.prototype.onSolo = function () {};
-View.prototype.onScales = function (isDown) {};
-View.prototype.onUser = function () {};
-View.prototype.onRepeat = function (isDown) {};
-View.prototype.onAccent = function (isDown) {};
-View.prototype.onOctaveDown = function () {};
-View.prototype.onOctaveUp = function () {};
+View.prototype.onDeviceLeft = function (event) {};
+View.prototype.onDeviceRight = function (event) {};
+View.prototype.onMute = function (event) {};
+View.prototype.onSolo = function (event) {};
+View.prototype.onScales = function (event) {};
+View.prototype.onUser = function (event) {};
+View.prototype.onRepeat = function (event) {};
+View.prototype.onAccent = function (event) {};
+View.prototype.onOctaveDown = function (event) {};
+View.prototype.onOctaveUp = function (event) {};
 
-View.prototype.onAddFX = function () {};
-View.prototype.onAddTrack = function () {};
-View.prototype.onNote = function () {};
-View.prototype.onSession = function () {};
-View.prototype.onSelect = function (isSelectPressed) {};
-View.prototype.onShift = function (isShiftPressed) {};
+View.prototype.onAddFX = function (event) {};
+View.prototype.onAddTrack = function (event) {};
+View.prototype.onNote = function (event) {};
+View.prototype.onSession = function (event) {};
+View.prototype.onSelect = function (event) {};
+View.prototype.onShift = function (event) {};
 
-View.prototype.onUp = function () {};
-View.prototype.onDown = function () {};
-View.prototype.onLeft = function () {};
-View.prototype.onRight = function () {};
+View.prototype.onUp = function (event) {};
+View.prototype.onDown = function (event) {};
+View.prototype.onLeft = function (event) {};
+View.prototype.onRight = function (event) {};
 
 View.prototype.onValueKnobTouch = function (knob, isTouched) {};
 View.prototype.onValueKnob9Touch = function (isTouched) {};

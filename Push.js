@@ -3,12 +3,9 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
+load ('ButtonEvent.js');
 load ('PadMatrix.js');
 load ('PushDisplay.js');
-
-var BUTTON_STATE_DOWN = 0;
-var BUTTON_STATE_UP   = 1;
-var BUTTON_STATE_LONG = 2;
 
 var PUSH_BUTTON_TAP				= 3;
 var PUSH_BUTTON_CLICK           = 9;
@@ -88,10 +85,6 @@ function Push (output)
 	this.activeModeId = -1;
 	this.modes = [];
 	
-	this.shiftPressed = false;
-	this.selectPressed = false;
-	this.deletePressed = false;
-	
 	this.buttons =
 	[
 		PUSH_BUTTON_TAP,
@@ -143,18 +136,13 @@ function Push (output)
 
 Push.prototype.init = function ()
 {
-	// Create the static scale matrices from scale intervals
-	Scales.createScales();
+	this.scales = new Scales ();
 	
-	// Note: with the current abstractions, there is no need for any
-	// global variables dealing with View and Mode, all state can be kept
-	// in the Push instance for encapsulation
-	
-	// Create Push View impls
-	this.addView (VIEW_PLAY, new PlayView ());
+	// Create Push Views
+	this.addView (VIEW_PLAY, new PlayView (this.scales));
 	this.addView (VIEW_SESSION, new SessionView ());
-	this.addView (VIEW_SEQUENCER, new SequencerView ());
-	this.addView (VIEW_DRUM, new DrumView ());
+	this.addView (VIEW_SEQUENCER, new SequencerView (this.scales));
+	this.addView (VIEW_DRUM, new DrumView (this.scales));
 	
 	// Create Push Mode impls
 	this.addMode (MODE_VOLUME, new VolumeMode ());
@@ -172,7 +160,7 @@ Push.prototype.init = function ()
 	this.addMode (MODE_MACRO, new MacroMode ());
 	this.addMode (MODE_FRAME, new FrameMode ());
 	this.addMode (MODE_PRESET, new PresetMode ());
-	this.addMode (MODE_SCALES, new ScalesMode ());
+	this.addMode (MODE_SCALES, new ScalesMode (this.scales));
 	this.addMode (MODE_FIXED, new FixedMode ());
 };
 
@@ -230,12 +218,6 @@ Push.prototype.addView = function (viewId, view)
 	this.views[viewId] = view;
 };
 
-Push.prototype.addMode = function (modeId, mode)
-{
-	mode.attachTo (this);
-	this.modes[modeId] = mode;
-};
-
 Push.prototype.getActiveMode = function ()
 {
 	if (this.activeModeId < 0)
@@ -260,6 +242,13 @@ Push.prototype.isActiveMode = function (modeId)
 	return this.activeModeId == modeId;
 };
 
+Push.prototype.addMode = function (modeId, mode)
+{
+	mode.attachTo (this);
+	this.modes[modeId] = mode;
+};
+
+// TODO Bad Push should not know about specific modes
 Push.prototype.isFullDisplayMode = function (modeId)
 {
 	switch (modeId)
@@ -277,17 +266,22 @@ Push.prototype.isFullDisplayMode = function (modeId)
 
 Push.prototype.isSelectPressed = function ()
 {
-	return this.selectPressed;
+	return this.isPressed (PUSH_BUTTON_SELECT);
 };
 
 Push.prototype.isShiftPressed = function ()
 {
-	return this.shiftPressed;
+	return this.isPressed (PUSH_BUTTON_SHIFT);
 };
 
 Push.prototype.isDeletePressed = function ()
 {
-	return this.deletePressed;
+	return this.isPressed (PUSH_BUTTON_DELETE);
+};
+
+Push.prototype.isPressed = function (button)
+{
+	return this.buttonStates[button] != BUTTON_STATE_UP;
 };
 
 Push.prototype.setButton = function (button, state)
@@ -331,7 +325,7 @@ Push.prototype.handleGrid = function (note, velocity)
 
 Push.prototype.handleCC = function (cc, value)
 {
-	if (typeof (this.buttonStates[cc]) != 'undefined')
+	if (this.isButton (cc))
 	{
 		this.buttonStates[cc] = value == 127 ? BUTTON_STATE_DOWN : BUTTON_STATE_UP;
 		if (this.buttonStates[cc] == BUTTON_STATE_DOWN)
@@ -346,25 +340,24 @@ Push.prototype.handleCC = function (cc, value)
 	this.handleEvent (cc, value);
 };
 
-
 Push.prototype.handleEvent = function (cc, value)
 {
 	var view = this.getActiveView ();
 	if (view == null)
 		return;
 		
+	var event = this.isButton (cc) ? new ButtonEvent (this.buttonStates[cc]) : null;
+		
 	switch (cc)
 	{
 		// Tap Tempo
 		case PUSH_BUTTON_TAP:
-			if (value == 127)
-				view.onTapTempo ();
+			view.onTapTempo (event);
 			break;
 	
 		// Click
 		case PUSH_BUTTON_CLICK:
-			if (value == 127)
-				view.onClick ();
+			view.onClick (event);
 			break;
 
 		// Small knob 1 (rastered)
@@ -392,12 +385,12 @@ Push.prototype.handleEvent = function (cc, value)
 			
 		// Select Master track
 		case PUSH_BUTTON_MASTER:
-			view.onMaster (this.buttonStates[cc]);
+			view.onMaster (event);
 			break;
 
 		// Stop
 		case PUSH_BUTTON_STOP:
-			view.onStop (this.buttonStates[cc]);
+			view.onStop (event);
 			break;
 
 		// Scene buttons
@@ -415,122 +408,104 @@ Push.prototype.handleEvent = function (cc, value)
 
 		// Left
 		case PUSH_BUTTON_LEFT:
-			if (value == 127)
-				view.onLeft ();
+			view.onLeft (event);
 			break;
 			
 		// Right
 		case PUSH_BUTTON_RIGHT:
-			if (value == 127)
-				view.onRight ();
+			view.onRight (event);
 			break;
 
 		// Up
 		case PUSH_BUTTON_UP:
-			if (value == 127)
-				view.onUp ();
+			view.onUp (event);
 			break;
 
 		// Down
 		case PUSH_BUTTON_DOWN:
-			if (value == 127)
-				view.onDown ();
+			view.onDown (event);
 			break;
 
 		// Select
 		case PUSH_BUTTON_SELECT:
-			this.selectPressed = value == 127;
 			if (view.usesButton (PUSH_BUTTON_SELECT))
-				this.setButton (PUSH_BUTTON_SELECT, this.selectPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-			view.onSelect (this.selectPressed);
+				this.setButton (PUSH_BUTTON_SELECT, event.isUp () ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_HI);
+			view.onSelect (event);
 			break;
 
 		// Shift Key
 		case PUSH_BUTTON_SHIFT:
-			this.shiftPressed = value == 127;
-			this.setButton (PUSH_BUTTON_SHIFT, this.shiftPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-			view.onShift (this.shiftPressed);
+			view.onShift (event);
 			break;
-			
+
 		// Play Note Mode
 		case PUSH_BUTTON_NOTE:
-			if (value == 127)
-				view.onNote ();
+			view.onNote (event);
 			break;
 
 		// Play Session Mode
 		case PUSH_BUTTON_SESSION:
-			if (value == 127)
-				view.onSession ();
+			view.onSession (event);
 			break;
 
 		// Add FX
 		case PUSH_BUTTON_ADD_EFFECT:
-			if (value == 127)
-				view.onAddFX ();
+			view.onAddFX (event);
 			break;
 			
 		// Add Track
 		case PUSH_BUTTON_ADD_TRACK:
-			if (value == 127)
-				view.onAddTrack ();
+			view.onAddTrack (event);
 			break;
 
 		// Octave Down
 		case PUSH_BUTTON_OCTAVE_DOWN:
-			if (value == 127)
-				view.onOctaveDown ();
+			view.onOctaveDown (event);
 			break;
 			
 		// Octave Up
 		case PUSH_BUTTON_OCTAVE_UP:
-			if (value == 127)
-				view.onOctaveUp ();
+			view.onOctaveUp (event);
 			break;
 
 		// Repeat
 		case PUSH_BUTTON_REPEAT:
-			view.onRepeat (value == 127);
+			view.onRepeat (event);
 			break;
 
 		// Accent
 		case PUSH_BUTTON_ACCENT:
-			view.onAccent (value == 127);
+			view.onAccent (event);
 			break;
 			
 		// Scales
 		case PUSH_BUTTON_SCALES:
-			view.onScales (value == 127);
+			view.onScales (event);
 			break;
 
 		// User Mode
 		case PUSH_BUTTON_USER_MODE:
-			if (value == 127)
-				view.onUser ();
+			view.onUser (event);
 			break;
 
 		// Mute
 		case PUSH_BUTTON_MUTE:
-			if (value == 127)
-				view.onMute ();
+			view.onMute (event);
 			break;
 			
 		// Solo
 		case PUSH_BUTTON_SOLO:
-			if (value == 127)
-				view.onSolo ();
+			view.onSolo (event);
 			break;
 
 		// Decrease selected device
 		case PUSH_BUTTON_DEVICE_LEFT:
-			if (value == 127)
-				view.onDeviceLeft ();
+			view.onDeviceLeft (event);
 			break;
 		
 		// Increase selected device
 		case PUSH_BUTTON_DEVICE_RIGHT:
-			if (value == 127)
-				view.onDeviceRight ();
+			view.onDeviceRight (event);
 			break;
 			
 		// Value Knobs 1-8
@@ -552,36 +527,32 @@ Push.prototype.handleEvent = function (cc, value)
 			
 		// Play
 		case PUSH_BUTTON_PLAY:
-			if (value == 127)
-				view.onPlay ();
+			view.onPlay (event);
 			break;
 			
 		// Record
 		case PUSH_BUTTON_RECORD:
-			if (value == 127)
-				view.onRecord ();
+			view.onRecord (event);
 			break;
 			
 		// New
 		case PUSH_BUTTON_NEW:
-			view.onNew (value == 127);
+			view.onNew (event);
 			break;
 			
 		// Duplicate
 		case PUSH_BUTTON_DUPLICATE:
-			if (value == 127)
-				view.onDuplicate ();
+			view.onDuplicate (event);
 			break;
 			
 		// Automation
 		case PUSH_BUTTON_AUTOMATION:
-			if (value == 127)
-				view.onAutomation ();
+			view.onAutomation (event);
 			break;
 			
 		// Fixed Length
 		case PUSH_BUTTON_FIXED_LENGTH:
-			view.onFixedLength (value == 127);
+			view.onFixedLength (event);
 			break;
 			
 		// 2nd button row below display
@@ -599,63 +570,52 @@ Push.prototype.handleEvent = function (cc, value)
 			
 		// Device Mode
 		case PUSH_BUTTON_DEVICE:
-			if (value == 127)
-				view.onDevice ();
+			view.onDevice (event);
 			break;
 			
 		// Browse
 		case PUSH_BUTTON_BROWSE:
-			if (value == 127)
-				view.onBrowse ();
+			view.onBrowse (event);
 			break;
 			
 	 	// Track Mode
 		case PUSH_BUTTON_TRACK:
-			if (value == 127)
-				view.onTrack ();
+			view.onTrack (event);
 			break;
 
 	 	// Clip Mode
 		case PUSH_BUTTON_CLIP:
-			if (value == 127)
-				view.onClip ();
+			view.onClip (event);
 			break;
 
 		// Volume Mode
 		case PUSH_BUTTON_VOLUME:
-			if (value == 127)
-				view.onVolume ();
+			view.onVolume (event);
 			break;
 			
 		// Pan & Send Mode
 		case PUSH_BUTTON_PAN_SEND:
-			if (value == 127)
-				view.onPanAndSend ();
+			view.onPanAndSend (event);
 			break;
 		
 		// Quantize
 		case PUSH_BUTTON_QUANTIZE:
-			if (value == 127)
-				view.onQuantize ();
+			view.onQuantize (event);
 			break;
 
 		// Double
 		case PUSH_BUTTON_DOUBLE:
-			if (value == 127)
-				view.onDouble ();
+			view.onDouble (event);
 			break;
 			
 		// Delete
 		case PUSH_BUTTON_DELETE:
-			this.deletePressed = value == 127;
-			if (value == 127)
-				view.onDelete ();
+			view.onDelete (event);
 			break;
 			
 		// Undo
 		case PUSH_BUTTON_UNDO:
-			if (value == 127)
-				view.onUndo ();
+			view.onUndo (event);
 			break;
 			
 		default:
@@ -704,4 +664,9 @@ Push.prototype.checkButtonState = function (buttonID)
 		
 	this.buttonStates[buttonID] = BUTTON_STATE_LONG;
 	this.handleEvent (buttonID, 127);
+};
+
+Push.prototype.isButton = function (cc)
+{
+	return typeof (this.buttonStates[cc]) != 'undefined';
 };

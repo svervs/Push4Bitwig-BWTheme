@@ -2,65 +2,33 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-var SEQ_NUM_ROWS = 128;
-var SEQ_NUM_COLS = 8;
 var SEQ_NUM_DISPLAY_ROWS = 8;
 var SEQ_NUM_DISPLAY_COLS = 8;
 var SEQ_START_KEY = 32;
 
-function SequencerView ()
+function SequencerView (scales)
 {
-	this.offsetX = 0;
+	AbstractSequencerView.call (this, scales, 128, 8);
 	this.offsetY = SEQ_START_KEY;
-	this.step    = -1;
-	
-	this.data = [];
-	for (var y = 0; y < SEQ_NUM_ROWS; y++)
-		this.data[y] = initArray (false, SEQ_NUM_COLS);
-	
-	this.clip = host.createCursorClip (SEQ_NUM_COLS, SEQ_NUM_ROWS);
-	this.lengthInBeatTime = 16;
-	this.clip.setStepSize (this.lengthInBeatTime);
-	
-	this.clip.addPlayingStepObserver (doObject (this, function (step)
-	{
-		this.step = step;
-	}));
-	
-	this.clip.addStepDataObserver (doObject (this, function (column, row, state)
-	{
-		this.data[column][row] = state;
-	}));
-	
 	this.clip.scrollToKey (SEQ_START_KEY);
 	this.clip.scrollToStep (0);
 }
-SequencerView.prototype = new BaseView ();
+SequencerView.prototype = new AbstractSequencerView ();
 
 SequencerView.prototype.updateArrows = function ()
 {
-	this.canScrollUp = this.offsetY + SEQ_NUM_DISPLAY_ROWS <= SEQ_NUM_ROWS - SEQ_NUM_DISPLAY_ROWS;
+	this.canScrollUp = this.offsetY + SEQ_NUM_DISPLAY_ROWS <= this.rows - SEQ_NUM_DISPLAY_ROWS;
 	this.canScrollDown = this.offsetY - SEQ_NUM_DISPLAY_ROWS >= 0;
 	this.canScrollLeft = this.offsetX > 0;
 	BaseView.prototype.updateArrows.call (this);
-};
-
-SequencerView.prototype.onActivate = function ()
-{
-	BaseView.prototype.onActivate.call (this);
-
-	push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
-	push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
-	for (var i = 0; i < 8; i++)
-		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (false);
-	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-		push.setButton (i, i % 2 == 0 ? PUSH_COLOR_SCENE_GREEN : PUSH_COLOR_BLACK);
 };
 
 SequencerView.prototype.usesButton = function (buttonID)
 {
 	switch (buttonID)
 	{
+		case PUSH_BUTTON_OCTAVE_DOWN:
+		case PUSH_BUTTON_OCTAVE_UP:
 		case PUSH_BUTTON_NEW:
 		case PUSH_BUTTON_CLIP:
 		case PUSH_BUTTON_SELECT:
@@ -75,15 +43,6 @@ SequencerView.prototype.usesButton = function (buttonID)
 	return true;
 };
 
-SequencerView.prototype.onScene = function (index)
-{
-	var button = 7 - index;
-	if (button % 2 != 0)
-		return;
-	this.lengthInBeatTime = Math.pow (0.5, button / 2);
-	this.clip.setStepSize (this.lengthInBeatTime);
-};
-
 SequencerView.prototype.onGrid = function (note, velocity)
 {
 	if (velocity == 0)
@@ -94,8 +53,10 @@ SequencerView.prototype.onGrid = function (note, velocity)
 	this.clip.toggleStep (x, this.offsetY + y, velocity);
 };
 
-SequencerView.prototype.onLeft = function ()
+SequencerView.prototype.onLeft = function (event)
 {
+	if (!event.isDown ())
+		return;
 	var newOffset = this.offsetX - SEQ_NUM_DISPLAY_COLS;
 	if (newOffset < 0)
 		this.offsetX = 0;
@@ -107,21 +68,27 @@ SequencerView.prototype.onLeft = function ()
 	this.updateArrows ();
 };
 
-SequencerView.prototype.onRight = function ()
+SequencerView.prototype.onRight = function (event)
 {
+	if (!event.isDown ())
+		return;
 	this.offsetX = this.offsetX + SEQ_NUM_DISPLAY_COLS;
 	this.clip.scrollStepsPageForward ();
 	this.updateArrows ();
 };
 
-SequencerView.prototype.onUp = function ()
+SequencerView.prototype.onUp = function (event)
 {
-	this.offsetY = Math.min (SEQ_NUM_ROWS - SEQ_NUM_DISPLAY_ROWS, this.offsetY + SEQ_NUM_DISPLAY_ROWS);
+	if (!event.isDown ())
+		return;
+	this.offsetY = Math.min (this.rows - SEQ_NUM_DISPLAY_ROWS, this.offsetY + SEQ_NUM_DISPLAY_ROWS);
 	this.updateArrows ();
 };
 
-SequencerView.prototype.onDown = function ()
+SequencerView.prototype.onDown = function (event)
 {
+	if (!event.isDown ())
+		return;
 	this.offsetY = Math.max (0, this.offsetY - SEQ_NUM_DISPLAY_ROWS);
 	this.updateArrows ();
 };
@@ -135,7 +102,7 @@ SequencerView.prototype.drawGrid = function ()
 		{
 			var isSet = this.data[x][this.offsetY + y];
 			var hilite = x == hiStep;
-			push.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_RED_HI) : hilite ? PUSH_COLOR_GREEN_HI : PUSH_COLOR_BLACK);
+			this.push.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLUE_HI) : hilite ? PUSH_COLOR_GREEN_HI : PUSH_COLOR_BLACK);
 		}
 	}
 };

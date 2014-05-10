@@ -54,7 +54,7 @@ function PadMatrix (output)
 {
 	this.output = output;
 
-	// Note: The matrix contains only 64 pads but is more efficient to use 
+	// Note: The grid contains only 64 pads but is more efficient to use 
 	// the 128 note values the pads understand
 	this.currentButtonColors = initArray (PUSH_COLOR_BLACK, 128);
 	this.buttonColors = initArray (PUSH_COLOR_BLACK, 128);

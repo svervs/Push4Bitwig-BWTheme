@@ -131,7 +131,7 @@ PresetMode.prototype.updateDisplay = function ()
 		return;
 	}		
 	
-	d.clearColumn (0).setBlock( 0, 0, "Select Preset:").setBlock (3, 0,"Device: " + selectedDevice.name);
+	d.clearColumn (0).setBlock( 0, 0, "Select Preset:").setBlock (3, 0, "Device: " + selectedDevice.name);
 	
 	var view = this.categoryProvider.getView (4);
 	for (var i = 0; i < 4; i++)

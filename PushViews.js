@@ -13,5 +13,6 @@ load("view/View.js");
 load("view/BaseView.js");
 load("view/PlayView.js");
 load("view/SessionView.js");
+load("view/AbstractSequencerView.js");
 load("view/SequencerView.js");
 load("view/DrumView.js");

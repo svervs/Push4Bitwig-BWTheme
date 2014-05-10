@@ -103,9 +103,6 @@ var noteInput = null;
 var canScrollTrackUp   = false;
 var canScrollTrackDown = false;
 
-var currentScaleOffset   = 0; // C
-var currentScale         = 1; // Major
-var currentOctave        = 0;
 var currentNewClipLength = 2; // 1 Bar
 
 var output = null;
@@ -118,7 +115,7 @@ host.addDeviceNameBasedDiscoveryPair (["Ableton Push MIDI 2"], ["Ableton Push MI
 
 function init()
 {
-	var port = host.getMidiInPort(0);
+	var port = host.getMidiInPort (0);
 	port.setMidiCallback (onMidi);
 	noteInput = port.createNoteInput ("Ableton Push", "80????", "90????", "E0????");
 	noteInput.setShouldConsumeEvents (false);
@@ -208,6 +205,7 @@ function getSelectedSlot (track)
 	return -1;
 }
 
+// TODO Move to Push.js incl. currentMode, previousMode
 function setMode (mode)
 {
 	if (mode == null)

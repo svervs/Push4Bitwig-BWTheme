@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// Contributions by Michael Schmalle - teotigraphix.com
+//            Michael Schmalle - teotigraphix.com
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -8,10 +8,6 @@ function SendMode ()
 	this.id = MODE_SEND;
 }
 SendMode.prototype = new BaseMode ();
-
-SendMode.prototype.attachTo = function (aPush) 
-{
-};
 
 SendMode.prototype.onValueKnob = function (index, value)
 {

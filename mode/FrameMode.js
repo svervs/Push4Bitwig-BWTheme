@@ -1,4 +1,5 @@
 // Written by Michael Schmalle - teotigraphix.com
+//            Jürgen Moßgraber - mossgrabers.de
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -23,17 +24,9 @@ FrameMode.prototype.attachTo = function (aPush)
 	this.addFirstRowCommand ('  Full  ', function () { application.toggleFullScreen(); });
 };
 
-FrameMode.prototype.onValueKnob = function (index, value)
-{
-};
-
 FrameMode.prototype.onFirstRow = function (index) 
 {
 	this.bottomItems[index].execute();
-};
-
-FrameMode.prototype.onSecondRow = function (index) 
-{
 };
 
 FrameMode.prototype.updateDisplay = function () 
@@ -71,4 +64,3 @@ FrameToggleCommand.prototype.execute = function ()
 {
 	this.command.call(this);
 };
-
