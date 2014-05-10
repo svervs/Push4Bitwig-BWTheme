@@ -54,7 +54,7 @@ ScalesMode.prototype.updateDisplay = function ()
 	var scale = this.scales.getSelectedScale ();
 	var offset = this.scales.getScaleOffset ();
 	
-	d.setBlock (0, 0, RIGHT_ARROW + this.scales.getName (scale))
+	d.setBlock (0, 0, Display.RIGHT_ARROW + this.scales.getName (scale))
 	 .clearBlock (0, 1)
 	 .clearBlock (0, 2)
 	 .setBlock (0, 3, this.scales.getRangeText ())
@@ -68,12 +68,12 @@ ScalesMode.prototype.updateDisplay = function ()
 	 
 	d.setCell (2, 0, ' ' + this.scales.getName (scale + 2));
 	for (var i = 0; i < 6; i++)
-		d.setCell (2, i + 1, '  ' + (offset == i ? RIGHT_ARROW : ' ') + SCALE_BASES[i]);
+		d.setCell (2, i + 1, '  ' + (offset == i ? Display.RIGHT_ARROW : ' ') + Scales.BASES[i]);
 	d.clearCell (2, 7).done (2);
 	 
 	d.setCell (3, 0, ' ' + this.scales.getName (scale + 3));
 	for (var i = 6; i < 12; i++)
-		d.setCell (3, i - 5, '  ' + (offset == i ? RIGHT_ARROW : ' ') + SCALE_BASES[i]);
+		d.setCell (3, i - 5, '  ' + (offset == i ? Display.RIGHT_ARROW : ' ') + Scales.BASES[i]);
 	d.setCell (3, 7, this.scales.isChromatic () ? 'Chromatc' : 'In Key').done (3);
 
 	for (var i = 0; i < 8; i++)

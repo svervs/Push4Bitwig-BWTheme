@@ -1,4 +1,5 @@
-// Written by Michael Schmalle
+// Written by Jürgen Moßgraber - mossgrabers.de
+//            Michael Schmalle - teotigraphix.com
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -19,17 +20,17 @@ var MODE_MACRO  = 12;
 var MODE_FIXED  = 13;
 var MODE_PRESET = 14;
 var MODE_FRAME  = 15;
-var MODE_SEND  = 16;
+var MODE_SEND   = 16;
 
-load("mode/BaseMode.js");
-load("mode/VolumeMode.js");
-load("mode/PanMode.js");
-load("mode/SendMode.js");
-load("mode/TrackMode.js");
-load("mode/DeviceMode.js");
-load("mode/MacroMode.js");
-load("mode/PresetMode.js");
-load("mode/MasterMode.js");
-load("mode/FrameMode.js");
-load("mode/ScalesMode.js");
-load("mode/FixedMode.js");
+load ("BaseMode.js");
+load ("VolumeMode.js");
+load ("PanMode.js");
+load ("SendMode.js");
+load ("TrackMode.js");
+load ("DeviceMode.js");
+load ("MacroMode.js");
+load ("PresetMode.js");
+load ("MasterMode.js");
+load ("FrameMode.js");
+load ("ScalesMode.js");
+load ("FixedMode.js");

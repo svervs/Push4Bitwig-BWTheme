@@ -1,11 +1,7 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// Contributions by Michael Schmalle - teotigraphix.com
+//            Michael Schmalle - teotigraphix.com
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
-
-load ('ButtonEvent.js');
-load ('PadMatrix.js');
-load ('PushDisplay.js');
 
 var PUSH_BUTTON_TAP				= 3;
 var PUSH_BUTTON_CLICK           = 9;
@@ -77,8 +73,8 @@ var PUSH_BUTTON_STATE_HI  = 4;
 function Push (output)
 {
 	this.output = output;
-	this.pads = new PadMatrix (output);
-	this.display = new PushDisplay (output);
+	this.pads = new Grid (output);
+	this.display = new Display (output);
 
 	this.activeViewId = -1;
 	this.views = [];
@@ -131,7 +127,7 @@ function Push (output)
 	
 	this.buttonStates = [];
 	for (var i = 0; i < this.buttons.length; i++)
-		this.buttonStates[this.buttons[i]] = BUTTON_STATE_UP;
+		this.buttonStates[this.buttons[i]] = ButtonEvent.UP;
 }
 
 Push.prototype.init = function ()
@@ -248,7 +244,6 @@ Push.prototype.addMode = function (modeId, mode)
 	this.modes[modeId] = mode;
 };
 
-// TODO Bad Push should not know about specific modes
 Push.prototype.isFullDisplayMode = function (modeId)
 {
 	switch (modeId)
@@ -281,7 +276,7 @@ Push.prototype.isDeletePressed = function ()
 
 Push.prototype.isPressed = function (button)
 {
-	return this.buttonStates[button] != BUTTON_STATE_UP;
+	return this.buttonStates[button] != ButtonEvent.UP;
 };
 
 Push.prototype.setButton = function (button, state)
@@ -327,8 +322,8 @@ Push.prototype.handleCC = function (cc, value)
 {
 	if (this.isButton (cc))
 	{
-		this.buttonStates[cc] = value == 127 ? BUTTON_STATE_DOWN : BUTTON_STATE_UP;
-		if (this.buttonStates[cc] == BUTTON_STATE_DOWN)
+		this.buttonStates[cc] = value == 127 ? ButtonEvent.DOWN : ButtonEvent.UP;
+		if (this.buttonStates[cc] == ButtonEvent.DOWN)
 		{
 			host.scheduleTask (function (object, buttonID)
 			{
@@ -659,10 +654,10 @@ Push.prototype.handleTouch = function (knob, value)
 
 Push.prototype.checkButtonState = function (buttonID)
 {
-	if (this.buttonStates[buttonID] != BUTTON_STATE_DOWN)
+	if (this.buttonStates[buttonID] != ButtonEvent.DOWN)
 		return;
 		
-	this.buttonStates[buttonID] = BUTTON_STATE_LONG;
+	this.buttonStates[buttonID] = ButtonEvent.LONG;
 	this.handleEvent (buttonID, 127);
 };
 

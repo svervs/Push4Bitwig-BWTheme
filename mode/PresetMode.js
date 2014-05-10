@@ -1,4 +1,5 @@
-// Written by Michael Schmalle - teotigraphix.com
+// Written by Jürgen Moßgraber - mossgrabers.de
+//            Michael Schmalle - teotigraphix.com
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -138,7 +139,7 @@ PresetMode.prototype.updateDisplay = function ()
 	{
 		var value = (view[i] != null) ? view[i] : "";
 		if (i == 0)
-			d.setBlock (i, 1, RIGHT_ARROW + value);
+			d.setBlock (i, 1, Display.RIGHT_ARROW + value);
 		else
 			d.setBlock (i, 1, value);
 	}
@@ -148,12 +149,12 @@ PresetMode.prototype.updateDisplay = function ()
 	{
 		var value = (view[i] != null) ? view[i] : "";
 		if (i == 0)
-			d.setBlock (i, 2, RIGHT_ARROW + value);
+			d.setBlock (i, 2, Display.RIGHT_ARROW + value);
 		else
 			d.setBlock (i, 2, value);
 	}
 
-	d.clearColumn(3).setBlock (0, 3, RIGHT_ARROW + this.currentPreset).done (0).done (1).done (2).done (3);
+	d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.currentPreset).done (0).done (1).done (2).done (3);
 	
 	for (var i = 20; i < 28; i++)
 		push.setButton (i, this.firstRowButtons[i] != null ? PresetMode.firstRowButtonColor : PUSH_COLOR_BLACK);

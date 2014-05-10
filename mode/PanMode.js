@@ -3,6 +3,9 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
+PanMode.PARAM_NAMES = 'Pan      Pan     Pan      Pan     Pan      Pan     Pan      Pan     ';
+
+
 function PanMode ()
 {
 	this.id = MODE_PAN;
@@ -26,7 +29,7 @@ PanMode.prototype.attachTo = function (aPush)
 PanMode.prototype.onValueKnob = function (index, value)
 {
 	var t = tracks[index];
-	t.pan = changeValue (value, t.pan);
+	t.pan = this.changeValue (value, t.pan);
 	trackBank.getTrack (t.index).getPan ().set (t.pan, 128);
 };
 
@@ -36,8 +39,8 @@ PanMode.prototype.updateDisplay = function ()
 	
 	for (var i = 0; i < 8; i++)
 	{
-		d.setCell (1, i, tracks[i].panStr, PushDisplay.FORMAT_RAW)
-		 .setCell (2, i, tracks[i].pan, PushDisplay.FORMAT_PAN);
+		d.setCell (1, i, tracks[i].panStr, Display.FORMAT_RAW)
+		 .setCell (2, i, tracks[i].pan, Display.FORMAT_PAN);
 	}
-	d.setRow (0, PARAM_NAMES_PAN).done (1).done (2);
+	d.setRow (0, PanMode.PARAM_NAMES).done (1).done (2);
 };

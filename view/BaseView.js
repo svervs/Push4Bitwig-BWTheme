@@ -3,6 +3,10 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
+BaseView.INC_FRACTION_TIME      = 1.0;	    // 1 beat
+BaseView.INC_FRACTION_TIME_SLOW = 1.0 / 20;	// 1/20th of a beat
+
+
 function BaseView ()
 {
 	this.canScrollLeft = true;
@@ -77,7 +81,6 @@ BaseView.prototype.onDuplicate = function (event)
 {
 	if (!event.isDown ())
 		return;
-	// TODO Not possible?
 	host.showPopupNotification ("Duplicate: Function not supported (yet).");
 };
 
@@ -100,7 +103,6 @@ BaseView.prototype.onQuantize = function (event)
 {
 	if (!event.isDown ())
 		return;
-	// TODO Not possible?
 	host.showPopupNotification ("Quantize: Function not supported (yet).");
 };
 
@@ -144,7 +146,7 @@ BaseView.prototype.onSmallKnob1Touch = function (isTouched)
 // Change time (play position)
 BaseView.prototype.onSmallKnob2 = function (increase)
 {
-	var frac = this.push.isShiftPressed () ? INC_FRACTION_TIME_SLOW : INC_FRACTION_TIME;
+	var frac = this.push.isShiftPressed () ? BaseView.INC_FRACTION_TIME_SLOW : BaseView.INC_FRACTION_TIME;
 	transport.incPosition (delta = increase ? frac : -frac, false);			
 };
 
@@ -330,7 +332,7 @@ BaseView.prototype.onSecondRow = function (index)
 	{
 		var t = trackBank.getTrack (index);
 		if (this.push.isShiftPressed ())
-			; // TODO Toggle monitor; Possible?
+			; // Toggle monitor: Currently not possible
 		else
 			 t.getArm ().set (toggleValue (tracks[index].recarm));
 	} 
@@ -340,15 +342,15 @@ BaseView.prototype.onMaster = function (event)
 {
 	switch (event.getState ())
 	{
-		case BUTTON_STATE_UP:
+		case ButtonEvent.UP:
 			if (currentMode == MODE_FRAME)
 				setMode (previousMode);
 			break;
-		case BUTTON_STATE_DOWN:
+		case ButtonEvent.DOWN:
 			setMode (MODE_MASTER);
 			masterTrack.select ();
 			break;
-		case BUTTON_STATE_LONG:
+		case ButtonEvent.LONG:
 			setMode (MODE_FRAME);
 			break;
 	}
@@ -458,14 +460,14 @@ BaseView.prototype.onScales = function (event)
 {
 	switch (event.getState ())
 	{
-		case BUTTON_STATE_DOWN:
+		case ButtonEvent.DOWN:
 			this.quitScalesMode = false;
 			setMode (currentMode == MODE_SCALES ? previousMode : MODE_SCALES);
 			break;
-		case BUTTON_STATE_LONG:
+		case ButtonEvent.LONG:
 			this.quitScalesMode = true;
 			break;
-		case BUTTON_STATE_UP:
+		case ButtonEvent.UP:
 			if (this.quitScalesMode)
 				setMode (previousMode);
 			break;
@@ -476,7 +478,6 @@ BaseView.prototype.onAddFX = function (event)
 {
 	if (!event.isDown ())
 		return;
-	// TODO Not possible?
 	host.showPopupNotification ("Add Effect: Function not supported (yet).");
 };
 
@@ -484,7 +485,6 @@ BaseView.prototype.onAddTrack = function (event)
 {
 	if (!event.isDown ())
 		return;
-	// TODO Not possible?
 	host.showPopupNotification ("Add Track: Function not supported (yet).");
 };
 

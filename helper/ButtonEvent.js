@@ -1,11 +1,11 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
+//            Michael Schmalle - teotigraphix.com
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-var BUTTON_STATE_DOWN = 0;
-var BUTTON_STATE_UP   = 1;
-var BUTTON_STATE_LONG = 2;
-
+ButtonEvent.DOWN = 0;
+ButtonEvent.UP   = 1;
+ButtonEvent.LONG = 2;
 
 function ButtonEvent (aState)
 {
@@ -19,15 +19,15 @@ ButtonEvent.prototype.getState = function ()
 
 ButtonEvent.prototype.isDown = function ()
 {
-	return this.state == BUTTON_STATE_DOWN;
+	return this.state == ButtonEvent.DOWN;
 };
 
 ButtonEvent.prototype.isUp = function ()
 {
-	return this.state == BUTTON_STATE_UP;
+	return this.state == ButtonEvent.UP;
 };
 
 ButtonEvent.prototype.isLong = function ()
 {
-	return this.state == BUTTON_STATE_LONG;
+	return this.state == ButtonEvent.LONG;
 };

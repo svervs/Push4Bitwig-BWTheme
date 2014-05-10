@@ -1,4 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
+//            Michael Schmalle - teotigraphix.com
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -50,7 +51,7 @@ var PUSH_COLOR_SCENE_GREEN_HI_BLINK       = 23;
 var PUSH_COLOR_SCENE_GREEN_HI_BLINK_FAST  = 24;
 
 
-function PadMatrix (output)
+function Grid (output)
 {
 	this.output = output;
 
@@ -64,30 +65,30 @@ function PadMatrix (output)
 	this.blinkFast = initArray (false, 128);
 }
 
-PadMatrix.prototype.light = function (note, color)
+Grid.prototype.light = function (note, color)
 {
 	this.buttonColors[note] = color;
 };
 
-PadMatrix.prototype.lightEx = function (x, y, color)
+Grid.prototype.lightEx = function (x, y, color)
 {
 	this.buttonColors[36 + x + 8 * y] = color;
 };
 
-PadMatrix.prototype.blink = function (note, color, fast)
+Grid.prototype.blink = function (note, color, fast)
 {
 	this.blinkColors[note] = color;
 	this.blinkFast[note] = fast;
 };
 
-PadMatrix.prototype.blinkEx = function (x, y, color)
+Grid.prototype.blinkEx = function (x, y, color)
 {
 	var note = 36 + x + 8 * y;
 	this.blinkColors[note] = color;
 	this.blinkFast[note] = fast;
 };
 
-PadMatrix.prototype.flush = function ()
+Grid.prototype.flush = function ()
 {
 	for (var i = 36; i < 100; i++)
 	{
@@ -109,7 +110,7 @@ PadMatrix.prototype.flush = function ()
 	}
 };
 
-PadMatrix.prototype.turnOff = function ()
+Grid.prototype.turnOff = function ()
 {
 	for (var i = 36; i < 100; i++)
 		this.light (i, PUSH_COLOR_BLACK);

@@ -3,6 +3,9 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
+VolumeMode.PARAM_NAMES = 'Volume   Volume  Volume   Volume  Volume   Volume  Volume   Volume  ';
+
+
 function VolumeMode ()
 {
 	this.id = MODE_VOLUME;
@@ -26,7 +29,7 @@ VolumeMode.prototype.attachTo = function (aPush)
 VolumeMode.prototype.onValueKnob = function (index, value)
 {
 	var t = tracks[index];
-	t.volume = changeValue (value, t.volume);
+	t.volume = this.changeValue (value, t.volume);
 	trackBank.getTrack (t.index).getVolume ().set (t.volume, 128);
 };
 
@@ -35,8 +38,8 @@ VolumeMode.prototype.updateDisplay = function ()
 	var d = push.display;
 	for (var i = 0; i < 8; i++)
 	{
-		d.setCell (1, i, tracks[i].volumeStr, PushDisplay.FORMAT_RAW)
-		 .setCell (2, i, tracks[i].volume, PushDisplay.FORMAT_VALUE);
+		d.setCell (1, i, tracks[i].volumeStr, Display.FORMAT_RAW)
+		 .setCell (2, i, tracks[i].volume, Display.FORMAT_VALUE);
 	}
-	d.setRow (0, PARAM_NAMES_VOLUME).done (1).done (2);
+	d.setRow (0, VolumeMode.PARAM_NAMES).done (1).done (2);
 };

@@ -43,7 +43,7 @@ DeviceMode.prototype.attachTo = function (aPush)
 
 DeviceMode.prototype.onValueKnob = function (index, value)
 {
-	fxparams[index].value = changeValue (value, fxparams[index].value);
+	fxparams[index].value = this.changeValue (value, fxparams[index].value);
 	device.getParameter (index).set (fxparams[index].value, 128);
 };
 
@@ -66,12 +66,12 @@ DeviceMode.prototype.updateDisplay = function ()
 	for (var i = 0; i < 8; i++)
 	{
 		var isEmpty = fxparams[i].name.length == 0;
-		d.setCell (0, i, fxparams[i].name, PushDisplay.FORMAT_RAW)
-		 .setCell (1, i, isEmpty ? '' : fxparams[i].valueStr, PushDisplay.FORMAT_RAW);
+		d.setCell (0, i, fxparams[i].name, Display.FORMAT_RAW)
+		 .setCell (1, i, isEmpty ? '' : fxparams[i].valueStr, Display.FORMAT_RAW);
 		if (isEmpty)
 			d.clearCell (2, i);
 		else				
-			d.setCell (2, i, fxparams[i].value, PushDisplay.FORMAT_VALUE);
+			d.setCell (2, i, fxparams[i].value, Display.FORMAT_VALUE);
 					
 		// Light up fx selection buttons
 		push.setButton (20 + i, i == 7 && selectedDevice.enabled ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
@@ -82,7 +82,7 @@ DeviceMode.prototype.updateDisplay = function ()
 		d.setBlock(1, 1, '    Please select').setBlock(1, 2, 'a Device...    ');
 	
 	d.done (0).done (1).done (2)
-	 .setCell (3, 0, 'Selected', PushDisplay.FORMAT_RAW).setCell (3, 1, 'Device: ', PushDisplay.FORMAT_RAW)
+	 .setCell (3, 0, 'Selected', Display.FORMAT_RAW).setCell (3, 1, 'Device: ', Display.FORMAT_RAW)
 	 .setBlock (3, 1, selectedDevice.name)
 	 .clearBlock (3, 2).clearCell (3, 6)
 	 .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);

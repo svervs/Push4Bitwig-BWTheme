@@ -1,14 +1,14 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// Contributions by Michael Schmalle - teotigraphix.com
-// Additional scales by Alexandre Bique
+//            Michael Schmalle - teotigraphix.com
+//            Alexandre Bique
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-var NOTE_NAMES    = [ 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B' ];
-var SCALE_BASES   = [ 'C', 'G', 'D', 'A', 'E', 'B', 'F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb' ];
-var SCALE_OFFSETS = [  0,   7,   2,   9,   4,   11,  5,   10,   3,    8,    1,    6 ];
+Scales.NOTE_NAMES    = [ 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B' ];
+Scales.BASES   = [ 'C', 'G', 'D', 'A', 'E', 'B', 'F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb' ];
+Scales.OFFSETS = [  0,   7,   2,   9,   4,   11,  5,   10,   3,    8,    1,    6 ];
 
-var SCALE_DRUM_NOTES =
+Scales.DRUM_MATRIX =
 [
 	0,   1,  2,  3, -1, -1, -1, -1, 
 	4,   5,  6,  7, -1, -1, -1, -1, 
@@ -20,7 +20,7 @@ var SCALE_DRUM_NOTES =
 	-1, -1, -1, -1, -1, -1, -1, -1
 ];
 
-var SCALE_INTERVALS =
+Scales.INTERVALS =
 [
 	{ name: 'Major',            notes: [ 0, 2, 4, 5, 7,  9,  11 ] },
 	{ name: 'Minor',            notes: [ 0, 2, 3, 5, 7,  8,  10 ] },
@@ -64,7 +64,7 @@ function Scales ()
 
 Scales.prototype.getName = function (scale)
 {
-	return scale < SCALE_INTERVALS.length ? SCALE_INTERVALS[scale].name : '';
+	return scale < Scales.INTERVALS.length ? Scales.INTERVALS[scale].name : '';
 };
 
 Scales.prototype.getSelectedScale = function ()
@@ -94,7 +94,7 @@ Scales.prototype.getScaleOffset = function ()
 
 Scales.prototype.setScaleOffset = function (scaleOffset)
 {
-	this.scaleOffset = Math.max (0, Math.min (scaleOffset, SCALE_OFFSETS.length - 1));
+	this.scaleOffset = Math.max (0, Math.min (scaleOffset, Scales.OFFSETS.length - 1));
 };
 
 Scales.prototype.setChromatic = function (enable)
@@ -166,7 +166,7 @@ Scales.prototype.getColor = function (note)
 		return PUSH_COLOR_BLUE_LGHT;
 	if (this.isChromatic ())
 	{
-		var notes = SCALE_INTERVALS[this.selectedScale].notes;
+		var notes = Scales.INTERVALS[this.selectedScale].notes;
 		for (var i = 0; i < notes.length; i++)
 		{
 			if (notes[i] == n)
@@ -183,7 +183,7 @@ Scales.prototype.getNoteMatrix = function ()
 	var noteMap = this.getEmptyMatrix ();
 	for (var note = 36; note < 100; note++)
 	{
-		var n = matrix[note - 36] + SCALE_OFFSETS[this.scaleOffset] + 36 + this.octave * 12;
+		var n = matrix[note - 36] + Scales.OFFSETS[this.scaleOffset] + 36 + this.octave * 12;
 		noteMap[note] = n < 0 || n > 127 ? -1 : n;
 	}
 	return noteMap;
@@ -196,7 +196,7 @@ Scales.prototype.getEmptyMatrix = function ()
 
 Scales.prototype.getDrumMatrix = function ()
 {
-	var matrix = SCALE_DRUM_NOTES;
+	var matrix = Scales.DRUM_MATRIX;
 	var noteMap = this.getEmptyMatrix ();
 	for (var note = 36; note < 100; note++)
 	{
@@ -209,13 +209,13 @@ Scales.prototype.getDrumMatrix = function ()
 Scales.prototype.getRangeText = function ()
 {
 	var matrix = this.getActiveMatrix ();
-	var offset = SCALE_OFFSETS[this.scaleOffset];
+	var offset = Scales.OFFSETS[this.scaleOffset];
 	return this.formatNote (offset + matrix[0]) + ' to ' + this.formatNote (offset + matrix[matrix.length - 1]);
 };
 
 Scales.prototype.formatNote = function (note)
 {
-	return NOTE_NAMES[note % 12] + (2 + Math.floor (note / 12) + this.octave);
+	return Scales.NOTE_NAMES[note % 12] + (2 + Math.floor (note / 12) + this.octave);
 }
 
 Scales.prototype.createScale = function (scale)
@@ -243,6 +243,6 @@ Scales.prototype.getActiveMatrix = function ()
 Scales.prototype.generateMatrices = function ()
 {
 	this.scales = [];
-	for (var i = 0; i < SCALE_INTERVALS.length; i++)
-		this.scales.push (this.createScale (SCALE_INTERVALS[i]));
+	for (var i = 0; i < Scales.INTERVALS.length; i++)
+		this.scales.push (this.createScale (Scales.INTERVALS[i]));
 };

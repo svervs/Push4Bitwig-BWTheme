@@ -1,4 +1,5 @@
-// Written by Michael Schmalle - teotigraphix.com
+// Written by Jürgen Moßgraber - mossgrabers.de
+//            Michael Schmalle - teotigraphix.com
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -32,7 +33,7 @@ MacroMode.prototype.attachTo = function (aPush)
 
 MacroMode.prototype.onValueKnob = function (index, value)
 {
-	macros[index].value = changeValue (value, macros[index].value);
+	macros[index].value = this.changeValue (value, macros[index].value);
 	device.getMacro (index).getAmount ().set (macros[index].value, 128);
 };
 
@@ -48,9 +49,9 @@ MacroMode.prototype.updateDisplay = function ()
 				d.clearCell (0, i).clearCell (1, i).clearCell (2, i);
 			else				
 			{
-				d.setCell (0, i, macros[i].name, PushDisplay.FORMAT_RAW)
-				 .setCell (1, i, macros[i].valueStr, PushDisplay.FORMAT_RAW)
-				 .setCell (2, i, macros[i].value, PushDisplay.FORMAT_VALUE);
+				d.setCell (0, i, macros[i].name, Display.FORMAT_RAW)
+				 .setCell (1, i, macros[i].valueStr, Display.FORMAT_RAW)
+				 .setCell (2, i, macros[i].value, Display.FORMAT_VALUE);
 			}
 		}
 	}

@@ -3,6 +3,9 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
+FixedMode.CLIP_LENGTHS = [ '1 Beat', '2 Beats', '1 Bar', '2 Bars', '4 Bars', '8 Bars', '16 Bars', '32 Bars' ];
+
+
 function FixedMode ()
 {
 	this.id = MODE_FIXED;
@@ -22,7 +25,7 @@ FixedMode.prototype.updateDisplay = function ()
 	 .setBlock (2, 0, 'New Clip Length:').clearBlock (2, 1).clearBlock (2, 2).clearBlock (2, 3)
 	 .done (2);
 	for (var i = 0; i < 8; i++)
-		d.setCell (3, i, (currentNewClipLength == i ? RIGHT_ARROW : ' ') + CLIP_LENGTHS[i]);
+		d.setCell (3, i, (currentNewClipLength == i ? Display.RIGHT_ARROW : ' ') + FixedMode.CLIP_LENGTHS[i]);
 	d.done (3);
 	
 	for (var i = 0; i < 8; i++)
