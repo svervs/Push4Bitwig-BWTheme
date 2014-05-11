@@ -82,9 +82,15 @@ DeviceMode.prototype.updateDisplay = function ()
 	if (selectedDevice.name == 'None')
 		d.setBlock(1, 1, '    Please select').setBlock(1, 2, 'a Device...    ');
 	
-	d.done (0).done (1).done (2)
-	 .setCell (3, 0, 'Selected', Display.FORMAT_RAW).setCell (3, 1, 'Device: ', Display.FORMAT_RAW)
-	 .setBlock (3, 1, selectedDevice.name)
-	 .clearBlock (3, 2).clearCell (3, 6)
-	 .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
+	d.done (0).done (1).done (2);
+
+	if (isEmpty)
+		d.clearRow (3).done (3);
+	else
+	{
+		d.setCell (3, 0, 'Selected', Display.FORMAT_RAW).setCell (3, 1, 'Device: ', Display.FORMAT_RAW)
+		 .setBlock (3, 1, selectedDevice.name)
+		 .clearBlock (3, 2).clearCell (3, 6)
+		 .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
+	}
 };
