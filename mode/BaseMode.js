@@ -11,7 +11,11 @@ function BaseMode (model)
 	this.id = null;
 }
 
-BaseMode.prototype.attachTo = function (push) {};
+BaseMode.prototype.attachTo = function (push)
+{
+	this.push = push;
+};
+
 BaseMode.prototype.onActivate = function () {};
 BaseMode.prototype.getId = function () { return this.id; };
 BaseMode.prototype.onValueKnob = function (index, value) {};

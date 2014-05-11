@@ -42,8 +42,10 @@ function TrackMode (model)
 }
 TrackMode.prototype = new BaseMode ();
 
-TrackMode.prototype.attachTo = function (aPush) 
+TrackMode.prototype.attachTo = function (push) 
 {
+	BaseMode.prototype.attachTo.call (this, push);
+	
  	trackBank.addCanScrollTracksDownObserver (function (canScroll)
 	{
 		canScrollTrackDown = canScroll;
@@ -103,7 +105,7 @@ TrackMode.prototype.updateDisplay = function ()
 		 .setCell (1, 7, t.sends[5].volumeStr, Display.FORMAT_RAW)
 		 .done (1)
 		
-		 .setCell (2, 0, t.volume, Display.FORMAT_VALUE)
+		 .setCell (2, 0, this.push.showVU ? t.vu : t.volume, Display.FORMAT_VALUE)
 		 .setCell (2, 1, t.pan, Display.FORMAT_PAN)
 		 .setCell (2, 2, t.sends[0].volume, Display.FORMAT_VALUE)
 		 .setCell (2, 3, t.sends[1].volume, Display.FORMAT_VALUE)

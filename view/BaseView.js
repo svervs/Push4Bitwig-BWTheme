@@ -270,10 +270,17 @@ BaseView.prototype.onMaster = function (event)
 				setMode (previousMode);
 			break;
 		case ButtonEvent.DOWN:
-			setMode (MODE_MASTER);
-			masterTrack.select ();
+			if (this.push.isActiveMode (MODE_MASTER))
+				this.push.showVU = !this.push.showVU;
+			else
+			{
+				setMode (MODE_MASTER);
+				masterTrack.select ();
+			}
 			break;
 		case ButtonEvent.LONG:
+			// Toggle back since it was toggled on DOWN
+			this.push.showVU = !this.push.showVU;
 			setMode (MODE_FRAME);
 			break;
 	}
@@ -281,7 +288,11 @@ BaseView.prototype.onMaster = function (event)
 
 BaseView.prototype.onVolume = function (event)
 {
-	if (event.isDown ())
+	if (!event.isDown ())
+		return;
+	if (this.push.isActiveMode (MODE_VOLUME))
+		this.push.showVU = !this.push.showVU;
+	else
 		setMode (MODE_VOLUME);
 };
 
@@ -297,7 +308,11 @@ BaseView.prototype.onPanAndSend = function (event)
 
 BaseView.prototype.onTrack = function (event)
 {
-	if (event.isDown ())
+	if (!event.isDown ())
+		return;
+	if (this.push.isActiveMode (MODE_TRACK))
+		this.push.showVU = !this.push.showVU;
+	else
 		setMode (MODE_TRACK);
 };
 

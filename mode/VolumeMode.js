@@ -27,7 +27,7 @@ VolumeMode.prototype.updateDisplay = function ()
 	{
 		var t = this.model.getTrack (i);
 		d.setCell (1, i, t.volumeStr, Display.FORMAT_RAW)
-		 .setCell (2, i, t.volume, Display.FORMAT_VALUE);
+		 .setCell (2, i, this.push.showVU ? t.vu : t.volume, Display.FORMAT_VALUE);
 	}
 	d.setRow (0, VolumeMode.PARAM_NAMES).done (1).done (2);
 };

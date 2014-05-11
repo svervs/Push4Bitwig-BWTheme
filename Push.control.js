@@ -77,7 +77,7 @@ function init()
 		push.setButton (PUSH_BUTTON_RECORD, isRecording ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	});
 	// Tempo
-	transport.getTempo ().addValueObserver(TEMPO_RESOLUTION, function (value)
+	transport.getTempo ().addValueObserver (TEMPO_RESOLUTION, function (value)
 	{
 		tempo = value;
 		quarterNoteInMillis = calcQuarterNoteInMillis (tempo);

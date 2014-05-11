@@ -41,7 +41,7 @@ MasterMode.prototype.updateDisplay = function ()
 	 .clearCell (1, 2).clearCell (1, 3).clearCell (1, 4).clearCell (1, 5)
 	 .clearCell (1, 6).clearCell (1, 7).done (1)
 	
-	 .setCell (2, 0, master.volume, Display.FORMAT_VALUE)
+	 .setCell (2, 0, this.push.showVU ? master.vu : master.volume, Display.FORMAT_VALUE)
 	 .setCell (2, 1, master.pan, Display.FORMAT_PAN)
 	 .clearCell (2, 2).clearCell (2, 3).clearCell (2, 4).clearCell (2, 5)
 	 .clearCell (2, 6).clearCell (2, 7).done (2)

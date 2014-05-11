@@ -37,6 +37,10 @@ function Model ()
 		this.master.selected = isSelected;
 		setMode (isSelected ? MODE_MASTER : previousMode);
 	}));
+	masterTrack.addVuMeterObserver (128, -1, true, doObject (this, function (value)
+	{
+		this.master.vu = value;
+	}));
 	
 	// Master Track Mute
 	masterTrack.getMute ().addValueObserver (doObject (this, function (isMuted)
@@ -93,6 +97,10 @@ function Model ()
 				setMode (MODE_TRACK);
 			if (push.isActiveView (VIEW_PLAY))
 				push.getActiveView ().updateNoteMapping ();
+		}));
+		t.addVuMeterObserver (128, -1, true, doObjectIndex (this, i, function (index, value)
+		{
+			this.tracks[index].vu = value;
 		}));
 		
 		// Track Mute

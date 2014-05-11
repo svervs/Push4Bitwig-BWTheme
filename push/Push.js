@@ -78,6 +78,8 @@ function Push (output)
 	this.output = output;
 	this.pads = new Grid (output);
 	this.display = new Display (output);
+	
+	this.showVU = true;
 
 	this.activeViewId = -1;
 	this.views = [];
@@ -240,6 +242,11 @@ Push.prototype.setActiveMode = function (modeId)
 Push.prototype.isActiveMode = function (modeId)
 {
 	return this.activeModeId == modeId;
+};
+
+Push.prototype.getMode = function (modeId)
+{
+	return this.modes[modeId];
 };
 
 Push.prototype.addMode = function (modeId, mode)
