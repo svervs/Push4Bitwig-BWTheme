@@ -89,7 +89,7 @@ function Model ()
 		t.addIsSelectedObserver (doObjectIndex (this, i, function (index, isSelected)
 		{
 			this.tracks[index].selected = isSelected;
-			if (isSelected)
+			if (isSelected && push.isActiveMode (MODE_MASTER))
 				setMode (MODE_TRACK);
 			if (push.isActiveView (VIEW_PLAY))
 				push.getActiveView ().updateNoteMapping ();
