@@ -51,7 +51,7 @@ function init()
 {
 	var port = host.getMidiInPort (0);
 	port.setMidiCallback (onMidi);
-	noteInput = port.createNoteInput ("Ableton Push", "80????", "90????", "E0????");
+	noteInput = port.createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
 	noteInput.setShouldConsumeEvents (false);
 	
 	device = host.createCursorDevice ();

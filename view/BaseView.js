@@ -443,6 +443,11 @@ BaseView.prototype.onShift = function (event)
 	this.push.setButton (PUSH_BUTTON_SHIFT, event.isUp () ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_HI);
 };
 
+BaseView.prototype.onFootswitch2 = function (value)
+{
+	this.onRecord (new ButtonEvent (value == 127 ? ButtonEvent.DOWN : ButtonEvent.UP));
+};
+
 function selectTrack (index)
 {
 	var t = trackBank.getTrack (index);

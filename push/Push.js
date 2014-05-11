@@ -65,6 +65,9 @@ var PUSH_KNOB9_TOUCH       = 8;
 var PUSH_SMALL_KNOB1_TOUCH = 10;
 var PUSH_SMALL_KNOB2_TOUCH = 9;
 
+var PUSH_FOOTSWITCH1 = 64;
+var PUSH_FOOTSWITCH2 = 69;
+
 var PUSH_BUTTON_STATE_OFF = 0;
 var PUSH_BUTTON_STATE_ON  = 1;
 var PUSH_BUTTON_STATE_HI  = 4;
@@ -657,6 +660,15 @@ Push.prototype.handleEvent = function (cc, value)
 		// Undo
 		case PUSH_BUTTON_UNDO:
 			view.onUndo (event);
+			break;
+			
+		// Note: Sustain already directly send to the DAW
+		case PUSH_FOOTSWITCH1:
+			view.onFootswitch1 (value);
+			break;
+
+		case PUSH_FOOTSWITCH2:
+			view.onFootswitch2 (value);
 			break;
 			
 		default:

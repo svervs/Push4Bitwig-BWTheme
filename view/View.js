@@ -83,3 +83,6 @@ View.prototype.onValueKnobTouch = function (knob, isTouched) {};
 View.prototype.onValueKnob9Touch = function (isTouched) {};
 View.prototype.onSmallKnob1Touch = function (isTouched) {};
 View.prototype.onSmallKnob1Touch = function (isTouched) {};
+
+View.prototype.onFootswitch1 = function (value) {};
+View.prototype.onFootswitch2 = function (value) {};
