@@ -10,28 +10,41 @@ function SessionView (model)
 	this.canScrollRight = true;
 	this.canScrollUp = true;
 	this.canScrollDown = true;
+	this.flip = false;
 	
 	trackBank.addCanScrollScenesDownObserver (doObject (this, function (canScroll)
 	{
-		this.canScrollUp = canScroll;
+		if (this.flip)
+			this.canScrollLeft = canScroll;
+		else
+			this.canScrollUp = canScroll;
 		if (this.push.isActiveView (VIEW_SESSION))
 			this.updateArrows ();
 	}));
 	trackBank.addCanScrollScenesUpObserver (doObject (this, function (canScroll)
 	{
-		this.canScrollDown = canScroll;
+		if (this.flip)
+			this.canScrollRight = canScroll;
+		else
+			this.canScrollDown = canScroll;
 		if (this.push.isActiveView (VIEW_SESSION))
 			this.updateArrows ();
 	}));
 	trackBank.addCanScrollTracksDownObserver (doObject (this, function (canScroll)
 	{
-		this.canScrollRight = canScroll;
+		if (this.flip)
+			this.canScrollDown = canScroll;
+		else
+			this.canScrollRight = canScroll;
 		if (this.push.isActiveView (VIEW_SESSION))
 			this.updateArrows ();
 	}));
 	trackBank.addCanScrollTracksUpObserver (doObject (this, function (canScroll)
 	{
-		this.canScrollLeft = canScroll;
+		if (this.flip)
+			this.canScrollUp = canScroll;
+		else
+			this.canScrollLeft = canScroll;
 		if (this.push.isActiveView (VIEW_SESSION))
 			this.updateArrows ();
 	}));
@@ -129,40 +142,84 @@ SessionView.prototype.onLeft = function (event)
 {
 	if (!event.isDown ())
 		return;
-	if (this.push.isShiftPressed ())
-		trackBank.scrollTracksPageUp ();
+
+	if (this.flip)
+	{
+		if (this.push.isShiftPressed ())
+			trackBank.scrollScenesPageUp ();
+		else
+			trackBank.scrollScenesUp ();
+	}
 	else
-		trackBank.scrollTracksUp ();
+	{
+		if (this.push.isShiftPressed ())
+			trackBank.scrollTracksPageUp ();
+		else
+			trackBank.scrollTracksUp ();
+	}
 };
 
 SessionView.prototype.onRight = function (event)
 {
 	if (!event.isDown ())
 		return;
-	if (this.push.isShiftPressed ())
-		trackBank.scrollTracksPageDown ();
+		
+	if (this.flip)
+	{
+		if (this.push.isShiftPressed ())
+			trackBank.scrollScenesPageDown ();
+		else
+			trackBank.scrollScenesDown ();
+	}
 	else
-		trackBank.scrollTracksDown ();
+	{
+		if (this.push.isShiftPressed ())
+			trackBank.scrollTracksPageDown ();
+		else
+			trackBank.scrollTracksDown ();
+	}
 };
 
 SessionView.prototype.onUp = function (event)
 {
 	if (!event.isDown ())
 		return;
-	if (this.push.isShiftPressed ())
-		trackBank.scrollScenesPageUp ();
+		
+	if (this.flip)
+	{
+		if (this.push.isShiftPressed ())
+			trackBank.scrollTracksPageUp ();
+		else
+			trackBank.scrollTracksUp ();
+	}
 	else
-		trackBank.scrollScenesUp ();
+	{
+		if (this.push.isShiftPressed ())
+			trackBank.scrollScenesPageUp ();
+		else
+			trackBank.scrollScenesUp ();
+	}
 };
 
 SessionView.prototype.onDown = function (event)
 {
 	if (!event.isDown ())
 		return;
-	if (this.push.isShiftPressed ())
-		trackBank.scrollScenesPageDown ();
+		
+	if (this.flip)
+	{
+		if (this.push.isShiftPressed ())
+			trackBank.scrollTracksPageDown ();
+		else
+			trackBank.scrollTracksDown ();
+	}
 	else
-		trackBank.scrollScenesDown ();
+	{
+		if (this.push.isShiftPressed ())
+			trackBank.scrollScenesPageDown ();
+		else
+			trackBank.scrollScenesDown ();
+	}
 };
 
 SessionView.prototype.onScene = function (scene)
@@ -175,13 +232,28 @@ SessionView.prototype.onAccent = function (event)
 	// No accent button usage in the Session view
 };
 
+SessionView.prototype.onSession = function (event)
+{
+	if (!event.isDown ())
+		return;
+		
+	this.flip = !this.flip;
+	var dUp   = this.canScrollUp;
+	var dDown = this.canScrollDown;
+	this.canScrollUp = this.canScrollLeft;
+	this.canScrollDown = this.canScrollRight;
+	this.canScrollLeft = dUp;
+	this.canScrollRight = dDown;
+	this.updateArrows ();
+};
+
 SessionView.prototype.drawGrid = function ()
 {
-	for (var i = 0; i < 8; i++)
+	for (var x = 0; x < 8; x++)
 	{
-		var t = this.model.getTrack (i);
-		for (var j = 0; j < 8; j++)
-			this.drawPad (t.slots[j], i, j, t.recarm);
+		var t = this.model.getTrack (x);
+		for (var y = 0; y < 8; y++)
+			this.drawPad (t.slots[y], this.flip ? y : x, this.flip ? x : y, t.recarm);
 	}
 };
 
