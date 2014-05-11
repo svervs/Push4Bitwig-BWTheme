@@ -102,9 +102,9 @@ Grid.prototype.flush = function ()
 		{
 			this.currentBlinkColors[i] = this.blinkColors[i];
 			this.currentBlinkFast[i] = this.blinkFast[i];
-			if (this.blinkColors[i] == PUSH_COLOR_BLACK)
-				this.output.sendNote (i, this.currentButtonColors[i]);
-			else
+
+			this.output.sendNote (i, this.currentButtonColors[i]);
+			if (this.blinkColors[i] != PUSH_COLOR_BLACK)
 				this.output.sendNoteEx (this.blinkFast[i] ? 14 : 10, i, this.blinkColors[i]);
 		}
 	}
