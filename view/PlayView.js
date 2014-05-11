@@ -8,6 +8,11 @@ function PlayView (model, scales)
 	BaseView.call (this, model);
 	this.scales = scales;
 	this.pressedKeys = initArray (0, 128);
+	this.maxVelocity = initArray (127, 128);
+	this.maxVelocity[0] = 0;
+	this.defaultVelocity = [];
+	for (var i = 0; i < 128; i++)
+		this.defaultVelocity.push (i);
 }
 PlayView.prototype = new BaseView ();
 
@@ -45,7 +50,6 @@ PlayView.prototype.usesButton = function (buttonID)
 		case PUSH_BUTTON_SELECT:
 		case PUSH_BUTTON_ADD_EFFECT:
 		case PUSH_BUTTON_ADD_TRACK:
-		case PUSH_BUTTON_ACCENT:
 		case PUSH_BUTTON_USER_MODE:
 		case PUSH_BUTTON_DUPLICATE:
 		case PUSH_BUTTON_CLIP:
@@ -157,4 +161,10 @@ PlayView.prototype.onRight = function (event)
 		}
 		selectTrack (index);
 	}
+};
+
+PlayView.prototype.onAccent = function (event)
+{
+	BaseView.prototype.onAccent.call (this, event);
+	noteInput.setVelocityTranslationTable (this.accentActive ? this.maxVelocity : this.defaultVelocity);
 };

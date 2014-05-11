@@ -170,6 +170,11 @@ SessionView.prototype.onScene = function (scene)
 	trackBank.launchScene (scene);
 };
 
+SessionView.prototype.onAccent = function (event)
+{
+	// No accent button usage in the Session view
+};
+
 SessionView.prototype.drawGrid = function ()
 {
 	for (var i = 0; i < 8; i++)

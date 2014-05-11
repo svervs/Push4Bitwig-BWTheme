@@ -39,7 +39,6 @@ DrumView.prototype.usesButton = function (buttonID)
 		case PUSH_BUTTON_ADD_EFFECT:
 		case PUSH_BUTTON_ADD_TRACK:
 		case PUSH_BUTTON_REPEAT:
-		case PUSH_BUTTON_ACCENT:
 		case PUSH_BUTTON_USER_MODE:
 		case PUSH_BUTTON_DUPLICATE:
 			return false;
@@ -65,7 +64,7 @@ DrumView.prototype.onGrid = function (note, velocity)
 		if (velocity != 0)
 		{
 			var col = 8 * (7 - y) + x;
-			this.clip.toggleStep (col, this.offsetY + this.selectedPad, velocity);
+			this.clip.toggleStep (col, this.offsetY + this.selectedPad, this.accentActive ? 127 : velocity);
 		}
 	}
 };

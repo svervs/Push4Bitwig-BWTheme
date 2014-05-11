@@ -35,7 +35,6 @@ SequencerView.prototype.usesButton = function (buttonID)
 		case PUSH_BUTTON_ADD_EFFECT:
 		case PUSH_BUTTON_ADD_TRACK:
 		case PUSH_BUTTON_REPEAT:
-		case PUSH_BUTTON_ACCENT:
 		case PUSH_BUTTON_USER_MODE:
 		case PUSH_BUTTON_DUPLICATE:
 			return false;
@@ -50,7 +49,7 @@ SequencerView.prototype.onGrid = function (note, velocity)
 	var index = note - 36;
 	var x = index % 8;
 	var y = Math.floor (index / 8);
-	this.clip.toggleStep (x, this.offsetY + y, velocity);
+	this.clip.toggleStep (x, this.offsetY + y, this.accentActive ? 127 : velocity);
 };
 
 SequencerView.prototype.onLeft = function (event)

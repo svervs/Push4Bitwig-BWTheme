@@ -22,6 +22,8 @@ function BaseView (model)
 	this.ttLastMillis = -1;
 	this.ttLastBPM = -1;
 	this.ttHistory = [];
+	
+	this.accentActive = false;
 }
 BaseView.prototype = new View ();
 BaseView.prototype.constructor = BaseView;
@@ -426,6 +428,14 @@ BaseView.prototype.onSession = function (event)
 		return;
 	BaseView.lastNoteView = this.push.isActiveView (VIEW_PLAY) ? VIEW_PLAY : (this.push.isActiveView (VIEW_DRUM) ? VIEW_DRUM : VIEW_SEQUENCER);
 	this.push.setActiveView (VIEW_SESSION);
+};
+
+BaseView.prototype.onAccent = function (event)
+{
+	if (!event.isDown ())
+		return;
+	this.accentActive = !this.accentActive;
+	this.push.setButton (PUSH_BUTTON_ACCENT, this.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 BaseView.prototype.onShift = function (event)
