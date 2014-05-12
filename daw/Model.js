@@ -8,6 +8,7 @@ function Model ()
 	this.application = host.createApplication ();
 
 	this.tracks = [];
+	this.recCount = 64;
 	for (var i = 0; i < 8; i++)
 	{
 		this.tracks.push (
@@ -167,6 +168,7 @@ function Model ()
 		}));
 		cs.addIsRecordingObserver (doObjectIndex (this, i, function (index, slot, isRecording)
 		{
+			this.recCount = this.recCount + (isRecording ? 1 : -1);
 			this.tracks[index].slots[slot].isRecording = isRecording;
 		}));
 		cs.addIsQueuedObserver (doObjectIndex (this, i, function (index, slot, isQueued)
@@ -213,4 +215,9 @@ Model.prototype.getTrack = function (index)
 Model.prototype.getApplication = function ()
 {
 	return this.application;
+};
+
+Model.prototype.isClipRecording = function ()
+{
+	return this.recCount != 0;
 };

@@ -3,8 +3,6 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-var TEMPO_RESOLUTION = 647;
-
 loadAPI (1);
 load ("helper/ClassLoader.js");
 load ("daw/ClassLoader.js");
@@ -17,11 +15,7 @@ var taskReturning = false;
 
 var previousMode = MODE_TRACK;
 var currentMode = MODE_TRACK;
-var tempo = 100;	// Note: For real BPM add 20
-var quarterNoteInMillis = calcQuarterNoteInMillis (tempo);
 
-var fxparams = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
-var macros = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
 var selectedDevice =
 {
 	name: 'None',
@@ -29,7 +23,6 @@ var selectedDevice =
 	hasNextDevice: false
 };
 
-var transport = null;
 var device = null;
 var masterTrack = null;
 var trackBank = null;
@@ -55,34 +48,11 @@ function init()
 	noteInput.setShouldConsumeEvents (false);
 	
 	device = host.createCursorDevice ();
-	transport = host.createTransport ();
 	masterTrack = host.createMasterTrack (0);
 	trackBank = host.createMainTrackBankSection (8, 6, 8);
 
 	var output = new MidiOutput ();
 	push = new Push (output);
-	
-	transport.addClickObserver (function (isOn)
-	{
-		push.setButton (PUSH_BUTTON_CLICK, isOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	});
-	// Play
-	transport.addIsPlayingObserver (function (isPlaying)
-	{
-		push.setButton (PUSH_BUTTON_PLAY, isPlaying ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	});
-	// Record
-	transport.addIsRecordingObserver (function (isRecording)
-	{
-		push.setButton (PUSH_BUTTON_RECORD, isRecording ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	});
-	// Tempo
-	transport.getTempo ().addValueObserver (TEMPO_RESOLUTION, function (value)
-	{
-		tempo = value;
-		quarterNoteInMillis = calcQuarterNoteInMillis (tempo);
-	});
-
 	push.init ();
 	push.setActiveView (VIEW_PLAY);
 	push.setActiveMode (MODE_TRACK);
@@ -184,9 +154,4 @@ function updateMode (mode)
 	push.setButton (PUSH_BUTTON_SCALES, isScales ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_FIXED_LENGTH, isFixed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_BROWSE, isPreset ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-}
-
-function calcQuarterNoteInMillis (tempo)
-{
-	return 60000 / (tempo + 20);
 }

@@ -8,6 +8,7 @@ function MacroMode (model)
 	BaseMode.call (this, model);
 	this.id = MODE_MACRO;
 	this.bottomItems = [];
+	this.macros = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
 }
 MacroMode.prototype = new BaseMode ();
 
@@ -16,26 +17,26 @@ MacroMode.prototype.attachTo = function (aPush)
 	for (var i = 0; i < 8; i++)
 	{
 		var m = device.getMacro (i);
-		m.addLabelObserver (8, '', doIndex (i, function (index, name)
+		m.addLabelObserver (8, '', doObjectIndex (this, i, function (index, name)
  		{
-			macros[index].name = name;
+			this.macros[index].name = name;
 		}));
-		m.getAmount().addValueObserver (128, doIndex (i, function (index, value)
+		m.getAmount().addValueObserver (128, doObjectIndex (this, i, function (index, value)
 		{
-			macros[index].value = value;
+			this.macros[index].value = value;
 		}));
 		// Macro value text
-		m.getAmount().addValueDisplayObserver (8, '',  doIndex (i, function (index, value)
+		m.getAmount().addValueDisplayObserver (8, '',  doObjectIndex (this, i, function (index, value)
 		{
-			macros[index].valueStr = value;
+			this.macros[index].valueStr = value;
 		}));
 	}
 };
 
 MacroMode.prototype.onValueKnob = function (index, value)
 {
-	macros[index].value = this.changeValue (value, macros[index].value);
-	device.getMacro (index).getAmount ().set (macros[index].value, 128);
+	this.macros[index].value = this.changeValue (value, this.macros[index].value);
+	device.getMacro (index).getAmount ().set (this.macros[index].value, 128);
 };
 
 MacroMode.prototype.updateDisplay = function () 
@@ -46,13 +47,13 @@ MacroMode.prototype.updateDisplay = function ()
 	{
 		for (var i = 0; i < 8; i++)
 		{
-			if (macros[i].name.length == 0)
+			if (this.macros[i].name.length == 0)
 				d.clearCell (0, i).clearCell (1, i).clearCell (2, i);
 			else				
 			{
-				d.setCell (0, i, macros[i].name, Display.FORMAT_RAW)
-				 .setCell (1, i, macros[i].valueStr, Display.FORMAT_RAW)
-				 .setCell (2, i, macros[i].value, Display.FORMAT_VALUE);
+				d.setCell (0, i, this.macros[i].name, Display.FORMAT_RAW)
+				 .setCell (1, i, this.macros[i].valueStr, Display.FORMAT_RAW)
+				 .setCell (2, i, this.macros[i].value, Display.FORMAT_VALUE);
 			}
 		}
 	}
@@ -69,7 +70,7 @@ MacroMode.prototype.hasMacros = function ()
 {
 	for (var i = 0; i < 8; i++)
 	{
-		if (macros[i].name.length != 0)
+		if (this.macros[i].name.length != 0)
 			return true;
 	}
 	return false;

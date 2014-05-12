@@ -3,10 +3,6 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-BaseView.INC_FRACTION_TIME      = 1.0;	    // 1 beat
-BaseView.INC_FRACTION_TIME_SLOW = 1.0 / 20;	// 1/20th of a beat
-
-
 function BaseView (model)
 {
 	this.model = model;
@@ -55,9 +51,9 @@ BaseView.prototype.onPlay = function (event)
 	if (!event.isDown ())
 		return;
 	if (this.push.isShiftPressed ())
-		transport.toggleLoop ();
+		this.push.transport.toggleLoop ();
 	else
-		transport.play ();
+		this.push.transport.play ();
 };
 
 BaseView.prototype.onRecord = function (event)
@@ -65,9 +61,9 @@ BaseView.prototype.onRecord = function (event)
 	if (!event.isDown ())
 		return;
 	if (this.push.isShiftPressed ())
-		transport.toggleLauncherOverdub ();
+		this.push.transport.toggleClipOverdub ();
 	else
-		transport.record ();
+		this.push.transport.record ();
 };
 
 BaseView.prototype.onStop = function (event)
@@ -94,7 +90,7 @@ BaseView.prototype.onAutomation = function (event)
 		return;
 	var selectedTrack = this.model.getSelectedTrack ();
 	if (selectedTrack != null)
-		transport.toggleWriteArrangerAutomation ();
+		this.push.transport.toggleWriteArrangerAutomation ();
 };
 
 BaseView.prototype.onFixedLength = function (event)
@@ -139,26 +135,24 @@ BaseView.prototype.onUndo = function (event)
 // Set tempo
 BaseView.prototype.onSmallKnob1 = function (increase)
 {
-	tempo = increase ? Math.min (tempo + 1, TEMPO_RESOLUTION) : Math.max (0, tempo - 1);
-	transport.getTempo ().set (tempo, TEMPO_RESOLUTION);
+	this.push.transport.changeTempo (increase);
 };
 
 BaseView.prototype.onSmallKnob1Touch = function (isTouched)
 {
-	transport.getTempo ().setIndication (isTouched);
+	this.push.transport.setTempoIndication (isTouched);
 };
 
 // Change time (play position)
 BaseView.prototype.onSmallKnob2 = function (increase)
 {
-	var frac = this.push.isShiftPressed () ? BaseView.INC_FRACTION_TIME_SLOW : BaseView.INC_FRACTION_TIME;
-	transport.incPosition (delta = increase ? frac : -frac, false);			
+	this.push.transport.changePosition (increase, this.push.isShiftPressed ());
 };
 
 BaseView.prototype.onClick = function (event)
 {
 	if (event.isDown ())
-		transport.toggleClick ();
+		this.push.transport.toggleClick ();
 };
 
 BaseView.prototype.onTapTempo = function (event)
@@ -200,9 +194,7 @@ BaseView.prototype.onTapTempo = function (event)
 	else
 	{
 		this.ttLastBPM = bpm;
-		// Rescale to Bitwig
-		var scaled = (bpm - 20) / 646 * TEMPO_RESOLUTION;
-		transport.getTempo ().set (Math.min (Math.max (0, scaled), TEMPO_RESOLUTION), TEMPO_RESOLUTION);
+		this.push.transport.setTempo (bpm);
 	}
 };
 

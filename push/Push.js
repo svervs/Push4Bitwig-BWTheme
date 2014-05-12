@@ -78,6 +78,7 @@ function Push (output)
 	this.output = output;
 	this.pads = new Grid (output);
 	this.display = new Display (output);
+	this.transport = new Transport (this);
 	
 	this.showVU = true;
 

@@ -63,7 +63,7 @@ PlayView.prototype.drawGrid = function ()
 	var t = this.model.getSelectedTrack ();
 	var isKeyboardEnabled = t != null && t.canHoldNotes;
 	for (var i = 36; i < 100; i++)
-		this.push.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ? PUSH_COLOR_GREEN_HI : this.scales.getColor (i)) : PUSH_COLOR_BLACK);
+		this.push.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ? (this.push.transport.isRecording || this.model.isClipRecording () ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : this.scales.getColor (i)) : PUSH_COLOR_BLACK);
 };
 
 PlayView.prototype.onGrid = function (note, velocity)
