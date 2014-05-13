@@ -88,12 +88,6 @@ SessionView.prototype.usesButton = function (buttonID)
 	return true;
 };
 
-SessionView.prototype.onNew = function (event)
-{
-	this.newPressed = event.isDown () || event.isLong ();
-	this.push.setButton (PUSH_BUTTON_NEW, this.newPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-};
-
 SessionView.prototype.onGrid = function (note, velocity)
 {
 	if (velocity == 0)
@@ -106,12 +100,7 @@ SessionView.prototype.onGrid = function (note, velocity)
 	var slot = this.model.getTrack (t).slots[s];
 	var slots = trackBank.getTrack (t).getClipLauncherSlots ();
 	
-	if (this.newPressed)
-	{
-		if (!slot.hasContent)
-			slots.createEmptyClip (s, Math.pow (2, currentNewClipLength));
-	}
-	else if (!this.push.isSelectPressed ())
+	if (!this.push.isSelectPressed ())
 	{
 		if (this.model.getTrack (t).recarm)
 		{
@@ -266,12 +255,4 @@ SessionView.prototype.drawPad = function (slot, x, y, isArmed)
 	var n = 92 + x - 8 * y;
 	this.push.pads.light (n, color);
 	this.push.pads.blink (n, (slot.isQueued || slot.isPlaying) ? (slot.isRecording ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : PUSH_COLOR_BLACK, slot.isQueued);
-};
-
-SessionView.prototype.getSelectedSlot = function (track)
-{
-	for (var i = 0; i < track.slots.length; i++)
-		if (track.slots[i].isSelected)
-			return i;
-	return -1;
 };

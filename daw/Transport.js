@@ -78,14 +78,18 @@ Transport.prototype.changeTempo = function (increase)
 
 Transport.prototype.setTempo = function (bpm)
 {
-	// Rescale to Bitwig
-	var scaled = (bpm - 20) / 646 * Transport.TEMPO_RESOLUTION;
-	this.transport.getTempo ().set (Math.min (Math.max (0, scaled), Transport.TEMPO_RESOLUTION), Transport.TEMPO_RESOLUTION);
+	this.transport.getTempo ().set (Math.min (Math.max (0, bpm - 20), Transport.TEMPO_RESOLUTION), Transport.TEMPO_RESOLUTION);
 };
 
 Transport.prototype.setTempoIndication = function (isTouched)
 {
 	this.transport.getTempo ().setIndication (isTouched);
+};
+
+Transport.prototype.setLauncherOverdub = function (on)
+{
+	// Note: This is a bug: On and off are switched
+	this.transport.setLauncherOverdub (!on);
 };
 
 Transport.prototype.setInternalTempo = function (t)

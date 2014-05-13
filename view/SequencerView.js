@@ -29,7 +29,6 @@ SequencerView.prototype.usesButton = function (buttonID)
 	{
 		case PUSH_BUTTON_OCTAVE_DOWN:
 		case PUSH_BUTTON_OCTAVE_UP:
-		case PUSH_BUTTON_NEW:
 		case PUSH_BUTTON_CLIP:
 		case PUSH_BUTTON_SELECT:
 		case PUSH_BUTTON_ADD_EFFECT:

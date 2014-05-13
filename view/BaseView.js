@@ -13,7 +13,6 @@ function BaseView (model)
 	this.canScrollDown = true;
 
 	this.stopPressed = false;
-	this.newPressed = false;
 	
 	this.ttLastMillis = -1;
 	this.ttLastBPM = -1;
@@ -75,6 +74,36 @@ BaseView.prototype.onStop = function (event)
 	}
 	this.stopPressed = event.isDown ();
 	this.push.setButton (PUSH_BUTTON_STOP, this.stopPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+};
+
+BaseView.prototype.onNew = function (event)
+{
+	if (!event.isDown ())
+		return;
+	var t = this.model.getSelectedTrack ();
+	if (t != null)
+	{
+		var slotIndex = this.getSelectedSlot (t);
+		if (slotIndex == -1)
+			slotIndex = 0;
+			
+		for (var i = 0; i < 8; i++)
+		{
+			var sIndex = (slotIndex + i) % 8;
+			var s = t.slots[sIndex];
+			if (!s.hasContent)
+			{
+				var slots = trackBank.getTrack (t.index).getClipLauncherSlots ();
+				slots.createEmptyClip (sIndex, Math.pow (2, currentNewClipLength));
+				if (slotIndex != sIndex)
+					slots.select (sIndex);
+				slots.launch (sIndex);
+				this.push.transport.setLauncherOverdub (true);
+				return;
+			}
+		}
+	}
+	host.showPopupNotification ("In the current selected grid view there is no empty slot. Please scroll down.");
 };
 
 BaseView.prototype.onDuplicate = function (event)
@@ -452,7 +481,15 @@ BaseView.prototype.onShift = function (event)
 
 BaseView.prototype.onFootswitch2 = function (value)
 {
-	this.onRecord (new ButtonEvent (value == 127 ? ButtonEvent.DOWN : ButtonEvent.UP));
+	this.onNew (new ButtonEvent (value == 127 ? ButtonEvent.DOWN : ButtonEvent.UP));
+};
+
+BaseView.prototype.getSelectedSlot = function (track)
+{
+	for (var i = 0; i < track.slots.length; i++)
+		if (track.slots[i].isSelected)
+			return i;
+	return -1;
 };
 
 function selectTrack (index)
