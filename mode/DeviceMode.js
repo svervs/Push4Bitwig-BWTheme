@@ -7,6 +7,7 @@ function DeviceMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_DEVICE;
+	this.fullDisplay = true;
 	
 	this.fxparams = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
 }
