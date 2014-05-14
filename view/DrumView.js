@@ -63,7 +63,7 @@ DrumView.prototype.onGrid = function (note, velocity)
 		if (velocity != 0)
 		{
 			var col = 8 * (7 - y) + x;
-			this.clip.toggleStep (col, this.offsetY + this.selectedPad, this.accentActive ? 127 : velocity);
+			this.clip.toggleStep (col, this.offsetY + this.selectedPad, Config.accentActive ? 127 : velocity);
 		}
 	}
 };
@@ -112,6 +112,10 @@ DrumView.prototype.onRight = function (event)
 
 DrumView.prototype.drawGrid = function ()
 {
+	// Turn off blinking (from Session)
+	for (var i = 36; i < 100; i++)
+		this.push.pads.blink (i, PUSH_COLOR_BLACK);
+
 	// 4x4 Grid
 	for (var x = 0; x < 4; x++)
 	{

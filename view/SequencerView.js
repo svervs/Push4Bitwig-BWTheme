@@ -48,7 +48,7 @@ SequencerView.prototype.onGrid = function (note, velocity)
 	var index = note - 36;
 	var x = index % 8;
 	var y = Math.floor (index / 8);
-	this.clip.toggleStep (x, this.offsetY + y, this.accentActive ? 127 : velocity);
+	this.clip.toggleStep (x, this.offsetY + y, Config.accentActive ? 127 : velocity);
 };
 
 SequencerView.prototype.onLeft = function (event)
@@ -93,6 +93,10 @@ SequencerView.prototype.onDown = function (event)
 
 SequencerView.prototype.drawGrid = function ()
 {
+	// Turn off blinking (from Session)
+	for (var i = 36; i < 100; i++)
+		this.push.pads.blink (i, PUSH_COLOR_BLACK);
+
 	var hiStep = this.isInXRange (this.step) ? this.step % SequencerView.NUM_DISPLAY_COLS : -1;
 	for (var x = 0; x < SequencerView.NUM_DISPLAY_COLS; x++)
 	{

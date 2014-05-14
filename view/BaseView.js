@@ -17,8 +17,6 @@ function BaseView (model)
 	this.ttLastMillis = -1;
 	this.ttLastBPM = -1;
 	this.ttHistory = [];
-	
-	this.accentActive = false;
 }
 BaseView.prototype = new View ();
 BaseView.prototype.constructor = BaseView;
@@ -478,8 +476,8 @@ BaseView.prototype.onAccent = function (event)
 {
 	if (!event.isDown ())
 		return;
-	this.accentActive = !this.accentActive;
-	this.push.setButton (PUSH_BUTTON_ACCENT, this.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	Config.accentActive = !Config.accentActive;
+	this.push.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 BaseView.prototype.onShift = function (event)

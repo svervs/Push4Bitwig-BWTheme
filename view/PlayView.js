@@ -30,6 +30,7 @@ PlayView.prototype.onActivate = function ()
 
 	this.push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
 	this.push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
+	this.push.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	for (var i = 0; i < 8; i++)
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (false);
 	this.updateSceneButtons ();
@@ -62,7 +63,10 @@ PlayView.prototype.drawGrid = function ()
 	var t = this.model.getSelectedTrack ();
 	var isKeyboardEnabled = t != null && t.canHoldNotes;
 	for (var i = 36; i < 100; i++)
+	{
 		this.push.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ? (this.push.transport.isRecording || this.model.isClipRecording () ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : this.scales.getColor (i)) : PUSH_COLOR_BLACK);
+		this.push.pads.blink (i, PUSH_COLOR_BLACK);
+	}
 };
 
 PlayView.prototype.onGrid = function (note, velocity)
@@ -165,5 +169,5 @@ PlayView.prototype.onRight = function (event)
 PlayView.prototype.onAccent = function (event)
 {
 	BaseView.prototype.onAccent.call (this, event);
-	noteInput.setVelocityTranslationTable (this.accentActive ? this.maxVelocity : this.defaultVelocity);
+	noteInput.setVelocityTranslationTable (Config.accentActive ? this.maxVelocity : this.defaultVelocity);
 };

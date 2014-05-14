@@ -1,3 +1,7 @@
+// Written by Jürgen Moßgraber - mossgrabers.de
+// (c) 2014
+// Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
+
 Transport.INC_FRACTION_TIME      = 1.0;	    // 1 beat
 Transport.INC_FRACTION_TIME_SLOW = 1.0 / 20;	// 1/20th of a beat
 Transport.TEMPO_RESOLUTION       = 647;
