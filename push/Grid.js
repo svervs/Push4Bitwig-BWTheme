@@ -92,13 +92,15 @@ Grid.prototype.flush = function ()
 {
 	for (var i = 36; i < 100; i++)
 	{
+		var baseChanged = false;
 		if (this.currentButtonColors[i] != this.buttonColors[i])
 		{
 			this.currentButtonColors[i] = this.buttonColors[i];
 			this.output.sendNote (i, this.buttonColors[i]);
+			baseChanged = true;
 		}
 		// No "else" here: Blinking color needs a base color
-		if (this.currentBlinkColors[i] != this.blinkColors[i] || this.currentBlinkFast[i] != this.blinkFast[i])
+		if (baseChanged || this.currentBlinkColors[i] != this.blinkColors[i] || this.currentBlinkFast[i] != this.blinkFast[i])
 		{
 			this.currentBlinkColors[i] = this.blinkColors[i];
 			this.currentBlinkFast[i] = this.blinkFast[i];
