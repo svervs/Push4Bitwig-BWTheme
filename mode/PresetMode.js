@@ -7,7 +7,8 @@ function PresetMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_PRESET;
-	
+	this.fullDisplay = true;
+
 	this.presetWidth = 16;
 	this.knobInvalidated = false;
 	

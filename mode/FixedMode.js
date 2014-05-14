@@ -10,6 +10,7 @@ function FixedMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_FIXED;
+	this.fullDisplay = true;
 }
 FixedMode.prototype = new BaseMode ();
 

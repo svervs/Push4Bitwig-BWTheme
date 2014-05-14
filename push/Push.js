@@ -256,21 +256,6 @@ Push.prototype.addMode = function (modeId, mode)
 	this.modes[modeId] = mode;
 };
 
-Push.prototype.isFullDisplayMode = function (modeId)
-{
-	switch (modeId)
-	{
-		case MODE_MASTER:
-		case MODE_FRAME:
-		case MODE_DEVICE:
-		case MODE_PRESET:
-		case MODE_SCALES:
-		case MODE_FIXED:
-			return true;
-	}
-	return false;
-};
-
 Push.prototype.isSelectPressed = function ()
 {
 	return this.isPressed (PUSH_BUTTON_SELECT);
@@ -314,7 +299,7 @@ Push.prototype.updateDisplay = function ()
 	if (m != null)
 		m.updateDisplay ();
 
-	if (this.isFullDisplayMode (currentMode))
+	if (m != null && m.isFullDisplay(currentMode))
 		return;
 
 	// Send, Mute, Automation
