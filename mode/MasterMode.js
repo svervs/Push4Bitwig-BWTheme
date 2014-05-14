@@ -10,6 +10,7 @@ function MasterMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_MASTER;
+	this.fullDisplay = true;
 }
 MasterMode.prototype = new BaseMode ();
 

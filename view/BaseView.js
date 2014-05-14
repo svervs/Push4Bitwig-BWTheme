@@ -252,10 +252,16 @@ BaseView.prototype.onFirstRow = function (index)
 	if (m != null)
 		m.onFirstRow (index);
 	
-	// TODO (mschmalle) This only seems right if we have a contract with
-	// Push that 'Not In Full Display' means we will always have track toggles
-	// for the first row, is the correct?
-	if (!this.push.isFullDisplayMode (currentMode)) 
+	// TODO (mschmalle) I changed this for the refactor of isFullDisplay()
+	// but this logic still feels weird, we should have a ViewMode that
+	// determines how views that only need parts of the display can share
+	// with other modes that are more primary, the logic below for now
+	// just emulates what it was doing originally until we change it
+	var fullDisplay = false;
+	if (m != null)
+		fullDisplay = !m.isFullDisplay(currentMode)
+
+	if (fullDisplay)
 	{
 		if (this.stopPressed)
 			trackBank.getTrack (index).stop ();

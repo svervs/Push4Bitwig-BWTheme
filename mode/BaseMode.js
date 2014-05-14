@@ -9,6 +9,7 @@ function BaseMode (model)
 {
 	this.model = model;
 	this.id = null;
+	this.fullDisplay = false;
 }
 
 BaseMode.prototype.attachTo = function (push)
@@ -17,6 +18,7 @@ BaseMode.prototype.attachTo = function (push)
 };
 
 BaseMode.prototype.onActivate = function () {};
+BaseMode.prototype.isFullDisplay = function () {return this.fullDisplay};
 BaseMode.prototype.getId = function () { return this.id; };
 BaseMode.prototype.onValueKnob = function (index, value) {};
 BaseMode.prototype.onValueKnobTouch = function (index, isTouched) {};
