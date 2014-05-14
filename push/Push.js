@@ -165,6 +165,7 @@ Push.prototype.init = function ()
 	this.addMode (MODE_PRESET, new PresetMode (this.model));
 	this.addMode (MODE_SCALES, new ScalesMode (this.model, this.scales));
 	this.addMode (MODE_FIXED, new FixedMode (this.model));
+	this.addMode (MODE_USERCONTROLS, new UserControlsMode (this.model));
 };
 
 Push.prototype.turnOff = function ()

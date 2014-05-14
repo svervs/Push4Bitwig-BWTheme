@@ -343,6 +343,8 @@ BaseView.prototype.onDevice = function (event)
 		return;
 	if (currentMode == MODE_DEVICE)
 		setMode (MODE_MACRO);
+	else if (currentMode == MODE_MACRO)
+		setMode (MODE_USERCONTROLS);
 	else
 		setMode (MODE_DEVICE);
 };

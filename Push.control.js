@@ -27,6 +27,7 @@ var device = null;
 var masterTrack = null;
 var trackBank = null;
 var noteInput = null;
+var userControlBank = null;
 
 var canScrollTrackUp   = false;
 var canScrollTrackDown = false;
@@ -50,6 +51,7 @@ function init()
 	device = host.createCursorDevice ();
 	masterTrack = host.createMasterTrack (0);
 	trackBank = host.createMainTrackBankSection (8, 6, 8);
+	userControlBank = host.createUserControls (8);
 
 	var output = new MidiOutput ();
 	push = new Push (output);
@@ -109,16 +111,17 @@ function setMode (mode)
 
 function updateMode (mode)
 {
-	var isMaster = mode == MODE_MASTER;
-	var isTrack  = mode == MODE_TRACK;
-	var isVolume = mode == MODE_VOLUME;
-	var isPan    = mode == MODE_PAN;
-	var isDevice = mode == MODE_DEVICE;
-	var isMacro  = mode == MODE_MACRO;
-	var isScales = mode == MODE_SCALES;
-	var isFixed  = mode == MODE_FIXED;
-	var isPreset = mode == MODE_PRESET;
-	var isFrame  = mode == MODE_FRAME;
+	var isMaster       = mode == MODE_MASTER;
+	var isTrack        = mode == MODE_TRACK;
+	var isVolume       = mode == MODE_VOLUME;
+	var isPan          = mode == MODE_PAN;
+	var isDevice       = mode == MODE_DEVICE;
+	var isMacro        = mode == MODE_MACRO;
+	var isScales       = mode == MODE_SCALES;
+	var isFixed        = mode == MODE_FIXED;
+	var isPreset       = mode == MODE_PRESET;
+	var isFrame        = mode == MODE_FRAME;
+	var isUserControls = mode == MODE_USERCONTROLS;
 	
 	masterTrack.getVolume ().setIndication (isMaster);
 	masterTrack.getPan ().setIndication (isMaster);
@@ -144,6 +147,7 @@ function updateMode (mode)
 
 		device.getParameter (i).setIndication (isDevice);
 		device.getMacro (i).getAmount ().setIndication (isMacro);
+		userControlBank.getControl (i).setIndication (isUserControls);
 	}
 			
 	push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);

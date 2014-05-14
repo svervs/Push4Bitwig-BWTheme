@@ -7,7 +7,6 @@ function MacroMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_MACRO;
-	this.bottomItems = [];
 	this.macros = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
 }
 MacroMode.prototype = new BaseMode ();
@@ -60,7 +59,7 @@ MacroMode.prototype.updateDisplay = function ()
 	else
 	{
 		d.clearRow (0).clearRow (1).clearRow (2)
-		 .setCell(1, 3, 'No Macro').setCell(1, 4, 'Assigned');
+		 .setCell (1, 3, 'No Macro').setCell (1, 4, 'Assigned');
 	}
 
 	d.done (0).done (1).done (2);
