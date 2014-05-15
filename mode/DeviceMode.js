@@ -8,6 +8,10 @@ function DeviceMode (model)
 	BaseMode.call (this, model);
 	this.id = MODE_DEVICE;
 	this.fullDisplay = true;
+
+	this.hasNextParameterPage = false;
+	this.hasPreviousParameterPage = false;
+	this.selectedParameterPage = -1;
 	
 	this.fxparams = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
 }
@@ -23,7 +27,22 @@ DeviceMode.prototype.attachTo = function (aPush)
 	{
 		selectedDevice.name = name;
 	});
-	
+	device.addPreviousParameterPageEnabledObserver(doObject(this, function (isEnabled)
+	{
+		//println("hasPreviousParameterPage" + isEnabled);
+		this.hasPreviousParameterPage = isEnabled;
+	}));
+	device.addNextParameterPageEnabledObserver(doObject(this, function (isEnabled)
+	{
+		//println("hasNextParameterPage" + isEnabled);
+		this.hasNextParameterPage = isEnabled;
+	}));
+	device.addSelectedPageObserver(-1, doObject(this, function (page)
+	{
+		//println("addSelectedPageObserver" + page);
+		this.selectedParameterPage = page;
+	}));
+
 	for (var i = 0; i < 8; i++)
 	{
 		var p = device.getParameter (i);
@@ -59,41 +78,71 @@ DeviceMode.prototype.onValueKnobTouch = function (index, isTouched)
 
 DeviceMode.prototype.onFirstRow = function (index)
 {
-	if (index == 7)
-		device.toggleEnabledState ();
+	switch (index)
+	{
+		case 5:
+			//if (hasPreviousParameterPage)
+				device.previousParameterPage ();
+			break;
+
+		case 6:
+			//if (hasNextParameterPage)
+				device.nextParameterPage ();
+			break;
+
+		case 7:
+			device.toggleEnabledState ();
+			break;
+	}
 };
 
 DeviceMode.prototype.updateDisplay = function () 
 {
 	var d = push.display;
-	
-	for (var i = 0; i < 8; i++)
+	var hasDevice = selectedDevice.name != 'None';
+
+	if (hasDevice)
 	{
-		var isEmpty = this.fxparams[i].name.length == 0;
-		d.setCell (0, i, this.fxparams[i].name, Display.FORMAT_RAW)
-		 .setCell (1, i, isEmpty ? '' : this.fxparams[i].valueStr, Display.FORMAT_RAW);
-		if (isEmpty)
-			d.clearCell (2, i);
-		else				
-			d.setCell (2, i, this.fxparams[i].value, Display.FORMAT_VALUE);
-					
-		// Light up fx selection buttons
-		push.setButton (20 + i, i == 7 && selectedDevice.enabled ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
-		push.setButton (102 + i, PUSH_COLOR_BLACK);
+		for (var i = 0; i < 8; i++)
+		{
+			var isEmpty = this.fxparams[i].name.length == 0;
+			d.setCell (0, i, this.fxparams[i].name, Display.FORMAT_RAW)
+			 .setCell (1, i, isEmpty ? '' : this.fxparams[i].valueStr, Display.FORMAT_RAW);
+
+			if (isEmpty)
+				d.clearCell (2, i);
+			else
+				d.setCell (2, i, this.fxparams[i].value, Display.FORMAT_VALUE);
+
+			// Light up fx selection buttons
+			if (i < 5)
+				push.setButton (20 + i, PUSH_COLOR_BLACK);
+			if (i == 7 && selectedDevice.enabled)
+				push.setButton (27, PUSH_COLOR_GREEN_LO - 4);
+
+			push.setButton (102 + i, PUSH_COLOR_BLACK);
+		}
 	}
-	
-	if (selectedDevice.name == 'None')
-		d.setBlock(1, 1, '    Please select').setBlock(1, 2, 'a Device...    ');
-	
+	else
+		d.clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ');
+
 	d.done (0).done (1).done (2);
 
-	if (isEmpty)
+	if (!hasDevice)
 		d.clearRow (3).done (3);
 	else
 	{
 		d.setCell (3, 0, 'Selected', Display.FORMAT_RAW).setCell (3, 1, 'Device: ', Display.FORMAT_RAW)
 		 .setBlock (3, 1, selectedDevice.name)
-		 .clearBlock (3, 2).clearCell (3, 6)
+		 .clearBlock (3, 2).clearCell (3, 6);
+
+		if (this.selectedParameterPage > 0)
+			d.setCell (3, 5, ' < Prev ', Display.FORMAT_RAW);
+
+		d.setCell (3, 6, ' Next > ', Display.FORMAT_RAW)
 		 .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
+
+		push.setButton (25, this.selectedParameterPage > 0 ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
+		push.setButton (26, PUSH_COLOR_ORANGE_LO);
 	}
 };
