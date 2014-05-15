@@ -343,15 +343,14 @@ BaseView.prototype.onTrack = function (event)
 
 BaseView.prototype.onDevice = function (event)
 {
-	switch (event.getState ())
-	{
-		case ButtonEvent.LONG:
-			setMode (MODE_PARAM_PAGE_SELECT);
-			break;
-		case ButtonEvent.UP:
-			setMode (this.push.getMode (MODE_PARAM_PAGE_SELECT).getCurrentMode ());
-			break;
-	}
+	if (!event.isDown())
+		return;
+
+	var selectMode = this.push.getMode (MODE_PARAM_PAGE_SELECT);
+	if (currentMode == MODE_PARAM_PAGE_SELECT || !selectMode.isPageMode (currentMode))
+		setMode (selectMode.getCurrentMode ());
+	else
+		setMode (MODE_PARAM_PAGE_SELECT);
 };
 
 BaseView.prototype.onBrowse = function (event)
