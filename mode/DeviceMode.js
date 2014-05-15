@@ -6,7 +6,7 @@
 function DeviceMode (model)
 {
 	BaseMode.call (this, model);
-	this.id = MODE_DEVICE;
+	this.id = MODE_BANK_DEVICE;
 	this.fullDisplay = true;
 
 	this.hasNextParameterPage = false;

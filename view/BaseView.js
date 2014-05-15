@@ -276,8 +276,8 @@ BaseView.prototype.onSecondRow = function (index)
 		m.onSecondRow (index);
 	
 	// TODO (mschmalle) Can we do this better now that we have more abstraction with modes?
-	// TODO MODE_DEVICE
-	if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER && currentMode != MODE_SCALES && currentMode != MODE_PRESET)
+	// TODO MODE_BANK_DEVICE
+	if (currentMode != MODE_BANK_DEVICE && currentMode != MODE_MASTER && currentMode != MODE_SCALES && currentMode != MODE_PRESET)
 	{
 		var t = trackBank.getTrack (index);
 		if (this.push.isShiftPressed ())
@@ -347,28 +347,20 @@ BaseView.prototype.onDevice = function (event)
 	switch (event.getState ())
 	{
 		case ButtonEvent.LONG:
-			setMode (MODE_PARAM_PAGE);
+			setMode (MODE_PARAM_PAGE_SELECT);
 			break;
 		case ButtonEvent.UP:
-			setMode (this.push.getMode (MODE_PARAM_PAGE).getCurrentMode ());
+			setMode (this.push.getMode (MODE_PARAM_PAGE_SELECT).getCurrentMode ());
 			break;
 	}
-//	if (!event.isDown ())
-//		return;
-//	if (currentMode == MODE_DEVICE)
-//		setMode (MODE_MACRO);
-//	else if (currentMode == MODE_MACRO)
-//		setMode (MODE_USERCONTROLS);
-//	else
-//		setMode (MODE_DEVICE);
 };
 
 BaseView.prototype.onBrowse = function (event)
 {
 	if (!event.isDown ())
 		return;
-	// TODO MODE_DEVICE
-	if (currentMode == MODE_DEVICE)
+
+	if (currentMode == MODE_BANK_DEVICE)
 		setMode(MODE_PRESET);
 	else
 		this.model.getApplication ().toggleBrowserVisibility (); // Track
@@ -379,8 +371,8 @@ BaseView.prototype.onDeviceLeft = function (event)
 {
 	if (!event.isDown ())
 		return;
-	// TODO MODE_DEVICE
-//	if (currentMode == MODE_DEVICE)
+	// TODO MODE_BANK_DEVICE
+//	if (currentMode == MODE_BANK_DEVICE)
 //	{
 //		device.previousParameterPage ();
 //		return;
@@ -397,8 +389,8 @@ BaseView.prototype.onDeviceRight = function (event)
 {
 	if (!event.isDown ())
 		return;
-	// TODO MODE_DEVICE
-//	if (currentMode == MODE_DEVICE)
+	// TODO MODE_BANK_DEVICE
+//	if (currentMode == MODE_BANK_DEVICE)
 //	{
 //		device.nextParameterPage ();
 //		return;

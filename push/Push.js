@@ -169,14 +169,18 @@ Push.prototype.init = function ()
 	this.addMode (MODE_SEND6, modeSend);
 	this.addMode (MODE_MASTER, new MasterMode (this.model));
 	this.addMode (MODE_TRACK, new TrackMode (this.model));
-	this.addMode (MODE_DEVICE, new DeviceMode (this.model));
-	this.addMode (MODE_MACRO, new MacroMode (this.model));
 	this.addMode (MODE_FRAME, new FrameMode (this.model));
-	this.addMode (MODE_PRESET, new PresetMode (this.model));
 	this.addMode (MODE_SCALES, new ScalesMode (this.model, this.scales));
 	this.addMode (MODE_FIXED, new FixedMode (this.model));
-	this.addMode (MODE_USERCONTROLS, new UserControlsMode (this.model));
-	this.addMode (MODE_PARAM_PAGE, new ParamPageMode (this.model));
+
+	this.addMode (MODE_PARAM_PAGE_SELECT, new ParamPageSelectMode (this.model));
+	this.addMode (MODE_BANK_DEVICE, new DeviceMode (this.model));
+	this.addMode (MODE_BANK_COMMON, new ParamPageMode (this.model, MODE_BANK_COMMON, 'Common'));
+	this.addMode (MODE_BANK_ENVELOPE, new ParamPageMode (this.model, MODE_BANK_ENVELOPE, 'Envelope'));
+	//this.addMode (MODE_BANK_MODULATE, new ParamPageMode (this.model, MODE_BANK_MODULATE, 'Modulate'));
+	this.addMode (MODE_BANK_USER, new ParamPageMode (this.model, MODE_BANK_USER, 'User'));
+	this.addMode (MODE_BANK_MACRO, new ParamPageMode (this.model, MODE_BANK_MACRO, 'Macro'));
+	this.addMode (MODE_PRESET, new PresetMode (this.model));
 };
 
 Push.prototype.turnOff = function ()

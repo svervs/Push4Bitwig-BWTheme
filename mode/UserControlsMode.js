@@ -6,7 +6,7 @@
 function UserControlsMode (model)
 {
 	BaseMode.call (this, model);
-	this.id = MODE_USERCONTROLS;
+	this.id = MODE_BANK_USER;
 	this.usercontrols = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
 }
 UserControlsMode.prototype = new BaseMode ();

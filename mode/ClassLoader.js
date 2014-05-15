@@ -4,48 +4,49 @@
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
 // Display Modes
-var MODE_TRACK        = 0;
-var MODE_VOLUME       = 1;
-var MODE_DEVICE       = 2;
-var MODE_MASTER       = 3;
-var MODE_PAN          = 4;
-var MODE_SEND1        = 5;
-var MODE_SEND2        = 6;
-var MODE_SEND3        = 7;
-var MODE_SEND4        = 8;
-var MODE_SEND5        = 9;
-var MODE_SEND6        = 10;
-var MODE_SCALES       = 11;
-var MODE_MACRO        = 12;
-var MODE_FIXED        = 13;
-var MODE_PRESET       = 14;
-var MODE_FRAME        = 15;
-var MODE_SEND         = 16;
-var MODE_USERCONTROLS = 17;
-var MODE_PARAM_PAGE   = 18;
+var MODE_TRACK               = 0;
+var MODE_VOLUME              = 1;
+var MODE_MASTER              = 2;
+var MODE_FRAME               = 3;
 
-var MODE_COMMON = 20;
-var MODE_ENVELOPE = 22;
-var MODE_MODULATE = 23;
+var MODE_PAN                 = 10;
+var MODE_SEND                = 11;
+var MODE_SEND1               = 12;
+var MODE_SEND2               = 13;
+var MODE_SEND3               = 14;
+var MODE_SEND4               = 15;
+var MODE_SEND5               = 16;
+var MODE_SEND6               = 17;
 
-var MODE_BANK_DEVICE = MODE_DEVICE;
-var MODE_BANK_COMMON = MODE_COMMON;
-var MODE_BANK_ENVELOPE = MODE_ENVELOPE;
-var MODE_BANK_MODULATE = MODE_MODULATE;
-var MODE_BANK_USER = MODE_USERCONTROLS;
-var MODE_BANK_MACRO = MODE_MACRO;
+var MODE_PARAM_PAGE_SELECT   = 20;
+var MODE_BANK_DEVICE         = 21;
+var MODE_BANK_COMMON         = 22;
+var MODE_BANK_ENVELOPE       = 23;
+//var MODE_BANK_MODULATE       = 24;
+var MODE_BANK_USER           = 25;
+var MODE_BANK_MACRO          = 26;
+var MODE_PRESET              = 27;
+
+var MODE_SCALES              = 30;
+var MODE_FIXED               = 31;
 
 load ("BaseMode.js");
-load ("VolumeMode.js");
-load ("PanMode.js");
-load ("SendMode.js");
 load ("TrackMode.js");
-load ("DeviceMode.js");
-load ("MacroMode.js");
-load ("PresetMode.js");
+load ("VolumeMode.js");
 load ("MasterMode.js");
 load ("FrameMode.js");
+load ("PanMode.js");
+load ("SendMode.js");
+
+load ("ParamPageSelectMode.js");
+load ("DeviceMode.js");
+load ("ParamPageMode.js");
+load ("PresetMode.js");
+
 load ("ScalesMode.js");
 load ("FixedMode.js");
-load ("UserControlsMode.js");
-load ("ParamPageMode.js");
+
+
+
+
+
