@@ -28,13 +28,26 @@ ParamPageSelectMode.prototype.setCurrentMode = function (mode)
 {
 	this.currentMode = mode;
 	this.currentModeChanged();
+	setMode (this.currentMode);
+};
+
+ParamPageSelectMode.prototype.isPageMode = function (mode)
+{
+	for (var i = 0; i < this.bottomItems.length; i++)
+	{
+		if (this.bottomItems[i].getModeId () == mode)
+			return true;
+	}
+	return false;
 };
 
 ParamPageSelectMode.prototype.currentModeChanged = function ()
 {
 	this.selectedIndex = 0;
-	for (var i = 0; i < this.bottomItems.length; i++) {
-		if (this.bottomItems[i].getModeId() == this.currentMode) {
+	for (var i = 0; i < this.bottomItems.length; i++)
+	{
+		if (this.bottomItems[i].getModeId () == this.currentMode)
+		{
 			this.selectedIndex = i;
 			break;
 		}
@@ -60,15 +73,18 @@ ParamPageSelectMode.prototype.updateDisplay = function ()
 	for (var i = 0; i < this.bottomItems.length; i++)
 		d.setCell (3, i, this.bottomItems[i].getLabel());
 
+	d.done (0).done (1).done (2).done (3);
+
 	for (var i = 20; i < 28; i++)
-		push.setButton (i, ParamPageSelectMode.firstRowButtonColorUp);
+	{
+		if (i == 20 + this.selectedIndex)
+			push.setButton (i, ParamPageSelectMode.firstRowButtonColorSelected);
+		else
+			push.setButton(i, ParamPageSelectMode.firstRowButtonColorUp);
+	}
 
 	for (var i = 102; i < 110; i++)
 		push.setButton (i, PUSH_COLOR_BLACK);
-
-	push.setButton (20 + this.selectedIndex, ParamPageSelectMode.firstRowButtonColorSelected);
-
-	d.done (0).done (1).done (2).done (3);
 };
 
 ParamPageSelectMode.prototype.onFirstRow = function (index)
