@@ -53,6 +53,16 @@ var PUSH_BUTTON_SCENE6          = 41;
 var PUSH_BUTTON_SCENE7          = 42;
 var PUSH_BUTTON_SCENE8          = 43;	// 1/32T
 
+var PUSH_KNOB1                  = 71;
+var PUSH_KNOB2                  = 72;
+var PUSH_KNOB3                  = 73;
+var PUSH_KNOB4                  = 74;
+var PUSH_KNOB5                  = 75;
+var PUSH_KNOB6                  = 76;
+var PUSH_KNOB7                  = 77;
+var PUSH_KNOB8                  = 78;
+var PUSH_KNOB9                  = 79;
+
 var PUSH_KNOB1_TOUCH       = 0;
 var PUSH_KNOB2_TOUCH       = 1;
 var PUSH_KNOB3_TOUCH       = 2;

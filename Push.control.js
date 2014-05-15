@@ -54,6 +54,9 @@ function init()
 	trackBank = host.createMainTrackBankSection (8, 6, 8);
 	userControlBank = host.createUserControls (8);
 
+	for (var i = PUSH_KNOB1; i <= PUSH_KNOB8; i++)
+		userControlBank.getControl (i - PUSH_KNOB1).setLabel ("CC" + i);
+
 	var output = new MidiOutput ();
 	push = new Push (output);
 	push.init ();

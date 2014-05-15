@@ -16,8 +16,9 @@ UserControlsMode.prototype.attachTo = function (aPush)
 	for (var i = 0; i < 8; i++)
 	{
 		var c = userControlBank.getControl (i);
+
 		c.addNameObserver (8, '', doObjectIndex (this, i, function (index, name)
- 		{
+		{
 			this.usercontrols[index].name = name;
 		}));
 		c.addValueObserver (128, doObjectIndex (this, i, function (index, value)
@@ -35,7 +36,7 @@ UserControlsMode.prototype.attachTo = function (aPush)
 UserControlsMode.prototype.onValueKnob = function (index, value)
 {
 	this.usercontrols[index].value = this.changeValue (value, this.usercontrols[index].value);
-	this.userControlBank.getControl (index).set (this.usercontrols[index].value, 128);
+	userControlBank.getControl (index).set (this.usercontrols[index].value, 128);
 };
 
 UserControlsMode.prototype.updateDisplay = function () 
