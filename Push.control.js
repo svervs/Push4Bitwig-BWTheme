@@ -123,6 +123,7 @@ function updateMode (mode)
 	var isFixed        = mode == MODE_FIXED;
 	var isPreset       = mode == MODE_PRESET;
 	var isFrame        = mode == MODE_FRAME;
+	var isGroove       = mode == MODE_GROOVE;
 
 	var isBankDevice   = mode == MODE_BANK_DEVICE;
 	var isBankCommon   = mode == MODE_BANK_COMMON;
@@ -157,6 +158,7 @@ function updateMode (mode)
 		device.getEnvelopeParameter (i).setIndication(isBankEnvelope)
 		userControlBank.getControl (i).setIndication (isBankUser);
 		device.getMacro (i).getAmount ().setIndication (isBankMacro);
+		push.groove.updateIndications (isGroove);
 	}
 			
 	push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);

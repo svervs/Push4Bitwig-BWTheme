@@ -130,7 +130,11 @@ BaseView.prototype.onQuantize = function (event)
 {
 	if (!event.isDown ())
 		return;
-	host.showPopupNotification ("Quantize: Function not supported (yet).");
+
+	if (this.push.isShiftPressed ())
+		setMode (MODE_GROOVE);
+	else
+		host.showPopupNotification ("Quantize: Function not supported (yet).");
 };
 
 BaseView.prototype.onDouble = function (event)

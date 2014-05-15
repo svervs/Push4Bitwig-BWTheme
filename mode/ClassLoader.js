@@ -8,6 +8,7 @@ var MODE_TRACK               = 0;
 var MODE_VOLUME              = 1;
 var MODE_MASTER              = 2;
 var MODE_FRAME               = 3;
+var MODE_GROOVE              = 4;
 
 var MODE_PAN                 = 10;
 var MODE_SEND                = 11;
@@ -35,6 +36,8 @@ load ("TrackMode.js");
 load ("VolumeMode.js");
 load ("MasterMode.js");
 load ("FrameMode.js");
+load ("GrooveMode.js");
+
 load ("PanMode.js");
 load ("SendMode.js");
 

@@ -5,3 +5,4 @@
 
 load ("Model.js");
 load ("Transport.js");
+load ("GrooveProxy.js");
