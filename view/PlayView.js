@@ -125,8 +125,8 @@ PlayView.prototype.onLeft = function (event)
 {
 	if (!event.isDown ())
 		return;
-	
-	if (currentMode == MODE_DEVICE || currentMode == MODE_PRESET)
+
+	if (currentMode == MODE_BANK_DEVICE || currentMode == MODE_PRESET)
 		device.selectPrevious ();
 	else
 	{
@@ -148,8 +148,8 @@ PlayView.prototype.onRight = function (event)
 {
 	if (!event.isDown ())
 		return;
-	
-	if (currentMode == MODE_DEVICE || currentMode == MODE_PRESET)
+
+	if (currentMode == MODE_BANK_DEVICE || currentMode == MODE_PRESET)
 		device.selectNext ();
 	else
 	{

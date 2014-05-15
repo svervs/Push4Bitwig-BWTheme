@@ -119,13 +119,16 @@ function updateMode (mode)
 	var isTrack        = mode == MODE_TRACK;
 	var isVolume       = mode == MODE_VOLUME;
 	var isPan          = mode == MODE_PAN;
-	var isDevice       = mode == MODE_DEVICE;
-	var isMacro        = mode == MODE_MACRO;
 	var isScales       = mode == MODE_SCALES;
 	var isFixed        = mode == MODE_FIXED;
 	var isPreset       = mode == MODE_PRESET;
 	var isFrame        = mode == MODE_FRAME;
-	var isUserControls = mode == MODE_USERCONTROLS;
+
+	var isBankDevice   = mode == MODE_BANK_DEVICE;
+	var isBankCommon   = mode == MODE_BANK_COMMON;
+	var isBankEnvelope = mode == MODE_BANK_ENVELOPE;
+	var isBankUser     = mode == MODE_BANK_USER;
+	var isBankMacro    = mode == MODE_BANK_MACRO;
 	
 	masterTrack.getVolume ().setIndication (isMaster);
 	masterTrack.getPan ().setIndication (isMaster);
@@ -149,16 +152,18 @@ function updateMode (mode)
 			t.getSend (j).setIndication (isEnabled);
 		}
 
-		device.getParameter (i).setIndication (isDevice);
-		device.getMacro (i).getAmount ().setIndication (isMacro);
-		userControlBank.getControl (i).setIndication (isUserControls);
+		device.getParameter (i).setIndication (isBankDevice);
+		device.getCommonParameter (i).setIndication (isBankCommon);
+		device.getEnvelopeParameter (i).setIndication(isBankEnvelope)
+		userControlBank.getControl (i).setIndication (isBankUser);
+		device.getMacro (i).getAmount ().setIndication (isBankMacro);
 	}
 			
 	push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_TRACK, isTrack ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_VOLUME, isVolume ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_PAN_SEND, mode >= MODE_PAN && mode <= MODE_SEND6 ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_DEVICE, isDevice || isMacro ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	push.setButton (PUSH_BUTTON_DEVICE, isBankDevice || isBankMacro ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_SCALES, isScales ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_FIXED_LENGTH, isFixed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_BROWSE, isPreset ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);

@@ -276,7 +276,7 @@ BaseView.prototype.onSecondRow = function (index)
 		m.onSecondRow (index);
 	
 	// TODO (mschmalle) Can we do this better now that we have more abstraction with modes?
-	if (currentMode != MODE_DEVICE && currentMode != MODE_MASTER && currentMode != MODE_SCALES && currentMode != MODE_PRESET)
+	if (currentMode != MODE_BANK_DEVICE && currentMode != MODE_MASTER && currentMode != MODE_SCALES && currentMode != MODE_PRESET)
 	{
 		var t = trackBank.getTrack (index);
 		if (this.push.isShiftPressed ())
@@ -343,21 +343,23 @@ BaseView.prototype.onTrack = function (event)
 
 BaseView.prototype.onDevice = function (event)
 {
-	if (!event.isDown ())
-		return;
-	if (currentMode == MODE_DEVICE)
-		setMode (MODE_MACRO);
-	else if (currentMode == MODE_MACRO)
-		setMode (MODE_USERCONTROLS);
-	else
-		setMode (MODE_DEVICE);
+	switch (event.getState ())
+	{
+		case ButtonEvent.LONG:
+			setMode (MODE_PARAM_PAGE_SELECT);
+			break;
+		case ButtonEvent.UP:
+			setMode (this.push.getMode (MODE_PARAM_PAGE_SELECT).getCurrentMode ());
+			break;
+	}
 };
 
 BaseView.prototype.onBrowse = function (event)
 {
 	if (!event.isDown ())
 		return;
-	if (currentMode == MODE_DEVICE)
+
+	if (currentMode == MODE_BANK_DEVICE)
 		setMode(MODE_PRESET);
 	else
 		this.model.getApplication ().toggleBrowserVisibility (); // Track
@@ -368,11 +370,7 @@ BaseView.prototype.onDeviceLeft = function (event)
 {
 	if (!event.isDown ())
 		return;
-	if (currentMode == MODE_DEVICE)
-	{
-		device.previousParameterPage ();
-		return;
-	}
+
 	if (canScrollTrackUp)
 	{
 		trackBank.scrollTracksPageUp ();
@@ -385,11 +383,7 @@ BaseView.prototype.onDeviceRight = function (event)
 {
 	if (!event.isDown ())
 		return;
-	if (currentMode == MODE_DEVICE)
-	{
-		device.nextParameterPage ();
-		return;
-	}
+
 	if (canScrollTrackDown)
 	{
 		trackBank.scrollTracksPageDown ();

@@ -5,7 +5,6 @@
 
 MasterMode.PARAM_NAMES = 'Volume   Pan                                                        ';
 
-
 function MasterMode (model)
 {
 	BaseMode.call (this, model);
