@@ -276,7 +276,6 @@ BaseView.prototype.onSecondRow = function (index)
 		m.onSecondRow (index);
 	
 	// TODO (mschmalle) Can we do this better now that we have more abstraction with modes?
-	// TODO MODE_BANK_DEVICE
 	if (currentMode != MODE_BANK_DEVICE && currentMode != MODE_MASTER && currentMode != MODE_SCALES && currentMode != MODE_PRESET)
 	{
 		var t = trackBank.getTrack (index);
@@ -371,12 +370,7 @@ BaseView.prototype.onDeviceLeft = function (event)
 {
 	if (!event.isDown ())
 		return;
-	// TODO MODE_BANK_DEVICE
-//	if (currentMode == MODE_BANK_DEVICE)
-//	{
-//		device.previousParameterPage ();
-//		return;
-//	}
+
 	if (canScrollTrackUp)
 	{
 		trackBank.scrollTracksPageUp ();
@@ -389,12 +383,7 @@ BaseView.prototype.onDeviceRight = function (event)
 {
 	if (!event.isDown ())
 		return;
-	// TODO MODE_BANK_DEVICE
-//	if (currentMode == MODE_BANK_DEVICE)
-//	{
-//		device.nextParameterPage ();
-//		return;
-//	}
+
 	if (canScrollTrackDown)
 	{
 		trackBank.scrollTracksPageDown ();

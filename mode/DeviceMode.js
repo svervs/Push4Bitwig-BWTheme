@@ -27,17 +27,19 @@ DeviceMode.prototype.attachTo = function (aPush)
 	{
 		selectedDevice.name = name;
 	});
-	device.addPreviousParameterPageEnabledObserver(doObject(this, function (isEnabled)
+	// TODO (mschmalle) These don't seem to work, when working, the Next, Previous visibilities
+	// can be managed correctly, right now just using selectedParameterPage
+	device.addPreviousParameterPageEnabledObserver (doObject (this, function (isEnabled)
 	{
 		//println("hasPreviousParameterPage" + isEnabled);
 		this.hasPreviousParameterPage = isEnabled;
 	}));
-	device.addNextParameterPageEnabledObserver(doObject(this, function (isEnabled)
+	device.addNextParameterPageEnabledObserver (doObject (this, function (isEnabled)
 	{
 		//println("hasNextParameterPage" + isEnabled);
 		this.hasNextParameterPage = isEnabled;
 	}));
-	device.addSelectedPageObserver(-1, doObject(this, function (page)
+	device.addSelectedPageObserver (-1, doObject (this, function (page)
 	{
 		//println("addSelectedPageObserver" + page);
 		this.selectedParameterPage = page;
