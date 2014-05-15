@@ -343,14 +343,23 @@ BaseView.prototype.onTrack = function (event)
 
 BaseView.prototype.onDevice = function (event)
 {
-	if (!event.isDown ())
-		return;
-	if (currentMode == MODE_DEVICE)
-		setMode (MODE_MACRO);
-	else if (currentMode == MODE_MACRO)
-		setMode (MODE_USERCONTROLS);
-	else
-		setMode (MODE_DEVICE);
+	switch (event.getState ())
+	{
+		case ButtonEvent.LONG:
+			setMode (MODE_PARAM_PAGE);
+			break;
+		case ButtonEvent.UP:
+			setMode (this.push.getMode (MODE_PARAM_PAGE).getCurrentMode ());
+			break;
+	}
+//	if (!event.isDown ())
+//		return;
+//	if (currentMode == MODE_DEVICE)
+//		setMode (MODE_MACRO);
+//	else if (currentMode == MODE_MACRO)
+//		setMode (MODE_USERCONTROLS);
+//	else
+//		setMode (MODE_DEVICE);
 };
 
 BaseView.prototype.onBrowse = function (event)

@@ -22,6 +22,18 @@ var MODE_PRESET       = 14;
 var MODE_FRAME        = 15;
 var MODE_SEND         = 16;
 var MODE_USERCONTROLS = 17;
+var MODE_PARAM_PAGE   = 18;
+
+var MODE_COMMON = 20;
+var MODE_ENVELOPE = 22;
+var MODE_MODULATE = 23;
+
+var MODE_BANK_DEVICE = MODE_DEVICE;
+var MODE_BANK_COMMON = MODE_COMMON;
+var MODE_BANK_ENVELOPE = MODE_ENVELOPE;
+var MODE_BANK_MODULATE = MODE_MODULATE;
+var MODE_BANK_USER = MODE_USERCONTROLS;
+var MODE_BANK_MACRO = MODE_MACRO;
 
 load ("BaseMode.js");
 load ("VolumeMode.js");
@@ -36,3 +48,4 @@ load ("FrameMode.js");
 load ("ScalesMode.js");
 load ("FixedMode.js");
 load ("UserControlsMode.js");
+load ("ParamPageMode.js");
