@@ -89,6 +89,8 @@ function Push (output)
 	this.pads = new Grid (output);
 	this.display = new Display (output);
 	this.transport = new Transport (this);
+
+	this.groove = new GrooveProxy (this);
 	
 	this.showVU = true;
 
@@ -172,6 +174,7 @@ Push.prototype.init = function ()
 	this.addMode (MODE_FRAME, new FrameMode (this.model));
 	this.addMode (MODE_SCALES, new ScalesMode (this.model, this.scales));
 	this.addMode (MODE_FIXED, new FixedMode (this.model));
+	this.addMode (MODE_GROOVE, new GrooveMode (this.model));
 
 	this.addMode (MODE_PARAM_PAGE_SELECT, new ParamPageSelectMode (this.model));
 	this.addMode (MODE_BANK_DEVICE, new DeviceMode (this.model));
