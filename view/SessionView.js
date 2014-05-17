@@ -1,4 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
+//            Michael Schmalle - teotigraphix.com
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
@@ -11,7 +12,10 @@ function SessionView (model)
 	this.canScrollUp = true;
 	this.canScrollDown = true;
 	this.flip = false;
-	
+
+	this.sessionLayout = new SessionLayout (this);
+	this.arrangementLayout = new ArrangementLayout (this);
+
 	trackBank.addCanScrollScenesDownObserver (doObject (this, function (canScroll)
 	{
 		if (this.flip)
@@ -51,10 +55,15 @@ function SessionView (model)
 }
 SessionView.prototype = new BaseView ();
 
+SessionView.prototype.getLayout = function ()
+{
+	return this.flip ? this.arrangementLayout :  this.sessionLayout;
+}
+
 SessionView.prototype.onFirstRow = function (index)
 {
-	if (this.push.isShiftPressed())
-		trackBank.getTrack(index).returnToArrangement();
+	if (this.push.isShiftPressed ())
+		trackBank.getTrack (index).returnToArrangement ();
 	else
 		BaseView.prototype.onFirstRow.call (this, index);
 };
@@ -67,6 +76,7 @@ SessionView.prototype.onActivate = function ()
 	this.push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
 	for (var i = 0; i < 8; i++)
 		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (true);
+
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
 		this.push.setButton (i, PUSH_COLOR_SCENE_GREEN);
 };
@@ -129,91 +139,27 @@ SessionView.prototype.onClip = function (event)
 
 SessionView.prototype.onLeft = function (event)
 {
-	if (!event.isDown ())
-		return;
-
-	if (this.flip)
-	{
-		if (this.push.isShiftPressed ())
-			trackBank.scrollScenesPageUp ();
-		else
-			trackBank.scrollScenesUp ();
-	}
-	else
-	{
-		if (this.push.isShiftPressed ())
-			trackBank.scrollTracksPageUp ();
-		else
-			trackBank.scrollTracksUp ();
-	}
+	this.getLayout ().onLeft (event);
 };
 
 SessionView.prototype.onRight = function (event)
 {
-	if (!event.isDown ())
-		return;
-		
-	if (this.flip)
-	{
-		if (this.push.isShiftPressed ())
-			trackBank.scrollScenesPageDown ();
-		else
-			trackBank.scrollScenesDown ();
-	}
-	else
-	{
-		if (this.push.isShiftPressed ())
-			trackBank.scrollTracksPageDown ();
-		else
-			trackBank.scrollTracksDown ();
-	}
+	this.getLayout ().onRight (event);
 };
 
 SessionView.prototype.onUp = function (event)
 {
-	if (!event.isDown ())
-		return;
-		
-	if (this.flip)
-	{
-		if (this.push.isShiftPressed ())
-			trackBank.scrollTracksPageUp ();
-		else
-			trackBank.scrollTracksUp ();
-	}
-	else
-	{
-		if (this.push.isShiftPressed ())
-			trackBank.scrollScenesPageUp ();
-		else
-			trackBank.scrollScenesUp ();
-	}
+	this.getLayout ().onUp (event);
 };
 
 SessionView.prototype.onDown = function (event)
 {
-	if (!event.isDown ())
-		return;
-		
-	if (this.flip)
-	{
-		if (this.push.isShiftPressed ())
-			trackBank.scrollTracksPageDown ();
-		else
-			trackBank.scrollTracksDown ();
-	}
-	else
-	{
-		if (this.push.isShiftPressed ())
-			trackBank.scrollScenesPageDown ();
-		else
-			trackBank.scrollScenesDown ();
-	}
+	this.getLayout ().onDown (event);
 };
 
 SessionView.prototype.onScene = function (scene)
 {
-	trackBank.launchScene (scene);
+	this.getLayout ().onScene (scene);
 };
 
 SessionView.prototype.onAccent = function (event)
@@ -238,21 +184,163 @@ SessionView.prototype.onSession = function (event)
 
 SessionView.prototype.drawGrid = function ()
 {
+	this.getLayout ().drawGrid ();
+};
+
+// TODO (mschmalle) Refactoring for Issue#67, will leave for now
+// This is currently not possible due to the fact the first row button
+// logic is tied into Modes. So switching rec arm to scene buttons isn't
+// straight forward
+
+function BaseSessionLayout (view)
+{
+	this.view = view;
+}
+
+BaseSessionLayout.prototype.onLeft = function (event) {};
+BaseSessionLayout.prototype.onRight = function (event) {};
+BaseSessionLayout.prototype.onUp = function (event) {};
+BaseSessionLayout.prototype.onDown = function (event) {};
+BaseSessionLayout.prototype.onScene = function (scene) {};
+BaseSessionLayout.prototype.drawGrid = function () {};
+
+BaseSessionLayout.prototype.drawPad = function (slot, x, y, isArmed)
+{
+	var color = slot.isRecording ? PUSH_COLOR_RED_HI :
+		(slot.hasContent ?
+			(slot.color ? slot.color : PUSH_COLOR_ORANGE_HI) :
+			(isArmed ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK));
+	var n = 92 + x - 8 * y;
+	this.view.push.pads.light (n, color);
+	this.view.push.pads.blink (n, (slot.isQueued || slot.isPlaying) ? (slot.isRecording ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : PUSH_COLOR_BLACK, slot.isQueued);
+};
+
+function SessionLayout (view)
+{
+	BaseSessionLayout.call (this, view);
+}
+SessionLayout.prototype = new BaseSessionLayout ();
+
+SessionLayout.prototype.onLeft = function (event)
+{
+	if (!event.isDown ())
+		return;
+
+	if (this.view.push.isShiftPressed ())
+		trackBank.scrollTracksPageUp ();
+	else
+		trackBank.scrollTracksUp ();
+};
+
+SessionLayout.prototype.onRight = function (event)
+{
+	if (!event.isDown ())
+		return;
+
+	if (this.view.push.isShiftPressed ())
+		trackBank.scrollTracksPageDown ();
+	else
+		trackBank.scrollTracksDown ();
+};
+
+SessionLayout.prototype.onUp = function (event)
+{
+	if (!event.isDown ())
+		return;
+
+	if (this.view.push.isShiftPressed ())
+		trackBank.scrollScenesPageUp ();
+	else
+		trackBank.scrollScenesUp ();
+};
+
+SessionLayout.prototype.onDown = function (event)
+{
+	if (!event.isDown ())
+		return;
+
+	if (this.view.push.isShiftPressed ())
+		trackBank.scrollScenesPageDown ();
+	else
+		trackBank.scrollScenesDown ();
+};
+
+SessionLayout.prototype.onScene = function (scene)
+{
+	trackBank.launchScene (scene);
+};
+
+SessionLayout.prototype.drawGrid = function ()
+{
 	for (var x = 0; x < 8; x++)
 	{
-		var t = this.model.getTrack (x);
+		var t = this.view.model.getTrack (x);
 		for (var y = 0; y < 8; y++)
-			this.drawPad (t.slots[y], this.flip ? y : x, this.flip ? x : y, t.recarm);
+			this.drawPad (t.slots[y], x, y, t.recarm);
 	}
 };
 
-SessionView.prototype.drawPad = function (slot, x, y, isArmed)
+function ArrangementLayout (view)
 {
-	var color = slot.isRecording ? PUSH_COLOR_RED_HI : 
-					(slot.hasContent ? 
-						(slot.color ? slot.color : PUSH_COLOR_ORANGE_HI) : 
-						(isArmed ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK));
-	var n = 92 + x - 8 * y;
-	this.push.pads.light (n, color);
-	this.push.pads.blink (n, (slot.isQueued || slot.isPlaying) ? (slot.isRecording ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : PUSH_COLOR_BLACK, slot.isQueued);
+	BaseSessionLayout.call (this, view);
+}
+ArrangementLayout.prototype = new BaseSessionLayout ();
+
+ArrangementLayout.prototype.onLeft = function (event)
+{
+	if (!event.isDown ())
+		return;
+
+	if (this.view.push.isShiftPressed ())
+		trackBank.scrollScenesPageUp ();
+	else
+		trackBank.scrollScenesUp ();
+};
+
+ArrangementLayout.prototype.onRight = function (event)
+{
+	if (!event.isDown ())
+		return;
+
+	if (this.view.push.isShiftPressed ())
+		trackBank.scrollScenesPageDown ();
+	else
+		trackBank.scrollScenesDown ();
+};
+
+ArrangementLayout.prototype.onUp = function (event)
+{
+	if (!event.isDown ())
+		return;
+
+	if (this.view.push.isShiftPressed ())
+		trackBank.scrollTracksPageUp ();
+	else
+		trackBank.scrollTracksUp ();
+};
+
+ArrangementLayout.prototype.onDown = function (event)
+{
+	if (!event.isDown ())
+		return;
+
+	if (this.view.push.isShiftPressed ())
+		trackBank.scrollTracksPageDown ();
+	else
+		trackBank.scrollTracksDown ();
+};
+
+ArrangementLayout.prototype.onScene = function (scene)
+{
+	trackBank.launchScene (scene);
+};
+
+ArrangementLayout.prototype.drawGrid = function ()
+{
+	for (var x = 0; x < 8; x++)
+	{
+		var t = this.view.model.getTrack (x);
+		for (var y = 0; y < 8; y++)
+			this.drawPad (t.slots[y], y, x, t.recarm);
+	}
 };
