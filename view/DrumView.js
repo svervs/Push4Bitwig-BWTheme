@@ -5,9 +5,9 @@
 DrumView.NUM_DISPLAY_COLS = 32;
 DrumView.DRUM_START_KEY = 36;
 
-function DrumView (model, scales)
+function DrumView (model)
 {
-	AbstractSequencerView.call (this, model, scales, 128, 32);
+	AbstractSequencerView.call (this, model, 128, 32);
 	this.pads = initArray ({ exists: false, solo: false, mute: false }, 16);
 	this.selectedPad = 0;
 	this.offsetY = DrumView.DRUM_START_KEY;

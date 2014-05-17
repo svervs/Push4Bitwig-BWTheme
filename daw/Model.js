@@ -9,6 +9,7 @@ function Model (push)
 
 	this.application = host.createApplication ();
 
+	this.transport = new TransportProxy (push);
 	this.masterTrack = new MasterTrackProxy (push);
 	this.userControlBank = new UserControlBankProxy (push);
 
@@ -183,20 +184,19 @@ Model.prototype.getSelectedDevice = function ()
 };
 
 /**
+ * @returns {TransportProxy|
+ */
+Model.prototype.getTransport = function () { return this.transport; };
+
+/**
  * @returns {MasterTrackProxy}
  */
-Model.prototype.getMasterTrack = function ()
-{
-	return this.masterTrack;
-};
+Model.prototype.getMasterTrack = function () { return this.masterTrack; };
 
 /**
  * @returns {UserControlBankProxy}
  */
-Model.prototype.getUserControlBank = function ()
-{
-	return this.userControlBank;
-};
+Model.prototype.getUserControlBank = function () { return this.userControlBank; };
 
 Model.prototype.getTrack = function (index)
 {

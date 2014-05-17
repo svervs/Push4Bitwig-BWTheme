@@ -163,15 +163,14 @@ Push.prototype.init = function ()
 
 	this.modeState = new ModeState (this, this.model);
 
-	this.transport = new TransportProxy (this);
 	this.groove = new GrooveProxy (this);
 	this.cursorDevice = new CursorDeviceProxy (this);
 
 	// Create Push Views
-	this.addView (VIEW_PLAY, new PlayView (this.model, this.scales));
+	this.addView (VIEW_PLAY, new PlayView (this.model));
 	this.addView (VIEW_SESSION, new SessionView (this.model));
-	this.addView (VIEW_SEQUENCER, new SequencerView (this.model, this.scales));
-	this.addView (VIEW_DRUM, new DrumView (this.model, this.scales));
+	this.addView (VIEW_SEQUENCER, new SequencerView (this.model));
+	this.addView (VIEW_DRUM, new DrumView (this.model));
 
 	// Create Push Mode impls
 	this.modeState.init ();

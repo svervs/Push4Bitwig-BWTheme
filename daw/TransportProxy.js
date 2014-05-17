@@ -10,7 +10,9 @@ TransportProxy.TEMPO_RESOLUTION       = 647;
 function TransportProxy (push)
 {
 	this.push = push;
+
 	this.transport = host.createTransport ();
+
 	this.isRecording = false;
 	
 	// Note: For real BPM add 20
@@ -71,7 +73,7 @@ TransportProxy.prototype.toggleWriteArrangerAutomation = function ()
 TransportProxy.prototype.changePosition = function (increase, slow)
 {
 	var frac = slow ? TransportProxy.INC_FRACTION_TIME_SLOW : TransportProxy.INC_FRACTION_TIME;
-	this.transport.incPosition (increase ? frac : -frac, false);			
+	this.transport.incPosition (increase ? frac : -frac, false);
 };
 
 TransportProxy.prototype.changeTempo = function (increase)
@@ -100,4 +102,4 @@ TransportProxy.prototype.setInternalTempo = function (t)
 {
 	this.tempo = t;
 	this.quarterNoteInMillis = 60000 / (t + 20);
-}
+};
