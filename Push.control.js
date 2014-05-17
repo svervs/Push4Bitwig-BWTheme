@@ -11,9 +11,6 @@ load ("push/ClassLoader.js");
 load ("view/ClassLoader.js");
 load ("mode/ClassLoader.js");
 
-var previousMode = MODE_TRACK;
-var currentMode = MODE_TRACK;
-
 var masterTrack = null;
 var trackBank = null;
 var noteInput = null;
@@ -68,78 +65,4 @@ function flush ()
 function onMidi (status, data1, data2)
 {
 	push.handleMidi (status, data1, data2);
-}
-
-function setMode (mode)
-{
-	if (mode == null)
-		mode = MODE_TRACK;
-	if (mode != currentMode)
-	{
-		if (currentMode != MODE_SCALES && currentMode != MODE_FIXED)
-			previousMode = currentMode;
-		currentMode = mode;
-		push.setActiveMode (currentMode);
-	}
-	updateMode (-1);
-	updateMode (currentMode);
-}
-
-function updateMode (mode)
-{
-	var isMaster       = mode == MODE_MASTER;
-	var isTrack        = mode == MODE_TRACK;
-	var isVolume       = mode == MODE_VOLUME;
-	var isPan          = mode == MODE_PAN;
-	var isScales       = mode == MODE_SCALES;
-	var isFixed        = mode == MODE_FIXED;
-	var isPreset       = mode == MODE_PRESET;
-	var isFrame        = mode == MODE_FRAME;
-	var isGroove       = mode == MODE_GROOVE;
-
-	var isBankDevice   = mode == MODE_BANK_DEVICE;
-	var isBankCommon   = mode == MODE_BANK_COMMON;
-	var isBankEnvelope = mode == MODE_BANK_ENVELOPE;
-	var isBankUser     = mode == MODE_BANK_USER;
-	var isBankMacro    = mode == MODE_BANK_MACRO;
-	
-	masterTrack.getVolume ().setIndication (isMaster);
-	masterTrack.getPan ().setIndication (isMaster);
-	
-	var selectedTrack = push.model.getSelectedTrack ();
-	for (var i = 0; i < 8; i++)
-	{
-		var isEnabled = false;
-		var t = trackBank.getTrack (i);
-		var hasTrackSel = selectedTrack != null && selectedTrack.index == i && mode == MODE_TRACK;
-		t.getVolume ().setIndication (isVolume || hasTrackSel);
-		t.getPan ().setIndication (isPan || hasTrackSel);
-		for (var j = 0; j < 6; j++)
-		{
-			isEnabled = mode == MODE_SEND1 && j == 0 ||
-			            mode == MODE_SEND2 && j == 1 ||
-			            mode == MODE_SEND3 && j == 2 ||
-			            mode == MODE_SEND4 && j == 3 ||
-			            mode == MODE_SEND5 && j == 4 ||
-			            mode == MODE_SEND6 && j == 5 || 
-						hasTrackSel;
-			t.getSend (j).setIndication (isEnabled);
-		}
-
-		push.cursorDevice.getParameter (i).setIndication (isBankDevice);
-		push.cursorDevice.getCommonParameter (i).setIndication (isBankCommon);
-		push.cursorDevice.getEnvelopeParameter (i).setIndication (isBankEnvelope);
-		userControlBank.getControl (i).setIndication (isBankUser);
-		push.cursorDevice.getMacro (i).getAmount ().setIndication (isBankMacro);
-		push.groove.updateIndications (isGroove);
-	}
-
-	push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_TRACK, isTrack ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_VOLUME, isVolume ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_PAN_SEND, mode >= MODE_PAN && mode <= MODE_SEND6 ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_DEVICE, isBankDevice || isBankMacro ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_SCALES, isScales ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_FIXED_LENGTH, isFixed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	push.setButton (PUSH_BUTTON_BROWSE, isPreset ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 }

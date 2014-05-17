@@ -88,13 +88,13 @@ function Push (output)
 	this.output = output;
 	this.pads = new Grid (output);
 	this.display = new Display (output);
-	
+
+	this.modeState = null;
+
 	this.showVU = true;
 
 	this.activeViewId = -1;
 	this.views = [];
-	this.activeModeId = -1;
-	this.modes = [];
 
 	this.displayScheduled = false;
 	this.taskReturning = false;
@@ -153,6 +153,8 @@ Push.prototype.init = function ()
 	this.model = new Model (this);
 	this.scales = new Scales ();
 
+	this.modeState = new ModeState (this, this.model);
+
 	this.transport = new TransportProxy (this);
 	this.groove = new GrooveProxy (this);
 	this.cursorDevice = new CursorDeviceProxy (this);
@@ -162,32 +164,9 @@ Push.prototype.init = function ()
 	this.addView (VIEW_SESSION, new SessionView (this.model));
 	this.addView (VIEW_SEQUENCER, new SequencerView (this.model, this.scales));
 	this.addView (VIEW_DRUM, new DrumView (this.model, this.scales));
-	
-	// Create Push Mode impls
-	this.addMode (MODE_VOLUME, new VolumeMode (this.model));
-	this.addMode (MODE_PAN, new PanMode (this.model));
-	var modeSend = new SendMode (this.model);
-	this.addMode (MODE_SEND1, modeSend);
-	this.addMode (MODE_SEND2, modeSend);
-	this.addMode (MODE_SEND3, modeSend);
-	this.addMode (MODE_SEND4, modeSend);
-	this.addMode (MODE_SEND5, modeSend);
-	this.addMode (MODE_SEND6, modeSend);
-	this.addMode (MODE_MASTER, new MasterMode (this.model));
-	this.addMode (MODE_TRACK, new TrackMode (this.model));
-	this.addMode (MODE_FRAME, new FrameMode (this.model));
-	this.addMode (MODE_SCALES, new ScalesMode (this.model, this.scales));
-	this.addMode (MODE_FIXED, new FixedMode (this.model));
-	this.addMode (MODE_GROOVE, new GrooveMode (this.model));
 
-	this.addMode (MODE_PARAM_PAGE_SELECT, new ParamPageSelectMode (this.model));
-	this.addMode (MODE_BANK_DEVICE, new DeviceMode (this.model));
-	this.addMode (MODE_BANK_COMMON, new ParamPageMode (this.model, MODE_BANK_COMMON, 'Common'));
-	this.addMode (MODE_BANK_ENVELOPE, new ParamPageMode (this.model, MODE_BANK_ENVELOPE, 'Envelope'));
-	//this.addMode (MODE_BANK_MODULATE, new ParamPageMode (this.model, MODE_BANK_MODULATE, 'Modulate'));
-	this.addMode (MODE_BANK_USER, new ParamPageMode (this.model, MODE_BANK_USER, 'User'));
-	this.addMode (MODE_BANK_MACRO, new ParamPageMode (this.model, MODE_BANK_MACRO, 'Macro'));
-	this.addMode (MODE_PRESET, new PresetMode (this.model));
+	// Create Push Mode impls
+	this.modeState.init ();
 };
 
 Push.prototype.flush = function ()
@@ -266,40 +245,49 @@ Push.prototype.addView = function (viewId, view)
 	this.views[viewId] = view;
 };
 
+//--------------------------------------
+// ModeState
+//--------------------------------------
+
+Push.prototype.setPendingMode = function (mode)
+{
+	this.modeState.setPendingMode (mode);
+}
+
+Push.prototype.getPreviousMode = function ()
+{
+	return this.modeState.getPreviousMode ();
+};
+
+Push.prototype.getCurrentMode = function ()
+{
+	return this.modeState.getCurrentMode ();
+};
+
 Push.prototype.getActiveMode = function ()
 {
-	if (this.activeModeId < 0)
-		return null;
-	var mode = this.modes[this.activeModeId];
-	return mode ? mode : null;
+	return this.modeState.getActiveMode ();
 };
 
 Push.prototype.setActiveMode = function (modeId)
 {
-	this.activeModeId = modeId;
-	
-	var mode = this.getActiveMode ();
-	if (mode == null)
-		return;
-	
-	mode.onActivate ();
+	this.modeState.setActiveMode (modeId);
 };
 
 Push.prototype.isActiveMode = function (modeId)
 {
-	return this.activeModeId == modeId;
+	return this.modeState.isActiveMode (modeId);
 };
 
 Push.prototype.getMode = function (modeId)
 {
-	return this.modes[modeId];
+	return this.modeState.getMode (modeId);
 };
 
-Push.prototype.addMode = function (modeId, mode)
+Push.prototype.updateMode = function (mode)
 {
-	mode.attachTo (this);
-	this.modes[modeId] = mode;
-};
+	this.modeState.updateMode (mode);
+}
 
 Push.prototype.isSelectPressed = function ()
 {
@@ -344,7 +332,7 @@ Push.prototype.updateDisplay = function ()
 	if (m != null)
 		m.updateDisplay ();
 
-	if (m != null && m.isFullDisplay(currentMode))
+	if (m != null && m.isFullDisplay (this.getCurrentMode ()))
 		return;
 
 	// Send, Mute, Automation

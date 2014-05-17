@@ -27,7 +27,7 @@ BaseView.prototype.onActivate = function ()
 {
 	this.updateNoteMapping ();
 	this.updateArrows ();
-	setMode (currentMode);
+	this.push.setPendingMode (this.push.getCurrentMode ());
 };
 
 BaseView.prototype.updateNoteMapping = function ()
@@ -123,7 +123,7 @@ BaseView.prototype.onAutomation = function (event)
 BaseView.prototype.onFixedLength = function (event)
 {
 	if (!event.isLong ())
-		setMode (event.isDown () ? MODE_FIXED : previousMode);
+		this.push.setPendingMode (event.isDown () ? MODE_FIXED : this.push.getPreviousMode ());
 };
 
 BaseView.prototype.onQuantize = function (event)
@@ -132,7 +132,7 @@ BaseView.prototype.onQuantize = function (event)
 		return;
 
 	if (this.push.isShiftPressed ())
-		setMode (MODE_GROOVE);
+		this.push.setPendingMode (MODE_GROOVE);
 	else
 		host.showPopupNotification ("Quantize: Function not supported (yet).");
 };
@@ -244,7 +244,7 @@ BaseView.prototype.onValueKnob9 = function (value)
 
 BaseView.prototype.onValueKnob9Touch = function (isTouched)
 {
-	if (currentMode != MODE_MASTER)
+	if (this.push.getCurrentMode () != MODE_MASTER)
 		masterTrack.getVolume ().setIndication (isTouched);
 };
 
@@ -261,7 +261,7 @@ BaseView.prototype.onFirstRow = function (index)
 	// just emulates what it was doing originally until we change it
 	var fullDisplay = false;
 	if (m != null)
-		fullDisplay = !m.isFullDisplay(currentMode)
+		fullDisplay = !m.isFullDisplay (this.push.getCurrentMode ())
 
 	if (fullDisplay)
 	{
@@ -280,7 +280,8 @@ BaseView.prototype.onSecondRow = function (index)
 		m.onSecondRow (index);
 	
 	// TODO (mschmalle) Can we do this better now that we have more abstraction with modes?
-	if (currentMode != MODE_BANK_DEVICE && currentMode != MODE_MASTER && currentMode != MODE_SCALES && currentMode != MODE_PRESET)
+	if (this.push.getCurrentMode () != MODE_BANK_DEVICE && this.push.getCurrentMode () != MODE_MASTER &&
+		this.push.getCurrentMode () != MODE_SCALES && this.push.getCurrentMode () != MODE_PRESET)
 	{
 		var t = trackBank.getTrack (index);
 		if (this.push.isShiftPressed ())
@@ -295,22 +296,22 @@ BaseView.prototype.onMaster = function (event)
 	switch (event.getState ())
 	{
 		case ButtonEvent.UP:
-			if (currentMode == MODE_FRAME)
-				setMode (previousMode);
+			if (this.push.getCurrentMode () == MODE_FRAME)
+				this.push.setPendingMode (this.push.getPreviousMode ());
 			break;
 		case ButtonEvent.DOWN:
 			if (this.push.isActiveMode (MODE_MASTER))
 				this.push.showVU = !this.push.showVU;
 			else
 			{
-				setMode (MODE_MASTER);
+				this.push.setPendingMode (MODE_MASTER);
 				masterTrack.select ();
 			}
 			break;
 		case ButtonEvent.LONG:
 			// Toggle back since it was toggled on DOWN
 			this.push.showVU = !this.push.showVU;
-			setMode (MODE_FRAME);
+			this.push.setPendingMode (MODE_FRAME);
 			break;
 	}
 };
@@ -322,17 +323,17 @@ BaseView.prototype.onVolume = function (event)
 	if (this.push.isActiveMode (MODE_VOLUME))
 		this.push.showVU = !this.push.showVU;
 	else
-		setMode (MODE_VOLUME);
+		this.push.setPendingMode (MODE_VOLUME);
 };
 
 BaseView.prototype.onPanAndSend = function (event)
 {
 	if (!event.isDown ())
 		return;
-	var mode = currentMode + 1;
+	var mode = this.push.getCurrentMode () + 1;
 	if (mode < MODE_PAN || mode > MODE_SEND6)
 		mode = MODE_PAN;
-	setMode (mode);
+	this.push.setPendingMode (mode);
 };
 
 BaseView.prototype.onTrack = function (event)
@@ -342,7 +343,7 @@ BaseView.prototype.onTrack = function (event)
 	if (this.push.isActiveMode (MODE_TRACK))
 		this.push.showVU = !this.push.showVU;
 	else
-		setMode (MODE_TRACK);
+		this.push.setPendingMode (MODE_TRACK);
 };
 
 BaseView.prototype.onDevice = function (event)
@@ -351,18 +352,18 @@ BaseView.prototype.onDevice = function (event)
 		return;
 
 	var selectMode = this.push.getMode (MODE_PARAM_PAGE_SELECT);
-	if (currentMode == MODE_PARAM_PAGE_SELECT || !selectMode.isPageMode (currentMode))
-		setMode (selectMode.getCurrentMode ());
+	if (this.push.getCurrentMode () == MODE_PARAM_PAGE_SELECT || !selectMode.isPageMode (this.push.getCurrentMode ()))
+		this.push.setPendingMode (selectMode.getCurrentMode ());
 	else
-		setMode (MODE_PARAM_PAGE_SELECT);
+		this.push.setPendingMode (MODE_PARAM_PAGE_SELECT);
 };
 
 BaseView.prototype.onBrowse = function (event) {
 	if (!event.isDown())
 		return;
 
-	if (currentMode == MODE_BANK_DEVICE)
-		setMode (MODE_PRESET);
+	if (this.push.getCurrentMode () == MODE_BANK_DEVICE)
+		this.push.setPendingMode (MODE_PRESET);
 	else
 		this.model.getApplication ().toggleBrowserVisibility (); // Track
 };
@@ -423,14 +424,14 @@ BaseView.prototype.onScales = function (event)
 	{
 		case ButtonEvent.DOWN:
 			this.quitScalesMode = false;
-			setMode (currentMode == MODE_SCALES ? previousMode : MODE_SCALES);
+			this.push.setPendingMode (this.push.getCurrentMode () == MODE_SCALES ? this.push.getPreviousMode () : MODE_SCALES);
 			break;
 		case ButtonEvent.LONG:
 			this.quitScalesMode = true;
 			break;
 		case ButtonEvent.UP:
 			if (this.quitScalesMode)
-				setMode (previousMode);
+				this.push.setPendingMode (this.push.getPreviousMode ());
 			break;
 	}
 };

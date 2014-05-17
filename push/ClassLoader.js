@@ -5,4 +5,5 @@
 
 load ("Display.js");
 load ("Grid.js");
+load ("ModeState.js");
 load ("Push.js");
