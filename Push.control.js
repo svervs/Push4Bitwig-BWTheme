@@ -11,20 +11,9 @@ load ("push/ClassLoader.js");
 load ("view/ClassLoader.js");
 load ("mode/ClassLoader.js");
 
-var displayScheduled = false;
-var taskReturning = false;
-
 var previousMode = MODE_TRACK;
 var currentMode = MODE_TRACK;
 
-var selectedDevice =
-{
-	name: 'None',
-	hasPreviousDevice: false, 
-	hasNextDevice: false
-};
-
-var device = null;
 var masterTrack = null;
 var trackBank = null;
 var noteInput = null;
@@ -35,6 +24,7 @@ var canScrollTrackDown = false;
 
 var currentNewClipLength = 2; // 1 Bar
 
+// This is the only global variable, do not use it.
 var push = null;
 
 host.defineController ("Ableton", "Push", "2.51", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
@@ -48,8 +38,7 @@ function init()
 	port.setMidiCallback (onMidi);
 	noteInput = port.createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
 	noteInput.setShouldConsumeEvents (false);
-	
-	device = host.createCursorDevice ();
+
 	masterTrack = host.createMasterTrack (0);
 	trackBank = host.createMainTrackBankSection (8, 6, 8);
 	userControlBank = host.createUserControls (8);
@@ -73,24 +62,7 @@ function exit()
 
 function flush ()
 {
-	if (taskReturning)
-	{
-		taskReturning = false;
-		return;
-	}
-
-	if (!displayScheduled)
-	{
-		displayScheduled = true;
-		host.scheduleTask (function ()
-		{
-			push.updateDisplay ();
-			push.display.flush ();
-			displayScheduled = false;
-			taskReturning = true;
-		}, null, 5);
-	}
-	push.redrawGrid ();
+	push.flush ();
 }
 
 function onMidi (status, data1, data2)
@@ -107,7 +79,7 @@ function setMode (mode)
 		if (currentMode != MODE_SCALES && currentMode != MODE_FIXED)
 			previousMode = currentMode;
 		currentMode = mode;
-		push.setActiveMode(currentMode);
+		push.setActiveMode (currentMode);
 	}
 	updateMode (-1);
 	updateMode (currentMode);
@@ -137,6 +109,7 @@ function updateMode (mode)
 	var selectedTrack = push.model.getSelectedTrack ();
 	for (var i = 0; i < 8; i++)
 	{
+		var isEnabled = false;
 		var t = trackBank.getTrack (i);
 		var hasTrackSel = selectedTrack != null && selectedTrack.index == i && mode == MODE_TRACK;
 		t.getVolume ().setIndication (isVolume || hasTrackSel);
@@ -153,14 +126,14 @@ function updateMode (mode)
 			t.getSend (j).setIndication (isEnabled);
 		}
 
-		device.getParameter (i).setIndication (isBankDevice);
-		device.getCommonParameter (i).setIndication (isBankCommon);
-		device.getEnvelopeParameter (i).setIndication(isBankEnvelope)
+		push.cursorDevice.getParameter (i).setIndication (isBankDevice);
+		push.cursorDevice.getCommonParameter (i).setIndication (isBankCommon);
+		push.cursorDevice.getEnvelopeParameter (i).setIndication (isBankEnvelope);
 		userControlBank.getControl (i).setIndication (isBankUser);
-		device.getMacro (i).getAmount ().setIndication (isBankMacro);
+		push.cursorDevice.getMacro (i).getAmount ().setIndication (isBankMacro);
 		push.groove.updateIndications (isGroove);
 	}
-			
+
 	push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_TRACK, isTrack ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_VOLUME, isVolume ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);

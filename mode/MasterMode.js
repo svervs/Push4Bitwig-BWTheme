@@ -32,7 +32,7 @@ MasterMode.prototype.onValueKnob = function (index, value)
 
 MasterMode.prototype.updateDisplay = function ()
 {
-	var d = push.display;
+	var d = this.push.display;
 	var master = this.model.getMaster ();
 	
 	d.setRow (0, MasterMode.PARAM_NAMES)
@@ -52,7 +52,7 @@ MasterMode.prototype.updateDisplay = function ()
 
 	for (var i = 0; i < 8; i++)
 	{
-		push.setButton (20 + i, PUSH_COLOR_BLACK);
-		push.setButton (102 + i, PUSH_COLOR_BLACK);
+		this.push.setButton (20 + i, PUSH_COLOR_BLACK);
+		this.push.setButton (102 + i, PUSH_COLOR_BLACK);
 	}
 };

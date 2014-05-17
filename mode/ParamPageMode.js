@@ -52,10 +52,10 @@ ParamPageMode.prototype.getParameter = function (index)
 	switch (this.id)
 	{
 		case MODE_BANK_COMMON:
-			return device.getCommonParameter (index);
+			return this.push.cursorDevice.getCommonParameter (index);
 
 		case MODE_BANK_ENVELOPE :
-			return device.getEnvelopeParameter (index);
+			return this.push.cursorDevice.getEnvelopeParameter (index);
 
 		//case MODE_BANK_MODULATE :
 		//	return device.getModulationSource (index);
@@ -64,7 +64,7 @@ ParamPageMode.prototype.getParameter = function (index)
 			return userControlBank.getControl (index);
 
 		case MODE_BANK_MACRO :
-			return device.getMacro (index).getAmount ();
+			return this.push.cursorDevice.getMacro (index).getAmount ();
 	}
 };
 
@@ -73,10 +73,10 @@ ParamPageMode.prototype.getNameParameter = function (index)
 	switch (this.id)
 	{
 		case MODE_BANK_COMMON:
-			return device.getCommonParameter (index);
+			return this.push.cursorDevice.getCommonParameter (index);
 
 		case MODE_BANK_ENVELOPE :
-			return device.getEnvelopeParameter (index);
+			return this.push.cursorDevice.getEnvelopeParameter (index);
 
 		//case MODE_BANK_MODULATE :
 		//	return device.getModulationSource (index);
@@ -85,7 +85,7 @@ ParamPageMode.prototype.getNameParameter = function (index)
 			return userControlBank.getControl (index);
 
 		case MODE_BANK_MACRO :
-			return device.getMacro (index);
+			return this.push.cursorDevice.getMacro (index);
 	}
 };
 
@@ -97,7 +97,7 @@ ParamPageMode.prototype.onValueKnob = function (index, value)
 
 ParamPageMode.prototype.updateDisplay = function ()
 {
-	var d = push.display;
+	var d = this.push.display;
 
 	if (this.hasParams())
 	{

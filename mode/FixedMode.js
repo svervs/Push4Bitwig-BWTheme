@@ -21,7 +21,7 @@ FixedMode.prototype.onFirstRow = function (index)
 
 FixedMode.prototype.updateDisplay = function ()
 {
-	var d = push.display;
+	var d = this.push.display;
 	
 	d.clearRow (0).done (0).clearRow (1).done (1)
 	 .setBlock (2, 0, 'New Clip Length:').clearBlock (2, 1).clearBlock (2, 2).clearBlock (2, 3)
@@ -32,7 +32,7 @@ FixedMode.prototype.updateDisplay = function ()
 	
 	for (var i = 0; i < 8; i++)
 	{
-		push.setButton (20 + i, PUSH_COLOR_GREEN_LO-4);
-		push.setButton (102 + i, PUSH_COLOR_BLACK);
+		this.push.setButton (20 + i, PUSH_COLOR_GREEN_LO-4);
+		this.push.setButton (102 + i, PUSH_COLOR_BLACK);
 	}	
 };

@@ -3,9 +3,17 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function Model ()
+function Model (push)
 {
+	this.push = push;
 	this.application = host.createApplication ();
+
+	this.selectedDevice =
+	{
+		name: 'None',
+		hasPreviousDevice: false,
+		hasNextDevice: false
+	};
 
 	this.tracks = [];
 	this.recCount = 64;
@@ -96,8 +104,8 @@ function Model ()
 			this.tracks[index].selected = isSelected;
 			if (isSelected && push.isActiveMode (MODE_MASTER))
 				setMode (MODE_TRACK);
-			if (push.isActiveView (VIEW_PLAY))
-				push.getActiveView ().updateNoteMapping ();
+			if (this.push.isActiveView (VIEW_PLAY))
+				this.push.getActiveView ().updateNoteMapping ();
 		}));
 		t.addVuMeterObserver (128, -1, true, doObjectIndex (this, i, function (index, value)
 		{
@@ -200,6 +208,16 @@ Model.prototype.getSelectedTrack = function ()
 			return this.tracks[i];
 	}
 	return null;
+};
+
+Model.prototype.hasSelectedDevice = function ()
+{
+	return this.selectedDevice.name != 'None';
+};
+
+Model.prototype.getSelectedDevice = function ()
+{
+	return this.selectedDevice;
 };
 
 Model.prototype.getMaster = function ()

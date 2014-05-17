@@ -66,7 +66,7 @@ ParamPageSelectMode.prototype.attachTo = function (aPush)
 
 ParamPageSelectMode.prototype.updateDisplay = function ()
 {
-	var d = push.display;
+	var d = this.push.display;
 
 	d.clear ().setBlock (0, 0, "Parameter Banks:");
 
@@ -78,13 +78,13 @@ ParamPageSelectMode.prototype.updateDisplay = function ()
 	for (var i = 20; i < 28; i++)
 	{
 		if (i == 20 + this.selectedIndex)
-			push.setButton (i, ParamPageSelectMode.firstRowButtonColorSelected);
+			this.push.setButton (i, ParamPageSelectMode.firstRowButtonColorSelected);
 		else
-			push.setButton(i, ParamPageSelectMode.firstRowButtonColorUp);
+			this.push.setButton(i, ParamPageSelectMode.firstRowButtonColorUp);
 	}
 
 	for (var i = 102; i < 110; i++)
-		push.setButton (i, PUSH_COLOR_BLACK);
+		this.push.setButton (i, PUSH_COLOR_BLACK);
 };
 
 ParamPageSelectMode.prototype.onFirstRow = function (index)

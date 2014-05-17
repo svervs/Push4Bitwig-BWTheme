@@ -32,7 +32,7 @@ SendMode.prototype.onValueKnob = function (index, value)
 
 SendMode.prototype.updateDisplay = function ()
 {
-	var d = push.display;
+	var d = this.push.display;
 	var sendNo = currentMode - MODE_SEND1;
 	for (var i = 0; i < 8; i++)
 	{

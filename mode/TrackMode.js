@@ -88,7 +88,7 @@ TrackMode.prototype.onValueKnob = function (index, value)
 TrackMode.prototype.updateDisplay = function ()
 {
 	var t = this.model.getSelectedTrack ();
-	var d = push.display;
+	var d = this.push.display;
 	
 	d.setRow (0, TrackMode.PARAM_NAMES);
 	if (t == null)

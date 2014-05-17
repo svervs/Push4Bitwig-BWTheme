@@ -357,13 +357,12 @@ BaseView.prototype.onDevice = function (event)
 		setMode (MODE_PARAM_PAGE_SELECT);
 };
 
-BaseView.prototype.onBrowse = function (event)
-{
-	if (!event.isDown ())
+BaseView.prototype.onBrowse = function (event) {
+	if (!event.isDown())
 		return;
 
 	if (currentMode == MODE_BANK_DEVICE)
-		setMode(MODE_PRESET);
+		setMode (MODE_PRESET);
 	else
 		this.model.getApplication ().toggleBrowserVisibility (); // Track
 };

@@ -88,9 +88,6 @@ function Push (output)
 	this.output = output;
 	this.pads = new Grid (output);
 	this.display = new Display (output);
-	this.transport = new Transport (this);
-
-	this.groove = new GrooveProxy (this);
 	
 	this.showVU = true;
 
@@ -98,7 +95,10 @@ function Push (output)
 	this.views = [];
 	this.activeModeId = -1;
 	this.modes = [];
-	
+
+	this.displayScheduled = false;
+	this.taskReturning = false;
+
 	this.buttons =
 	[
 		PUSH_BUTTON_TAP,
@@ -150,9 +150,13 @@ function Push (output)
 
 Push.prototype.init = function ()
 {
-	this.model = new Model ();
+	this.model = new Model (this);
 	this.scales = new Scales ();
-	
+
+	this.transport = new TransportProxy (this);
+	this.groove = new GrooveProxy (this);
+	this.cursorDevice = new CursorDeviceProxy (this);
+
 	// Create Push Views
 	this.addView (VIEW_PLAY, new PlayView (this.model, this.scales));
 	this.addView (VIEW_SESSION, new SessionView (this.model));
@@ -184,6 +188,28 @@ Push.prototype.init = function ()
 	this.addMode (MODE_BANK_USER, new ParamPageMode (this.model, MODE_BANK_USER, 'User'));
 	this.addMode (MODE_BANK_MACRO, new ParamPageMode (this.model, MODE_BANK_MACRO, 'Macro'));
 	this.addMode (MODE_PRESET, new PresetMode (this.model));
+};
+
+Push.prototype.flush = function ()
+{
+	if (this.taskReturning)
+	{
+		this.taskReturning = false;
+		return;
+	}
+
+	if (!this.displayScheduled)
+	{
+		this.displayScheduled = true;
+		host.scheduleTask (doObject (this, function ()
+		{
+			this.updateDisplay ();
+			this.display.flush ();
+			this.displayScheduled = false;
+			this.taskReturning = true;
+		}), null, 5);
+	}
+	this.redrawGrid ();
 };
 
 Push.prototype.turnOff = function ()

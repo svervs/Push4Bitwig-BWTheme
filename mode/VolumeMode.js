@@ -22,7 +22,7 @@ VolumeMode.prototype.onValueKnob = function (index, value)
 
 VolumeMode.prototype.updateDisplay = function ()
 {
-	var d = push.display;
+	var d = this.push.display;
 	for (var i = 0; i < 8; i++)
 	{
 		var t = this.model.getTrack (i);
