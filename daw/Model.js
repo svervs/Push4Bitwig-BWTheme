@@ -10,6 +10,7 @@ function Model (push)
 	this.application = host.createApplication ();
 
 	this.transport = new TransportProxy (push);
+	this.groove = new GrooveProxy (push);
 	this.masterTrack = new MasterTrackProxy (push);
 	this.userControlBank = new UserControlBankProxy (push);
 
@@ -187,6 +188,11 @@ Model.prototype.getSelectedDevice = function ()
  * @returns {TransportProxy|
  */
 Model.prototype.getTransport = function () { return this.transport; };
+
+/**
+ * @returns {GrooveProxy}
+ */
+Model.prototype.getGroove = function () { return this.groove; };
 
 /**
  * @returns {MasterTrackProxy}

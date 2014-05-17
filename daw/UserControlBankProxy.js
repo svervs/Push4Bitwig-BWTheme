@@ -22,8 +22,8 @@ UserControlBankProxy.prototype.getControl = function (index)
 	return this.userControlBank.getControl (index);
 };
 
-UserControlBankProxy.prototype.updateIndication = function (index, isOurMode)
+UserControlBankProxy.prototype.updateIndication = function (index, isIndicated)
 {
-	this.userControlBank.getControl (index).setIndication (isOurMode);
+	this.userControlBank.getControl (index).setIndication (isIndicated);
 };
 

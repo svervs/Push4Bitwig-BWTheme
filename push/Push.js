@@ -163,7 +163,6 @@ Push.prototype.init = function ()
 
 	this.modeState = new ModeState (this, this.model);
 
-	this.groove = new GrooveProxy (this);
 	this.cursorDevice = new CursorDeviceProxy (this);
 
 	// Create Push Views
