@@ -83,9 +83,13 @@ var PUSH_BUTTON_STATE_ON  = 1;
 var PUSH_BUTTON_STATE_HI  = 4;
 
 
-function Push (output)
+function Push (output, input)
 {
 	this.output = output;
+	this.input = input;
+
+	this.input.getPort().setMidiCallback (doObject (this, this.handleMidi));
+
 	this.pads = new Grid (output);
 	this.display = new Display (output);
 
@@ -148,10 +152,14 @@ function Push (output)
 		this.buttonStates[this.buttons[i]] = ButtonEvent.UP;
 }
 
+/**
+ * @returns {MidiOutput}
+ */
+Push.prototype.getOutput = function () { return this.output; };
+
 Push.prototype.init = function ()
 {
 	this.model = new Model (this);
-	this.scales = new Scales ();
 
 	this.modeState = new ModeState (this, this.model);
 

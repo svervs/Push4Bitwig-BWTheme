@@ -32,7 +32,7 @@ BaseView.prototype.onActivate = function ()
 
 BaseView.prototype.updateNoteMapping = function ()
 {
-	noteInput.setKeyTranslationTable (initArray (-1, 128));
+	this.model.setKeyTranslationTable (initArray (-1, 128));
 };
 
 BaseView.prototype.updateArrows = function ()

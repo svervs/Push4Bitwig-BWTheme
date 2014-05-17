@@ -29,7 +29,7 @@ ModeState.prototype.init = function ()
 	this.addMode (MODE_MASTER, new MasterMode (this.model));
 	this.addMode (MODE_TRACK, new TrackMode (this.model));
 	this.addMode (MODE_FRAME, new FrameMode (this.model));
-	this.addMode (MODE_SCALES, new ScalesMode (this.model, this.scales));
+	this.addMode (MODE_SCALES, new ScalesMode (this.model));
 	this.addMode (MODE_FIXED, new FixedMode (this.model));
 	this.addMode (MODE_GROOVE, new GrooveMode (this.model));
 
@@ -147,8 +147,8 @@ ModeState.prototype.updateMode = function (mode)
 		this.push.cursorDevice.getParameter (i).setIndication (isBankDevice);
 		this.push.cursorDevice.getCommonParameter (i).setIndication (isBankCommon);
 		this.push.cursorDevice.getEnvelopeParameter (i).setIndication (isBankEnvelope);
-		userControlBank.getControl (i).setIndication (isBankUser);
 		this.push.cursorDevice.getMacro (i).getAmount ().setIndication (isBankMacro);
+		this.model.getUserControlBank().updateIndication (i, isBankUser);
 		this.push.groove.updateIndications (isGroove);
 	}
 
