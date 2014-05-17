@@ -11,9 +11,6 @@ load ("push/ClassLoader.js");
 load ("view/ClassLoader.js");
 load ("mode/ClassLoader.js");
 
-var displayScheduled = false;
-var taskReturning = false;
-
 var previousMode = MODE_TRACK;
 var currentMode = MODE_TRACK;
 
@@ -73,24 +70,7 @@ function exit()
 
 function flush ()
 {
-	if (taskReturning)
-	{
-		taskReturning = false;
-		return;
-	}
-
-	if (!displayScheduled)
-	{
-		displayScheduled = true;
-		host.scheduleTask (function ()
-		{
-			push.updateDisplay ();
-			push.display.flush ();
-			displayScheduled = false;
-			taskReturning = true;
-		}, null, 5);
-	}
-	push.redrawGrid ();
+	push.flush ();
 }
 
 function onMidi (status, data1, data2)

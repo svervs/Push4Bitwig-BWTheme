@@ -98,6 +98,9 @@ function Push (output)
 	this.views = [];
 	this.activeModeId = -1;
 	this.modes = [];
+
+	this.displayScheduled = false;
+	this.taskReturning = false;
 	
 	this.buttons =
 	[
@@ -184,6 +187,29 @@ Push.prototype.init = function ()
 	this.addMode (MODE_BANK_USER, new ParamPageMode (this.model, MODE_BANK_USER, 'User'));
 	this.addMode (MODE_BANK_MACRO, new ParamPageMode (this.model, MODE_BANK_MACRO, 'Macro'));
 	this.addMode (MODE_PRESET, new PresetMode (this.model));
+};
+
+Push.prototype.flush = function ()
+{
+	if (this.taskReturning)
+	{
+		this.taskReturning = false;
+		return;
+	}
+
+	if (!this.displayScheduled)
+	{
+		this.displayScheduled = true;
+		host.scheduleTask (doObject (this, function ()
+		{
+			println("redraw");
+			push.updateDisplay ();
+			push.display.flush ();
+			this.displayScheduled = false;
+			this.taskReturning = true;
+		}), null, 5);
+	}
+	push.redrawGrid ();
 };
 
 Push.prototype.turnOff = function ()
