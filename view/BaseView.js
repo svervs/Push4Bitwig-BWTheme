@@ -239,13 +239,14 @@ BaseView.prototype.onValueKnob = function (index, value)
 // Master Volume
 BaseView.prototype.onValueKnob9 = function (value)
 {
-	masterTrack.getVolume ().inc (value <= 61 ? 1 : -1, 128);
+	this.model.getMasterTrack ().incVolume (value);
 };
 
 BaseView.prototype.onValueKnob9Touch = function (isTouched)
 {
-	if (this.push.getCurrentMode () != MODE_MASTER)
-		masterTrack.getVolume ().setIndication (isTouched);
+	// commented out, dosn't belong here
+	//if (this.push.getCurrentMode () != MODE_MASTER)
+	//	masterTrack.getVolume ().setIndication (isTouched);
 };
 
 BaseView.prototype.onFirstRow = function (index)
@@ -305,7 +306,7 @@ BaseView.prototype.onMaster = function (event)
 			else
 			{
 				this.push.setPendingMode (MODE_MASTER);
-				masterTrack.select ();
+				this.model.getMasterTrack().select ();
 			}
 			break;
 		case ButtonEvent.LONG:

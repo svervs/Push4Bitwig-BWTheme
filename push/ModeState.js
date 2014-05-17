@@ -122,8 +122,7 @@ ModeState.prototype.updateMode = function (mode)
 	var isBankUser     = mode == MODE_BANK_USER;
 	var isBankMacro    = mode == MODE_BANK_MACRO;
 
-	masterTrack.getVolume ().setIndication (isMaster);
-	masterTrack.getPan ().setIndication (isMaster);
+	this.model.getMasterTrack ().updateIndications (isMaster);
 
 	var selectedTrack = this.model.getSelectedTrack ();
 	for (var i = 0; i < 8; i++)
