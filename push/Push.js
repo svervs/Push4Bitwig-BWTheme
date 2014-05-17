@@ -88,9 +88,6 @@ function Push (output)
 	this.output = output;
 	this.pads = new Grid (output);
 	this.display = new Display (output);
-	this.transport = new Transport (this);
-
-	this.groove = new GrooveProxy (this);
 	
 	this.showVU = true;
 
@@ -101,7 +98,7 @@ function Push (output)
 
 	this.displayScheduled = false;
 	this.taskReturning = false;
-	
+
 	this.buttons =
 	[
 		PUSH_BUTTON_TAP,
@@ -155,7 +152,11 @@ Push.prototype.init = function ()
 {
 	this.model = new Model ();
 	this.scales = new Scales ();
-	
+
+	this.transport = new TransportProxy (this);
+	this.groove = new GrooveProxy (this);
+	this.cursorDevice = new CursorDeviceProxy (this);
+
 	// Create Push Views
 	this.addView (VIEW_PLAY, new PlayView (this.model, this.scales));
 	this.addView (VIEW_SESSION, new SessionView (this.model));

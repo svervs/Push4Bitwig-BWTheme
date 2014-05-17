@@ -14,7 +14,6 @@ load ("mode/ClassLoader.js");
 var previousMode = MODE_TRACK;
 var currentMode = MODE_TRACK;
 
-var device = null;
 var masterTrack = null;
 var trackBank = null;
 var noteInput = null;
@@ -38,8 +37,7 @@ function init()
 	port.setMidiCallback (onMidi);
 	noteInput = port.createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
 	noteInput.setShouldConsumeEvents (false);
-	
-	device = host.createCursorDevice ();
+
 	masterTrack = host.createMasterTrack (0);
 	trackBank = host.createMainTrackBankSection (8, 6, 8);
 	userControlBank = host.createUserControls (8);
@@ -80,7 +78,7 @@ function setMode (mode)
 		if (currentMode != MODE_SCALES && currentMode != MODE_FIXED)
 			previousMode = currentMode;
 		currentMode = mode;
-		push.setActiveMode(currentMode);
+		push.setActiveMode (currentMode);
 	}
 	updateMode (-1);
 	updateMode (currentMode);
@@ -126,12 +124,12 @@ function updateMode (mode)
 			t.getSend (j).setIndication (isEnabled);
 		}
 
-		device.getParameter (i).setIndication (isBankDevice);
-		device.getCommonParameter (i).setIndication (isBankCommon);
-		device.getEnvelopeParameter (i).setIndication(isBankEnvelope)
+		this.push.cursorDevice.getParameter (i).setIndication (isBankDevice);
+		this.push.cursorDevice.getCommonParameter (i).setIndication (isBankCommon);
+		this.push.cursorDevice.getEnvelopeParameter (i).setIndication(isBankEnvelope)
 		userControlBank.getControl (i).setIndication (isBankUser);
-		device.getMacro (i).getAmount ().setIndication (isBankMacro);
-		push.groove.updateIndications (isGroove);
+		this.push.cursorDevice.getMacro (i).getAmount ().setIndication (isBankMacro);
+		this.push.groove.updateIndications (isGroove);
 	}
 			
 	push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
