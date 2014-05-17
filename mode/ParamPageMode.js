@@ -61,7 +61,7 @@ ParamPageMode.prototype.getParameter = function (index)
 		//	return device.getModulationSource (index);
 
 		case MODE_BANK_USER :
-			return userControlBank.getControl (index);
+			return this.model.getUserControlBank().getControl (index);
 
 		case MODE_BANK_MACRO :
 			return this.push.cursorDevice.getMacro (index).getAmount ();
@@ -82,7 +82,7 @@ ParamPageMode.prototype.getNameParameter = function (index)
 		//	return device.getModulationSource (index);
 
 		case MODE_BANK_USER :
-			return userControlBank.getControl (index);
+			return this.model.getUserControlBank().getControl (index);
 
 		case MODE_BANK_MACRO :
 			return this.push.cursorDevice.getMacro (index);

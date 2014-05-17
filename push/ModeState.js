@@ -147,8 +147,8 @@ ModeState.prototype.updateMode = function (mode)
 		this.push.cursorDevice.getParameter (i).setIndication (isBankDevice);
 		this.push.cursorDevice.getCommonParameter (i).setIndication (isBankCommon);
 		this.push.cursorDevice.getEnvelopeParameter (i).setIndication (isBankEnvelope);
-		userControlBank.getControl (i).setIndication (isBankUser);
 		this.push.cursorDevice.getMacro (i).getAmount ().setIndication (isBankMacro);
+		this.model.getUserControlBank().updateIndication (i, isBankUser);
 		this.push.groove.updateIndications (isGroove);
 	}
 

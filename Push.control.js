@@ -13,7 +13,6 @@ load ("mode/ClassLoader.js");
 
 var trackBank = null;
 var noteInput = null;
-var userControlBank = null;
 
 var canScrollTrackUp   = false;
 var canScrollTrackDown = false;
@@ -36,10 +35,6 @@ function init()
 	noteInput.setShouldConsumeEvents (false);
 
 	trackBank = host.createMainTrackBankSection (8, 6, 8);
-	userControlBank = host.createUserControls (8);
-
-	for (var i = PUSH_KNOB1; i <= PUSH_KNOB8; i++)
-		userControlBank.getControl (i - PUSH_KNOB1).setLabel ("CC" + i);
 
 	var output = new MidiOutput ();
 	push = new Push (output);

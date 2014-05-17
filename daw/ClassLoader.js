@@ -8,3 +8,4 @@ load ("TransportProxy.js");
 load ("CursorDeviceProxy.js");
 load ("GrooveProxy.js");
 load ("MasterTrackProxy.js");
+load ("UserControlBankProxy.js");

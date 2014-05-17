@@ -9,6 +9,7 @@ function Model (push)
 	this.application = host.createApplication ();
 
 	this.masterTrack = new MasterTrackProxy (push);
+	this.userControlBank = new UserControlBankProxy (push);
 
 	this.selectedDevice =
 	{
@@ -168,6 +169,14 @@ Model.prototype.getSelectedDevice = function ()
 Model.prototype.getMasterTrack = function ()
 {
 	return this.masterTrack;
+};
+
+/**
+ * @returns {UserControlBankProxy}
+ */
+Model.prototype.getUserControlBank = function ()
+{
+	return this.userControlBank;
 };
 
 Model.prototype.getTrack = function (index)
