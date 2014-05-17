@@ -23,7 +23,7 @@ SendMode.prototype = new BaseMode ();
 
 SendMode.prototype.onValueKnob = function (index, value)
 {
-	var sendNo = currentMode - MODE_SEND1;
+	var sendNo = this.push.getCurrentMode () - MODE_SEND1;
 	var t = this.model.getTrack (index);
 	var send = t.sends[sendNo];
 	send.volume = this.changeValue (value, send.volume);
@@ -33,7 +33,7 @@ SendMode.prototype.onValueKnob = function (index, value)
 SendMode.prototype.updateDisplay = function ()
 {
 	var d = this.push.display;
-	var sendNo = currentMode - MODE_SEND1;
+	var sendNo = this.push.getCurrentMode () - MODE_SEND1;
 	for (var i = 0; i < 8; i++)
 	{
 		var t = this.model.getTrack (i);

@@ -28,7 +28,7 @@ ParamPageSelectMode.prototype.setCurrentMode = function (mode)
 {
 	this.currentMode = mode;
 	this.currentModeChanged();
-	setMode (this.currentMode);
+	this.push.setPendingMode (this.currentMode);
 };
 
 ParamPageSelectMode.prototype.isPageMode = function (mode)

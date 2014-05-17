@@ -44,7 +44,7 @@ function Model (push)
 	masterTrack.addIsSelectedObserver (doObject (this, function (isSelected)
 	{
 		this.master.selected = isSelected;
-		setMode (isSelected ? MODE_MASTER : previousMode);
+		this.push.setPendingMode (isSelected ? MODE_MASTER : this.push.getPreviousMode ());
 	}));
 	masterTrack.addVuMeterObserver (128, -1, true, doObject (this, function (value)
 	{
@@ -103,7 +103,7 @@ function Model (push)
 		{
 			this.tracks[index].selected = isSelected;
 			if (isSelected && push.isActiveMode (MODE_MASTER))
-				setMode (MODE_TRACK);
+				this.push.setPendingMode (MODE_TRACK);
 			if (this.push.isActiveView (VIEW_PLAY))
 				this.push.getActiveView ().updateNoteMapping ();
 		}));
