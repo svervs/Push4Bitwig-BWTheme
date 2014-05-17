@@ -14,13 +14,6 @@ load ("mode/ClassLoader.js");
 var previousMode = MODE_TRACK;
 var currentMode = MODE_TRACK;
 
-var selectedDevice =
-{
-	name: 'None',
-	hasPreviousDevice: false, 
-	hasNextDevice: false
-};
-
 var device = null;
 var masterTrack = null;
 var trackBank = null;

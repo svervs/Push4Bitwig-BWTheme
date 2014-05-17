@@ -7,6 +7,13 @@ function Model ()
 {
 	this.application = host.createApplication ();
 
+	this.selectedDevice =
+	{
+		name: 'None',
+		hasPreviousDevice: false,
+		hasNextDevice: false
+	};
+
 	this.tracks = [];
 	this.recCount = 64;
 	for (var i = 0; i < 8; i++)
@@ -200,6 +207,16 @@ Model.prototype.getSelectedTrack = function ()
 			return this.tracks[i];
 	}
 	return null;
+};
+
+Model.prototype.hasSelectedDevice = function ()
+{
+	return this.selectedDevice.name != 'None';
+};
+
+Model.prototype.getSelectedDevice = function ()
+{
+	return this.selectedDevice;
 };
 
 Model.prototype.getMaster = function ()

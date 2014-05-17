@@ -19,14 +19,14 @@ DeviceMode.prototype = new BaseMode ();
 
 DeviceMode.prototype.attachTo = function (aPush) 
 {
-	device.addIsEnabledObserver (function (isEnabled)
+	device.addIsEnabledObserver (doObject (this, function (isEnabled)
 	{
-		selectedDevice.enabled = isEnabled;
-	});
-	device.addNameObserver (34, 'None', function (name)
+		this.model.getSelectedDevice ().enabled = isEnabled;
+	}));
+	device.addNameObserver (34, 'None', doObject (this, function (name)
 	{
-		selectedDevice.name = name;
-	});
+		this.model.getSelectedDevice ().name = name;
+	}));
 	// TODO (mschmalle) These don't seem to work, when working, the Next, Previous visibilities
 	// can be managed correctly, right now just using selectedParameterPage
 	device.addPreviousParameterPageEnabledObserver (doObject (this, function (isEnabled)
@@ -101,7 +101,8 @@ DeviceMode.prototype.onFirstRow = function (index)
 DeviceMode.prototype.updateDisplay = function () 
 {
 	var d = push.display;
-	var hasDevice = selectedDevice.name != 'None';
+	var selectedDevice = this.model.getSelectedDevice ();
+	var hasDevice = this.model.hasSelectedDevice ();
 
 	if (hasDevice)
 	{

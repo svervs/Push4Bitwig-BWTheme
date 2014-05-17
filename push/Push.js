@@ -202,7 +202,6 @@ Push.prototype.flush = function ()
 		this.displayScheduled = true;
 		host.scheduleTask (doObject (this, function ()
 		{
-			println("redraw");
 			push.updateDisplay ();
 			push.display.flush ();
 			this.displayScheduled = false;

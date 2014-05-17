@@ -127,14 +127,15 @@ PresetMode.prototype.updateDisplay = function ()
 {
 	var d = push.display;
 	
-	if (selectedDevice.name == 'None')
+	if (this.model.hasSelectedDevice ())
 	{
 		d.clear ()
 		 .setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ');
 		return;
 	}		
 	
-	d.clearColumn (0).setBlock ( 0, 0, "Select Preset:").setBlock (3, 0, "Device: " + selectedDevice.name);
+	d.clearColumn (0).setBlock ( 0, 0, "Select Preset:")
+	 .setBlock (3, 0, "Device: " + this.model.getSelectedDevice ().name);
 	
 	var view = this.categoryProvider.getView (4);
 	for (var i = 0; i < 4; i++)
