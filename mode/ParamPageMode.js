@@ -97,7 +97,7 @@ ParamPageMode.prototype.onValueKnob = function (index, value)
 
 ParamPageMode.prototype.updateDisplay = function ()
 {
-	var d = push.display;
+	var d = this.push.display;
 
 	if (this.hasParams())
 	{

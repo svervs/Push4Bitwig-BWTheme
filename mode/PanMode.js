@@ -22,7 +22,7 @@ PanMode.prototype.onValueKnob = function (index, value)
 
 PanMode.prototype.updateDisplay = function ()
 {
-	var d = push.display;
+	var d = this.push.display;
 	
 	for (var i = 0; i < 8; i++)
 	{

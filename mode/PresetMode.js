@@ -106,8 +106,8 @@ PresetMode.prototype.updateDisplay = function ()
 	d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.push.cursorDevice.currentPreset).done (0).done (1).done (2).done (3);
 	
 	for (var i = 20; i < 28; i++)
-		push.setButton (i, this.firstRowButtons[i] != null ? PresetMode.firstRowButtonColor : PUSH_COLOR_BLACK);
+		this.push.setButton (i, this.firstRowButtons[i] != null ? PresetMode.firstRowButtonColor : PUSH_COLOR_BLACK);
 	
 	for (var i = 104; i < 110; i++)
-		push.setButton (i, this.secondRowButtons[i] != null ? PresetMode.secondRowButtonColor : PUSH_COLOR_BLACK);
+		this.push.setButton (i, this.secondRowButtons[i] != null ? PresetMode.secondRowButtonColor : PUSH_COLOR_BLACK);
 };

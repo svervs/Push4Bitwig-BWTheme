@@ -20,7 +20,7 @@ DeviceMode.prototype.onValueKnob = function (index, value)
 
 DeviceMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
-	if (push.isDeletePressed ())
+	if (this.push.isDeletePressed ())
 		this.push.cursorDevice.getParameter (index).reset ();
 };
 

@@ -25,7 +25,7 @@ ScalesMode.prototype.onValueKnob = function (index, value)
 			this.scales.nextScale ();
 		else
 			this.scales.prevScale ();
-		push.getActiveView ().updateNoteMapping ();
+		this.push.getActiveView ().updateNoteMapping ();
 	}
 };
 
@@ -35,7 +35,7 @@ ScalesMode.prototype.onFirstRow = function (index)
 		this.scales.prevScale ();
 	else if (index > 0 && index < 7)
 		this.scales.setScaleOffset (index - 1);
-	push.getActiveView().updateNoteMapping ();
+	this.push.getActiveView().updateNoteMapping ();
 };
 
 ScalesMode.prototype.onSecondRow = function (index)
@@ -46,13 +46,13 @@ ScalesMode.prototype.onSecondRow = function (index)
 		this.scales.toggleChromatic ();
 	else
 		this.scales.setScaleOffset (index + 5);
-		
-	push.getActiveView().updateNoteMapping ();
+
+	this.push.getActiveView().updateNoteMapping ();
 };
 
 ScalesMode.prototype.updateDisplay = function ()
 {
-	var d = push.display;
+	var d = this.push.display;
 	var scale = this.scales.getSelectedScale ();
 	var offset = this.scales.getScaleOffset ();
 	
@@ -81,7 +81,7 @@ ScalesMode.prototype.updateDisplay = function ()
 	for (var i = 0; i < 8; i++)
 	{
 		var isFirstOrLast = i == 0 || i == 7;
-		push.setButton (20 + i, i == 7 ? PUSH_COLOR_BLACK : (isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == i - 1 ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN)));
-		push.setButton (102 + i, isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == (i - 1) + 6 ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO));
+		this.push.setButton (20 + i, i == 7 ? PUSH_COLOR_BLACK : (isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == i - 1 ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN)));
+		this.push.setButton (102 + i, isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == (i - 1) + 6 ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO));
 	}
 };

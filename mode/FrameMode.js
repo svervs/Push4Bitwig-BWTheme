@@ -33,7 +33,7 @@ FrameMode.prototype.onFirstRow = function (index)
 
 FrameMode.prototype.updateDisplay = function () 
 {
-	var d = push.display;
+	var d = this.push.display;
 
 	d.clear ().setBlock (0, 0, "Perspectives:").setCell (0, 3, "Panels:");
 	
@@ -41,7 +41,7 @@ FrameMode.prototype.updateDisplay = function ()
 		d.setCell (3, i, this.bottomItems[i].getLabel());
 	
 	for (var i = 20; i < 28; i++)
-		push.setButton (i, FrameMode.firstRowButtonColor);
+		this.push.setButton (i, FrameMode.firstRowButtonColor);
 	
 	d.done (0).done (1).done (2).done (3);
 };

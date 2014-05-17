@@ -24,6 +24,7 @@ var canScrollTrackDown = false;
 
 var currentNewClipLength = 2; // 1 Bar
 
+// This is the only global variable, do not use it.
 var push = null;
 
 host.defineController ("Ableton", "Push", "2.51", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
@@ -108,6 +109,7 @@ function updateMode (mode)
 	var selectedTrack = push.model.getSelectedTrack ();
 	for (var i = 0; i < 8; i++)
 	{
+		var isEnabled = false;
 		var t = trackBank.getTrack (i);
 		var hasTrackSel = selectedTrack != null && selectedTrack.index == i && mode == MODE_TRACK;
 		t.getVolume ().setIndication (isVolume || hasTrackSel);
@@ -124,14 +126,14 @@ function updateMode (mode)
 			t.getSend (j).setIndication (isEnabled);
 		}
 
-		this.push.cursorDevice.getParameter (i).setIndication (isBankDevice);
-		this.push.cursorDevice.getCommonParameter (i).setIndication (isBankCommon);
-		this.push.cursorDevice.getEnvelopeParameter (i).setIndication(isBankEnvelope)
+		push.cursorDevice.getParameter (i).setIndication (isBankDevice);
+		push.cursorDevice.getCommonParameter (i).setIndication (isBankCommon);
+		push.cursorDevice.getEnvelopeParameter (i).setIndication (isBankEnvelope);
 		userControlBank.getControl (i).setIndication (isBankUser);
-		this.push.cursorDevice.getMacro (i).getAmount ().setIndication (isBankMacro);
-		this.push.groove.updateIndications (isGroove);
+		push.cursorDevice.getMacro (i).getAmount ().setIndication (isBankMacro);
+		push.groove.updateIndications (isGroove);
 	}
-			
+
 	push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_TRACK, isTrack ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	push.setButton (PUSH_BUTTON_VOLUME, isVolume ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);

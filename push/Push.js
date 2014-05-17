@@ -150,7 +150,7 @@ function Push (output)
 
 Push.prototype.init = function ()
 {
-	this.model = new Model ();
+	this.model = new Model (this);
 	this.scales = new Scales ();
 
 	this.transport = new TransportProxy (this);
@@ -203,13 +203,13 @@ Push.prototype.flush = function ()
 		this.displayScheduled = true;
 		host.scheduleTask (doObject (this, function ()
 		{
-			push.updateDisplay ();
-			push.display.flush ();
+			this.updateDisplay ();
+			this.display.flush ();
 			this.displayScheduled = false;
 			this.taskReturning = true;
 		}), null, 5);
 	}
-	push.redrawGrid ();
+	this.redrawGrid ();
 };
 
 Push.prototype.turnOff = function ()

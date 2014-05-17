@@ -19,9 +19,9 @@ GrooveMode.prototype.attachTo = function (aPush)
 
 GrooveMode.prototype.onValueKnob = function (index, value)
 {
-	var v = push.groove.getValue (index);
+	var v = this.push.groove.getValue (index);
 	v.value = this.changeValue (value, v.value);
-	push.groove.getRangedValue (index).set (v.value, 128);
+	this.push.groove.getRangedValue (index).set (v.value, 128);
 };
 
 GrooveMode.prototype.onFirstRow = function (index)

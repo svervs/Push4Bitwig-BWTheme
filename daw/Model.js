@@ -3,8 +3,9 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function Model ()
+function Model (push)
 {
+	this.push = push;
 	this.application = host.createApplication ();
 
 	this.selectedDevice =
@@ -103,8 +104,8 @@ function Model ()
 			this.tracks[index].selected = isSelected;
 			if (isSelected && push.isActiveMode (MODE_MASTER))
 				setMode (MODE_TRACK);
-			if (push.isActiveView (VIEW_PLAY))
-				push.getActiveView ().updateNoteMapping ();
+			if (this.push.isActiveView (VIEW_PLAY))
+				this.push.getActiveView ().updateNoteMapping ();
 		}));
 		t.addVuMeterObserver (128, -1, true, doObjectIndex (this, i, function (index, value)
 		{
