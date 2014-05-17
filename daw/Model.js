@@ -8,6 +8,8 @@ function Model (push)
 	this.push = push;
 	this.application = host.createApplication ();
 
+	this.masterTrack = new MasterTrackProxy (push);
+
 	this.selectedDevice =
 	{
 		name: 'None',
@@ -27,67 +29,7 @@ function Model (push)
 			slots: [{ index: 0 }, { index: 1 }, { index: 2 }, { index: 3 }, { index: 4 }, { index: 5 }, { index: 6 }, { index: 7 }]
 		});
 	}
-	
-	this.master =
-	{ 
-		selected: false,
-		canHoldNotes: false,
-		sends: [{ index: 0 }, { index: 1 }, { index: 2 }, { index: 3 }, { index: 4 }, { index: 5 }],
-	};
-	
-	// Master Track name
-	masterTrack.addNameObserver (8, '', doObject (this, function (name)
-	{
-		this.master.name = name;
-	}));
-	// Master Track selection
-	masterTrack.addIsSelectedObserver (doObject (this, function (isSelected)
-	{
-		this.master.selected = isSelected;
-		this.push.setPendingMode (isSelected ? MODE_MASTER : this.push.getPreviousMode ());
-	}));
-	masterTrack.addVuMeterObserver (128, -1, true, doObject (this, function (value)
-	{
-		this.master.vu = value;
-	}));
-	
-	// Master Track Mute
-	masterTrack.getMute ().addValueObserver (doObject (this, function (isMuted)
-	{
-		this.master.mute = isMuted;
-	}));
-	// Master Track Solo
-	masterTrack.getSolo ().addValueObserver (doObject (this, function (isSoloed)
-	{
-		this.master.solo = isSoloed;
-	}));
-	// Master Track Arm
-	masterTrack.getArm ().addValueObserver (doObject (this, function (isArmed)
-	{
-		this.master.recarm = isArmed;
-	}));
-	
-	// Master Track Pan value & text
-	var p = masterTrack.getPan ();
-	p.addValueObserver (128, doObject (this, function (value)
-	{
-		this.master.pan = value;
-	}));
-	p.addValueDisplayObserver (8, '', doObject (this, function (text)
-	{
-		this.master.panStr = text;
-	}));
-	
-	// Master Track volume value & text
-	var v = masterTrack.getVolume ();
-	v.addValueObserver (128, doObject (this, function (value)
-	{
-		this.master.volume = value;
-	}));
-	v.addValueDisplayObserver (8, '', doObject (this, function (text)
-	{
-		this.master.volumeStr = text;
-	}));
+
 	
 	for (var i = 0; i < 8; i++)
 	{
@@ -220,9 +162,12 @@ Model.prototype.getSelectedDevice = function ()
 	return this.selectedDevice;
 };
 
-Model.prototype.getMaster = function ()
+/**
+ * @returns {MasterTrackProxy}
+ */
+Model.prototype.getMasterTrack = function ()
 {
-	return this.master;
+	return this.masterTrack;
 };
 
 Model.prototype.getTrack = function (index)

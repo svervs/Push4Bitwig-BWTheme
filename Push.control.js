@@ -11,7 +11,6 @@ load ("push/ClassLoader.js");
 load ("view/ClassLoader.js");
 load ("mode/ClassLoader.js");
 
-var masterTrack = null;
 var trackBank = null;
 var noteInput = null;
 var userControlBank = null;
@@ -36,7 +35,6 @@ function init()
 	noteInput = port.createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
 	noteInput.setShouldConsumeEvents (false);
 
-	masterTrack = host.createMasterTrack (0);
 	trackBank = host.createMainTrackBankSection (8, 6, 8);
 	userControlBank = host.createUserControls (8);
 
