@@ -129,7 +129,7 @@ PlayView.prototype.onLeft = function (event)
 		return;
 
 	if (this.push.getCurrentMode () == MODE_BANK_DEVICE || this.push.getCurrentMode () == MODE_PRESET)
-		this.push.cursorDevice.selectPrevious ();
+		this.model.getCursorDevice ().selectPrevious ();
 	else
 	{
 		var sel = this.model.getSelectedTrack ();
@@ -152,7 +152,7 @@ PlayView.prototype.onRight = function (event)
 		return;
 
 	if (this.push.getCurrentMode () == MODE_BANK_DEVICE || this.push.getCurrentMode () == MODE_PRESET)
-		this.push.cursorDevice.selectNext ();
+		this.model.getCursorDevice ().selectNext ();
 	else
 	{
 		var sel = this.model.getSelectedTrack ();

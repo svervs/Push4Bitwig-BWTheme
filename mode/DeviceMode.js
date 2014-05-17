@@ -13,15 +13,15 @@ DeviceMode.prototype = new BaseMode ();
 
 DeviceMode.prototype.onValueKnob = function (index, value)
 {
-	var param = this.push.cursorDevice.getFXParam (index);
+	var param = this.model.getCursorDevice ().getFXParam (index);
 	param.value = this.changeValue (value, param.value);
-	this.push.cursorDevice.getParameter (index).set (param.value, 128);
+	this.model.getCursorDevice ().getParameter (index).set (param.value, 128);
 };
 
 DeviceMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
 	if (this.push.isDeletePressed ())
-		this.push.cursorDevice.getParameter (index).reset ();
+		this.model.getCursorDevice ().getParameter (index).reset ();
 };
 
 DeviceMode.prototype.onFirstRow = function (index)
@@ -30,16 +30,16 @@ DeviceMode.prototype.onFirstRow = function (index)
 	{
 		case 5:
 			//if (hasPreviousParameterPage)
-				this.push.cursorDevice.previousParameterPage ();
+				this.model.getCursorDevice ().previousParameterPage ();
 			break;
 
 		case 6:
 			//if (hasNextParameterPage)
-			this.push.cursorDevice.nextParameterPage ();
+			this.model.getCursorDevice ().nextParameterPage ();
 			break;
 
 		case 7:
-			this.push.cursorDevice.toggleEnabledState ();
+			this.model.getCursorDevice ().toggleEnabledState ();
 			break;
 	}
 };
@@ -54,7 +54,7 @@ DeviceMode.prototype.updateDisplay = function ()
 	{
 		for (var i = 0; i < 8; i++)
 		{
-			var param = this.push.cursorDevice.getFXParam (i);
+			var param = this.model.getCursorDevice ().getFXParam (i);
 			var isEmpty = param.name.length == 0;
 			d.setCell (0, i, param.name, Display.FORMAT_RAW)
 			 .setCell (1, i, isEmpty ? '' : param.valueStr, Display.FORMAT_RAW);
@@ -86,13 +86,13 @@ DeviceMode.prototype.updateDisplay = function ()
 		 .setBlock (3, 1, selectedDevice.name)
 		 .clearBlock (3, 2).clearCell (3, 6);
 
-		if (this.push.cursorDevice.selectedParameterPage > 0)
+		if (this.model.getCursorDevice ().selectedParameterPage > 0)
 			d.setCell (3, 5, ' < Prev ', Display.FORMAT_RAW);
 
 		d.setCell (3, 6, ' Next > ', Display.FORMAT_RAW)
 		 .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
 
-		this.push.setButton (25, this.push.cursorDevice.selectedParameterPage > 0 ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
+		this.push.setButton (25, this.model.getCursorDevice ().selectedParameterPage > 0 ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
 		this.push.setButton (26, PUSH_COLOR_ORANGE_LO);
 	}
 };

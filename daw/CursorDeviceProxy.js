@@ -9,7 +9,7 @@ function CursorDeviceProxy (push)
 
 	this.hasNextParameterPage = false;
 	this.hasPreviousParameterPage = false;
-	this.selectedParameterPage = -1;
+	this.selectedParameterPage = -1; // TODO need getter
 
 	this.presetWidth = 16;
 
@@ -199,7 +199,13 @@ CursorDeviceProxy.prototype.toggleEnabledState =function ()
 	return this.cursorDevice.toggleEnabledState ();
 };
 
-
+CursorDeviceProxy.prototype.updateIndication = function (index, mode)
+{
+	this.getParameter (index).setIndication (mode == MODE_BANK_DEVICE);
+	this.getCommonParameter (index).setIndication (mode == MODE_BANK_COMMON);
+	this.getEnvelopeParameter (index).setIndication (mode == MODE_BANK_ENVELOPE);
+	this.getMacro (index).getAmount ().setIndication (mode == MODE_BANK_MACRO);
+};
 
 
 function PresetProvider (kind)

@@ -14,6 +14,8 @@ function Model (push)
 	this.masterTrack = new MasterTrackProxy (push);
 	this.userControlBank = new UserControlBankProxy (push);
 
+	this.cursorDevice = new CursorDeviceProxy (push);
+
 	this.noteInput = this.push.input.getPort().createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
 	this.noteInput.setShouldConsumeEvents (false);
 
@@ -198,6 +200,11 @@ Model.prototype.getGroove = function () { return this.groove; };
  * @returns {MasterTrackProxy}
  */
 Model.prototype.getMasterTrack = function () { return this.masterTrack; };
+
+/**
+ * @returns {CursorDeviceProxy}
+ */
+Model.prototype.getCursorDevice = function () { return this.cursorDevice; };
 
 /**
  * @returns {UserControlBankProxy}

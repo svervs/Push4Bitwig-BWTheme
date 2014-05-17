@@ -163,8 +163,6 @@ Push.prototype.init = function ()
 
 	this.modeState = new ModeState (this, this.model);
 
-	this.cursorDevice = new CursorDeviceProxy (this);
-
 	// Create Push Views
 	this.addView (VIEW_PLAY, new PlayView (this.model));
 	this.addView (VIEW_SESSION, new SessionView (this.model));

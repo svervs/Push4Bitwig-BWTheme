@@ -123,6 +123,7 @@ ModeState.prototype.updateMode = function (mode)
 	var isBankMacro    = mode == MODE_BANK_MACRO;
 
 	this.model.getMasterTrack ().updateIndication (isMaster);
+	this.model.getGroove ().updateIndication (isGroove);
 
 	var selectedTrack = this.model.getSelectedTrack ();
 	for (var i = 0; i < 8; i++)
@@ -144,12 +145,8 @@ ModeState.prototype.updateMode = function (mode)
 			t.getSend (j).setIndication (isEnabled);
 		}
 
-		this.push.cursorDevice.getParameter (i).setIndication (isBankDevice);
-		this.push.cursorDevice.getCommonParameter (i).setIndication (isBankCommon);
-		this.push.cursorDevice.getEnvelopeParameter (i).setIndication (isBankEnvelope);
-		this.push.cursorDevice.getMacro (i).getAmount ().setIndication (isBankMacro);
-		this.model.getUserControlBank().updateIndication (i, isBankUser);
-		this.model.getGroove ().updateIndication (isGroove);
+		this.model.getCursorDevice ().updateIndication (i, mode);
+		this.model.getUserControlBank().updateIndication (i, mode);
 	}
 
 	this.push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
