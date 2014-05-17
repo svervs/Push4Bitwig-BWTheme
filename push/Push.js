@@ -93,81 +93,30 @@ function Push (output, input)
 	this.pads = new Grid (output);
 	this.display = new Display (output);
 
+	this.viewState = null;
 	this.modeState = null;
 
 	this.showVU = true;
 
-	this.activeViewId = -1;
-	this.views = [];
-
 	this.displayScheduled = false;
 	this.taskReturning = false;
-
-	this.buttons =
-	[
-		PUSH_BUTTON_TAP,
-		PUSH_BUTTON_CLICK,
-		PUSH_BUTTON_MASTER,
-		PUSH_BUTTON_STOP,
-		PUSH_BUTTON_LEFT,
-		PUSH_BUTTON_RIGHT,
-		PUSH_BUTTON_UP,
-		PUSH_BUTTON_DOWN,
-		PUSH_BUTTON_SELECT,
-		PUSH_BUTTON_SHIFT,
-		PUSH_BUTTON_NOTE,
-		PUSH_BUTTON_SESSION,
-		PUSH_BUTTON_ADD_EFFECT,
-		PUSH_BUTTON_ADD_TRACK,
-		PUSH_BUTTON_OCTAVE_DOWN,
-		PUSH_BUTTON_OCTAVE_UP,
-		PUSH_BUTTON_REPEAT,
-		PUSH_BUTTON_ACCENT,
-		PUSH_BUTTON_SCALES,
-		PUSH_BUTTON_USER_MODE,
-		PUSH_BUTTON_MUTE,
-		PUSH_BUTTON_SOLO,
-		PUSH_BUTTON_DEVICE_LEFT,
-		PUSH_BUTTON_DEVICE_RIGHT,
-		PUSH_BUTTON_PLAY,
-		PUSH_BUTTON_RECORD,
-		PUSH_BUTTON_NEW,
-		PUSH_BUTTON_DUPLICATE,
-		PUSH_BUTTON_AUTOMATION,
-		PUSH_BUTTON_FIXED_LENGTH,
-		PUSH_BUTTON_DEVICE,
-		PUSH_BUTTON_BROWSE,
-		PUSH_BUTTON_TRACK,    
-		PUSH_BUTTON_CLIP,
-		PUSH_BUTTON_VOLUME,
-		PUSH_BUTTON_PAN_SEND,
-		PUSH_BUTTON_QUANTIZE,
-		PUSH_BUTTON_DOUBLE,
-		PUSH_BUTTON_DELETE,
-		PUSH_BUTTON_UNDO
-	];
 	
 	this.buttonStates = [];
-	for (var i = 0; i < this.buttons.length; i++)
-		this.buttonStates[this.buttons[i]] = ButtonEvent.UP;
 }
-
-/**
- * @returns {MidiOutput}
- */
-Push.prototype.getOutput = function () { return this.output; };
 
 Push.prototype.init = function ()
 {
 	this.model = new Model (this);
 
+	this.viewState = new ViewState (this, this.model);
 	this.modeState = new ModeState (this, this.model);
 
+	var len = this.viewState.getButtons ().length;
+	for (var i = 0; i < len; i++)
+		this.buttonStates[this.viewState.getButton (i)] = ButtonEvent.UP;
+
 	// Create Push Views
-	this.addView (VIEW_PLAY, new PlayView (this.model));
-	this.addView (VIEW_SESSION, new SessionView (this.model));
-	this.addView (VIEW_SEQUENCER, new SequencerView (this.model));
-	this.addView (VIEW_DRUM, new DrumView (this.model));
+	this.viewState.init ();
 
 	// Create Push Mode impls
 	this.modeState.init ();
@@ -202,51 +151,33 @@ Push.prototype.turnOff = function ()
 		this.display.clearRow (i);
 
 	// Turn off all buttons
-	for (var i = 0; i < this.buttons.length; i++)
-		this.setButton (this.buttons[i], PUSH_BUTTON_STATE_OFF);
+	this.viewState.turnOff ();
 
-	for (var i = 20; i < 27; i++)
-		this.setButton (i, PUSH_BUTTON_STATE_OFF);
-	for (var i = 102; i < 110; i++)
-		this.setButton (i, PUSH_BUTTON_STATE_OFF);
-		
 	this.pads.turnOff ();
 };
 
+/**
+ * @returns {MidiOutput}
+ */
+Push.prototype.getOutput = function () { return this.output; };
+
+//--------------------------------------
+// ViewState
+//--------------------------------------
+
 Push.prototype.setActiveView = function (viewId)
 {
-	this.activeViewId = viewId;
-	
-	var view = this.getActiveView ();
-	if (view == null)
-	{
-		this.turnOff ();
-		return;
-	}
-	
-	for (var i = 0; i < this.buttons.length; i++)
-		this.setButton (this.buttons[i], view.usesButton (this.buttons[i]) ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
-	
-	view.onActivate ();
+	this.viewState.setActiveView (viewId);
 };
 
 Push.prototype.getActiveView = function ()
 {
-	if (this.activeViewId < 0)
-		return null;
-	var view = this.views[this.activeViewId];
-	return view ? view : null;
+	return this.viewState.getActiveView ();
 };
 
 Push.prototype.isActiveView = function (viewId)
 {
-	return this.activeViewId == viewId;
-};
-
-Push.prototype.addView = function (viewId, view)
-{
-	view.attachTo (this);
-	this.views[viewId] = view;
+	return this.viewState.isActiveView (viewId);
 };
 
 //--------------------------------------
@@ -293,6 +224,10 @@ Push.prototype.updateMode = function (mode)
 	this.modeState.updateMode (mode);
 }
 
+//--------------------------------------
+// Gesture
+//--------------------------------------
+
 Push.prototype.isSelectPressed = function ()
 {
 	return this.isPressed (PUSH_BUTTON_SELECT);
@@ -312,6 +247,10 @@ Push.prototype.isPressed = function (button)
 {
 	return this.buttonStates[button] != ButtonEvent.UP;
 };
+
+//--------------------------------------
+// Display
+//--------------------------------------
 
 Push.prototype.setButton = function (button, state)
 {
@@ -371,6 +310,10 @@ Push.prototype.updateDisplay = function ()
 	}
 	d.done (3);
 }
+
+//--------------------------------------
+// Handlers
+//--------------------------------------
 
 Push.prototype.handleMidi = function (status, data1, data2)
 {
