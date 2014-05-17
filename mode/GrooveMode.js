@@ -19,9 +19,9 @@ GrooveMode.prototype.attachTo = function (aPush)
 
 GrooveMode.prototype.onValueKnob = function (index, value)
 {
-	var v = this.push.groove.getValue (index);
+	var v = this.model.getGroove ().getValue (index);
 	v.value = this.changeValue (value, v.value);
-	this.push.groove.getRangedValue (index).set (v.value, 128);
+	this.model.getGroove ().getRangedValue (index).set (v.value, 128);
 };
 
 GrooveMode.prototype.onFirstRow = function (index)
@@ -29,7 +29,7 @@ GrooveMode.prototype.onFirstRow = function (index)
 	switch (index)
 	{
 		case 7:
-			this.push.groove.toggleEnabled ();
+			this.model.getGroove ().toggleEnabled ();
 			break;
 	}
 };
@@ -37,7 +37,7 @@ GrooveMode.prototype.onFirstRow = function (index)
 GrooveMode.prototype.updateDisplay = function ()
 {
 	var d = this.push.display;
-	var g = this.push.groove;
+	var g = this.model.getGroove ();;
 
 	d.clear ();
 

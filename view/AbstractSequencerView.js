@@ -2,15 +2,15 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function AbstractSequencerView (model, scales, rows, cols)
+function AbstractSequencerView (model, rows, cols)
 {
-	if (!scales) // Called on first prototype creation
+	if (!model) // Called on first prototype creation
 		return;
 		
 	BaseView.call (this, model);
 		
 	this.resolutions = [ 1, 2/3, 1/2, 1/3, 1/4, 1/6, 1/8, 1/12 ];
-	this.scales = scales;
+	this.scales = model.getScales ();
 	this.rows = rows;
 	this.cols = cols;
 

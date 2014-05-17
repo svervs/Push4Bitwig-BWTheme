@@ -12,7 +12,6 @@ load ("view/ClassLoader.js");
 load ("mode/ClassLoader.js");
 
 var trackBank = null;
-var noteInput = null;
 
 var canScrollTrackUp   = false;
 var canScrollTrackDown = false;
@@ -29,11 +28,6 @@ host.addDeviceNameBasedDiscoveryPair (["Ableton Push MIDI 2"], ["Ableton Push MI
 
 function init()
 {
-	//var port = host.getMidiInPort (0);
-	//port.setMidiCallback (onMidi);
-	//noteInput = port.createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
-	//noteInput.setShouldConsumeEvents (false);
-
 	trackBank = host.createMainTrackBankSection (8, 6, 8);
 
 	var output = new MidiOutput ();
@@ -55,8 +49,3 @@ function flush ()
 {
 	push.flush ();
 }
-
-//function onMidi (status, data1, data2)
-//{
-//	push.handleMidi (status, data1, data2);
-//}

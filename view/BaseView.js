@@ -48,9 +48,9 @@ BaseView.prototype.onPlay = function (event)
 	if (!event.isDown ())
 		return;
 	if (this.push.isShiftPressed ())
-		this.push.transport.toggleLoop ();
+		this.model.getTransport().toggleLoop ();
 	else
-		this.push.transport.play ();
+		this.model.getTransport().play ();
 };
 
 BaseView.prototype.onRecord = function (event)
@@ -58,9 +58,9 @@ BaseView.prototype.onRecord = function (event)
 	if (!event.isDown ())
 		return;
 	if (this.push.isShiftPressed ())
-		this.push.transport.toggleClipOverdub ();
+		this.model.getTransport().toggleClipOverdub ();
 	else
-		this.push.transport.record ();
+		this.model.getTransport().record ();
 };
 
 BaseView.prototype.onStop = function (event)
@@ -96,7 +96,7 @@ BaseView.prototype.onNew = function (event)
 				if (slotIndex != sIndex)
 					slots.select (sIndex);
 				slots.launch (sIndex);
-				this.push.transport.setLauncherOverdub (true);
+				this.model.getTransport().setLauncherOverdub (true);
 				return;
 			}
 		}
@@ -117,7 +117,7 @@ BaseView.prototype.onAutomation = function (event)
 		return;
 	var selectedTrack = this.model.getSelectedTrack ();
 	if (selectedTrack != null)
-		this.push.transport.toggleWriteArrangerAutomation ();
+		this.model.getTransport().toggleWriteArrangerAutomation ();
 };
 
 BaseView.prototype.onFixedLength = function (event)
@@ -166,24 +166,24 @@ BaseView.prototype.onUndo = function (event)
 // Set tempo
 BaseView.prototype.onSmallKnob1 = function (increase)
 {
-	this.push.transport.changeTempo (increase);
+	this.model.getTransport().changeTempo (increase);
 };
 
 BaseView.prototype.onSmallKnob1Touch = function (isTouched)
 {
-	this.push.transport.setTempoIndication (isTouched);
+	this.model.getTransport().setTempoIndication (isTouched);
 };
 
 // Change time (play position)
 BaseView.prototype.onSmallKnob2 = function (increase)
 {
-	this.push.transport.changePosition (increase, this.push.isShiftPressed ());
+	this.model.getTransport().changePosition (increase, this.push.isShiftPressed ());
 };
 
 BaseView.prototype.onClick = function (event)
 {
 	if (event.isDown ())
-		this.push.transport.toggleClick ();
+		this.model.getTransport().toggleClick ();
 };
 
 BaseView.prototype.onTapTempo = function (event)
@@ -225,7 +225,7 @@ BaseView.prototype.onTapTempo = function (event)
 	else
 	{
 		this.ttLastBPM = bpm;
-		this.push.transport.setTempo (bpm);
+		this.model.getTransport().setTempo (bpm);
 	}
 };
 

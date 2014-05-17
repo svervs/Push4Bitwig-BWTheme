@@ -3,10 +3,10 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function PlayView (model, scales)
+function PlayView (model)
 {
 	BaseView.call (this, model);
-	this.scales = scales;
+	this.scales = model.getScales ();
 	this.pressedKeys = initArray (0, 128);
 	this.maxVelocity = initArray (127, 128);
 	this.maxVelocity[0] = 0;
@@ -64,7 +64,9 @@ PlayView.prototype.drawGrid = function ()
 	var isKeyboardEnabled = t != null && t.canHoldNotes;
 	for (var i = 36; i < 100; i++)
 	{
-		this.push.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ? (this.push.transport.isRecording || this.model.isClipRecording () ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : this.scales.getColor (i)) : PUSH_COLOR_BLACK);
+		this.push.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ?
+			(this.model.getTransport().isRecording || this.model.isClipRecording () ?
+				PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : this.scales.getColor (i)) : PUSH_COLOR_BLACK);
 		this.push.pads.blink (i, PUSH_COLOR_BLACK);
 	}
 };
@@ -127,7 +129,7 @@ PlayView.prototype.onLeft = function (event)
 		return;
 
 	if (this.push.getCurrentMode () == MODE_BANK_DEVICE || this.push.getCurrentMode () == MODE_PRESET)
-		this.push.cursorDevice.selectPrevious ();
+		this.model.getCursorDevice ().selectPrevious ();
 	else
 	{
 		var sel = this.model.getSelectedTrack ();
@@ -150,7 +152,7 @@ PlayView.prototype.onRight = function (event)
 		return;
 
 	if (this.push.getCurrentMode () == MODE_BANK_DEVICE || this.push.getCurrentMode () == MODE_PRESET)
-		this.push.cursorDevice.selectNext ();
+		this.model.getCursorDevice ().selectNext ();
 	else
 	{
 		var sel = this.model.getSelectedTrack ();

@@ -52,19 +52,16 @@ ParamPageMode.prototype.getParameter = function (index)
 	switch (this.id)
 	{
 		case MODE_BANK_COMMON:
-			return this.push.cursorDevice.getCommonParameter (index);
+			return this.model.getCursorDevice ().getCommonParameter (index);
 
 		case MODE_BANK_ENVELOPE :
-			return this.push.cursorDevice.getEnvelopeParameter (index);
-
-		//case MODE_BANK_MODULATE :
-		//	return device.getModulationSource (index);
+			return this.model.getCursorDevice ().getEnvelopeParameter (index);
 
 		case MODE_BANK_USER :
 			return this.model.getUserControlBank().getControl (index);
 
 		case MODE_BANK_MACRO :
-			return this.push.cursorDevice.getMacro (index).getAmount ();
+			return this.model.getCursorDevice ().getMacro (index).getAmount ();
 	}
 };
 
@@ -73,19 +70,16 @@ ParamPageMode.prototype.getNameParameter = function (index)
 	switch (this.id)
 	{
 		case MODE_BANK_COMMON:
-			return this.push.cursorDevice.getCommonParameter (index);
+			return this.model.getCursorDevice ().getCommonParameter (index);
 
 		case MODE_BANK_ENVELOPE :
-			return this.push.cursorDevice.getEnvelopeParameter (index);
-
-		//case MODE_BANK_MODULATE :
-		//	return device.getModulationSource (index);
+			return this.model.getCursorDevice ().getEnvelopeParameter (index);
 
 		case MODE_BANK_USER :
 			return this.model.getUserControlBank().getControl (index);
 
 		case MODE_BANK_MACRO :
-			return this.push.cursorDevice.getMacro (index);
+			return this.model.getCursorDevice ().getMacro (index);
 	}
 };
 

@@ -51,21 +51,21 @@ PresetMode.prototype.onValueKnob = function (index, value)
 PresetMode.prototype.onFirstRow = function (index)
 {
 	if (index == 2)
-		this.push.cursorDevice.switchToPreviousPresetCategory();
+		this.model.getCursorDevice ().switchToPreviousPresetCategory();
 	else if (index == 4)
-		this.push.cursorDevice.switchToPreviousPresetCreator();
+		this.model.getCursorDevice ().switchToPreviousPresetCreator();
 	else if (index == 6)
-		this.push.cursorDevice.switchToPreviousPreset();
+		this.model.getCursorDevice ().switchToPreviousPreset();
 };
 
 PresetMode.prototype.onSecondRow = function (index)
 {
 	if (index == 2)
-		this.push.cursorDevice.switchToNextPresetCategory ();
+		this.model.getCursorDevice ().switchToNextPresetCategory ();
 	else if (index == 4)
-		this.push.cursorDevice.switchToNextPresetCreator ();
+		this.model.getCursorDevice ().switchToNextPresetCreator ();
 	else if (index == 6)
-		this.push.cursorDevice.switchToNextPreset ();
+		this.model.getCursorDevice ().switchToNextPreset ();
 };
 
 PresetMode.prototype.updateDisplay = function ()
@@ -83,7 +83,7 @@ PresetMode.prototype.updateDisplay = function ()
 	d.clearColumn (0).setBlock ( 0, 0, "Select Preset:")
 	 .setBlock (3, 0, "Device: " + this.model.getSelectedDevice ().name);
 	
-	var view = this.push.cursorDevice.categoryProvider.getView (4);
+	var view = this.model.getCursorDevice ().categoryProvider.getView (4);
 	for (var i = 0; i < 4; i++)
 	{
 		var value = (view[i] != null) ? view[i] : "";
@@ -93,7 +93,7 @@ PresetMode.prototype.updateDisplay = function ()
 			d.setBlock (i, 1, ' ' + value);
 	}
 	
-	var view = this.push.cursorDevice.creatorProvider.getView (4);
+	var view = this.model.getCursorDevice ().creatorProvider.getView (4);
 	for (var i = 0; i < 4; i++)
 	{
 		var value = (view[i] != null) ? view[i] : "";
@@ -103,7 +103,7 @@ PresetMode.prototype.updateDisplay = function ()
 			d.setBlock (i, 2, ' ' + value);
 	}
 
-	d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.push.cursorDevice.currentPreset).done (0).done (1).done (2).done (3);
+	d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.model.getCursorDevice ().currentPreset).done (0).done (1).done (2).done (3);
 	
 	for (var i = 20; i < 28; i++)
 		this.push.setButton (i, this.firstRowButtons[i] != null ? PresetMode.firstRowButtonColor : PUSH_COLOR_BLACK);
