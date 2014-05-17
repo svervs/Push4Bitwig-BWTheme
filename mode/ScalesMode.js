@@ -3,10 +3,10 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function ScalesMode (model, scales)
+function ScalesMode (model)
 {
 	BaseMode.call (this, model);
-	this.scales = scales;
+	this.scales = model.getScales ();
 	this.id = MODE_SCALES;
 	this.fullDisplay = true;
 }

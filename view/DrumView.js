@@ -26,7 +26,7 @@ DrumView.prototype.updateNoteMapping = function ()
 {
 	var t = this.model.getSelectedTrack ();
 	var noteMap = t != null && t.canHoldNotes ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
-	noteInput.setKeyTranslationTable (noteMap);
+	this.model.setKeyTranslationTable (noteMap);
 };
 
 DrumView.prototype.usesButton = function (buttonID)

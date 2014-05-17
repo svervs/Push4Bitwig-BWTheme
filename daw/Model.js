@@ -6,10 +6,16 @@
 function Model (push)
 {
 	this.push = push;
+
 	this.application = host.createApplication ();
 
 	this.masterTrack = new MasterTrackProxy (push);
 	this.userControlBank = new UserControlBankProxy (push);
+
+	this.noteInput = this.push.input.getPort().createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
+	this.noteInput.setShouldConsumeEvents (false);
+
+	this.scales = new Scales ();
 
 	this.selectedDevice =
 	{
@@ -142,6 +148,19 @@ function Model (push)
 		}
 	}
 }
+
+Model.prototype.setKeyTranslationTable = function (table)
+{
+	this.noteInput.setKeyTranslationTable (table);
+};
+
+/**
+ * @returns {Scales}
+ */
+Model.prototype.getScales = function ()
+{
+	return this.scales;
+};
 
 Model.prototype.getSelectedTrack = function ()
 {

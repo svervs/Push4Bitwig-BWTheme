@@ -21,7 +21,7 @@ PlayView.prototype.updateNoteMapping = function ()
 	var t = this.model.getSelectedTrack ();
 	var noteMap = t != null && t.canHoldNotes ? this.scales.getNoteMatrix () : this.scales.getEmptyMatrix ();
 	// Workaround: https://github.com/git-moss/Push4Bitwig/issues/7
-	host.scheduleTask (function () { noteInput.setKeyTranslationTable (noteMap); }, null, 100);
+	host.scheduleTask (doObject (this, function () { this.model.setKeyTranslationTable (noteMap); }), null, 100);
 };
 
 PlayView.prototype.onActivate = function ()
@@ -169,5 +169,5 @@ PlayView.prototype.onRight = function (event)
 PlayView.prototype.onAccent = function (event)
 {
 	BaseView.prototype.onAccent.call (this, event);
-	noteInput.setVelocityTranslationTable (Config.accentActive ? this.maxVelocity : this.defaultVelocity);
+	this.model.setVelocityTranslationTable (Config.accentActive ? this.maxVelocity : this.defaultVelocity);
 };

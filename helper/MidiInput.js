@@ -3,8 +3,15 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-load ("ButtonEvent.js");
-load ("MidiOutput.js");
-load ("MidiInput.js");
-load ("Scales.js");
-load ("Utilities.js");
+function MidiInput ()
+{
+	this.port = host.getMidiInPort (0);
+}
+
+/**
+ * @returns {MidiIn}
+ */
+MidiInput.prototype.getPort = function ()
+{
+	return this.port;
+};
