@@ -11,13 +11,6 @@ load ("push/ClassLoader.js");
 load ("view/ClassLoader.js");
 load ("mode/ClassLoader.js");
 
-var trackBank = null;
-
-var canScrollTrackUp   = false;
-var canScrollTrackDown = false;
-
-var currentNewClipLength = 2; // 1 Bar
-
 // This is the only global variable, do not use it.
 var push = null;
 
@@ -28,10 +21,9 @@ host.addDeviceNameBasedDiscoveryPair (["Ableton Push MIDI 2"], ["Ableton Push MI
 
 function init()
 {
-	trackBank = host.createMainTrackBankSection (8, 6, 8);
-
 	var output = new MidiOutput ();
 	var input = new MidiInput();
+
 	push = new Push (output, input);
 	push.init ();
 	push.setActiveView (VIEW_PLAY);

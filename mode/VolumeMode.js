@@ -15,9 +15,7 @@ VolumeMode.prototype = new BaseMode ();
 
 VolumeMode.prototype.onValueKnob = function (index, value)
 {
-	var t = this.model.getTrack (index);
-	t.volume = this.changeValue (value, t.volume);
-	trackBank.getTrack (t.index).getVolume ().set (t.volume, 128);
+	this.model.getTrackBank ().setVolume (index, value);
 };
 
 VolumeMode.prototype.updateDisplay = function ()

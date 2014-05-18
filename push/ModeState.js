@@ -129,7 +129,8 @@ ModeState.prototype.updateMode = function (mode)
 	for (var i = 0; i < 8; i++)
 	{
 		var isEnabled = false;
-		var t = trackBank.getTrack (i);
+		// TODO FIX THIS
+		var t = this.model.getTrackBank ().trackBank.getTrack (i);
 		var hasTrackSel = selectedTrack != null && selectedTrack.index == i && mode == MODE_TRACK;
 		t.getVolume ().setIndication (isVolume || hasTrackSel);
 		t.getPan ().setIndication (isPan || hasTrackSel);
@@ -146,7 +147,7 @@ ModeState.prototype.updateMode = function (mode)
 		}
 
 		this.model.getCursorDevice ().updateIndication (i, mode);
-		this.model.getUserControlBank().updateIndication (i, mode);
+		this.model.getUserControlBank ().updateIndication (i, mode);
 	}
 
 	this.push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);

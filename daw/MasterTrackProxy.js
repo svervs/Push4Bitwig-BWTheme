@@ -13,7 +13,6 @@ function MasterTrackProxy (push)
 	this.vu = null;
 	this.mute = null;
 	this.solo = null;
-	this.recarm = null;
 	this.pan = null;
 	this.panStr = null;
 	this.volume = null;
@@ -85,7 +84,6 @@ MasterTrackProxy.prototype.getName = function () { return this.name; };
 MasterTrackProxy.prototype.getVU = function () { return this.vu; };
 MasterTrackProxy.prototype.isMute = function () { return this.mute; };
 MasterTrackProxy.prototype.isSolo = function () { return this.solo; };
-MasterTrackProxy.prototype.getRecArm = function () { return this.recarm; };
 MasterTrackProxy.prototype.getPan = function () { return this.pan; };
 MasterTrackProxy.prototype.getPanString = function () { return this.panStr; };
 MasterTrackProxy.prototype.getVolume = function () { return this.volume; };

@@ -67,7 +67,7 @@ BaseView.prototype.onStop = function (event)
 {
 	if (this.push.isShiftPressed ())
 	{
-		trackBank.getClipLauncherScenes ().stop ();
+		this.model.getTrackBank ().getClipLauncherScenes ().stop ();
 		return;
 	}
 	this.stopPressed = event.isDown ();
@@ -91,8 +91,8 @@ BaseView.prototype.onNew = function (event)
 			var s = t.slots[sIndex];
 			if (!s.hasContent)
 			{
-				var slots = trackBank.getTrack (t.index).getClipLauncherSlots ();
-				slots.createEmptyClip (sIndex, Math.pow (2, currentNewClipLength));
+				var slots = this.model.getTrackBank ().getClipLauncherSlots (t.index);
+				slots.createEmptyClip (sIndex, Math.pow (2, this.model.getTrackBank().getNewClipLength ()));
 				if (slotIndex != sIndex)
 					slots.select (sIndex);
 				slots.launch (sIndex);
@@ -267,9 +267,9 @@ BaseView.prototype.onFirstRow = function (index)
 	if (fullDisplay)
 	{
 		if (this.stopPressed)
-			trackBank.getTrack (index).stop ();
+			this.model.getTrackBank ().stop (index);
 		else
-			trackBank.getTrack (index).select ();
+			this.model.getTrackBank ().select (index);
 	}
 };
 
@@ -284,11 +284,10 @@ BaseView.prototype.onSecondRow = function (index)
 	if (this.push.getCurrentMode () != MODE_BANK_DEVICE && this.push.getCurrentMode () != MODE_MASTER &&
 		this.push.getCurrentMode () != MODE_SCALES && this.push.getCurrentMode () != MODE_PRESET)
 	{
-		var t = trackBank.getTrack (index);
 		if (this.push.isShiftPressed ())
 			; // Toggle monitor: Currently not possible
 		else
-			t.getArm ().set (toggleValue (this.model.getTrack (index).recarm));
+			this.model.getTrackBank ().toggleArm (index);
 	} 
 };
 
@@ -375,10 +374,10 @@ BaseView.prototype.onDeviceLeft = function (event)
 	if (!event.isDown ())
 		return;
 
-	if (canScrollTrackUp)
+	if (this.model.getTrackBank ().canScrollTrackUp ())
 	{
-		trackBank.scrollTracksPageUp ();
-		host.scheduleTask (selectTrack, [7], 100);
+		this.model.getTrackBank ().scrollTracksPageUp ();
+		host.scheduleTask (doObject (this, this.selectTrack), [7], 100);
 	}
 };
 
@@ -388,10 +387,10 @@ BaseView.prototype.onDeviceRight = function (event)
 	if (!event.isDown ())
 		return;
 
-	if (canScrollTrackDown)
+	if (this.model.getTrackBank ().canScrollTrackDown ())
 	{
-		trackBank.scrollTracksPageDown ();
-		host.scheduleTask (selectTrack, [0], 100);
+		this.model.getTrackBank ().scrollTracksPageDown ();
+		host.scheduleTask (doObject (this, this.selectTrack), [0], 100);
 	}
 };
 
@@ -402,8 +401,7 @@ BaseView.prototype.onMute = function (event)
 	var selectedTrack = this.model.getSelectedTrack ();
 	if (selectedTrack == null)
 		return;
-	selectedTrack.mute = toggleValue (selectedTrack.mute);
-	trackBank.getTrack (selectedTrack.index).getMute ().set (selectedTrack.mute);
+	this.model.getTrackBank ().toggleMute (selectedTrack.index);
 	this.push.setButton (PUSH_BUTTON_MUTE, selectedTrack.mute ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
@@ -414,8 +412,7 @@ BaseView.prototype.onSolo = function (event)
 	var selectedTrack = this.model.getSelectedTrack ();
 	if (selectedTrack == null)
 		return;
-	selectedTrack.solo = toggleValue (selectedTrack.solo);
-	trackBank.getTrack (selectedTrack.index).getSolo ().set (selectedTrack.solo);
+	this.model.getTrackBank ().toggleSolo (selectedTrack.index);
 	this.push.setButton (PUSH_BUTTON_SOLO, selectedTrack.solo ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
@@ -496,9 +493,8 @@ BaseView.prototype.getSelectedSlot = function (track)
 	return -1;
 };
 
-function selectTrack (index)
+// TODO (mschmalle) TEMP unitl refactor finished
+BaseView.prototype.selectTrack = function (index)
 {
-	var t = trackBank.getTrack (index);
-	if (t != null)
-		t.select ();
+	this.model.getTrackBank().selectTrack (index);
 }

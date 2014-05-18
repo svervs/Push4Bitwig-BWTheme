@@ -45,15 +45,6 @@ TrackMode.prototype = new BaseMode ();
 TrackMode.prototype.attachTo = function (push) 
 {
 	BaseMode.prototype.attachTo.call (this, push);
-	
- 	trackBank.addCanScrollTracksDownObserver (function (canScroll)
-	{
-		canScrollTrackDown = canScroll;
-	});
-	trackBank.addCanScrollTracksUpObserver (function (canScroll)
-	{
-		canScrollTrackUp = canScroll;
-	});
 };
 
 TrackMode.prototype.onValueKnob = function (index, value)
@@ -61,8 +52,8 @@ TrackMode.prototype.onValueKnob = function (index, value)
 	var selectedTrack = this.model.getSelectedTrack ();
 	if (selectedTrack == null)
 		return;
-		
-	var t = trackBank.getTrack (selectedTrack.index);
+	// TODO FIX trackBank
+	var t = this.model.getTrackBank ().trackBank.getTrack (selectedTrack.index);
 	if (index == 0)
 	{
 		// Volume
