@@ -19,7 +19,7 @@ host.defineMidiPorts (1, 1);
 host.addDeviceNameBasedDiscoveryPair (["MIDIIN2 (Ableton Push)"], ["MIDIOUT2 (Ableton Push)"]);
 host.addDeviceNameBasedDiscoveryPair (["Ableton Push MIDI 2"], ["Ableton Push MIDI 2"]);
 
-function init()
+function init ()
 {
 	var output = new MidiOutput ();
 	var input = new MidiInput ();
@@ -32,7 +32,7 @@ function init()
 	println ("Initialized.");
 }
 
-function exit()
+function exit ()
 {
 	push.turnOff ();
 }

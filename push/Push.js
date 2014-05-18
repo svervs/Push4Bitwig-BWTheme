@@ -160,6 +160,11 @@ Push.prototype.turnOff = function ()
  */
 Push.prototype.getOutput = function () { return this.output; };
 
+/**
+ * @returns {Model}
+ */
+Push.prototype.getModel = function () { return this.model; };
+
 //--------------------------------------
 // ViewState
 //--------------------------------------

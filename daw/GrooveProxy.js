@@ -80,10 +80,10 @@ GrooveProxy.prototype.getRangedValue = function (kind)
 	}
 }
 
-GrooveProxy.prototype.updateIndication = function (isIndicated)
+GrooveProxy.prototype.updateIndication = function (mode)
 {
 	for (var i = 0; i < GrooveValue.Kind.values ().length; i++)
-		this.getRangedValue (i).setIndication (isIndicated);
+		this.getRangedValue (i).setIndication (mode == MODE_GROOVE);
 };
 
 function GrooveValue (kind)
