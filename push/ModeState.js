@@ -122,33 +122,9 @@ ModeState.prototype.updateMode = function (mode)
 	var isBankUser     = mode == MODE_BANK_USER;
 	var isBankMacro    = mode == MODE_BANK_MACRO;
 
-	this.model.getMasterTrack ().updateIndication (isMaster);
-	this.model.getGroove ().updateIndication (isGroove);
-
-	var selectedTrack = this.model.getTrackBank ().getSelectedTrack ();
-	for (var i = 0; i < 8; i++)
-	{
-		var isEnabled = false;
-		// TODO FIX THIS
-		var t = this.model.getTrackBank ().trackBank.getTrack (i);
-		var hasTrackSel = selectedTrack != null && selectedTrack.index == i && mode == MODE_TRACK;
-		t.getVolume ().setIndication (isVolume || hasTrackSel);
-		t.getPan ().setIndication (isPan || hasTrackSel);
-		for (var j = 0; j < 6; j++)
-		{
-			isEnabled = mode == MODE_SEND1 && j == 0 ||
-				mode == MODE_SEND2 && j == 1 ||
-				mode == MODE_SEND3 && j == 2 ||
-				mode == MODE_SEND4 && j == 3 ||
-				mode == MODE_SEND5 && j == 4 ||
-				mode == MODE_SEND6 && j == 5 ||
-				hasTrackSel;
-			t.getSend (j).setIndication (isEnabled);
-		}
-
-		this.model.getCursorDevice ().updateIndication (i, mode);
-		this.model.getUserControlBank ().updateIndication (i, mode);
-	}
+	this.model.getMasterTrack ().updateIndication (mode);
+	this.model.getGroove ().updateIndication (mode);
+	this.model.getTrackBank ().updateIndication (mode);
 
 	this.push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	this.push.setButton (PUSH_BUTTON_TRACK, isTrack ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);

@@ -326,6 +326,36 @@ TrackBankProxy.prototype.getClipLauncherScenes = function ()
 	return this.trackBank.getClipLauncherScenes ();
 };
 
+TrackBankProxy.prototype.updateIndication = function (mode)
+{
+	var isVolume = mode == MODE_VOLUME;
+	var isPan    = mode == MODE_PAN;
+
+	var selectedTrack = this.getSelectedTrack ();
+	for (var i = 0; i < 8; i++)
+	{
+		var isEnabled = false;
+		var t = this.trackBank.getTrack (i);
+		var hasTrackSel = selectedTrack != null && selectedTrack.index == i && mode == MODE_TRACK;
+		t.getVolume ().setIndication (isVolume || hasTrackSel);
+		t.getPan ().setIndication (isPan || hasTrackSel);
+		for (var j = 0; j < 6; j++)
+		{
+			isEnabled = mode == MODE_SEND1 && j == 0 ||
+				mode == MODE_SEND2 && j == 1 ||
+				mode == MODE_SEND3 && j == 2 ||
+				mode == MODE_SEND4 && j == 3 ||
+				mode == MODE_SEND5 && j == 4 ||
+				mode == MODE_SEND6 && j == 5 ||
+				hasTrackSel;
+			t.getSend (j).setIndication (isEnabled);
+		}
+
+		this.push.getModel ().getCursorDevice ().updateIndication (i, mode);
+		this.push.getModel ().getUserControlBank ().updateIndication (i, mode);
+	}
+};
+
 // TODO (mschmalle) get this in utility, MasterTrack uses it as well
 TrackBankProxy.prototype.changeValue = function (control, value)
 {

@@ -110,10 +110,10 @@ MasterTrackProxy.prototype.incVolume = function (value)
 	this.masterTrack.getVolume ().inc (value <= 61 ? 1 : -1, 128);
 };
 
-MasterTrackProxy.prototype.updateIndication = function (isIndicated)
+MasterTrackProxy.prototype.updateIndication = function (mode)
 {
-	this.masterTrack.getVolume ().setIndication (isIndicated);
-	this.masterTrack.getPan ().setIndication (isIndicated);
+	this.masterTrack.getVolume ().setIndication (mode == MODE_MASTER);
+	this.masterTrack.getPan ().setIndication (mode == MODE_MASTER);
 };
 
 MasterTrackProxy.prototype.select = function ()
