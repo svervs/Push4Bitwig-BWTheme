@@ -15,9 +15,7 @@ PanMode.prototype = new BaseMode ();
 
 PanMode.prototype.onValueKnob = function (index, value)
 {
-	var t = this.model.getTrack (index);
-	t.pan = this.changeValue (value, t.pan);
-	trackBank.getTrack (t.index).getPan ().set (t.pan, 128);
+	this.model.getTrackBank ().setPan (index, value);
 };
 
 PanMode.prototype.updateDisplay = function ()
@@ -26,7 +24,7 @@ PanMode.prototype.updateDisplay = function ()
 	
 	for (var i = 0; i < 8; i++)
 	{
-		var t = this.model.getTrack (i);
+		var t = this.model.getTrackBank ().getTrack (i);
 		d.setCell (1, i, t.panStr, Display.FORMAT_RAW)
 		 .setCell (2, i, t.pan, Display.FORMAT_PAN);
 	}

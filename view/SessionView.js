@@ -6,7 +6,8 @@
 function SessionView (model)
 {
 	BaseView.call (this, model);
-	
+
+	// TODO eventually move this data to TrackBankProxy
 	this.canScrollLeft = true;
 	this.canScrollRight = true;
 	this.canScrollUp = true;
@@ -16,7 +17,10 @@ function SessionView (model)
 	this.sessionLayout = new SessionLayout (this);
 	this.arrangementLayout = new ArrangementLayout (this);
 
-	trackBank.addCanScrollScenesDownObserver (doObject (this, function (canScroll)
+	// TODO (mschmalle) These observers belong in TrackBankProxy
+	// where this view uses the model data from the proxy
+	var tb = this.model.getTrackBank ().trackBank;
+	tb.addCanScrollScenesDownObserver (doObject (this, function (canScroll)
 	{
 		if (this.flip)
 			this.canScrollLeft = canScroll;
@@ -25,7 +29,7 @@ function SessionView (model)
 		if (this.push.isActiveView (VIEW_SESSION))
 			this.updateArrows ();
 	}));
-	trackBank.addCanScrollScenesUpObserver (doObject (this, function (canScroll)
+	tb.addCanScrollScenesUpObserver (doObject (this, function (canScroll)
 	{
 		if (this.flip)
 			this.canScrollRight = canScroll;
@@ -34,7 +38,7 @@ function SessionView (model)
 		if (this.push.isActiveView (VIEW_SESSION))
 			this.updateArrows ();
 	}));
-	trackBank.addCanScrollTracksDownObserver (doObject (this, function (canScroll)
+	tb.addCanScrollTracksDownObserver (doObject (this, function (canScroll)
 	{
 		if (this.flip)
 			this.canScrollDown = canScroll;
@@ -43,7 +47,7 @@ function SessionView (model)
 		if (this.push.isActiveView (VIEW_SESSION))
 			this.updateArrows ();
 	}));
-	trackBank.addCanScrollTracksUpObserver (doObject (this, function (canScroll)
+	tb.addCanScrollTracksUpObserver (doObject (this, function (canScroll)
 	{
 		if (this.flip)
 			this.canScrollUp = canScroll;
@@ -63,7 +67,7 @@ SessionView.prototype.getLayout = function ()
 SessionView.prototype.onFirstRow = function (index)
 {
 	if (this.push.isShiftPressed ())
-		trackBank.getTrack (index).returnToArrangement ();
+		this.model.getTrackBank ().returnToArrangement (index);
 	else
 		BaseView.prototype.onFirstRow.call (this, index);
 };
@@ -75,7 +79,7 @@ SessionView.prototype.onActivate = function ()
 	this.push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
 	this.push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
 	for (var i = 0; i < 8; i++)
-		trackBank.getTrack (i).getClipLauncherSlots ().setIndication (true);
+		this.model.getTrackBank ().getClipLauncherSlots (i).setIndication (true);
 
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
 		this.push.setButton (i, PUSH_COLOR_SCENE_GREEN);
@@ -107,12 +111,12 @@ SessionView.prototype.onGrid = function (note, velocity)
 	var t = index % 8;
 	var s = 7 - Math.floor (index / 8);
 	
-	var slot = this.model.getTrack (t).slots[s];
-	var slots = trackBank.getTrack (t).getClipLauncherSlots ();
+	var slot = this.model.getTrackBank ().getTrack (index).slots[s];
+	var slots = this.model.getTrackBank ().getClipLauncherSlots (t);
 	
 	if (!this.push.isSelectPressed ())
 	{
-		if (this.model.getTrack (t).recarm)
+		if (this.model.getTrackBank ().getTrack (t).recarm)
 		{
 			if (slot.isRecording)
 				slots.launch (s);
@@ -129,12 +133,12 @@ SessionView.prototype.onClip = function (event)
 {
 	if (!event.isDown ())
 		return;
-	var t = this.model.getSelectedTrack ();
+	var t = this.model.getTrackBank ().getSelectedTrack ();
 	if (t == null)
 		return;
 	var slot = this.getSelectedSlot (t);
 	if (slot != -1)
-		trackBank.getTrack (t.index).getClipLauncherSlots ().showInEditor (slot);
+		this.model.getTrackBank ().getClipLauncherSlots (t.index).showInEditor (slot);
 };
 
 SessionView.prototype.onLeft = function (event)
@@ -194,7 +198,10 @@ SessionView.prototype.drawGrid = function ()
 
 function BaseSessionLayout (view)
 {
+	if (view == null)
+		return; // FIX this
 	this.view = view;
+	this.model = view.model;
 }
 
 BaseSessionLayout.prototype.onLeft = function (event) {};
@@ -227,9 +234,9 @@ SessionLayout.prototype.onLeft = function (event)
 		return;
 
 	if (this.view.push.isShiftPressed ())
-		trackBank.scrollTracksPageUp ();
+		this.model.getTrackBank ().scrollTracksPageUp ();
 	else
-		trackBank.scrollTracksUp ();
+		this.model.getTrackBank ().scrollTracksUp ();
 };
 
 SessionLayout.prototype.onRight = function (event)
@@ -238,9 +245,9 @@ SessionLayout.prototype.onRight = function (event)
 		return;
 
 	if (this.view.push.isShiftPressed ())
-		trackBank.scrollTracksPageDown ();
+		this.model.getTrackBank ().scrollTracksPageDown ();
 	else
-		trackBank.scrollTracksDown ();
+		this.model.getTrackBank ().scrollTracksDown ();
 };
 
 SessionLayout.prototype.onUp = function (event)
@@ -249,9 +256,9 @@ SessionLayout.prototype.onUp = function (event)
 		return;
 
 	if (this.view.push.isShiftPressed ())
-		trackBank.scrollScenesPageUp ();
+		this.model.getTrackBank ().scrollScenesPageUp ();
 	else
-		trackBank.scrollScenesUp ();
+		this.model.getTrackBank ().scrollScenesUp ();
 };
 
 SessionLayout.prototype.onDown = function (event)
@@ -260,21 +267,21 @@ SessionLayout.prototype.onDown = function (event)
 		return;
 
 	if (this.view.push.isShiftPressed ())
-		trackBank.scrollScenesPageDown ();
+		this.model.getTrackBank ().scrollScenesPageDown ();
 	else
-		trackBank.scrollScenesDown ();
+		this.model.getTrackBank ().scrollScenesDown ();
 };
 
 SessionLayout.prototype.onScene = function (scene)
 {
-	trackBank.launchScene (scene);
+	this.model.getTrackBank ().launchScene (scene);
 };
 
 SessionLayout.prototype.drawGrid = function ()
 {
 	for (var x = 0; x < 8; x++)
 	{
-		var t = this.view.model.getTrack (x);
+		var t = this.model.getTrackBank ().getTrack (x);
 		for (var y = 0; y < 8; y++)
 			this.drawPad (t.slots[y], x, y, t.recarm);
 	}
@@ -292,9 +299,9 @@ ArrangementLayout.prototype.onLeft = function (event)
 		return;
 
 	if (this.view.push.isShiftPressed ())
-		trackBank.scrollScenesPageUp ();
+		this.model.getTrackBank ().scrollScenesPageUp ();
 	else
-		trackBank.scrollScenesUp ();
+		this.model.getTrackBank ().scrollScenesUp ();
 };
 
 ArrangementLayout.prototype.onRight = function (event)
@@ -303,9 +310,9 @@ ArrangementLayout.prototype.onRight = function (event)
 		return;
 
 	if (this.view.push.isShiftPressed ())
-		trackBank.scrollScenesPageDown ();
+		this.model.getTrackBank ().scrollScenesPageDown ();
 	else
-		trackBank.scrollScenesDown ();
+		this.model.getTrackBank ().scrollScenesDown ();
 };
 
 ArrangementLayout.prototype.onUp = function (event)
@@ -314,9 +321,9 @@ ArrangementLayout.prototype.onUp = function (event)
 		return;
 
 	if (this.view.push.isShiftPressed ())
-		trackBank.scrollTracksPageUp ();
+		this.model.getTrackBank ().scrollTracksPageUp ();
 	else
-		trackBank.scrollTracksUp ();
+		this.model.getTrackBank ().scrollTracksUp ();
 };
 
 ArrangementLayout.prototype.onDown = function (event)
@@ -325,21 +332,21 @@ ArrangementLayout.prototype.onDown = function (event)
 		return;
 
 	if (this.view.push.isShiftPressed ())
-		trackBank.scrollTracksPageDown ();
+		this.model.getTrackBank ().scrollTracksPageDown ();
 	else
-		trackBank.scrollTracksDown ();
+		this.model.getTrackBank ().scrollTracksDown ();
 };
 
 ArrangementLayout.prototype.onScene = function (scene)
 {
-	trackBank.launchScene (scene);
+	this.model.getTrackBank ().launchScene (scene);
 };
 
 ArrangementLayout.prototype.drawGrid = function ()
 {
 	for (var x = 0; x < 8; x++)
 	{
-		var t = this.view.model.getTrack (x);
+		var t = this.model.getTrackBank ().getTrack (x);
 		for (var y = 0; y < 8; y++)
 			this.drawPad (t.slots[y], y, x, t.recarm);
 	}

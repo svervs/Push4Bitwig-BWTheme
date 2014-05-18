@@ -15,9 +15,7 @@ VolumeMode.prototype = new BaseMode ();
 
 VolumeMode.prototype.onValueKnob = function (index, value)
 {
-	var t = this.model.getTrack (index);
-	t.volume = this.changeValue (value, t.volume);
-	trackBank.getTrack (t.index).getVolume ().set (t.volume, 128);
+	this.model.getTrackBank ().setVolume (index, value);
 };
 
 VolumeMode.prototype.updateDisplay = function ()
@@ -25,7 +23,7 @@ VolumeMode.prototype.updateDisplay = function ()
 	var d = this.push.display;
 	for (var i = 0; i < 8; i++)
 	{
-		var t = this.model.getTrack (i);
+		var t = this.model.getTrackBank ().getTrack (i);
 		d.setCell (1, i, t.volumeStr, Display.FORMAT_RAW)
 		 .setCell (2, i, this.push.showVU ? t.vu : t.volume, Display.FORMAT_VALUE);
 	}
