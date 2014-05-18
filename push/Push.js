@@ -82,7 +82,6 @@ var PUSH_BUTTON_STATE_OFF = 0;
 var PUSH_BUTTON_STATE_ON  = 1;
 var PUSH_BUTTON_STATE_HI  = 4;
 
-
 function Push (output, input)
 {
 	this.output = output;
@@ -268,7 +267,7 @@ Push.prototype.redrawGrid = function ()
 
 Push.prototype.updateDisplay = function ()
 {
-	var t = this.model.getSelectedTrack ();
+	var t = this.model.getTrackBank ().getSelectedTrack ();
 	var d = this.display;
 	
 	var m = this.getActiveMode ();
@@ -297,7 +296,7 @@ Push.prototype.updateDisplay = function ()
 	for (var i = 0; i < 8; i++)
 	{
 		var isSel = i == sel;
-		var t = this.model.getTrack (i);
+		var t = this.model.getTrackBank ().getTrack (i);
 		var n = optimizeName (t.name, isSel ? 7 : 8);
 		d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
 		

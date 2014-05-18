@@ -18,7 +18,7 @@ PlayView.prototype = new BaseView ();
 
 PlayView.prototype.updateNoteMapping = function ()
 {
-	var t = this.model.getSelectedTrack ();
+	var t = this.model.getTrackBank ().getSelectedTrack ();
 	var noteMap = t != null && t.canHoldNotes ? this.scales.getNoteMatrix () : this.scales.getEmptyMatrix ();
 	// Workaround: https://github.com/git-moss/Push4Bitwig/issues/7
 	host.scheduleTask (doObject (this, function () { this.model.setKeyTranslationTable (noteMap); }), null, 100);
@@ -60,7 +60,7 @@ PlayView.prototype.usesButton = function (buttonID)
 
 PlayView.prototype.drawGrid = function ()
 {
-	var t = this.model.getSelectedTrack ();
+	var t = this.model.getTrackBank ().getSelectedTrack ();
 	var isKeyboardEnabled = t != null && t.canHoldNotes;
 	for (var i = 36; i < 100; i++)
 	{
@@ -73,7 +73,7 @@ PlayView.prototype.drawGrid = function ()
 
 PlayView.prototype.onGrid = function (note, velocity)
 {
-	var t = this.model.getSelectedTrack ();
+	var t = this.model.getTrackBank ().getSelectedTrack ();
 	if (t == null || !t.canHoldNotes)
 		return;
 
@@ -132,7 +132,7 @@ PlayView.prototype.onLeft = function (event)
 		this.model.getCursorDevice ().selectPrevious ();
 	else
 	{
-		var sel = this.model.getSelectedTrack ();
+		var sel = this.model.getTrackBank ().getSelectedTrack ();
 		var index = sel == null ? 0 : sel.index - 1;
 		if (index == -1)
 		{
@@ -155,7 +155,7 @@ PlayView.prototype.onRight = function (event)
 		this.model.getCursorDevice ().selectNext ();
 	else
 	{
-		var sel = this.model.getSelectedTrack ();
+		var sel = this.model.getTrackBank ().getSelectedTrack ();
 		var index = sel == null ? 0 : sel.index + 1;
 		if (index == 8)
 		{

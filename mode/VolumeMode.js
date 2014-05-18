@@ -23,7 +23,7 @@ VolumeMode.prototype.updateDisplay = function ()
 	var d = this.push.display;
 	for (var i = 0; i < 8; i++)
 	{
-		var t = this.model.getTrack (i);
+		var t = this.model.getTrackBank ().getTrack (i);
 		d.setCell (1, i, t.volumeStr, Display.FORMAT_RAW)
 		 .setCell (2, i, this.push.showVU ? t.vu : t.volume, Display.FORMAT_VALUE);
 	}

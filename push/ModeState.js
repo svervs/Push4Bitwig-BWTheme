@@ -125,7 +125,7 @@ ModeState.prototype.updateMode = function (mode)
 	this.model.getMasterTrack ().updateIndication (isMaster);
 	this.model.getGroove ().updateIndication (isGroove);
 
-	var selectedTrack = this.model.getSelectedTrack ();
+	var selectedTrack = this.model.getTrackBank ().getSelectedTrack ();
 	for (var i = 0; i < 8; i++)
 	{
 		var isEnabled = false;

@@ -46,7 +46,7 @@ AbstractSequencerView.prototype.onActivate = function ()
 	this.push.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	// TODO (mschmalle) FIX THIS
 	for (var i = 0; i < 8; i++)
-		this.model.getTrackBank ().trackBank.getTrack (i).getClipLauncherSlots ().setIndication (false);
+		this.model.getTrackBank ().getClipLauncherSlots (i).setIndication (false);
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
 		this.push.setButton (i, PUSH_COLOR_SCENE_GREEN);
 };

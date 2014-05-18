@@ -111,12 +111,12 @@ SessionView.prototype.onGrid = function (note, velocity)
 	var t = index % 8;
 	var s = 7 - Math.floor (index / 8);
 	
-	var slot = this.model.getTrack (t).slots[s];
+	var slot = this.model.getTrackBank ().getTrack (index).slots[s];
 	var slots = this.model.getTrackBank ().getClipLauncherSlots (t);
 	
 	if (!this.push.isSelectPressed ())
 	{
-		if (this.model.getTrack (t).recarm)
+		if (this.model.getTrackBank ().getTrack (t).recarm)
 		{
 			if (slot.isRecording)
 				slots.launch (s);
@@ -133,7 +133,7 @@ SessionView.prototype.onClip = function (event)
 {
 	if (!event.isDown ())
 		return;
-	var t = this.model.getSelectedTrack ();
+	var t = this.model.getTrackBank ().getSelectedTrack ();
 	if (t == null)
 		return;
 	var slot = this.getSelectedSlot (t);
@@ -281,7 +281,7 @@ SessionLayout.prototype.drawGrid = function ()
 {
 	for (var x = 0; x < 8; x++)
 	{
-		var t = this.view.model.getTrack (x);
+		var t = this.model.getTrackBank ().getTrack (x);
 		for (var y = 0; y < 8; y++)
 			this.drawPad (t.slots[y], x, y, t.recarm);
 	}
@@ -346,7 +346,7 @@ ArrangementLayout.prototype.drawGrid = function ()
 {
 	for (var x = 0; x < 8; x++)
 	{
-		var t = this.view.model.getTrack (x);
+		var t = this.model.getTrackBank ().getTrack (x);
 		for (var y = 0; y < 8; y++)
 			this.drawPad (t.slots[y], y, x, t.recarm);
 	}

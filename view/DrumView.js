@@ -24,7 +24,7 @@ DrumView.prototype.updateArrows = function ()
 
 DrumView.prototype.updateNoteMapping = function ()
 {
-	var t = this.model.getSelectedTrack ();
+	var t = this.model.getTrackBank ().getSelectedTrack ();
 	var noteMap = t != null && t.canHoldNotes ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
 	this.model.setKeyTranslationTable (noteMap);
 };

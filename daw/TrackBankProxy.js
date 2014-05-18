@@ -149,11 +149,26 @@ function TrackBankProxy (push)
 }
 
 TrackBankProxy.prototype.isClipRecording = function () { return this.recCount != 0; };
+
 TrackBankProxy.prototype.getNewClipLength = function () { return this.newClipLength; };
 TrackBankProxy.prototype.setNewClipLength = function (value) { this.newClipLength = value; };
 
+TrackBankProxy.prototype.canScrollTrackDown = function () { return this.canScrollTrackDownFlag; };
+TrackBankProxy.prototype.canScrollTrackUp = function () { return this.canScrollTrackUpFlag; };
+
 /**
- * @returns {Track}
+ * Returns a Track value object.
+ * @param index
+ * @returns {*}
+ */
+TrackBankProxy.prototype.getTrack = function (index)
+{
+	return this.tracks[index];
+};
+
+/**
+ * Returns the selected Track value object.
+ * @returns {*}
  */
 TrackBankProxy.prototype.getSelectedTrack = function ()
 {
@@ -171,26 +186,6 @@ TrackBankProxy.prototype.selectTrack = function (index)
 	if (t != null)
 		t.select ();
 }
-
-TrackBankProxy.prototype.canScrollTrackDown = function ()
-{
-	return this.canScrollTrackDownFlag;
-};
-
-TrackBankProxy.prototype.canScrollTrackUp = function ()
-{
-	return this.canScrollTrackUpFlag;
-};
-
-TrackBankProxy.prototype.getCurrentSendIndex = function ()
-{
-	return this.push.getCurrentMode () - MODE_SEND1;
-};
-
-TrackBankProxy.prototype.getTrack = function (index)
-{
-	return this.tracks[index];
-};
 
 TrackBankProxy.prototype.setVolume = function (index, value)
 {
@@ -239,17 +234,17 @@ TrackBankProxy.prototype.toggleArm = function (index)
 	this.setArm (index, !this.getTrack (index).recarm);
 };
 
+TrackBankProxy.prototype.getCurrentSendIndex = function ()
+{
+	return this.push.getCurrentMode () - MODE_SEND1;
+};
+
 TrackBankProxy.prototype.setSend = function (index, sendIndex, value)
 {
 	var t = this.getTrack (index);
 	var send = t.sends[sendIndex];
 	send.volume = this.changeValue (value, send.volume);
 	this.trackBank.getTrack (t.index).getSend (sendIndex).set (send.volume, 128);
-};
-
-TrackBankProxy.prototype.scrollTracksPageUp = function ()
-{
-	this.trackBank.scrollTracksPageUp ();
 };
 
 TrackBankProxy.prototype.stop = function (index)
@@ -260,30 +255,6 @@ TrackBankProxy.prototype.stop = function (index)
 TrackBankProxy.prototype.select = function (index)
 {
 	this.trackBank.getTrack (index).select ();
-};
-
-TrackBankProxy.prototype.scrollTracksPageUp = function ()
-{
-	this.trackBank.scrollTracksPageUp ();
-};
-
-/**
- * @param index
- * @returns {ClipLauncherSlots}
- */
-TrackBankProxy.prototype.getClipLauncherSlots = function (index)
-{
-	// TODO (mschmalle) Need container? [getClipLauncherSlots]
-	return this.trackBank.getTrack (index).getClipLauncherSlots ();
-};
-
-/**
- * @returns {ClipLauncherScenesOrSlots}
- */
-TrackBankProxy.prototype.getClipLauncherScenes = function ()
-{
-	// TODO (mschmalle) Need container? [getClipLauncherScenes]
-	return this.trackBank.getClipLauncherScenes ();
 };
 
 TrackBankProxy.prototype.launchScene = function (scene)
@@ -316,7 +287,6 @@ TrackBankProxy.prototype.scrollTracksPageDown = function ()
 	this.trackBank.scrollTracksPageDown ();
 };
 
-
 TrackBankProxy.prototype.scrollScenesUp = function ()
 {
 	this.trackBank.scrollScenesUp ();
@@ -335,6 +305,25 @@ TrackBankProxy.prototype.scrollScenesPageUp = function ()
 TrackBankProxy.prototype.scrollScenesPageDown = function ()
 {
 	this.trackBank.scrollScenesPageDown ();
+};
+
+/**
+ * @param index
+ * @returns {ClipLauncherSlots}
+ */
+TrackBankProxy.prototype.getClipLauncherSlots = function (index)
+{
+	// TODO (mschmalle) Need container? [getClipLauncherSlots]
+	return this.trackBank.getTrack (index).getClipLauncherSlots ();
+};
+
+/**
+ * @returns {ClipLauncherScenesOrSlots}
+ */
+TrackBankProxy.prototype.getClipLauncherScenes = function ()
+{
+	// TODO (mschmalle) Need container? [getClipLauncherScenes]
+	return this.trackBank.getClipLauncherScenes ();
 };
 
 // TODO (mschmalle) get this in utility, MasterTrack uses it as well

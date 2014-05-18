@@ -22,7 +22,7 @@ host.addDeviceNameBasedDiscoveryPair (["Ableton Push MIDI 2"], ["Ableton Push MI
 function init()
 {
 	var output = new MidiOutput ();
-	var input = new MidiInput();
+	var input = new MidiInput ();
 
 	push = new Push (output, input);
 	push.init ();

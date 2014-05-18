@@ -78,7 +78,7 @@ BaseView.prototype.onNew = function (event)
 {
 	if (!event.isDown ())
 		return;
-	var t = this.model.getSelectedTrack ();
+	var t = this.model.getTrackBank ().getSelectedTrack ();
 	if (t != null)
 	{
 		var slotIndex = this.getSelectedSlot (t);
@@ -115,7 +115,7 @@ BaseView.prototype.onAutomation = function (event)
 {
 	if (!event.isDown ())
 		return;
-	var selectedTrack = this.model.getSelectedTrack ();
+	var selectedTrack = this.model.getTrackBank ().getSelectedTrack ();
 	if (selectedTrack != null)
 		this.model.getTransport().toggleWriteArrangerAutomation ();
 };
@@ -398,7 +398,7 @@ BaseView.prototype.onMute = function (event)
 {
 	if (!event.isDown ())
 		return;
-	var selectedTrack = this.model.getSelectedTrack ();
+	var selectedTrack = this.model.getTrackBank ().getSelectedTrack ();
 	if (selectedTrack == null)
 		return;
 	this.model.getTrackBank ().toggleMute (selectedTrack.index);
@@ -409,7 +409,7 @@ BaseView.prototype.onSolo = function (event)
 {
 	if (!event.isDown ())
 		return;
-	var selectedTrack = this.model.getSelectedTrack ();
+	var selectedTrack = this.model.getTrackBank ().getSelectedTrack ();
 	if (selectedTrack == null)
 		return;
 	this.model.getTrackBank ().toggleSolo (selectedTrack.index);

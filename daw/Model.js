@@ -51,14 +51,6 @@ Model.prototype.getSelectedTrack = function ()
 {
 	return this.getTrackBank ().getSelectedTrack ();
 };
-// TODO Move to TrackBankProxy
-/**
- * @returns {Object}
- */
-Model.prototype.getTrack = function (index)
-{
-	return this.getTrackBank ().getTrack (index);
-};
 
 Model.prototype.hasSelectedDevice = function ()
 {

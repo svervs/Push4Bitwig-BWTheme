@@ -49,7 +49,7 @@ TrackMode.prototype.attachTo = function (push)
 
 TrackMode.prototype.onValueKnob = function (index, value)
 {
-	var selectedTrack = this.model.getSelectedTrack ();
+	var selectedTrack = this.model.getTrackBank ().getSelectedTrack ();
 	if (selectedTrack == null)
 		return;
 	// TODO FIX trackBank
@@ -78,7 +78,7 @@ TrackMode.prototype.onValueKnob = function (index, value)
 
 TrackMode.prototype.updateDisplay = function ()
 {
-	var t = this.model.getSelectedTrack ();
+	var t = this.model.getTrackBank ().getSelectedTrack ();
 	var d = this.push.display;
 	
 	d.setRow (0, TrackMode.PARAM_NAMES);
