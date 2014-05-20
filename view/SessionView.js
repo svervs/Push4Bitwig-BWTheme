@@ -110,8 +110,8 @@ SessionView.prototype.onGrid = function (note, velocity)
 	var index = note - 36;
 	var t = index % 8;
 	var s = 7 - Math.floor (index / 8);
-	
-	var slot = this.model.getTrackBank ().getTrack (index).slots[s];
+
+	var slot = this.model.getTrackBank ().getTrack (t).slots[s];
 	var slots = this.model.getTrackBank ().getClipLauncherSlots (t);
 	
 	if (!this.push.isSelectPressed ())
