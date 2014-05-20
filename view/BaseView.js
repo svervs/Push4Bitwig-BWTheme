@@ -12,6 +12,8 @@ function BaseView (model)
 	this.canScrollUp = true;
 	this.canScrollDown = true;
 
+	this.restartFlag = false;
+
 	this.stopPressed = false;
 	
 	this.ttLastMillis = -1;
@@ -50,7 +52,27 @@ BaseView.prototype.onPlay = function (event)
 	if (this.push.isShiftPressed ())
 		this.model.getTransport().toggleLoop ();
 	else
-		this.model.getTransport().play ();
+	{
+		if (!this.restartFlag)
+		{
+			this.model.getTransport().play();
+			this.doubleClickTest ();
+		}
+		else
+		{
+			this.model.getTransport ().rewindAndPlay ();
+			this.restartFlag = false;
+		}
+	}
+};
+
+BaseView.prototype.doubleClickTest = function ()
+{
+	this.restartFlag = true;
+	host.scheduleTask (doObject (this, function ()
+	{
+		this.restartFlag = false;
+	}), null, 250);
 };
 
 BaseView.prototype.onRecord = function (event)
