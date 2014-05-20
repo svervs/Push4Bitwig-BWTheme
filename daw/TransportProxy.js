@@ -45,6 +45,18 @@ TransportProxy.prototype.play = function      ()
 	this.transport.play ();
 };
 
+TransportProxy.prototype.restart = function      ()
+{
+	this.transport.restart ();
+};
+
+TransportProxy.prototype.rewindAndPlay = function      ()
+{
+	this.transport.stop ();
+	this.transport.setPosition (0);
+	this.transport.play ();
+};
+
 TransportProxy.prototype.record = function      ()
 {
 	this.transport.record ();
