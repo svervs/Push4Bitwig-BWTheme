@@ -210,7 +210,7 @@ Display.prototype.formatStr = function (value, format)
 		case Display.FORMAT_PAN:
 			return this.formatPan (value);
 		default:
-			return value;
+			return value.toString ();
 	}
 };
 

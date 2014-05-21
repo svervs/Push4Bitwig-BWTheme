@@ -48,7 +48,7 @@ SequencerView.prototype.onGrid = function (note, velocity)
 	var index = note - 36;
 	var x = index % 8;
 	var y = Math.floor (index / 8);
-	this.clip.toggleStep (x, this.offsetY + y, Config.accentActive ? 127 : velocity);
+	this.clip.toggleStep (x, this.offsetY + y, Config.accentActive ? Config.fixedAccentValue : velocity);
 };
 
 SequencerView.prototype.onLeft = function (event)

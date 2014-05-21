@@ -34,7 +34,6 @@ function TrackBankProxy (push)
 		// Track name
 		t.addNameObserver (8, '', doObjectIndex (this, i, function (index, name)
 		{
-			//println(index + ", " + name);
 			this.tracks[index].name = name;
 		}));
 		// Track selection

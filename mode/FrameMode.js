@@ -48,7 +48,7 @@ FrameMode.prototype.updateDisplay = function ()
 
 FrameMode.prototype.addFirstRowCommand = function (label, command)
 {
-	this.bottomItems.push(new FrameToggleCommand(label, command));
+	this.bottomItems.push (new FrameToggleCommand (label, command));
 };
 
 function FrameToggleCommand (label, command)

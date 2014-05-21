@@ -30,6 +30,7 @@ ModeState.prototype.init = function ()
 	this.addMode (MODE_TRACK, new TrackMode (this.model));
 	this.addMode (MODE_FRAME, new FrameMode (this.model));
 	this.addMode (MODE_SCALES, new ScalesMode (this.model));
+	this.addMode (MODE_ACCENT, new AccentMode (this.model));
 	this.addMode (MODE_FIXED, new FixedMode (this.model));
 	this.addMode (MODE_GROOVE, new GrooveMode (this.model));
 
@@ -60,7 +61,7 @@ ModeState.prototype.setPendingMode = function (mode)
 
 	if (mode != this.currentMode)
 	{
-		if (this.currentMode != MODE_SCALES && this.currentMode != MODE_FIXED)
+		if (this.currentMode != MODE_SCALES && this.currentMode != MODE_FIXED && this.currentMode != MODE_SCALES)
 			this.previousMode = this.currentMode;
 		this.currentMode = mode;
 		this.setActiveMode (this.currentMode);
@@ -134,4 +135,4 @@ ModeState.prototype.updateMode = function (mode)
 	this.push.setButton (PUSH_BUTTON_SCALES, isScales ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	this.push.setButton (PUSH_BUTTON_FIXED_LENGTH, isFixed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	this.push.setButton (PUSH_BUTTON_BROWSE, isPreset ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-}
+};

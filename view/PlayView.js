@@ -8,11 +8,13 @@ function PlayView (model)
 	BaseView.call (this, model);
 	this.scales = model.getScales ();
 	this.pressedKeys = initArray (0, 128);
-	this.maxVelocity = initArray (127, 128);
-	this.maxVelocity[0] = 0;
 	this.defaultVelocity = [];
 	for (var i = 0; i < 128; i++)
 		this.defaultVelocity.push (i);
+	Config.addPropertyListener (Config.FIXED_ACCENT_VALUE, doObject (this, function ()
+	{
+		this.initMaxVelocity ();
+	}));
 }
 PlayView.prototype = new BaseView ();
 
@@ -34,6 +36,7 @@ PlayView.prototype.onActivate = function ()
 	for (var i = 0; i < 8; i++)
 		this.model.getTrackBank ().getClipLauncherSlots (i).setIndication (false);
 	this.updateSceneButtons ();
+	this.initMaxVelocity ();
 };
 
 PlayView.prototype.updateSceneButtons = function (buttonID)
@@ -171,5 +174,13 @@ PlayView.prototype.onRight = function (event)
 PlayView.prototype.onAccent = function (event)
 {
 	BaseView.prototype.onAccent.call (this, event);
+	if (event.isUp ())
+		this.initMaxVelocity ();
+};
+
+PlayView.prototype.initMaxVelocity = function ()
+{
+	this.maxVelocity = initArray (Config.fixedAccentValue, 128);
+	this.maxVelocity[0] = 0;
 	this.model.setVelocityTranslationTable (Config.accentActive ? this.maxVelocity : this.defaultVelocity);
 };

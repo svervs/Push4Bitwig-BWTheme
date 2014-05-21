@@ -491,10 +491,25 @@ BaseView.prototype.onSession = function (event)
 
 BaseView.prototype.onAccent = function (event)
 {
-	if (!event.isDown ())
-		return;
-	Config.accentActive = !Config.accentActive;
-	this.push.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+	switch (event.getState ())
+	{
+		case ButtonEvent.DOWN:
+			this.quitAccentMode = false;
+			break;
+		case ButtonEvent.LONG:
+			this.quitAccentMode = true;
+			this.push.setPendingMode (MODE_ACCENT);
+			break;
+		case ButtonEvent.UP:
+			if (this.quitAccentMode)
+				this.push.setPendingMode (this.push.getPreviousMode ());
+			else
+			{
+				Config.accentActive = !Config.accentActive;
+				this.push.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+			}
+			break;
+	}
 };
 
 BaseView.prototype.onShift = function (event)

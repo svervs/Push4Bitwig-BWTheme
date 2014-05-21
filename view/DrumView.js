@@ -63,7 +63,7 @@ DrumView.prototype.onGrid = function (note, velocity)
 		if (velocity != 0)
 		{
 			var col = 8 * (7 - y) + x;
-			this.clip.toggleStep (col, this.offsetY + this.selectedPad, Config.accentActive ? 127 : velocity);
+			this.clip.toggleStep (col, this.offsetY + this.selectedPad, Config.accentActive ? Config.fixedAccentValue : velocity);
 		}
 	}
 };

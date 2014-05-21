@@ -103,12 +103,13 @@ ViewState.prototype.addView = function (viewId, view)
 	this.views[viewId] = view;
 };
 
-ViewState.prototype.turnOff = function () {
+ViewState.prototype.turnOff = function ()
+{
 	// Turn off all buttons
 	for (var i = 0; i < this.buttons.length; i++)
-		this.push.setButton(this.buttons[i], PUSH_BUTTON_STATE_OFF);
+		this.push.setButton (this.buttons[i], PUSH_BUTTON_STATE_OFF);
 
-	// turn off 1st/2nd row buttons
+	// Turn off 1st/2nd row buttons
 	for (var i = 20; i < 27; i++)
 		this.push.setButton (i, PUSH_BUTTON_STATE_OFF);
 	for (var i = 102; i < 110; i++)

@@ -17,7 +17,7 @@ function Model (push)
 	this.userControlBank = new UserControlBankProxy (push);
 	this.cursorDevice = new CursorDeviceProxy (push);
 
-	this.noteInput = this.push.input.getPort().createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
+	this.noteInput = this.push.input.getPort ().createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
 	this.noteInput.setShouldConsumeEvents (false);
 
 	this.scales = new Scales ();
@@ -33,6 +33,11 @@ function Model (push)
 Model.prototype.setKeyTranslationTable = function (table)
 {
 	this.noteInput.setKeyTranslationTable (table);
+};
+
+Model.prototype.setVelocityTranslationTable = function (table)
+{
+	this.noteInput.setVelocityTranslationTable (table);
 };
 
 /**

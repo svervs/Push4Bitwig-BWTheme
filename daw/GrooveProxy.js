@@ -9,13 +9,13 @@ function GrooveProxy (push)
 	this.groove = host.createGroove ();
 	this.values = [];
 
-	this.addValue(GrooveValue.Kind.SHUFFLE_RATE);
-	this.addValue(GrooveValue.Kind.SHUFFLE_AMOUNT);
-	this.addValue(GrooveValue.Kind.ACCENT_RATE);
-	this.addValue(GrooveValue.Kind.ACCENT_AMOUNT);
-	this.addValue(GrooveValue.Kind.ACCENT_PHASE);
+	this.addValue (GrooveValue.Kind.SHUFFLE_RATE);
+	this.addValue (GrooveValue.Kind.SHUFFLE_AMOUNT);
+	this.addValue (GrooveValue.Kind.ACCENT_RATE);
+	this.addValue (GrooveValue.Kind.ACCENT_AMOUNT);
+	this.addValue (GrooveValue.Kind.ACCENT_PHASE);
 
-	this.groove.getEnabled().addValueObserver(128, doObject (this, function (enabled)
+	this.groove.getEnabled ().addValueObserver (128, doObject (this, function (enabled)
 	{
 		this.enabled = enabled == 127;
 	}));
@@ -96,11 +96,11 @@ function GrooveValue (kind)
 
 GrooveValue.Kind =
 {
-	SHUFFLE_RATE:0,
-	SHUFFLE_AMOUNT:1,
-	ACCENT_RATE:2,
-	ACCENT_AMOUNT:3,
-	ACCENT_PHASE:4
+	SHUFFLE_RATE:   0,
+	SHUFFLE_AMOUNT: 1,
+	ACCENT_RATE:    2,
+	ACCENT_AMOUNT:  3,
+	ACCENT_PHASE:   4
 };
 
 GrooveValue.Kind._enums =
