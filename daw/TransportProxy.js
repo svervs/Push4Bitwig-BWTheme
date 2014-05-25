@@ -40,24 +40,23 @@ function TransportProxy (push)
 	}));
 }
 
-TransportProxy.prototype.play = function      ()
+TransportProxy.prototype.play = function ()
 {
 	this.transport.play ();
 };
 
-TransportProxy.prototype.restart = function      ()
+TransportProxy.prototype.restart = function ()
 {
 	this.transport.restart ();
 };
 
-TransportProxy.prototype.rewindAndPlay = function      ()
+TransportProxy.prototype.rewindAndPlay = function ()
 {
 	this.transport.stop ();
 	this.transport.setPosition (0);
-	this.transport.play ();
 };
 
-TransportProxy.prototype.record = function      ()
+TransportProxy.prototype.record = function ()
 {
 	this.transport.record ();
 };
