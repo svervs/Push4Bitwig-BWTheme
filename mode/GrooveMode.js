@@ -50,10 +50,9 @@ GrooveMode.prototype.updateDisplay = function ()
 		 .setCell (2, i, v.value, Display.FORMAT_VALUE);
 	}
 
-	d.setBlock (3, 0, "Global Groove:");
-	d.setCell (3, 7, g.isEnabled () ? 'Enabled' : 'Disabled');
-
-	d.done (0).done (1).done (2).done (3);
+	d.setBlock (3, 0, "Global Groove:")
+	 .setCell (3, 7, g.isEnabled () ? 'Enabled' : 'Disabled')
+	 .allDone ();
 
 	for (var i = 0; i < 7; i++)
 		this.push.setButton (20 + i, PUSH_COLOR_BLACK);

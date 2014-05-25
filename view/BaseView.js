@@ -50,12 +50,12 @@ BaseView.prototype.onPlay = function (event)
 	if (!event.isDown ())
 		return;
 	if (this.push.isShiftPressed ())
-		this.model.getTransport().toggleLoop ();
+		this.model.getTransport ().toggleLoop ();
 	else
 	{
 		if (!this.restartFlag)
 		{
-			this.model.getTransport().play();
+			this.model.getTransport ().play ();
 			this.doubleClickTest ();
 		}
 		else
@@ -80,9 +80,9 @@ BaseView.prototype.onRecord = function (event)
 	if (!event.isDown ())
 		return;
 	if (this.push.isShiftPressed ())
-		this.model.getTransport().toggleClipOverdub ();
+		this.model.getTransport ().toggleClipOverdub ();
 	else
-		this.model.getTransport().record ();
+		this.model.getTransport ().record ();
 };
 
 BaseView.prototype.onStop = function (event)
@@ -114,11 +114,11 @@ BaseView.prototype.onNew = function (event)
 			if (!s.hasContent)
 			{
 				var slots = this.model.getTrackBank ().getClipLauncherSlots (t.index);
-				slots.createEmptyClip (sIndex, Math.pow (2, this.model.getTrackBank().getNewClipLength ()));
+				slots.createEmptyClip (sIndex, Math.pow (2, this.model.getTrackBank ().getNewClipLength ()));
 				if (slotIndex != sIndex)
 					slots.select (sIndex);
 				slots.launch (sIndex);
-				this.model.getTransport().setLauncherOverdub (true);
+				this.model.getTransport ().setLauncherOverdub (true);
 				return;
 			}
 		}
@@ -139,7 +139,7 @@ BaseView.prototype.onAutomation = function (event)
 		return;
 	var selectedTrack = this.model.getTrackBank ().getSelectedTrack ();
 	if (selectedTrack != null)
-		this.model.getTransport().toggleWriteArrangerAutomation ();
+		this.model.getTransport ().toggleWriteArrangerAutomation ();
 };
 
 BaseView.prototype.onFixedLength = function (event)
@@ -188,24 +188,24 @@ BaseView.prototype.onUndo = function (event)
 // Set tempo
 BaseView.prototype.onSmallKnob1 = function (increase)
 {
-	this.model.getTransport().changeTempo (increase);
+	this.model.getTransport( ).changeTempo (increase);
 };
 
 BaseView.prototype.onSmallKnob1Touch = function (isTouched)
 {
-	this.model.getTransport().setTempoIndication (isTouched);
+	this.model.getTransport ().setTempoIndication (isTouched);
 };
 
 // Change time (play position)
 BaseView.prototype.onSmallKnob2 = function (increase)
 {
-	this.model.getTransport().changePosition (increase, this.push.isShiftPressed ());
+	this.model.getTransport ().changePosition (increase, this.push.isShiftPressed ());
 };
 
 BaseView.prototype.onClick = function (event)
 {
 	if (event.isDown ())
-		this.model.getTransport().toggleClick ();
+		this.model.getTransport ().toggleClick ();
 };
 
 BaseView.prototype.onTapTempo = function (event)
@@ -247,7 +247,7 @@ BaseView.prototype.onTapTempo = function (event)
 	else
 	{
 		this.ttLastBPM = bpm;
-		this.model.getTransport().setTempo (bpm);
+		this.model.getTransport ().setTempo (bpm);
 	}
 };
 
@@ -304,7 +304,8 @@ BaseView.prototype.onSecondRow = function (index)
 	
 	// TODO (mschmalle) Can we do this better now that we have more abstraction with modes?
 	if (this.push.getCurrentMode () != MODE_BANK_DEVICE && this.push.getCurrentMode () != MODE_MASTER &&
-		this.push.getCurrentMode () != MODE_SCALES && this.push.getCurrentMode () != MODE_PRESET)
+		this.push.getCurrentMode () != MODE_SCALES && this.push.getCurrentMode () != MODE_PRESET &&
+		this.push.getCurrentMode () != MODE_SCALE_LAYOUT)
 	{
 		if (this.push.isShiftPressed ())
 			; // Toggle monitor: Currently not possible
@@ -327,7 +328,7 @@ BaseView.prototype.onMaster = function (event)
 			else
 			{
 				this.push.setPendingMode (MODE_MASTER);
-				this.model.getMasterTrack().select ();
+				this.model.getMasterTrack ().select ();
 			}
 			break;
 		case ButtonEvent.LONG:
@@ -370,7 +371,7 @@ BaseView.prototype.onTrack = function (event)
 
 BaseView.prototype.onDevice = function (event)
 {
-	if (!event.isDown())
+	if (!event.isDown ())
 		return;
 
 	var selectMode = this.push.getMode (MODE_PARAM_PAGE_SELECT);
@@ -380,8 +381,9 @@ BaseView.prototype.onDevice = function (event)
 		this.push.setPendingMode (MODE_PARAM_PAGE_SELECT);
 };
 
-BaseView.prototype.onBrowse = function (event) {
-	if (!event.isDown())
+BaseView.prototype.onBrowse = function (event)
+{
+	if (!event.isDown ())
 		return;
 
 	if (this.push.getCurrentMode () == MODE_BANK_DEVICE)
@@ -515,6 +517,12 @@ BaseView.prototype.onAccent = function (event)
 BaseView.prototype.onShift = function (event)
 {
 	this.push.setButton (PUSH_BUTTON_SHIFT, event.isUp () ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_HI);
+	
+	var cm = this.push.getCurrentMode ();
+	if (event.isDown () && cm == MODE_SCALES)
+		this.push.setPendingMode (MODE_SCALE_LAYOUT);
+	else if (event.isUp () && cm == MODE_SCALE_LAYOUT)
+		this.push.setPendingMode (MODE_SCALES);
 };
 
 BaseView.prototype.onFootswitch2 = function (value)
@@ -533,5 +541,5 @@ BaseView.prototype.getSelectedSlot = function (track)
 // TODO (mschmalle) TEMP unitl refactor finished
 BaseView.prototype.selectTrack = function (index)
 {
-	this.model.getTrackBank().selectTrack (index);
+	this.model.getTrackBank ().selectTrack (index);
 }

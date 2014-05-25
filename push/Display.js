@@ -143,6 +143,13 @@ Display.prototype.done = function (row)
 	return this;
 };
 
+Display.prototype.allDone = function ()
+{
+	for (var row = 0; row < 4; row++)
+		this.done (row);
+	return this;
+};
+
 Display.prototype.flush = function (row)
 {
 	for (var row = 0; row < 4; row++)

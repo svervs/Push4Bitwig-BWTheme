@@ -7,6 +7,7 @@ function PlayView (model)
 {
 	BaseView.call (this, model);
 	this.scales = model.getScales ();
+	this.noteMap = this.scales.getEmptyMatrix ();
 	this.pressedKeys = initArray (0, 128);
 	this.defaultVelocity = [];
 	for (var i = 0; i < 128; i++)
@@ -21,9 +22,9 @@ PlayView.prototype = new BaseView ();
 PlayView.prototype.updateNoteMapping = function ()
 {
 	var t = this.model.getTrackBank ().getSelectedTrack ();
-	var noteMap = t != null && t.canHoldNotes ? this.scales.getNoteMatrix () : this.scales.getEmptyMatrix ();
+	this.noteMap = t != null && t.canHoldNotes ? this.scales.getNoteMatrix () : this.scales.getEmptyMatrix ();
 	// Workaround: https://github.com/git-moss/Push4Bitwig/issues/7
-	host.scheduleTask (doObject (this, function () { this.model.setKeyTranslationTable (noteMap); }), null, 100);
+	host.scheduleTask (doObject (this, function () { this.model.setKeyTranslationTable (this.noteMap); }), null, 100);
 };
 
 PlayView.prototype.onActivate = function ()
@@ -65,11 +66,12 @@ PlayView.prototype.drawGrid = function ()
 {
 	var t = this.model.getTrackBank ().getSelectedTrack ();
 	var isKeyboardEnabled = t != null && t.canHoldNotes;
+	var isRecording = this.model.getTransport ().isRecording || this.model.getTrackBank ().isClipRecording ();
 	for (var i = 36; i < 100; i++)
 	{
 		this.push.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ?
-			(this.model.getTransport ().isRecording || this.model.getTrackBank().isClipRecording () ?
-				PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : this.scales.getColor (i)) : PUSH_COLOR_BLACK);
+			(isRecording ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : 
+			this.scales.getColor (this.noteMap, i)) : PUSH_COLOR_BLACK);
 		this.push.pads.blink (i, PUSH_COLOR_BLACK);
 	}
 };
@@ -79,15 +81,12 @@ PlayView.prototype.onGrid = function (note, velocity)
 	var t = this.model.getTrackBank ().getSelectedTrack ();
 	if (t == null || !t.canHoldNotes)
 		return;
-
-	// Remember pressed pads
-	this.pressedKeys[note] = velocity;
-
-	var index = note - 36;
-	if (index % 8 > 2 && index + 5 < 64)
-		this.pressedKeys[Math.min (note + 5, 127)] = velocity;
-	if (index % 8 < 5 && index - 5 > 0)
-		this.pressedKeys[Math.max (note - 5, 0)] = velocity;
+	// Mark selected notes
+	for (var i = 0; i < 128; i++)
+	{
+		if (this.noteMap[note] == this.noteMap[i])
+			this.pressedKeys[i] = velocity;
+	}
 };
 
 PlayView.prototype.onOctaveDown = function (event)

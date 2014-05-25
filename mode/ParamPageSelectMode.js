@@ -27,7 +27,7 @@ ParamPageSelectMode.prototype.getCurrentMode = function ()
 ParamPageSelectMode.prototype.setCurrentMode = function (mode)
 {
 	this.currentMode = mode;
-	this.currentModeChanged();
+	this.currentModeChanged ();
 	this.push.setPendingMode (this.currentMode);
 };
 
@@ -67,13 +67,10 @@ ParamPageSelectMode.prototype.attachTo = function (aPush)
 ParamPageSelectMode.prototype.updateDisplay = function ()
 {
 	var d = this.push.display;
-
 	d.clear ().setBlock (0, 0, "Parameter Banks:");
-
 	for (var i = 0; i < this.bottomItems.length; i++)
-		d.setCell (3, i, this.bottomItems[i].getLabel());
-
-	d.done (0).done (1).done (2).done (3);
+		d.setCell (3, i, this.bottomItems[i].getLabel ());
+	d.allDone ();
 
 	for (var i = 20; i < 28; i++)
 	{
@@ -89,7 +86,7 @@ ParamPageSelectMode.prototype.updateDisplay = function ()
 
 ParamPageSelectMode.prototype.onFirstRow = function (index)
 {
-	this.bottomItems[index].execute();
+	this.bottomItems[index].execute ();
 };
 
 ParamPageSelectMode.prototype.addFirstRowCommand = function (label, modeId)

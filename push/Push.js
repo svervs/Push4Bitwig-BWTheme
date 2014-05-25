@@ -87,7 +87,7 @@ function Push (output, input)
 	this.output = output;
 	this.input = input;
 
-	this.input.getPort().setMidiCallback (doObject (this, this.handleMidi));
+	this.input.getPort ().setMidiCallback (doObject (this, this.handleMidi));
 
 	this.pads = new Grid (output);
 	this.display = new Display (output);

@@ -49,11 +49,23 @@ Scales.INTERVALS =
 	{ name: 'Spanish',          notes: [ 0, 1, 4, 5, 7,  9,  10 ] }
 ];
 
+Scales.FOURTH_UP     = 0;
+Scales.FOURTH_RIGHT  = 1;
+Scales.THIRD_UP      = 2;
+Scales.THIRD_RIGHT   = 3;
+Scales.SEQUENT_UP    = 4;
+Scales.SEQUENT_RIGHT = 5;
+Scales.LAYOUT_NAMES  = [ '4th ^', '4th >', '3rd ^', '3rd >', 'Seqent^', 'Seqent>' ];
+Scales.ORIENT_UP     = 0;
+Scales.ORIENT_RIGHT  = 1;
+
 
 function Scales ()
 {
 	this.selectedScale = 0;      // Major
 	this.scaleOffset   = 0;      // C
+	this.scaleLayout   = Scales.FOURTH_UP;
+	this.orientation   = Scales.ORIENT_UP;
 	this.chromaticOn   = false;
 	this.octave        = 0;
 	this.shift         = 3;
@@ -95,6 +107,32 @@ Scales.prototype.getScaleOffset = function ()
 Scales.prototype.setScaleOffset = function (scaleOffset)
 {
 	this.scaleOffset = Math.max (0, Math.min (scaleOffset, Scales.OFFSETS.length - 1));
+};
+
+Scales.prototype.getScaleLayout = function ()
+{
+	return this.scaleLayout;
+};
+
+Scales.prototype.setScaleLayout = function (scaleLayout)
+{
+	this.scaleLayout = Math.max (Scales.FOURTH_UP, Math.min (scaleLayout, Scales.SEQUENT_RIGHT));
+	this.orientation = this.scaleLayout % 2 == 0 ? Scales.ORIENT_UP : Scales.ORIENT_RIGHT;
+	switch (this.scaleLayout)
+	{
+		case 0:
+		case 1:
+			this.setPlayShift (3);
+			break;
+		case 2:
+		case 3:
+			this.setPlayShift (2);
+			break;
+		case 4:
+		case 5:
+			this.setPlayShift (8);
+			break;
+	}
 };
 
 Scales.prototype.setChromatic = function (enable)
@@ -156,12 +194,19 @@ Scales.prototype.setPlayShift = function (shift)
 {
 	this.shift = shift;
 	this.generateMatrices ();
-}
+};
 
-Scales.prototype.getColor = function (note)
+Scales.prototype.getPlayShift = function ()
 {
-	var matrix = this.getActiveMatrix ();
-	var n = matrix[note - 36] % 12;
+	return this.shift;
+};
+
+Scales.prototype.getColor = function (noteMap, note)
+{
+	var midiNote = noteMap[note];
+	if (midiNote == -1)
+		return PUSH_COLOR_BLACK;
+	var n = (midiNote - Scales.OFFSETS[this.scaleOffset]) % 12;
 	if (n == 0)
 		return PUSH_COLOR_BLUE_LGHT;
 	if (this.isChromatic ())
@@ -223,13 +268,16 @@ Scales.prototype.createScale = function (scale)
 	var len = scale.notes.length;
 	var matrix = [];
 	var chromatic = [];
+	var isUp = this.orientation == Scales.ORIENT_UP;
 	for (var row = 0; row < 8; row++)
 	{
 		for (var column = 0; column < 8; column++)
 		{
-			var offset = row * this.shift + column;
+			var y = isUp ? row : column;
+			var x = isUp ? column : row;
+			var offset = y * this.shift + x;
 			matrix.push ((Math.floor (offset / len)) * 12 + scale.notes[offset % len]);
-			chromatic.push (row * (4 + this.shift) + column);
+			chromatic.push (y * (this.shift == 8 ? 8 : scale.notes[this.shift % len]) + x);
 		}
 	}
 	return { name: scale.name, matrix: matrix, chromatic: chromatic };

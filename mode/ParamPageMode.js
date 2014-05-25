@@ -58,7 +58,7 @@ ParamPageMode.prototype.getParameter = function (index)
 			return this.model.getCursorDevice ().getEnvelopeParameter (index);
 
 		case MODE_BANK_USER :
-			return this.model.getUserControlBank().getControl (index);
+			return this.model.getUserControlBank ().getControl (index);
 
 		case MODE_BANK_MACRO :
 			return this.model.getCursorDevice ().getMacro (index).getAmount ();
@@ -76,7 +76,7 @@ ParamPageMode.prototype.getNameParameter = function (index)
 			return this.model.getCursorDevice ().getEnvelopeParameter (index);
 
 		case MODE_BANK_USER :
-			return this.model.getUserControlBank().getControl (index);
+			return this.model.getUserControlBank ().getControl (index);
 
 		case MODE_BANK_MACRO :
 			return this.model.getCursorDevice ().getMacro (index);
@@ -93,7 +93,7 @@ ParamPageMode.prototype.updateDisplay = function ()
 {
 	var d = this.push.display;
 
-	if (this.hasParams())
+	if (this.hasParams ())
 	{
 		for (var i = 0; i < 8; i++)
 		{

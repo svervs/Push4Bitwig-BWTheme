@@ -31,6 +31,8 @@ var MODE_PRESET              = 27;
 
 var MODE_SCALES              = 30;
 var MODE_FIXED               = 31;
+var MODE_SCALE_LAYOUT        = 32;
+
 
 load ("BaseMode.js");
 load ("TrackMode.js");
@@ -49,4 +51,5 @@ load ("ParamPageMode.js");
 load ("PresetMode.js");
 
 load ("ScalesMode.js");
+load ("ScaleLayoutMode.js");
 load ("FixedMode.js");

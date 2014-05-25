@@ -23,5 +23,5 @@ AccentMode.prototype.updateDisplay = function ()
 		.setCell (0, 7, "Accent", Display.FORMAT_RAW)
 		.setCell (1, 7, Config.fixedAccentValue, Display.FORMAT_RAW)
 		.setCell (2, 7, Config.fixedAccentValue, Display.FORMAT_VALUE)
-		.done (0).done (1).done (2).done (3);
+		.allDone ();
 };

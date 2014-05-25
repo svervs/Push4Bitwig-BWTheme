@@ -242,7 +242,7 @@ PresetProvider.prototype.setSelectedItem = function (item)
 PresetProvider.prototype.setSelectedItemVerbose = function (selectedItemVerbose)
 {
 	this.selectedItemVerbose = selectedItemVerbose;
-	this.itemsChanged();
+	this.itemsChanged ();
 };
 
 PresetProvider.prototype.getView = function (length)
@@ -256,7 +256,7 @@ PresetProvider.prototype.getView = function (length)
 PresetProvider.prototype.setItems = function (items)
 {
 	this.items = items;
-	this.itemsChanged();
+	this.itemsChanged ();
 };
 
 PresetProvider.prototype.itemsChanged = function ()

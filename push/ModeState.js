@@ -30,6 +30,7 @@ ModeState.prototype.init = function ()
 	this.addMode (MODE_TRACK, new TrackMode (this.model));
 	this.addMode (MODE_FRAME, new FrameMode (this.model));
 	this.addMode (MODE_SCALES, new ScalesMode (this.model));
+	this.addMode (MODE_SCALE_LAYOUT, new ScaleLayoutMode (this.model));
 	this.addMode (MODE_ACCENT, new AccentMode (this.model));
 	this.addMode (MODE_FIXED, new FixedMode (this.model));
 	this.addMode (MODE_GROOVE, new GrooveMode (this.model));
@@ -56,12 +57,12 @@ ModeState.prototype.getCurrentMode = function ()
 
 ModeState.prototype.setPendingMode = function (mode)
 {
-	if (mode == null)
+	if (mode == null)	// TODO Create a setter/getter for the DEFAULT mode
 		mode = MODE_TRACK;
 
 	if (mode != this.currentMode)
-	{
-		if (this.currentMode != MODE_SCALES && this.currentMode != MODE_FIXED && this.currentMode != MODE_SCALES)
+	{	// TODO Create a setTempMode function which does not set the currentMode
+		if (this.currentMode != MODE_SCALES && this.currentMode != MODE_FIXED && this.currentMode != MODE_SCALES && this.currentMode != MODE_SCALE_LAYOUT)
 			this.previousMode = this.currentMode;
 		this.currentMode = mode;
 		this.setActiveMode (this.currentMode);

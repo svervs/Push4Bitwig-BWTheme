@@ -6,8 +6,8 @@
 function ScalesMode (model)
 {
 	BaseMode.call (this, model);
-	this.scales = model.getScales ();
 	this.id = MODE_SCALES;
+	this.scales = model.getScales ();
 	this.fullDisplay = true;
 }
 ScalesMode.prototype = new BaseMode ();
@@ -35,7 +35,7 @@ ScalesMode.prototype.onFirstRow = function (index)
 		this.scales.prevScale ();
 	else if (index > 0 && index < 7)
 		this.scales.setScaleOffset (index - 1);
-	this.push.getActiveView().updateNoteMapping ();
+	this.push.getActiveView ().updateNoteMapping ();
 };
 
 ScalesMode.prototype.onSecondRow = function (index)
@@ -47,7 +47,7 @@ ScalesMode.prototype.onSecondRow = function (index)
 	else
 		this.scales.setScaleOffset (index + 5);
 
-	this.push.getActiveView().updateNoteMapping ();
+	this.push.getActiveView ().updateNoteMapping ();
 };
 
 ScalesMode.prototype.updateDisplay = function ()

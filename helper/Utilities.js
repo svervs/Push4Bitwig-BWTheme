@@ -65,7 +65,7 @@ function toHexStr (data)
 	var sysex = "";
 	for (i in data)
 	{
-		var v = data[i].toString(16).toUpperCase();
+		var v = data[i].toString (16).toUpperCase ();
 		if (v.length < 2)
 			v = '0' + v;
 		sysex += v + ' ';

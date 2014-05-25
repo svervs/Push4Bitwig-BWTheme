@@ -45,17 +45,17 @@ PresetMode.prototype.onValueKnob = function (index, value)
 		else
 			this.onSecondRow (index);
 		this.knobInvalidated = false;
-	}), null, PresetMode.knobDuration - (this.push.isShiftPressed()) ? 100 : 0);
+	}), null, PresetMode.knobDuration - (this.push.isShiftPressed ()) ? 100 : 0);
 };
 
 PresetMode.prototype.onFirstRow = function (index)
 {
 	if (index == 2)
-		this.model.getCursorDevice ().switchToPreviousPresetCategory();
+		this.model.getCursorDevice ().switchToPreviousPresetCategory ();
 	else if (index == 4)
-		this.model.getCursorDevice ().switchToPreviousPresetCreator();
+		this.model.getCursorDevice ().switchToPreviousPresetCreator ();
 	else if (index == 6)
-		this.model.getCursorDevice ().switchToPreviousPreset();
+		this.model.getCursorDevice ().switchToPreviousPreset ();
 };
 
 PresetMode.prototype.onSecondRow = function (index)
@@ -76,7 +76,7 @@ PresetMode.prototype.updateDisplay = function ()
 	{
 		d.clear ()
 		 .setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ')
-		 .done (0).done (1).done (2).done (3);
+		 .allDone ();
 		return;
 	}
 
@@ -103,7 +103,7 @@ PresetMode.prototype.updateDisplay = function ()
 			d.setBlock (i, 2, ' ' + value);
 	}
 
-	d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.model.getCursorDevice ().currentPreset).done (0).done (1).done (2).done (3);
+	d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.model.getCursorDevice ().currentPreset).allDone ();
 	
 	for (var i = 20; i < 28; i++)
 		this.push.setButton (i, this.firstRowButtons[i] != null ? PresetMode.firstRowButtonColor : PUSH_COLOR_BLACK);
