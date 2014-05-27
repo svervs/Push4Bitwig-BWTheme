@@ -3,10 +3,8 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function UserControlBankProxy (push)
+function UserControlBankProxy ()
 {
-	this.push = push;
-
 	this.userControlBank = host.createUserControls (8);
 
 	for (var i = PUSH_KNOB1; i <= PUSH_KNOB8; i++)
@@ -21,9 +19,3 @@ UserControlBankProxy.prototype.getControl = function (index)
 {
 	return this.userControlBank.getControl (index);
 };
-
-UserControlBankProxy.prototype.updateIndication = function (index, mode)
-{
-	this.userControlBank.getControl (index).setIndication (mode == MODE_BANK_USER);
-};
-

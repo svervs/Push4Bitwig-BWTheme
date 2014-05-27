@@ -10,24 +10,17 @@ function Model (push)
 	this.application = host.createApplication ();
 
 	this.transport = new TransportProxy (push);
-	this.groove = new GrooveProxy (push);
+	this.groove = new GrooveProxy ();
 	this.masterTrack = new MasterTrackProxy (push);
 	this.trackBank = new TrackBankProxy (push);
 
-	this.userControlBank = new UserControlBankProxy (push);
-	this.cursorDevice = new CursorDeviceProxy (push);
+	this.userControlBank = new UserControlBankProxy ();
+	this.cursorDevice = new CursorDeviceProxy ();
 
 	this.noteInput = this.push.input.getPort ().createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
 	this.noteInput.setShouldConsumeEvents (false);
 
 	this.scales = new Scales ();
-
-	this.selectedDevice =
-	{
-		name: 'None',
-		hasPreviousDevice: false,
-		hasNextDevice: false
-	};
 }
 
 Model.prototype.setKeyTranslationTable = function (table)
@@ -59,12 +52,12 @@ Model.prototype.getSelectedTrack = function ()
 
 Model.prototype.hasSelectedDevice = function ()
 {
-	return this.selectedDevice.name != 'None';
+	return this.cursorDevice.getSelectedDevice ().name != 'None';
 };
 
 Model.prototype.getSelectedDevice = function ()
 {
-	return this.selectedDevice;
+	return this.cursorDevice.getSelectedDevice ();
 };
 
 /**
@@ -101,4 +94,44 @@ Model.prototype.getUserControlBank = function () { return this.userControlBank; 
 Model.prototype.getApplication = function ()
 {
 	return this.application;
+};
+
+Model.prototype.updateIndication = function (mode)
+{
+	var isVolume = mode == MODE_VOLUME;
+	var isPan    = mode == MODE_PAN;
+    
+    var tb = this.getTrackBank ();
+	var selectedTrack = tb.getSelectedTrack ();
+	for (var i = 0; i < 8; i++)
+	{
+		var hasTrackSel = selectedTrack != null && selectedTrack.index == i && mode == MODE_TRACK;
+		tb.setVolumeIndication (i, isVolume || hasTrackSel);
+		tb.setPanIndication (i, isPan || hasTrackSel);
+		for (var j = 0; j < 6; j++)
+		{
+			tb.setSendIndication (i, j,
+                mode == MODE_SEND1 && j == 0 ||
+				mode == MODE_SEND2 && j == 1 ||
+				mode == MODE_SEND3 && j == 2 ||
+				mode == MODE_SEND4 && j == 3 ||
+				mode == MODE_SEND5 && j == 4 ||
+				mode == MODE_SEND6 && j == 5 ||
+				hasTrackSel
+			);
+		}
+
+        this.cursorDevice.getParameter (i).setIndication (mode == MODE_BANK_DEVICE);
+        this.cursorDevice.getCommonParameter (i).setIndication (mode == MODE_BANK_COMMON);
+        this.cursorDevice.getEnvelopeParameter (i).setIndication (mode == MODE_BANK_ENVELOPE);
+        this.cursorDevice.getMacro (i).getAmount ().setIndication (mode == MODE_BANK_MACRO);
+        
+        this.userControlBank.getControl (i).setIndication (mode == MODE_BANK_USER);
+	
+		this.masterTrack.setVolumeIndication (mode == MODE_MASTER);
+		this.masterTrack.setPanIndication (mode == MODE_MASTER);
+	
+		for (var g = 0; g < GrooveValue.Kind.values ().length; g++)
+			this.groove.getRangedValue (g).setIndication (mode == MODE_GROOVE);
+	}
 };

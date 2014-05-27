@@ -15,3 +15,8 @@ MidiInput.prototype.getPort = function ()
 {
 	return this.port;
 };
+
+MidiInput.prototype.setMidiCallback = function (f)
+{
+    this.port.setMidiCallback (f);
+};

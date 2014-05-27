@@ -3,6 +3,9 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
+FrameMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO - 4;
+
+
 function FrameMode (model)
 {
 	BaseMode.call (this, model);
@@ -12,10 +15,10 @@ function FrameMode (model)
 }
 FrameMode.prototype = new BaseMode ();
 
-FrameMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO - 4;
-
-FrameMode.prototype.attachTo = function (aPush)
+FrameMode.prototype.attachTo = function (push)
 {
+	BaseMode.prototype.attachTo.call (this, push);
+
 	this.addFirstRowCommand ('Arrange ', doObject (this, function () { this.model.getApplication ().setPerspective ('ARRANGE'); }));
 	this.addFirstRowCommand ('  Mix   ', doObject (this, function () { this.model.getApplication ().setPerspective ('MIX'); }));
 	this.addFirstRowCommand ('  Edit  ', doObject (this, function () { this.model.getApplication ().setPerspective ('EDIT'); }));

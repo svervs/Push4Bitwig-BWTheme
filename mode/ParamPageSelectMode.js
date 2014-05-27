@@ -3,21 +3,19 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
+ParamPageSelectMode.firstRowButtonColorUp = PUSH_COLOR_BLACK;
+ParamPageSelectMode.firstRowButtonColorSelected = PUSH_COLOR_GREEN_LO - 4;
+
+
 function ParamPageSelectMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_PARAM_PAGE_SELECT;
 	this.fullDisplay = true;
-
 	this.bottomItems = [];
 	this.selectedIndex = 0;
-
-	this.setCurrentMode (MODE_BANK_DEVICE);
 }
 ParamPageSelectMode.prototype = new BaseMode ();
-
-ParamPageSelectMode.firstRowButtonColorUp = PUSH_COLOR_BLACK;
-ParamPageSelectMode.firstRowButtonColorSelected = PUSH_COLOR_GREEN_LO - 4;
 
 ParamPageSelectMode.prototype.getCurrentMode = function ()
 {
@@ -54,14 +52,18 @@ ParamPageSelectMode.prototype.currentModeChanged = function ()
 	}
 };
 
-ParamPageSelectMode.prototype.attachTo = function (aPush)
+ParamPageSelectMode.prototype.attachTo = function (push)
 {
+	BaseMode.prototype.attachTo.call (this, push);
+
 	this.addFirstRowCommand (' Device ', MODE_BANK_DEVICE);
 	this.addFirstRowCommand (' Common ', MODE_BANK_COMMON);
 	this.addFirstRowCommand ('Envelope', MODE_BANK_ENVELOPE);
 	//this.addFirstRowCommand ('Modulate', MODE_BANK_MODULATE);
 	this.addFirstRowCommand (' User   ', MODE_BANK_USER);
 	this.addFirstRowCommand (' Macro  ', MODE_BANK_MACRO);
+	
+	this.setCurrentMode (MODE_BANK_DEVICE);
 };
 
 ParamPageSelectMode.prototype.updateDisplay = function ()

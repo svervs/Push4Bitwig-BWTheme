@@ -3,9 +3,8 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function GrooveProxy (push)
+function GrooveProxy ()
 {
-	this.push = push;
 	this.groove = host.createGroove ();
 	this.values = [];
 
@@ -79,12 +78,6 @@ GrooveProxy.prototype.getRangedValue = function (kind)
 			return this.groove.getShuffleRate ();
 	}
 }
-
-GrooveProxy.prototype.updateIndication = function (mode)
-{
-	for (var i = 0; i < GrooveValue.Kind.values ().length; i++)
-		this.getRangedValue (i).setIndication (mode == MODE_GROOVE);
-};
 
 function GrooveValue (kind)
 {

@@ -95,11 +95,22 @@ MasterTrackProxy.prototype.setVolume = function (value)
 	this.masterTrack.getVolume ().set (this.volume, 128);
 };
 
+MasterTrackProxy.prototype.setVolumeIndication = function (indicate)
+{
+    this.masterTrack.getVolume ().setIndication (indicate);
+};
+
 MasterTrackProxy.prototype.setPan = function (value)
 {
 	this.pan = this.changeValue (value, this.pan);
 	this.masterTrack.getPan ().set (this.pan, 128);
 };
+
+MasterTrackProxy.prototype.setPanIndication = function (indicate)
+{
+    this.masterTrack.getPan ().setIndication (indicate);
+};
+
 
 //--------------------------------------
 // Actions
@@ -108,12 +119,6 @@ MasterTrackProxy.prototype.setPan = function (value)
 MasterTrackProxy.prototype.incVolume = function (value)
 {
 	this.masterTrack.getVolume ().inc (value <= 61 ? 1 : -1, 128);
-};
-
-MasterTrackProxy.prototype.updateIndication = function (mode)
-{
-	this.masterTrack.getVolume ().setIndication (mode == MODE_MASTER);
-	this.masterTrack.getPan ().setIndication (mode == MODE_MASTER);
 };
 
 MasterTrackProxy.prototype.select = function ()

@@ -13,6 +13,8 @@ function TransportProxy (push)
 
 	this.transport = host.createTransport ();
 
+	this.isClickOn   = false;
+	this.isPlaying   = false;
 	this.isRecording = false;
 	
 	// Note: For real BPM add 20
@@ -20,11 +22,13 @@ function TransportProxy (push)
 
 	this.transport.addClickObserver (doObject (this, function (isOn)
 	{
+        this.isClickOn = isOn;
 		this.push.setButton (PUSH_BUTTON_CLICK, isOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	}));
 	// Play
 	this.transport.addIsPlayingObserver (doObject (this, function (isPlaying)
 	{
+        this.isPlaying = isPlaying;
 		this.push.setButton (PUSH_BUTTON_PLAY, isPlaying ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	}));
 	// Record

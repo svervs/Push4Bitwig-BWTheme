@@ -124,9 +124,7 @@ ModeState.prototype.updateMode = function (mode)
 	var isBankUser     = mode == MODE_BANK_USER;
 	var isBankMacro    = mode == MODE_BANK_MACRO;
 
-	this.model.getMasterTrack ().updateIndication (mode);
-	this.model.getGroove ().updateIndication (mode);
-	this.model.getTrackBank ().updateIndication (mode);
+	this.model.updateIndication (mode);
 
 	this.push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	this.push.setButton (PUSH_BUTTON_TRACK, isTrack ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);

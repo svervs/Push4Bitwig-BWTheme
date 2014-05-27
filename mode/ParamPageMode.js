@@ -12,8 +12,10 @@ function ParamPageMode (model, mode, name)
 }
 ParamPageMode.prototype = new BaseMode ();
 
-ParamPageMode.prototype.attachTo = function (aPush)
+ParamPageMode.prototype.attachTo = function (push)
 {
+	BaseMode.prototype.attachTo.call (this, push);
+    
 	for (var i = 0; i < 8; i++)
 	{
 		var p = this.getParameter (i);

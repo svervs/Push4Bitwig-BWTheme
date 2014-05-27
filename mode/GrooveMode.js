@@ -11,12 +11,6 @@ function GrooveMode (model)
 }
 GrooveMode.prototype = new BaseMode ();
 
-GrooveMode.prototype.attachTo = function (aPush)
-{
-	BaseMode.prototype.attachTo (aPush);
-	// add observers in GrooveProxy
-};
-
 GrooveMode.prototype.onValueKnob = function (index, value)
 {
 	var v = this.model.getGroove ().getValue (index);

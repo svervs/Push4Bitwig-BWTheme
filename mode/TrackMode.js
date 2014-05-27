@@ -42,11 +42,6 @@ function TrackMode (model)
 }
 TrackMode.prototype = new BaseMode ();
 
-TrackMode.prototype.attachTo = function (push) 
-{
-	BaseMode.prototype.attachTo.call (this, push);
-};
-
 TrackMode.prototype.onValueKnob = function (index, value)
 {
 	var selectedTrack = this.model.getTrackBank ().getSelectedTrack ();

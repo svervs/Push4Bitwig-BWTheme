@@ -22,14 +22,14 @@ SendMode.prototype = new BaseMode ();
 
 SendMode.prototype.onValueKnob = function (index, value)
 {
-	var sendIndex = this.model.getTrackBank ().getCurrentSendIndex ();
+	var sendIndex = this.getCurrentSendIndex ();
 	this.model.getTrackBank ().setSend (index, sendIndex, value);
 };
 
 SendMode.prototype.updateDisplay = function ()
 {
 	var d = this.push.display;
-	var sendIndex = this.model.getTrackBank ().getCurrentSendIndex ();
+	var sendIndex = this.getCurrentSendIndex ();
 	for (var i = 0; i < 8; i++)
 	{
 		var t = this.model.getTrackBank ().getTrack (i);
@@ -37,4 +37,9 @@ SendMode.prototype.updateDisplay = function ()
 		 .setCell (2, i, t.sends[sendIndex].volume, Display.FORMAT_VALUE);
 	}
 	d.setRow (0, SendMode.PARAM_NAMES[sendIndex]).done (1).done (2);
+};
+
+SendMode.prototype.getCurrentSendIndex = function ()
+{
+	return this.push.getCurrentMode () - MODE_SEND1;
 };

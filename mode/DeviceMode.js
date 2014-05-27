@@ -87,13 +87,14 @@ DeviceMode.prototype.updateDisplay = function ()
 		 .setBlock (3, 1, selectedDevice.name)
 		 .clearBlock (3, 2).clearCell (3, 6);
 
-		if (this.model.getCursorDevice ().selectedParameterPage > 0)
+        var hasPrevious = this.model.getCursorDevice ().hasPreviousParameterPage ();
+		if (hasPrevious)
 			d.setCell (3, 5, ' < Prev ', Display.FORMAT_RAW);
 
 		d.setCell (3, 6, ' Next > ', Display.FORMAT_RAW)
 		 .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
 
-		this.push.setButton (25, this.model.getCursorDevice ().selectedParameterPage > 0 ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
+		this.push.setButton (25, hasPrevious ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
 		this.push.setButton (26, PUSH_COLOR_ORANGE_LO);
 	}
 };

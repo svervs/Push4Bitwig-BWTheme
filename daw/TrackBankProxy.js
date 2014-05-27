@@ -193,11 +193,21 @@ TrackBankProxy.prototype.setVolume = function (index, value)
 	this.trackBank.getTrack (t.index).getVolume ().set (t.volume, 128);
 };
 
+TrackBankProxy.prototype.setVolumeIndication = function (index, indicate)
+{
+    this.trackBank.getTrack (index).getVolume ().setIndication (indicate);
+};
+
 TrackBankProxy.prototype.setPan = function (index, value)
 {
 	var t = this.getTrack (index);
 	t.pan = this.changeValue (value, t.pan);
 	this.trackBank.getTrack (t.index).getPan ().set (t.pan, 128);
+};
+
+TrackBankProxy.prototype.setPanIndication = function (index, indicate)
+{
+    this.trackBank.getTrack (index).getPan ().setIndication (indicate);
 };
 
 TrackBankProxy.prototype.setMute = function (index, value)
@@ -233,17 +243,17 @@ TrackBankProxy.prototype.toggleArm = function (index)
 	this.setArm (index, !this.getTrack (index).recarm);
 };
 
-TrackBankProxy.prototype.getCurrentSendIndex = function ()
-{
-	return this.push.getCurrentMode () - MODE_SEND1;
-};
-
 TrackBankProxy.prototype.setSend = function (index, sendIndex, value)
 {
 	var t = this.getTrack (index);
 	var send = t.sends[sendIndex];
 	send.volume = this.changeValue (value, send.volume);
 	this.trackBank.getTrack (t.index).getSend (sendIndex).set (send.volume, 128);
+};
+
+TrackBankProxy.prototype.setSendIndication = function (index, sendIndex, indicate)
+{
+    this.trackBank.getTrack (index).getSend (sendIndex).setIndication (indicate);
 };
 
 TrackBankProxy.prototype.stop = function (index)
@@ -325,38 +335,8 @@ TrackBankProxy.prototype.getClipLauncherScenes = function ()
 	return this.trackBank.getClipLauncherScenes ();
 };
 
-TrackBankProxy.prototype.updateIndication = function (mode)
-{
-	var isVolume = mode == MODE_VOLUME;
-	var isPan    = mode == MODE_PAN;
-
-	var selectedTrack = this.getSelectedTrack ();
-	for (var i = 0; i < 8; i++)
-	{
-		var isEnabled = false;
-		var t = this.trackBank.getTrack (i);
-		var hasTrackSel = selectedTrack != null && selectedTrack.index == i && mode == MODE_TRACK;
-		t.getVolume ().setIndication (isVolume || hasTrackSel);
-		t.getPan ().setIndication (isPan || hasTrackSel);
-		for (var j = 0; j < 6; j++)
-		{
-			isEnabled = mode == MODE_SEND1 && j == 0 ||
-				mode == MODE_SEND2 && j == 1 ||
-				mode == MODE_SEND3 && j == 2 ||
-				mode == MODE_SEND4 && j == 3 ||
-				mode == MODE_SEND5 && j == 4 ||
-				mode == MODE_SEND6 && j == 5 ||
-				hasTrackSel;
-			t.getSend (j).setIndication (isEnabled);
-		}
-
-		this.push.getModel ().getCursorDevice ().updateIndication (i, mode);
-		this.push.getModel ().getUserControlBank ().updateIndication (i, mode);
-	}
-};
-
 // TODO (mschmalle) get this in utility, MasterTrack uses it as well
 TrackBankProxy.prototype.changeValue = function (control, value)
 {
 	return control <= 61 ? Math.min (value + BaseMode.INC_FRACTION_VALUE, 127) : Math.max (value - BaseMode.INC_FRACTION_VALUE, 0);
-}
+};

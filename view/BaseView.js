@@ -373,9 +373,9 @@ BaseView.prototype.onDevice = function (event)
 {
 	if (!event.isDown ())
 		return;
-
 	var selectMode = this.push.getMode (MODE_PARAM_PAGE_SELECT);
-	if (this.push.getCurrentMode () == MODE_PARAM_PAGE_SELECT || !selectMode.isPageMode (this.push.getCurrentMode ()))
+	var cm = this.push.getCurrentMode ();
+	if (cm == MODE_PARAM_PAGE_SELECT || !selectMode.isPageMode (cm))
 		this.push.setPendingMode (selectMode.getCurrentMode ());
 	else
 		this.push.setPendingMode (MODE_PARAM_PAGE_SELECT);
