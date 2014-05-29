@@ -538,6 +538,12 @@ BaseView.prototype.getSelectedSlot = function (track)
 	return -1;
 };
 
+BaseView.prototype.turnOffBlink = function ()
+{
+	for (var i = 36; i < 100; i++)
+		this.push.pads.blink (i, PUSH_COLOR_BLACK);
+};
+
 // TODO (mschmalle) TEMP unitl refactor finished
 BaseView.prototype.selectTrack = function (index)
 {

@@ -14,7 +14,7 @@ load ("mode/ClassLoader.js");
 // This is the only global variable, do not use it.
 var push = null;
 
-host.defineController ("Ableton", "Push", "2.51", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
+host.defineController ("Ableton", "Push", "3.00", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66");
 host.defineMidiPorts (1, 1);
 host.addDeviceNameBasedDiscoveryPair (["MIDIIN2 (Ableton Push)"], ["MIDIOUT2 (Ableton Push)"]);
 host.addDeviceNameBasedDiscoveryPair (["Ableton Push MIDI 2"], ["Ableton Push MIDI 2"]);

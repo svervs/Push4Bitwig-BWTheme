@@ -222,6 +222,27 @@ Scales.prototype.getColor = function (noteMap, note)
 	return PUSH_COLOR_WHITE_HI;
 };
 
+Scales.prototype.getSequencerColor = function (noteMap, note)
+{
+	var midiNote = noteMap[note];
+	if (midiNote == -1)
+		return PUSH_COLOR_BLACK;
+	var n = (midiNote - Scales.OFFSETS[this.scaleOffset]) % 12;
+	if (n == 0)
+		return PUSH_COLOR_BLUE_LO;
+	if (this.isChromatic ())
+	{
+		var notes = Scales.INTERVALS[this.selectedScale].notes;
+		for (var i = 0; i < notes.length; i++)
+		{
+			if (notes[i] == n)
+				return PUSH_COLOR_WHITE_LO;
+		}
+		return PUSH_COLOR_BLACK;
+	}
+	return PUSH_COLOR_WHITE_LO;
+};
+
 Scales.prototype.getNoteMatrix = function ()
 {
 	var matrix = this.getActiveMatrix ();
@@ -229,6 +250,18 @@ Scales.prototype.getNoteMatrix = function ()
 	for (var note = 36; note < 100; note++)
 	{
 		var n = matrix[note - 36] + Scales.OFFSETS[this.scaleOffset] + 36 + this.octave * 12;
+		noteMap[note] = n < 0 || n > 127 ? -1 : n;
+	}
+	return noteMap;
+};
+
+Scales.prototype.getSequencerMatrix = function (length, offset)
+{
+	var matrix = this.getActiveMatrix ();
+	var noteMap = initArray (-1, length);
+	for (var note = 0; note < length; note++)
+	{
+		var n = matrix[note] + Scales.OFFSETS[this.scaleOffset] + offset;
 		noteMap[note] = n < 0 || n > 127 ? -1 : n;
 	}
 	return noteMap;

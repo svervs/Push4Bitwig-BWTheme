@@ -112,9 +112,7 @@ DrumView.prototype.onRight = function (event)
 
 DrumView.prototype.drawGrid = function ()
 {
-	// Turn off blinking (from Session)
-	for (var i = 36; i < 100; i++)
-		this.push.pads.blink (i, PUSH_COLOR_BLACK);
+	this.turnOffBlink ();
 
 	// 4x4 Grid
 	for (var x = 0; x < 4; x++)
