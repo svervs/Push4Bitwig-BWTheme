@@ -20,3 +20,10 @@ MidiInput.prototype.setMidiCallback = function (f)
 {
     this.port.setMidiCallback (f);
 };
+
+MidiInput.prototype.createNoteInput = function (f)
+{
+    var noteInput = this.port.createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
+	noteInput.setShouldConsumeEvents (false);
+    return noteInput;
+};

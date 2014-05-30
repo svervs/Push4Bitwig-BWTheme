@@ -3,10 +3,8 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function Model (push)
+function Model ()
 {
-	this.push = push;
-
 	this.application = host.createApplication ();
 
 	this.transport = new TransportProxy ();
@@ -17,21 +15,9 @@ function Model (push)
 	this.userControlBank = new UserControlBankProxy ();
 	this.cursorDevice = new CursorDeviceProxy ();
 
-	this.noteInput = this.push.input.getPort ().createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
-	this.noteInput.setShouldConsumeEvents (false);
-
 	this.scales = new Scales ();
 }
 
-Model.prototype.setKeyTranslationTable = function (table)
-{
-	this.noteInput.setKeyTranslationTable (table);
-};
-
-Model.prototype.setVelocityTranslationTable = function (table)
-{
-	this.noteInput.setVelocityTranslationTable (table);
-};
 
 /**
  * @returns {Scales}

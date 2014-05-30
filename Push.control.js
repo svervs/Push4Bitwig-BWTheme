@@ -6,6 +6,7 @@
 loadAPI (1);
 load ("Config.js");
 load ("helper/ClassLoader.js");
+load ("midi/ClassLoader.js");
 load ("daw/ClassLoader.js");
 load ("push/ClassLoader.js");
 load ("view/ClassLoader.js");

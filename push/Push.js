@@ -88,6 +88,8 @@ function Push (output, input)
 	this.input = input;
 
 	this.input.setMidiCallback (doObject (this, this.handleMidi));
+    this.noteInput = this.input.createNoteInput ();
+
 
 	this.pads = new Grid (output);
 	this.display = new Display (output);
@@ -105,7 +107,7 @@ function Push (output, input)
 
 Push.prototype.init = function ()
 {
-	this.model = new Model (this);
+	this.model = new Model ();
 
 	this.viewState = new ViewState (this, this.model);
 	this.modeState = new ModeState (this, this.model);
@@ -159,6 +161,17 @@ Push.prototype.turnOff = function ()
  * @returns {MidiOutput}
  */
 Push.prototype.getOutput = function () { return this.output; };
+
+
+Push.prototype.setKeyTranslationTable = function (table)
+{
+	this.noteInput.setKeyTranslationTable (table);
+};
+
+Push.prototype.setVelocityTranslationTable = function (table)
+{
+	this.noteInput.setVelocityTranslationTable (table);
+};
 
 /**
  * @returns {Model}
