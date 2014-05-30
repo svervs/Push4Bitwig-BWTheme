@@ -3,19 +3,16 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function TrackBankProxy (push)
+function TrackBankProxy ()
 {
-	this.push = push;
-
 	this.trackBank = host.createMainTrackBank (8, 6, 8);
-
 	this.canScrollTrackUpFlag   = false;
 	this.canScrollTrackDownFlag = false;
-
 	this.newClipLength = 2; // 1 Bar
+	this.recCount = 64;
+    this.listeners = [];
 
 	this.tracks = [];
-	this.recCount = 64;
 	for (var i = 0; i < 8; i++)
 	{
 		this.tracks.push (
@@ -40,10 +37,8 @@ function TrackBankProxy (push)
 		t.addIsSelectedObserver (doObjectIndex (this, i, function (index, isSelected)
 		{
 			this.tracks[index].selected = isSelected;
-			if (isSelected && this.push.isActiveMode (MODE_MASTER))
-				this.push.setPendingMode (MODE_TRACK);
-			if (this.push.isActiveView (VIEW_PLAY))
-				this.push.getActiveView ().updateNoteMapping ();
+            for (var l = 0; l < this.listeners.length; l++)
+                this.listeners[l].call (null, index, isSelected);
 		}));
 		t.addVuMeterObserver (128, -1, true, doObjectIndex (this, i, function (index, value)
 		{
@@ -154,6 +149,12 @@ TrackBankProxy.prototype.setNewClipLength = function (value) { this.newClipLengt
 
 TrackBankProxy.prototype.canScrollTrackDown = function () { return this.canScrollTrackDownFlag; };
 TrackBankProxy.prototype.canScrollTrackUp = function () { return this.canScrollTrackUpFlag; };
+
+// listener has 2 parameters: [int] index, [boolean] isSelected
+TrackBankProxy.prototype.addTrackSelectionListener = function (listener)
+{
+    this.listeners.push (listener);
+};
 
 /**
  * Returns a Track value object.

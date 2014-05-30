@@ -9,10 +9,10 @@ function Model (push)
 
 	this.application = host.createApplication ();
 
-	this.transport = new TransportProxy (push);
+	this.transport = new TransportProxy ();
 	this.groove = new GrooveProxy ();
-	this.masterTrack = new MasterTrackProxy (push);
-	this.trackBank = new TrackBankProxy (push);
+	this.masterTrack = new MasterTrackProxy ();
+	this.trackBank = new TrackBankProxy ();
 
 	this.userControlBank = new UserControlBankProxy ();
 	this.cursorDevice = new CursorDeviceProxy ();

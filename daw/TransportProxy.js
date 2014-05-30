@@ -7,10 +7,8 @@ TransportProxy.INC_FRACTION_TIME      = 1.0;	    // 1 beat
 TransportProxy.INC_FRACTION_TIME_SLOW = 1.0 / 20;	// 1/20th of a beat
 TransportProxy.TEMPO_RESOLUTION       = 647;
 
-function TransportProxy (push)
+function TransportProxy ()
 {
-	this.push = push;
-
 	this.transport = host.createTransport ();
 
 	this.isClickOn   = false;
@@ -23,19 +21,16 @@ function TransportProxy (push)
 	this.transport.addClickObserver (doObject (this, function (isOn)
 	{
         this.isClickOn = isOn;
-		this.push.setButton (PUSH_BUTTON_CLICK, isOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	}));
 	// Play
 	this.transport.addIsPlayingObserver (doObject (this, function (isPlaying)
 	{
         this.isPlaying = isPlaying;
-		this.push.setButton (PUSH_BUTTON_PLAY, isPlaying ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	}));
 	// Record
 	this.transport.addIsRecordingObserver (doObject (this, function (isRec)
 	{
 		this.isRecording = isRec;
-		this.push.setButton (PUSH_BUTTON_RECORD, isRec ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	}));
 	// Tempo
 	this.transport.getTempo ().addValueObserver (TransportProxy.TEMPO_RESOLUTION, doObject (this, function (value)

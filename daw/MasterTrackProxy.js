@@ -3,12 +3,10 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function MasterTrackProxy (push)
+function MasterTrackProxy ()
 {
-	this.push = push;
-
 	this.masterTrack = host.createMasterTrack (0);
-
+    this.listeners = [];
 	this.name = null;
 	this.vu = null;
 	this.mute = null;
@@ -17,7 +15,6 @@ function MasterTrackProxy (push)
 	this.panStr = null;
 	this.volume = null;
 	this.volumeStr = null;
-
 	this.selected = false;
 
 	// Master Track name
@@ -29,7 +26,8 @@ function MasterTrackProxy (push)
 	this.masterTrack.addIsSelectedObserver (doObject (this, function (isSelected)
 	{
 		this.selected = isSelected;
-		this.push.setPendingMode (isSelected ? MODE_MASTER : this.push.getPreviousMode ());
+        for (var l = 0; l < this.listeners.length; l++)
+            this.listeners[l].call (null, isSelected);
 	}));
 	this.masterTrack.addVuMeterObserver (128, -1, true, doObject (this, function (value)
 	{
@@ -74,6 +72,12 @@ function MasterTrackProxy (push)
 		this.volumeStr = text;
 	}));
 }
+
+// listener has 1 parameter: [boolean] isSelected
+MasterTrackProxy.prototype.addTrackSelectionListener = function (listener)
+{
+    this.listeners.push (listener);
+};
 
 //--------------------------------------
 // Properties
