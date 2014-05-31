@@ -82,46 +82,81 @@ var PUSH_BUTTON_STATE_OFF = 0;
 var PUSH_BUTTON_STATE_ON  = 1;
 var PUSH_BUTTON_STATE_HI  = 4;
 
+
 function Push (output, input)
 {
 	this.output = output;
-	this.input = input;
-
+	this.pads    = new Grid (output);
+	this.display = new Display (output);
+    
+	this.input  = input;
 	this.input.setMidiCallback (doObject (this, this.handleMidi));
     this.noteInput = this.input.createNoteInput ();
-
-
-	this.pads = new Grid (output);
-	this.display = new Display (output);
-
-	this.viewState = null;
-	this.modeState = null;
-
-	this.showVU = true;
-
+    
+	this.showVU           = true;
 	this.displayScheduled = false;
-	this.taskReturning = false;
-	
+	this.taskReturning    = false;
+
+    // Mode related
+	this.previousMode  = null;
+	this.currentMode   = null;
+    this.defaultMode   = null;
+	this.activeModeId  = -1;
+	this.modes         = [];
+    this.modeListeners = [];
+
+    // View related
+	this.activeViewId = -1;
+	this.views = [];
+    
+    // Button related
+	this.buttons =
+	[
+		PUSH_BUTTON_TAP,
+		PUSH_BUTTON_CLICK,
+		PUSH_BUTTON_MASTER,
+		PUSH_BUTTON_STOP,
+		PUSH_BUTTON_LEFT,
+		PUSH_BUTTON_RIGHT,
+		PUSH_BUTTON_UP,
+		PUSH_BUTTON_DOWN,
+		PUSH_BUTTON_SELECT,
+		PUSH_BUTTON_SHIFT,
+		PUSH_BUTTON_NOTE,
+		PUSH_BUTTON_SESSION,
+		PUSH_BUTTON_ADD_EFFECT,
+		PUSH_BUTTON_ADD_TRACK,
+		PUSH_BUTTON_OCTAVE_DOWN,
+		PUSH_BUTTON_OCTAVE_UP,
+		PUSH_BUTTON_REPEAT,
+		PUSH_BUTTON_ACCENT,
+		PUSH_BUTTON_SCALES,
+		PUSH_BUTTON_USER_MODE,
+		PUSH_BUTTON_MUTE,
+		PUSH_BUTTON_SOLO,
+		PUSH_BUTTON_DEVICE_LEFT,
+		PUSH_BUTTON_DEVICE_RIGHT,
+		PUSH_BUTTON_PLAY,
+		PUSH_BUTTON_RECORD,
+		PUSH_BUTTON_NEW,
+		PUSH_BUTTON_DUPLICATE,
+		PUSH_BUTTON_AUTOMATION,
+		PUSH_BUTTON_FIXED_LENGTH,
+		PUSH_BUTTON_DEVICE,
+		PUSH_BUTTON_BROWSE,
+		PUSH_BUTTON_TRACK,
+		PUSH_BUTTON_CLIP,
+		PUSH_BUTTON_VOLUME,
+		PUSH_BUTTON_PAN_SEND,
+		PUSH_BUTTON_QUANTIZE,
+		PUSH_BUTTON_DOUBLE,
+		PUSH_BUTTON_DELETE,
+		PUSH_BUTTON_UNDO
+	];
 	this.buttonStates = [];
+	for (var i = 0; i < this.buttons.length; i++)
+		this.buttonStates[this.buttons[i]] = ButtonEvent.UP;
 }
-
-Push.prototype.init = function ()
-{
-	this.model = new Model ();
-
-	this.viewState = new ViewState (this, this.model);
-	this.modeState = new ModeState (this, this.model);
-
-	var len = this.viewState.getButtons ().length;
-	for (var i = 0; i < len; i++)
-		this.buttonStates[this.viewState.getButton (i)] = ButtonEvent.UP;
-
-	// Create Push Views
-	this.viewState.init ();
-
-	// Create Push Mode impls
-	this.modeState.init ();
-};
 
 Push.prototype.flush = function ()
 {
@@ -152,16 +187,17 @@ Push.prototype.turnOff = function ()
 		this.display.clearRow (i);
 
 	// Turn off all buttons
-	this.viewState.turnOff ();
+	for (var i = 0; i < this.buttons.length; i++)
+		this.setButton (this.buttons[i], PUSH_BUTTON_STATE_OFF);
+
+	// Turn off 1st/2nd row buttons
+	for (var i = 20; i < 27; i++)
+		this.setButton (i, PUSH_BUTTON_STATE_OFF);
+	for (var i = 102; i < 110; i++)
+		this.setButton (i, PUSH_BUTTON_STATE_OFF);
 
 	this.pads.turnOff ();
 };
-
-/**
- * @returns {MidiOutput}
- */
-Push.prototype.getOutput = function () { return this.output; };
-
 
 Push.prototype.setKeyTranslationTable = function (table)
 {
@@ -173,73 +209,123 @@ Push.prototype.setVelocityTranslationTable = function (table)
 	this.noteInput.setVelocityTranslationTable (table);
 };
 
-/**
- * @returns {Model}
- */
-Push.prototype.getModel = function () { return this.model; };
-
 //--------------------------------------
 // ViewState
 //--------------------------------------
 
+Push.prototype.addView = function (viewId, view)
+{
+	view.attachTo (this);
+	this.views[viewId] = view;
+};
+
 Push.prototype.setActiveView = function (viewId)
 {
-	this.viewState.setActiveView (viewId);
+	this.activeViewId = viewId;
+
+	var view = this.getActiveView ();
+	if (view == null)
+	{
+		this.turnOff ();
+		return;
+	}
+
+	for (var i = 0; i < this.buttons.length; i++)
+		this.setButton (this.buttons[i], view.usesButton (this.buttons[i]) ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
+
+	view.onActivate ();
 };
 
 Push.prototype.getActiveView = function ()
 {
-	return this.viewState.getActiveView ();
+	if (this.activeViewId < 0)
+		return null;
+	var view = this.views[this.activeViewId];
+	return view ? view : null;
 };
 
 Push.prototype.isActiveView = function (viewId)
 {
-	return this.viewState.isActiveView (viewId);
+	return this.activeViewId == viewId;
 };
 
 //--------------------------------------
 // ModeState
 //--------------------------------------
 
+Push.prototype.addMode = function (modeId, mode)
+{
+	mode.attachTo (this);
+	this.modes[modeId] = mode;
+};
+
+// listener must be a 2 parameter function: [int] oldMode, [int] newMode
+Push.prototype.addModeListener = function (listener)
+{
+    this.modeListeners.push (listener);
+};
+
+Push.prototype.setDefaultMode = function (mode)
+{
+    this.defaultMode = mode;
+};
+
 Push.prototype.setPendingMode = function (mode)
 {
-	this.modeState.setPendingMode (mode);
+	if (mode == null)
+		mode = this.defaultMode;
+
+	if (mode != this.currentMode)
+	{	// TODO Create a setTempMode function which does not set the currentMode
+		if (this.currentMode != MODE_SCALES && this.currentMode != MODE_FIXED && this.currentMode != MODE_SCALES && this.currentMode != MODE_SCALE_LAYOUT)
+			this.previousMode = this.currentMode;
+		this.currentMode = mode;
+		this.setActiveMode (this.currentMode);
+	}
+    
+    // Notify all mode change listeners
+    for (var i = 0; i < this.modeListeners.length; i++)
+        this.modeListeners[i].call (null, this.previousMode, this.currentMode);
 }
 
 Push.prototype.getPreviousMode = function ()
 {
-	return this.modeState.getPreviousMode ();
+	return this.previousMode;
 };
 
 Push.prototype.getCurrentMode = function ()
 {
-	return this.modeState.getCurrentMode ();
+	return this.currentMode;
 };
 
 Push.prototype.getActiveMode = function ()
 {
-	return this.modeState.getActiveMode ();
+	if (this.activeModeId < 0)
+		return null;
+	var mode = this.modes[this.activeModeId];
+	return mode ? mode : null;
 };
 
 Push.prototype.setActiveMode = function (modeId)
 {
-	this.modeState.setActiveMode (modeId);
+	this.activeModeId = modeId;
+
+	var mode = this.getActiveMode ();
+	if (mode == null)
+		return;
+
+	mode.onActivate ();
 };
 
 Push.prototype.isActiveMode = function (modeId)
 {
-	return this.modeState.isActiveMode (modeId);
+	return this.activeModeId == modeId;
 };
 
 Push.prototype.getMode = function (modeId)
 {
-	return this.modeState.getMode (modeId);
+	return this.modes[modeId];
 };
-
-Push.prototype.updateMode = function (mode)
-{
-	this.modeState.updateMode (mode);
-}
 
 //--------------------------------------
 // Gesture
@@ -285,48 +371,10 @@ Push.prototype.redrawGrid = function ()
 
 Push.prototype.updateDisplay = function ()
 {
-	var t = this.model.getTrackBank ().getSelectedTrack ();
-	var d = this.display;
-	
 	var m = this.getActiveMode ();
 	if (m != null)
 		m.updateDisplay ();
-
-	if (m != null && m.isFullDisplay (this.getCurrentMode ()))
-		return;
-
-	// Send, Mute, Automation
-	if (t == null)
-	{
-		this.setButton (PUSH_BUTTON_MUTE, PUSH_BUTTON_STATE_OFF);
-		this.setButton (PUSH_BUTTON_SOLO, PUSH_BUTTON_STATE_OFF);
-		this.setButton (PUSH_BUTTON_AUTOMATION, PUSH_BUTTON_STATE_OFF);
-	}
-	else
-	{
-		this.setButton (PUSH_BUTTON_MUTE, t.mute ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-		this.setButton (PUSH_BUTTON_SOLO, t.solo ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-		this.setButton (PUSH_BUTTON_AUTOMATION, t.autowrite ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	}
-
-	// Format track names
-	var sel = t == null ? -1 : t.index;
-	for (var i = 0; i < 8; i++)
-	{
-		var isSel = i == sel;
-		var t = this.model.getTrackBank ().getTrack (i);
-		var n = optimizeName (t.name, isSel ? 7 : 8);
-		d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
-		
-		// Light up selection and record/monitor buttons
-		this.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
-		if (this.isShiftPressed ())
-			this.setButton (102 + i, t.monitor ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
-		else
-			this.setButton (102 + i, t.recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
-	}
-	d.done (3);
-}
+};
 
 //--------------------------------------
 // Handlers

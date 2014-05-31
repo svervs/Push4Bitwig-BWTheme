@@ -28,6 +28,8 @@ SendMode.prototype.onValueKnob = function (index, value)
 
 SendMode.prototype.updateDisplay = function ()
 {
+    this.drawTrackNames ();
+
 	var d = this.push.display;
 	var sendIndex = this.getCurrentSendIndex ();
 	for (var i = 0; i < 8; i++)

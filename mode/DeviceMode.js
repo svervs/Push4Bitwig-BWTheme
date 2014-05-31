@@ -7,7 +7,6 @@ function DeviceMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_BANK_DEVICE;
-	this.fullDisplay = true;
 }
 DeviceMode.prototype = new BaseMode ();
 

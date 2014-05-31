@@ -11,7 +11,6 @@ function ParamPageSelectMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_PARAM_PAGE_SELECT;
-	this.fullDisplay = true;
 	this.bottomItems = [];
 	this.selectedIndex = 0;
 }
@@ -59,6 +58,7 @@ ParamPageSelectMode.prototype.attachTo = function (push)
 	this.addFirstRowCommand (' Device ', MODE_BANK_DEVICE);
 	this.addFirstRowCommand (' Common ', MODE_BANK_COMMON);
 	this.addFirstRowCommand ('Envelope', MODE_BANK_ENVELOPE);
+    // TODO
 	//this.addFirstRowCommand ('Modulate', MODE_BANK_MODULATE);
 	this.addFirstRowCommand (' User   ', MODE_BANK_USER);
 	this.addFirstRowCommand (' Macro  ', MODE_BANK_MACRO);

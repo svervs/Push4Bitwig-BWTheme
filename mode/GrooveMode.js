@@ -7,7 +7,6 @@ function GrooveMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_GROOVE;
-	this.fullDisplay = true;
 }
 GrooveMode.prototype = new BaseMode ();
 

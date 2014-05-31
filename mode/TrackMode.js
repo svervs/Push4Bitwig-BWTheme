@@ -73,6 +73,8 @@ TrackMode.prototype.onValueKnob = function (index, value)
 
 TrackMode.prototype.updateDisplay = function ()
 {
+    this.drawTrackNames ();
+
 	var t = this.model.getTrackBank ().getSelectedTrack ();
 	var d = this.push.display;
 	

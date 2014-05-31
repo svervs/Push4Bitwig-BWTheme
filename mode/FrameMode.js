@@ -10,7 +10,6 @@ function FrameMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_FRAME;
-	this.fullDisplay = true;
 	this.bottomItems = [];
 }
 FrameMode.prototype = new BaseMode ();

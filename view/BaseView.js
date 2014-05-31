@@ -7,18 +7,17 @@ function BaseView (model)
 {
 	this.model = model;
 
-	this.canScrollLeft = true;
+	this.canScrollLeft  = true;
 	this.canScrollRight = true;
-	this.canScrollUp = true;
-	this.canScrollDown = true;
+	this.canScrollUp    = true;
+	this.canScrollDown  = true;
 
-	this.restartFlag = false;
-
-	this.stopPressed = false;
+	this.restartFlag   = false;
+	this.stopPressed   = false;
 	
 	this.ttLastMillis = -1;
-	this.ttLastBPM = -1;
-	this.ttHistory = [];
+	this.ttLastBPM    = -1;
+	this.ttHistory    = [];
 }
 BaseView.prototype = new View ();
 BaseView.prototype.constructor = BaseView;
@@ -266,9 +265,9 @@ BaseView.prototype.onValueKnob9 = function (value)
 
 BaseView.prototype.onValueKnob9Touch = function (isTouched)
 {
-	// commented out, dosn't belong here
-	//if (this.push.getCurrentMode () != MODE_MASTER)
-	//	masterTrack.getVolume ().setIndication (isTouched);
+	if (isTouched && this.push.getCurrentMode () == MODE_MASTER)
+        return;
+    this.push.setPendingMode (isTouched ? MODE_MASTER : this.push.getPreviousMode ());
 };
 
 BaseView.prototype.onFirstRow = function (index)
@@ -276,23 +275,6 @@ BaseView.prototype.onFirstRow = function (index)
 	var m = this.push.getActiveMode ();
 	if (m != null)
 		m.onFirstRow (index);
-	
-	// TODO (mschmalle) I changed this for the refactor of isFullDisplay()
-	// but this logic still feels weird, we should have a ViewMode that
-	// determines how views that only need parts of the display can share
-	// with other modes that are more primary, the logic below for now
-	// just emulates what it was doing originally until we change it
-	var fullDisplay = false;
-	if (m != null)
-		fullDisplay = !m.isFullDisplay (this.push.getCurrentMode ())
-
-	if (fullDisplay)
-	{
-		if (this.stopPressed)
-			this.model.getTrackBank ().stop (index);
-		else
-			this.model.getTrackBank ().select (index);
-	}
 };
 
 // Rec arm / enable monitor buttons

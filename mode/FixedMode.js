@@ -10,7 +10,6 @@ function FixedMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_FIXED;
-	this.fullDisplay = true;
 }
 FixedMode.prototype = new BaseMode ();
 
@@ -22,7 +21,6 @@ FixedMode.prototype.onFirstRow = function (index)
 FixedMode.prototype.updateDisplay = function ()
 {
 	var d = this.push.display;
-	
 	d.clearRow (0).done (0).clearRow (1).done (1)
 	 .setBlock (2, 0, 'New Clip Length:').clearBlock (2, 1).clearBlock (2, 2).clearBlock (2, 3)
 	 .done (2);

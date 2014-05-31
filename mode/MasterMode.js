@@ -9,20 +9,15 @@ function MasterMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_MASTER;
-	this.fullDisplay = true;
 }
 MasterMode.prototype = new BaseMode ();
 
 MasterMode.prototype.onValueKnob = function (index, value)
 {
 	if (index == 0)
-	{
 		this.model.getMasterTrack ().setVolume (value);
-	}
 	else if (index == 1)
-	{
 		this.model.getMasterTrack ().setPan (value);
-	}
 };
 
 MasterMode.prototype.updateDisplay = function ()

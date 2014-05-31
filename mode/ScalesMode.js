@@ -8,7 +8,6 @@ function ScalesMode (model)
 	BaseMode.call (this, model);
 	this.id = MODE_SCALES;
 	this.scales = model.getScales ();
-	this.fullDisplay = true;
 }
 ScalesMode.prototype = new BaseMode ();
 

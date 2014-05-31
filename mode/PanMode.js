@@ -20,8 +20,9 @@ PanMode.prototype.onValueKnob = function (index, value)
 
 PanMode.prototype.updateDisplay = function ()
 {
+    this.drawTrackNames ();
+
 	var d = this.push.display;
-	
 	for (var i = 0; i < 8; i++)
 	{
 		var t = this.model.getTrackBank ().getTrack (i);

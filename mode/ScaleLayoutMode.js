@@ -8,7 +8,6 @@ function ScaleLayoutMode (model)
 	BaseMode.call (this, model);
 	this.id = MODE_SCALE_LAYOUT;
 	this.scales = model.getScales ();
-	this.fullDisplay = true;
 }
 ScaleLayoutMode.prototype = new BaseMode ();
 

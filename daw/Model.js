@@ -18,7 +18,6 @@ function Model ()
 	this.scales = new Scales ();
 }
 
-
 /**
  * @returns {Scales}
  */

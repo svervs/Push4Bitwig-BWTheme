@@ -7,7 +7,6 @@ function AccentMode (model)
 {
 	BaseMode.call (this, model);
 	this.id = MODE_ACCENT;
-	this.fullDisplay = true;
 }
 AccentMode.prototype = new BaseMode ();
 

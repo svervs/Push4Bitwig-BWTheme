@@ -93,8 +93,9 @@ ParamPageMode.prototype.onValueKnob = function (index, value)
 
 ParamPageMode.prototype.updateDisplay = function ()
 {
-	var d = this.push.display;
+    this.drawTrackNames ();
 
+	var d = this.push.display;
 	if (this.hasParams ())
 	{
 		for (var i = 0; i < 8; i++)
@@ -104,17 +105,16 @@ ParamPageMode.prototype.updateDisplay = function ()
 			else
 			{
 				d.setCell (0, i, this.params[i].name, Display.FORMAT_RAW)
-					.setCell (1, i, this.params[i].valueStr, Display.FORMAT_RAW)
-					.setCell (2, i, this.params[i].value, Display.FORMAT_VALUE);
+				 .setCell (1, i, this.params[i].valueStr, Display.FORMAT_RAW)
+				 .setCell (2, i, this.params[i].value, Display.FORMAT_VALUE);
 			}
 		}
 	}
 	else
 	{
 		d.clearRow (0).clearRow (1).clearRow (2)
-			.setCell (1, 3, 'No ' + this.name).setCell (1, 4, 'Assigned');
+		 .setCell (1, 3, 'No ' + this.name).setCell (1, 4, 'Assigned');
 	}
-
 	d.done (0).done (1).done (2);
 };
 
