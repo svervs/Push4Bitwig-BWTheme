@@ -516,7 +516,6 @@ BaseView.prototype.turnOffBlink = function ()
 		this.push.pads.blink (i, PUSH_COLOR_BLACK);
 };
 
-// TODO (mschmalle) TEMP unitl refactor finished
 BaseView.prototype.selectTrack = function (index)
 {
 	this.model.getTrackBank ().selectTrack (index);

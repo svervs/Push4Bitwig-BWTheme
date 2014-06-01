@@ -147,6 +147,11 @@ CursorDeviceProxy.prototype.getMacro = function (index)
 	return this.cursorDevice.getMacro (index)
 };
 
+CursorDeviceProxy.prototype.getModulationSource = function (index)
+{
+	return this.cursorDevice.getModulationSource (index)
+};
+
 CursorDeviceProxy.prototype.switchToNextPresetCategory = function ()
 {
 	return this.cursorDevice.switchToNextPresetCategory ();

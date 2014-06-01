@@ -37,15 +37,26 @@ ParamPageMode.prototype.attachTo = function (push)
 			}));
 		}
 
-		p.addValueObserver (128, doObjectIndex (this, i, function (index, value)
+		if (this.id == MODE_BANK_MODULATE)
 		{
-			this.params[index].value = value;
-		}));
-		// Parameter value text
-		p.addValueDisplayObserver (8, '',  doObjectIndex (this, i, function (index, value)
+			p.addIsMappingObserver (doObjectIndex (this, i, function (index, isMapping)
+			{
+				this.params[index].value = isMapping;
+				this.params[index].valueStr = isMapping ? 'On' : 'Off';
+			}));
+		}
+		else
 		{
-			this.params[index].valueStr = value;
-		}));
+			p.addValueObserver (128, doObjectIndex (this, i, function (index, value)
+			{
+				this.params[index].value = value;
+			}));
+			// Parameter value text
+			p.addValueDisplayObserver (8, '',  doObjectIndex (this, i, function (index, value)
+			{
+				this.params[index].valueStr = value;
+			}));
+		}
 	}
 };
 
@@ -55,15 +66,14 @@ ParamPageMode.prototype.getParameter = function (index)
 	{
 		case MODE_BANK_COMMON:
 			return this.model.getCursorDevice ().getCommonParameter (index);
-
-		case MODE_BANK_ENVELOPE :
+		case MODE_BANK_ENVELOPE:
 			return this.model.getCursorDevice ().getEnvelopeParameter (index);
-
-		case MODE_BANK_USER :
+		case MODE_BANK_USER:
 			return this.model.getUserControlBank ().getControl (index);
-
-		case MODE_BANK_MACRO :
+		case MODE_BANK_MACRO:
 			return this.model.getCursorDevice ().getMacro (index).getAmount ();
+		case MODE_BANK_MODULATE:
+			return this.model.getCursorDevice ().getModulationSource (index);
 	}
 };
 
@@ -73,20 +83,26 @@ ParamPageMode.prototype.getNameParameter = function (index)
 	{
 		case MODE_BANK_COMMON:
 			return this.model.getCursorDevice ().getCommonParameter (index);
-
-		case MODE_BANK_ENVELOPE :
+		case MODE_BANK_ENVELOPE:
 			return this.model.getCursorDevice ().getEnvelopeParameter (index);
-
-		case MODE_BANK_USER :
+		case MODE_BANK_USER:
 			return this.model.getUserControlBank ().getControl (index);
-
-		case MODE_BANK_MACRO :
+		case MODE_BANK_MACRO:
 			return this.model.getCursorDevice ().getMacro (index);
+		case MODE_BANK_MODULATE:
+			return this.model.getCursorDevice ().getModulationSource (index);
 	}
 };
 
 ParamPageMode.prototype.onValueKnob = function (index, value)
 {
+	if (this.id == MODE_BANK_MODULATE)
+	{
+		if ((value <= 61 && !this.params[index].value) ||
+			(value > 61 && this.params[index].value))
+			this.getParameter (index).toggleIsMapping ();
+		return;
+	}
 	this.params[index].value = changeValue (value, this.params[index].value);
 	this.getParameter (index).set (this.params[index].value, 128);
 };
@@ -109,6 +125,8 @@ ParamPageMode.prototype.updateDisplay = function ()
 				 .setCell (2, i, this.params[i].value, Display.FORMAT_VALUE);
 			}
 		}
+		if (this.id == MODE_BANK_MODULATE)
+			d.clearRow (2);
 	}
 	else
 	{
