@@ -3,8 +3,6 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-BaseMode.INC_FRACTION_VALUE = 1;
-
 function BaseMode (model)
 {
 	this.model = model;
@@ -60,9 +58,3 @@ BaseMode.prototype.drawTrackNames = function ()
 	}
 	d.done (3);
 };
-
-// TODO duplicated
-BaseMode.prototype.changeValue = function (control, value)
-{
-	return control <= 61 ? Math.min (value + BaseMode.INC_FRACTION_VALUE, 127) : Math.max (value - BaseMode.INC_FRACTION_VALUE, 0);
-}

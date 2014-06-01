@@ -87,7 +87,7 @@ ParamPageMode.prototype.getNameParameter = function (index)
 
 ParamPageMode.prototype.onValueKnob = function (index, value)
 {
-	this.params[index].value = this.changeValue (value, this.params[index].value);
+	this.params[index].value = changeValue (value, this.params[index].value);
 	this.getParameter (index).set (this.params[index].value, 128);
 };
 

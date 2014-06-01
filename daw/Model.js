@@ -26,15 +26,6 @@ Model.prototype.getScales = function ()
 	return this.scales;
 };
 
-// TODO Move to TrackBankProxy
-/**
- * @returns {Track}
- */
-Model.prototype.getSelectedTrack = function ()
-{
-	return this.getTrackBank ().getSelectedTrack ();
-};
-
 Model.prototype.hasSelectedDevice = function ()
 {
 	return this.cursorDevice.getSelectedDevice ().name != 'None';

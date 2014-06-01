@@ -12,13 +12,13 @@ var MODE_GROOVE              = 4;
 var MODE_ACCENT              = 5;
 
 var MODE_PAN                 = 10;
-var MODE_SEND                = 11;
-var MODE_SEND1               = 12;
-var MODE_SEND2               = 13;
-var MODE_SEND3               = 14;
-var MODE_SEND4               = 15;
-var MODE_SEND5               = 16;
-var MODE_SEND6               = 17;
+var MODE_SEND1               = 11;
+var MODE_SEND2               = 12;
+var MODE_SEND3               = 13;
+var MODE_SEND4               = 14;
+var MODE_SEND5               = 15;
+var MODE_SEND6               = 16;
+var MODE_SEND                = 17;
 
 var MODE_PARAM_PAGE_SELECT   = 20;
 var MODE_BANK_DEVICE         = 21;
@@ -35,6 +35,7 @@ var MODE_SCALE_LAYOUT        = 32;
 
 
 load ("BaseMode.js");
+load ("AbstractTrackMode.js");
 load ("TrackMode.js");
 load ("VolumeMode.js");
 load ("MasterMode.js");

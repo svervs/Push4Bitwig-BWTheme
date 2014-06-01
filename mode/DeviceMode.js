@@ -13,7 +13,7 @@ DeviceMode.prototype = new BaseMode ();
 DeviceMode.prototype.onValueKnob = function (index, value)
 {
 	var param = this.model.getCursorDevice ().getFXParam (index);
-	param.value = this.changeValue (value, param.value);
+	param.value = changeValue (value, param.value);
 	this.model.getCursorDevice ().getParameter (index).set (param.value, 128);
 };
 

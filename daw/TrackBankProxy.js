@@ -190,7 +190,7 @@ TrackBankProxy.prototype.selectTrack = function (index)
 TrackBankProxy.prototype.setVolume = function (index, value)
 {
 	var t = this.getTrack (index);
-	t.volume = this.changeValue (value, t.volume);
+	t.volume = changeValue (value, t.volume);
 	this.trackBank.getTrack (t.index).getVolume ().set (t.volume, 128);
 };
 
@@ -202,7 +202,7 @@ TrackBankProxy.prototype.setVolumeIndication = function (index, indicate)
 TrackBankProxy.prototype.setPan = function (index, value)
 {
 	var t = this.getTrack (index);
-	t.pan = this.changeValue (value, t.pan);
+	t.pan = changeValue (value, t.pan);
 	this.trackBank.getTrack (t.index).getPan ().set (t.pan, 128);
 };
 
@@ -248,7 +248,7 @@ TrackBankProxy.prototype.setSend = function (index, sendIndex, value)
 {
 	var t = this.getTrack (index);
 	var send = t.sends[sendIndex];
-	send.volume = this.changeValue (value, send.volume);
+	send.volume = changeValue (value, send.volume);
 	this.trackBank.getTrack (t.index).getSend (sendIndex).set (send.volume, 128);
 };
 
@@ -317,13 +317,18 @@ TrackBankProxy.prototype.scrollScenesPageDown = function ()
 	this.trackBank.scrollScenesPageDown ();
 };
 
+TrackBankProxy.prototype.setIndication = function (enable)
+{
+	for (var index = 0; index < 8; index++)
+		this.trackBank.getTrack (index).getClipLauncherSlots ().setIndication (enable);
+};
+
 /**
  * @param index
  * @returns {ClipLauncherSlots}
  */
 TrackBankProxy.prototype.getClipLauncherSlots = function (index)
 {
-	// TODO (mschmalle) Need container? [getClipLauncherSlots]
 	return this.trackBank.getTrack (index).getClipLauncherSlots ();
 };
 
@@ -332,12 +337,5 @@ TrackBankProxy.prototype.getClipLauncherSlots = function (index)
  */
 TrackBankProxy.prototype.getClipLauncherScenes = function ()
 {
-	// TODO (mschmalle) Need container? [getClipLauncherScenes]
 	return this.trackBank.getClipLauncherScenes ();
-};
-
-// TODO (mschmalle) get this in utility, MasterTrack uses it as well
-TrackBankProxy.prototype.changeValue = function (control, value)
-{
-	return control <= 61 ? Math.min (value + BaseMode.INC_FRACTION_VALUE, 127) : Math.max (value - BaseMode.INC_FRACTION_VALUE, 0);
 };

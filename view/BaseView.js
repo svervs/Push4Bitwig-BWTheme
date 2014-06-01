@@ -99,7 +99,8 @@ BaseView.prototype.onNew = function (event)
 {
 	if (!event.isDown ())
 		return;
-	var t = this.model.getTrackBank ().getSelectedTrack ();
+	var tb = this.model.getTrackBank ();
+	var t = tb.getSelectedTrack ();
 	if (t != null)
 	{
 		var slotIndex = this.getSelectedSlot (t);
@@ -112,8 +113,8 @@ BaseView.prototype.onNew = function (event)
 			var s = t.slots[sIndex];
 			if (!s.hasContent)
 			{
-				var slots = this.model.getTrackBank ().getClipLauncherSlots (t.index);
-				slots.createEmptyClip (sIndex, Math.pow (2, this.model.getTrackBank ().getNewClipLength ()));
+				var slots = tb.getClipLauncherSlots (t.index);
+				slots.createEmptyClip (sIndex, Math.pow (2, tb.getNewClipLength ()));
 				if (slotIndex != sIndex)
 					slots.select (sIndex);
 				slots.launch (sIndex);
@@ -283,17 +284,6 @@ BaseView.prototype.onSecondRow = function (index)
 	var m = this.push.getActiveMode ();
 	if (m != null)
 		m.onSecondRow (index);
-	
-	// TODO (mschmalle) Can we do this better now that we have more abstraction with modes?
-	if (this.push.getCurrentMode () != MODE_BANK_DEVICE && this.push.getCurrentMode () != MODE_MASTER &&
-		this.push.getCurrentMode () != MODE_SCALES && this.push.getCurrentMode () != MODE_PRESET &&
-		this.push.getCurrentMode () != MODE_SCALE_LAYOUT)
-	{
-		if (this.push.isShiftPressed ())
-			; // Toggle monitor: Currently not possible
-		else
-			this.model.getTrackBank ().toggleArm (index);
-	} 
 };
 
 BaseView.prototype.onMaster = function (event)

@@ -37,38 +37,23 @@ TrackMode.COLORS =
 
 function TrackMode (model)
 {
-	BaseMode.call (this, model);
+	AbstractTrackMode.call (this, model);
 	this.id = MODE_TRACK;
 }
-TrackMode.prototype = new BaseMode ();
+TrackMode.prototype = new AbstractTrackMode ();
 
 TrackMode.prototype.onValueKnob = function (index, value)
 {
-	var selectedTrack = this.model.getTrackBank ().getSelectedTrack ();
+	var tb = this.model.getTrackBank ();
+	var selectedTrack = tb.getSelectedTrack ();
 	if (selectedTrack == null)
 		return;
-	// TODO FIX trackBank
-	var t = this.model.getTrackBank ().trackBank.getTrack (selectedTrack.index);
 	if (index == 0)
-	{
-		// Volume
-		selectedTrack.volume = this.changeValue (value, selectedTrack.volume);
-		t.getVolume ().set (selectedTrack.volume, 128);
-	}
+		tb.setVolume (selectedTrack.index, value);
 	else if (index == 1)
-	{
-		// Pan
-		selectedTrack.pan = this.changeValue (value, selectedTrack.pan);
-		t.getPan ().set (selectedTrack.pan, 128);
-	}
+		tb.setPan (selectedTrack.index, value);
 	else
-	{
-		// Send 1-6 Volume
-		var sel = index - 2;
-		var send = selectedTrack.sends[sel];
-		send.volume = this.changeValue (value, send.volume);
-		t.getSend (send.index).set (send.volume, 128);
-	}
+		tb.setSend (selectedTrack.index, index - 2, value);
 };
 
 TrackMode.prototype.updateDisplay = function ()

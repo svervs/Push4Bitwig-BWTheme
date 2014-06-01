@@ -8,10 +8,10 @@ PanMode.PARAM_NAMES = 'Pan      Pan     Pan      Pan     Pan      Pan     Pan   
 
 function PanMode (model)
 {
-	BaseMode.call (this, model);
+	AbstractTrackMode.call (this, model);
 	this.id = MODE_PAN;
 }
-PanMode.prototype = new BaseMode ();
+PanMode.prototype = new AbstractTrackMode ();
 
 PanMode.prototype.onValueKnob = function (index, value)
 {

@@ -8,10 +8,10 @@ VolumeMode.PARAM_NAMES = 'Volume   Volume  Volume   Volume  Volume   Volume  Vol
 
 function VolumeMode (model)
 {
-	BaseMode.call (this, model);
+	AbstractTrackMode.call (this, model);
 	this.id = MODE_VOLUME;
 }
-VolumeMode.prototype = new BaseMode ();
+VolumeMode.prototype = new AbstractTrackMode ();
 
 VolumeMode.prototype.onValueKnob = function (index, value)
 {

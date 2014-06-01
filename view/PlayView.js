@@ -34,8 +34,7 @@ PlayView.prototype.onActivate = function ()
 	this.push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
 	this.push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
 	this.push.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-	for (var i = 0; i < 8; i++)
-		this.model.getTrackBank ().getClipLauncherSlots (i).setIndication (false);
+	this.model.getTrackBank ().setIndication (false);
 	this.updateSceneButtons ();
 	this.initMaxVelocity ();
 };

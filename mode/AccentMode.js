@@ -12,7 +12,7 @@ AccentMode.prototype = new BaseMode ();
 
 AccentMode.prototype.onValueKnob = function (index, value)
 {
-	var v = this.changeValue (value, Config.fixedAccentValue);
+	var v = changeValue (value, Config.fixedAccentValue);
 	Config.setAccentValue (v == 0 ? 1 : v);
 };
 

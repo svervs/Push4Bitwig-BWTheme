@@ -15,10 +15,10 @@ SendMode.PARAM_NAMES   =
 
 function SendMode (model)
 {
-	BaseMode.call (this, model);
+	AbstractTrackMode.call (this, model);
 	this.id = MODE_SEND;
 }
-SendMode.prototype = new BaseMode ();
+SendMode.prototype = new AbstractTrackMode ();
 
 SendMode.prototype.onValueKnob = function (index, value)
 {

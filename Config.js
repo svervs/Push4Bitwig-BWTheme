@@ -2,8 +2,12 @@
 Config.accentActive     = false;
 // Fixed velocity value for accent
 Config.fixedAccentValue = 127;
+// Inc/Dec of knobs
+Config.fractionValue    = 1;
+
 
 Config.FIXED_ACCENT_VALUE = 0;
+Config.INC_FRACTION_VALUE = 1;
 
 
 Config.setAccentValue = function (value)

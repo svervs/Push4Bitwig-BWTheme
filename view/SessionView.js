@@ -78,8 +78,7 @@ SessionView.prototype.onActivate = function ()
 
 	this.push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
 	this.push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
-	for (var i = 0; i < 8; i++)
-		this.model.getTrackBank ().getClipLauncherSlots (i).setIndication (true);
+	this.model.getTrackBank ().setIndication (true);
 
 	for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
 		this.push.setButton (i, PUSH_COLOR_SCENE_GREEN);
@@ -111,12 +110,13 @@ SessionView.prototype.onGrid = function (note, velocity)
 	var t = index % 8;
 	var s = 7 - Math.floor (index / 8);
 
-	var slot = this.model.getTrackBank ().getTrack (t).slots[s];
-	var slots = this.model.getTrackBank ().getClipLauncherSlots (t);
+	var tb = this.model.getTrackBank ();
+	var slot = tb.getTrack (t).slots[s];
+	var slots = tb.getClipLauncherSlots (t);
 	
 	if (!this.push.isSelectPressed ())
 	{
-		if (this.model.getTrackBank ().getTrack (t).recarm)
+		if (tb.getTrack (t).recarm)
 		{
 			if (slot.isRecording)
 				slots.launch (s);
