@@ -82,7 +82,6 @@ SequencerView.prototype.onLeft = function (event)
 		this.offsetX = newOffset;
 		this.clip.scrollStepsPageBackwards ();
 	}
-	this.updateArrows ();
 };
 
 SequencerView.prototype.onRight = function (event)
@@ -91,7 +90,6 @@ SequencerView.prototype.onRight = function (event)
 		return;
 	this.offsetX = this.offsetX + SequencerView.NUM_DISPLAY_COLS;
 	this.clip.scrollStepsPageForward ();
-	this.updateArrows ();
 };
 
 SequencerView.prototype.onUp = function (event)
@@ -100,7 +98,6 @@ SequencerView.prototype.onUp = function (event)
 		return;
 	this.offsetY = Math.min (this.rows - SequencerView.NUM_OCTAVE, this.offsetY + SequencerView.NUM_OCTAVE);
 	this.updateScale ();
-	this.updateArrows ();
 };
 
 SequencerView.prototype.onDown = function (event)
@@ -109,7 +106,6 @@ SequencerView.prototype.onDown = function (event)
 		return;
 	this.offsetY = Math.max (0, this.offsetY - SequencerView.NUM_OCTAVE);
 	this.updateScale ();
-	this.updateArrows ();
 };
 
 SequencerView.prototype.drawGrid = function ()

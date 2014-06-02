@@ -137,7 +137,7 @@ PlayView.prototype.onLeft = function (event)
 		var index = sel == null ? 0 : sel.index - 1;
 		if (index == -1)
 		{
-			if (!this.model.getTrackBank ().canScrollTrackUp ())
+			if (!this.model.getTrackBank ().canScrollTracksUp ())
 				return;
 			this.model.getTrackBank ().scrollTracksPageUp ();
 			host.scheduleTask (doObject (this, this.selectTrack), [7], 100);
@@ -160,9 +160,10 @@ PlayView.prototype.onRight = function (event)
 		var index = sel == null ? 0 : sel.index + 1;
 		if (index == 8)
 		{
-			if (!this.model.getTrackBank ().canScrollTrackDown ())
+            var tb = this.model.getTrackBank ();
+			if (!tb.canScrollTracksDown ())
 				return;
-			this.model.getTrackBank ().scrollTracksPageDown ();
+			tb.scrollTracksPageDown ();
 			host.scheduleTask (doObject (this, this.selectTrack), [0], 100);
 		}
 		this.selectTrack (index);

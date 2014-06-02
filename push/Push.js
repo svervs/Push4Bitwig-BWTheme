@@ -171,8 +171,7 @@ Push.prototype.flush = function ()
 		this.displayScheduled = true;
 		host.scheduleTask (doObject (this, function ()
 		{
-			this.updateDisplay ();
-			this.display.flush ();
+			this.scheduledFlush ();
 			this.displayScheduled = false;
 			this.taskReturning = true;
 		}), null, 5);
@@ -268,6 +267,10 @@ Push.prototype.addModeListener = function (listener)
 Push.prototype.setDefaultMode = function (mode)
 {
     this.defaultMode = mode;
+	if (this.currentMode == null)
+		this.currentMode = this.defaultMode;
+	if (this.previousMode == null)
+		this.previousMode = this.defaultMode;
 };
 
 Push.prototype.setPendingMode = function (mode)
@@ -276,8 +279,8 @@ Push.prototype.setPendingMode = function (mode)
 		mode = this.defaultMode;
 
 	if (mode != this.currentMode)
-	{	// TODO Create a setTempMode function which does not set the currentMode
-		if (this.currentMode != MODE_SCALES && this.currentMode != MODE_FIXED && this.currentMode != MODE_SCALES && this.currentMode != MODE_SCALE_LAYOUT)
+	{
+        if (!this.getMode (this.currentMode).isTemporary)
 			this.previousMode = this.currentMode;
 		this.currentMode = mode;
 		this.setActiveMode (this.currentMode);
@@ -369,11 +372,12 @@ Push.prototype.redrawGrid = function ()
 	this.pads.flush ();
 };
 
-Push.prototype.updateDisplay = function ()
+Push.prototype.scheduledFlush = function ()
 {
-	var m = this.getActiveMode ();
-	if (m != null)
-		m.updateDisplay ();
+	var view = this.getActiveView ();
+	if (view != null)
+		view.updateDevice ();
+	this.display.flush ();
 };
 
 //--------------------------------------

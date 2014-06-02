@@ -7,6 +7,9 @@ function BaseMode (model)
 {
 	this.model = model;
 	this.id = null;
+    // True if a specific mode always needs the 2nd button row
+    this.hasSecondRowPriority = true;
+    this.isTemporary = true;
 }
 
 BaseMode.prototype.attachTo = function (push)
@@ -25,10 +28,7 @@ BaseMode.prototype.onValueKnobTouch = function (index, isTouched) {};
 
 BaseMode.prototype.onFirstRow = function (index)
 {
-    if (this.push.isPressed (PUSH_BUTTON_STOP))
-        this.model.getTrackBank ().stop (index);
-    else
-        this.model.getTrackBank ().select (index);
+    this.model.getTrackBank ().select (index);
 };
 
 BaseMode.prototype.onSecondRow = function (index) {};
@@ -37,24 +37,22 @@ BaseMode.prototype.updateDisplay = function () {};
 BaseMode.prototype.drawTrackNames = function ()
 {
     var tb = this.model.getTrackBank ()
-	var t = tb.getSelectedTrack ();
+	var selTrack = tb.getSelectedTrack ();
     
 	// Format track names
-	var sel = t == null ? -1 : t.index;
+	var selIndex = selTrack == null ? -1 : selTrack.index;
 	var d = this.push.display;
 	for (var i = 0; i < 8; i++)
 	{
-		var isSel = i == sel;
+		var isSel = i == selIndex;
 		var t = tb.getTrack (i);
 		var n = optimizeName (t.name, isSel ? 7 : 8);
 		d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
 		
-		// Light up selection and record/monitor buttons
+		// Light up selection and record buttons
 		this.push.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
-		if (this.push.isShiftPressed ())
-			this.push.setButton (102 + i, t.monitor ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
-		else
-			this.push.setButton (102 + i, t.recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
+        if (!this.hasSecondRowPriority)
+            this.push.setButton (102 + i, t.recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
 	}
 	d.done (3);
 };

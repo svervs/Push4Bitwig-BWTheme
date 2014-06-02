@@ -27,13 +27,16 @@ BaseView.lastNoteView = VIEW_PLAY;
 BaseView.prototype.onActivate = function ()
 {
 	this.updateNoteMapping ();
-	this.updateArrows ();
+    // TODO What is this good for?
 	this.push.setPendingMode (this.push.getCurrentMode ());
 };
 
-BaseView.prototype.updateNoteMapping = function ()
+BaseView.prototype.updateDevice = function ()
 {
-	this.push.setKeyTranslationTable (initArray (-1, 128));
+	var m = this.push.getActiveMode ();
+	if (m != null)
+		m.updateDisplay ();
+	this.updateArrows ();
 };
 
 BaseView.prototype.updateArrows = function ()
@@ -42,6 +45,11 @@ BaseView.prototype.updateArrows = function ()
 	this.push.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
 	this.push.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
 	this.push.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+};
+
+BaseView.prototype.updateNoteMapping = function ()
+{
+	this.push.setKeyTranslationTable (initArray (-1, 128));
 };
 
 BaseView.prototype.onPlay = function (event)
@@ -278,7 +286,6 @@ BaseView.prototype.onFirstRow = function (index)
 		m.onFirstRow (index);
 };
 
-// Rec arm / enable monitor buttons
 BaseView.prototype.onSecondRow = function (index)
 {
 	var m = this.push.getActiveMode ();
@@ -370,9 +377,10 @@ BaseView.prototype.onDeviceLeft = function (event)
 	if (!event.isDown ())
 		return;
 
-	if (this.model.getTrackBank ().canScrollTrackUp ())
+    var tb = this.model.getTrackBank ();
+	if (tb.canScrollTracksUp ())
 	{
-		this.model.getTrackBank ().scrollTracksPageUp ();
+		tb.scrollTracksPageUp ();
 		host.scheduleTask (doObject (this, this.selectTrack), [7], 100);
 	}
 };
@@ -383,9 +391,10 @@ BaseView.prototype.onDeviceRight = function (event)
 	if (!event.isDown ())
 		return;
 
-	if (this.model.getTrackBank ().canScrollTrackDown ())
+    var tb = this.model.getTrackBank ();
+	if (tb.canScrollTracksDown ())
 	{
-		this.model.getTrackBank ().scrollTracksPageDown ();
+		tb.scrollTracksPageDown ();
 		host.scheduleTask (doObject (this, this.selectTrack), [0], 100);
 	}
 };

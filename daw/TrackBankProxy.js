@@ -6,8 +6,12 @@
 function TrackBankProxy ()
 {
 	this.trackBank = host.createMainTrackBank (8, 6, 8);
-	this.canScrollTrackUpFlag   = false;
-	this.canScrollTrackDownFlag = false;
+	
+    this.canScrollTracksUpFlag   = false;
+	this.canScrollTracksDownFlag = false;
+    this.canScrollScenesUpFlag   = false;
+    this.canScrollScenesDownFlag = false;
+    
 	this.newClipLength = 2; // 1 Bar
 	this.recCount = 64;
     this.listeners = [];
@@ -132,13 +136,21 @@ function TrackBankProxy ()
 		}
 	}
 
-	this.trackBank.addCanScrollTracksDownObserver (doObject (this, function (canScroll)
-	{
-		this.canScrollTrackDownFlag = canScroll;
-	}));
 	this.trackBank.addCanScrollTracksUpObserver (doObject (this, function (canScroll)
 	{
-		this.canScrollTrackUpFlag = canScroll;
+		this.canScrollTracksUpFlag = canScroll;
+	}));
+	this.trackBank.addCanScrollTracksDownObserver (doObject (this, function (canScroll)
+	{
+		this.canScrollTracksDownFlag = canScroll;
+	}));
+	this.trackBank.addCanScrollScenesUpObserver (doObject (this, function (canScroll)
+	{
+		this.canScrollScenesUpFlag = canScroll;
+	}));
+	this.trackBank.addCanScrollScenesDownObserver (doObject (this, function (canScroll)
+	{
+		this.canScrollScenesDownFlag = canScroll;
 	}));
 }
 
@@ -147,8 +159,10 @@ TrackBankProxy.prototype.isClipRecording = function () { return this.recCount !=
 TrackBankProxy.prototype.getNewClipLength = function () { return this.newClipLength; };
 TrackBankProxy.prototype.setNewClipLength = function (value) { this.newClipLength = value; };
 
-TrackBankProxy.prototype.canScrollTrackDown = function () { return this.canScrollTrackDownFlag; };
-TrackBankProxy.prototype.canScrollTrackUp = function () { return this.canScrollTrackUpFlag; };
+TrackBankProxy.prototype.canScrollTracksUp   = function () { return this.canScrollTracksUpFlag; };
+TrackBankProxy.prototype.canScrollTracksDown = function () { return this.canScrollTracksDownFlag; };
+TrackBankProxy.prototype.canScrollScenesUp   = function () { return this.canScrollScenesUpFlag; };
+TrackBankProxy.prototype.canScrollScenesDown = function () { return this.canScrollScenesDownFlag; };
 
 // listener has 2 parameters: [int] index, [boolean] isSelected
 TrackBankProxy.prototype.addTrackSelectionListener = function (listener)

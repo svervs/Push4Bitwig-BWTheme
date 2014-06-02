@@ -6,13 +6,12 @@
 function AbstractTrackMode (model)
 {
 	BaseMode.call (this, model);
+    this.hasSecondRowPriority = false;
+    this.isTemporary = false;
 }
 AbstractTrackMode.prototype = new BaseMode ();
 
 AbstractTrackMode.prototype.onSecondRow = function (index)
 {
-	if (this.push.isShiftPressed ())
-		; // Toggle monitor: Currently not possible
-	else
-		this.model.getTrackBank ().toggleArm (index);
+	this.model.getTrackBank ().toggleArm (index);
 };

@@ -19,6 +19,7 @@ View.prototype.usesButton = function (buttonID)
 
 View.prototype.onActivate = function () {};
 
+View.prototype.updateDevice = function () {};
 View.prototype.drawGrid = function () {};
 View.prototype.onGrid = function (note, velocity) {};
 

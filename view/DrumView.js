@@ -8,6 +8,9 @@ DrumView.DRUM_START_KEY = 36;
 function DrumView (model)
 {
 	AbstractSequencerView.call (this, model, 128, 32);
+	this.canScrollUp = false;
+	this.canScrollDown = false;
+
 	this.pads = initArray ({ exists: false, solo: false, mute: false }, 16);
 	this.selectedPad = 0;
 	this.offsetY = DrumView.DRUM_START_KEY;
@@ -16,8 +19,6 @@ DrumView.prototype = new AbstractSequencerView ();
 
 DrumView.prototype.updateArrows = function ()
 {
-	this.canScrollUp = false;
-	this.canScrollDown = false;
 	this.canScrollLeft = this.offsetX > 0;
 	BaseView.prototype.updateArrows.call (this);
 };
@@ -98,7 +99,6 @@ DrumView.prototype.onLeft = function (event)
 		this.offsetX = newOffset;
 		this.clip.scrollStepsPageBackwards ();
 	}
-	this.updateArrows ();
 };
 
 DrumView.prototype.onRight = function (event)
@@ -107,7 +107,6 @@ DrumView.prototype.onRight = function (event)
 		return;
 	this.offsetX = this.offsetX + DrumView.NUM_DISPLAY_COLS;
 	this.clip.scrollStepsPageForward ();
-	this.updateArrows ();
 };
 
 DrumView.prototype.drawGrid = function ()
