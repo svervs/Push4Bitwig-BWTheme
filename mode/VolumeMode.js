@@ -23,9 +23,10 @@ VolumeMode.prototype.updateDisplay = function ()
     this.drawTrackNames ();
 
 	var d = this.push.display;
+	var tb = this.model.getTrackBank ();
 	for (var i = 0; i < 8; i++)
 	{
-		var t = this.model.getTrackBank ().getTrack (i);
+		var t = tb.getTrack (i);
 		d.setCell (1, i, t.volumeStr, Display.FORMAT_RAW)
 		 .setCell (2, i, this.push.showVU ? t.vu : t.volume, Display.FORMAT_VALUE);
 	}

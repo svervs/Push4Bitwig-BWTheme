@@ -401,10 +401,11 @@ BaseView.prototype.onMute = function (event)
 {
 	if (!event.isDown ())
 		return;
-	var selectedTrack = this.model.getTrackBank ().getSelectedTrack ();
+	var tb = this.model.getTrackBank ();
+	var selectedTrack = tb.getSelectedTrack ();
 	if (selectedTrack == null)
 		return;
-	this.model.getTrackBank ().toggleMute (selectedTrack.index);
+	tb.toggleMute (selectedTrack.index);
 	this.push.setButton (PUSH_BUTTON_MUTE, selectedTrack.mute ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 

@@ -32,9 +32,10 @@ SendMode.prototype.updateDisplay = function ()
 
 	var d = this.push.display;
 	var sendIndex = this.getCurrentSendIndex ();
+	var tb = this.model.getTrackBank ();
 	for (var i = 0; i < 8; i++)
 	{
-		var t = this.model.getTrackBank ().getTrack (i);
+		var t = tb.getTrack (i);
 		d.setCell (1, i, t.sends[sendIndex].volumeStr, Display.FORMAT_RAW)
 		 .setCell (2, i, t.sends[sendIndex].volume, Display.FORMAT_VALUE);
 	}

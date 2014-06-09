@@ -46,17 +46,7 @@ function TrackBankProxy ()
 	this.recCount = 64;
     this.listeners = [];
 
-	this.tracks = [];
-	for (var i = 0; i < 8; i++)
-	{
-		this.tracks.push (
-			{
-				index: i,
-				selected: false,
-				sends: [{ index: 0 }, { index: 1 }, { index: 2 }, { index: 3 }, { index: 4 }, { index: 5 }],
-				slots: [{ index: 0 }, { index: 1 }, { index: 2 }, { index: 3 }, { index: 4 }, { index: 5 }, { index: 6 }, { index: 7 }]
-			});
-	}
+	this.tracks = this.createTracks (8);
 
 	for (var i = 0; i < 8; i++)
 	{
@@ -395,4 +385,28 @@ TrackBankProxy.prototype.getColorIndex = function (red, green, blue)
 			return color[3];
 	}
 	return null;
-}
+};
+
+TrackBankProxy.prototype.createTracks = function (count)
+{
+	var tracks = [];
+	for (var i = 0; i < count; i++)
+	{
+		tracks.push (
+			{
+				index: i,
+				selected: false,
+				name: '',
+				volumeStr: '',
+				volume: 0,
+				vu: 0,
+				mute: false,
+				solo: false,
+				recarm: false,
+				panStr: '',
+				pan: 0,
+				sends: [{ index: 0 }, { index: 1 }, { index: 2 }, { index: 3 }, { index: 4 }, { index: 5 }],
+				slots: [{ index: 0 }, { index: 1 }, { index: 2 }, { index: 3 }, { index: 4 }, { index: 5 }, { index: 6 }, { index: 7 }]
+			});
+	}
+	return tracks;};
