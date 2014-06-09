@@ -8,7 +8,7 @@ function Controller ()
 	var output = new MidiOutput ();
 	var input = new MidiInput ();
 
-	this.model = new Model ();
+	this.model = new Model (PUSH_KNOB1);
     this.model.getTrackBank ().addTrackSelectionListener (doObject (this, function (index, isSelected)
     {
         if (isSelected && this.push.isActiveMode (MODE_MASTER))
@@ -114,7 +114,7 @@ Controller.prototype.updateMode = function (mode)
 	var isBankUser     = mode == MODE_BANK_USER;
 	var isBankMacro    = mode == MODE_BANK_MACRO;
 
-	this.model.updateIndication (mode);
+	this.updateIndication (mode);
 
 	this.push.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	this.push.setButton (PUSH_BUTTON_TRACK, isTrack ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
@@ -124,4 +124,46 @@ Controller.prototype.updateMode = function (mode)
 	this.push.setButton (PUSH_BUTTON_SCALES, isScales ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	this.push.setButton (PUSH_BUTTON_FIXED_LENGTH, isFixed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 	this.push.setButton (PUSH_BUTTON_BROWSE, isPreset ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+};
+
+Controller.prototype.updateIndication = function (mode)
+{
+	var isVolume = mode == MODE_VOLUME;
+	var isPan    = mode == MODE_PAN;
+    
+    var tb = this.model.getTrackBank ();
+	var selectedTrack = tb.getSelectedTrack ();
+	for (var i = 0; i < 8; i++)
+	{
+		var hasTrackSel = selectedTrack != null && selectedTrack.index == i && mode == MODE_TRACK;
+		tb.setVolumeIndication (i, isVolume || hasTrackSel);
+		tb.setPanIndication (i, isPan || hasTrackSel);
+		for (var j = 0; j < 6; j++)
+		{
+			tb.setSendIndication (i, j,
+                mode == MODE_SEND1 && j == 0 ||
+				mode == MODE_SEND2 && j == 1 ||
+				mode == MODE_SEND3 && j == 2 ||
+				mode == MODE_SEND4 && j == 3 ||
+				mode == MODE_SEND5 && j == 4 ||
+				mode == MODE_SEND6 && j == 5 ||
+				hasTrackSel
+			);
+		}
+
+		var cd = this.model.getCursorDevice ();
+        cd.getParameter (i).setIndication (mode == MODE_BANK_DEVICE);
+        cd.getCommonParameter (i).setIndication (mode == MODE_BANK_COMMON);
+        cd.getEnvelopeParameter (i).setIndication (mode == MODE_BANK_ENVELOPE);
+        cd.getMacro (i).getAmount ().setIndication (mode == MODE_BANK_MACRO);
+        
+		var uc = this.model.getUserControlBank ();
+        uc.getControl (i).setIndication (mode == MODE_BANK_USER);
+	
+		var mt = this.model.getMasterTrack ();
+		mt.setVolumeIndication (mode == MODE_MASTER);
+		mt.setPanIndication (mode == MODE_MASTER);
+
+		this.model.getGroove ().setIndication (mode == MODE_GROOVE);
+	}
 };

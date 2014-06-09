@@ -77,7 +77,14 @@ GrooveProxy.prototype.getRangedValue = function (kind)
 		case GrooveValue.Kind.SHUFFLE_RATE:
 			return this.groove.getShuffleRate ();
 	}
-}
+};
+
+GrooveProxy.prototype.setIndication = function (enable)
+{
+	for (var g = 0; g < GrooveValue.Kind.values ().length; g++)
+		this.getRangedValue (g).setIndication (enable);
+};
+
 
 function GrooveValue (kind)
 {

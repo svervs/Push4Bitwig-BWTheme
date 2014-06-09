@@ -3,12 +3,12 @@
 // (c) 2014
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
-function UserControlBankProxy ()
+function UserControlBankProxy (ccStart)
 {
 	this.userControlBank = host.createUserControls (8);
 
-	for (var i = PUSH_KNOB1; i <= PUSH_KNOB8; i++)
-		this.userControlBank.getControl (i - PUSH_KNOB1).setLabel ("CC" + i);
+	for (var i = 0; i < 8; i++)
+		this.userControlBank.getControl (i).setLabel ("CC" + (i + ccStart));
 }
 
 /**
