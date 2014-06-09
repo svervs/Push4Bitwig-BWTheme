@@ -27,8 +27,6 @@ BaseView.lastNoteView = VIEW_PLAY;
 BaseView.prototype.onActivate = function ()
 {
 	this.updateNoteMapping ();
-    // TODO What is this good for?
-	this.push.setPendingMode (this.push.getCurrentMode ());
 };
 
 BaseView.prototype.updateDevice = function ()
