@@ -44,15 +44,20 @@ TransportProxy.prototype.play = function ()
 	this.transport.play ();
 };
 
-TransportProxy.prototype.restart = function ()
+TransportProxy.prototype.stop = function ()
 {
-	this.transport.restart ();
+	this.transport.stop ();
 };
 
-TransportProxy.prototype.rewindAndPlay = function ()
+TransportProxy.prototype.stopAndRewind = function ()
 {
 	this.transport.stop ();
 	this.transport.setPosition (0);
+};
+
+TransportProxy.prototype.restart = function ()
+{
+	this.transport.restart ();
 };
 
 TransportProxy.prototype.record = function ()
@@ -111,5 +116,6 @@ TransportProxy.prototype.setLauncherOverdub = function (on)
 TransportProxy.prototype.setInternalTempo = function (t)
 {
 	this.tempo = t;
+	// TODO quarterNoteInMillis is not used anywhere
 	this.quarterNoteInMillis = 60000 / (t + 20);
 };

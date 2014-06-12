@@ -65,7 +65,7 @@ BaseView.prototype.onPlay = function (event)
 		}
 		else
 		{
-			this.model.getTransport ().rewindAndPlay ();
+			this.model.getTransport ().stopAndRewind ();
 			this.restartFlag = false;
 		}
 	}
