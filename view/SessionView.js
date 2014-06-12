@@ -23,7 +23,7 @@ SessionView.prototype.onActivate = function ()
 
 SessionView.prototype.drawSceneButtons = function ()
 {
-    var tb = this.model.getTrackBank ()
+    var tb = this.model.getTrackBank ();
 	for (var i = 0; i < 8; i++)
 	{
 		if (this.flip)
@@ -35,7 +35,10 @@ SessionView.prototype.drawSceneButtons = function ()
 
 SessionView.prototype.updateDevice = function ()
 {
-    BaseView.prototype.updateDevice.call (this);
+	// TODO this super call was making the buttons flash green, just updating arrows here
+	// must be in the updateDisplay() code
+    //BaseView.prototype.updateDevice.call (this);
+	this.updateArrows ();
 	if (this.flip && !this.push.getMode (this.push.getCurrentMode ()).hasSecondRowPriority)
 	{
 		for (var i = 0; i < 8; i++)
