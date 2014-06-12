@@ -71,15 +71,6 @@ BaseView.prototype.onPlay = function (event)
 	}
 };
 
-BaseView.prototype.doubleClickTest = function ()
-{
-	this.restartFlag = true;
-	host.scheduleTask (doObject (this, function ()
-	{
-		this.restartFlag = false;
-	}), null, 250);
-};
-
 BaseView.prototype.onRecord = function (event)
 {
 	if (!event.isDown ())
@@ -208,7 +199,7 @@ BaseView.prototype.onSmallKnob2 = function (increase)
 	this.model.getTransport ().changePosition (increase, this.push.isShiftPressed ());
 };
 
-BaseView.prototype.onClick = function (event)
+BaseView.prototype.onMetronome = function (event)
 {
 	if (event.isDown ())
 		this.model.getTransport ().toggleClick ();
@@ -528,3 +519,13 @@ BaseView.prototype.selectTrack = function (index)
 {
 	this.model.getTrackBank ().selectTrack (index);
 }
+
+
+BaseView.prototype.doubleClickTest = function ()
+{
+	this.restartFlag = true;
+	host.scheduleTask (doObject (this, function ()
+	{
+		this.restartFlag = false;
+	}), null, 250);
+};

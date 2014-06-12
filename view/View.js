@@ -38,7 +38,7 @@ View.prototype.onUndo = function (event) {};
 View.prototype.onSmallKnob1 = function (increase) {};
 View.prototype.onSmallKnob2 = function (increase) {};
 
-View.prototype.onClick = function (event) {};
+View.prototype.onMetronome = function (event) {};
 View.prototype.onTapTempo = function (event) {};
 
 View.prototype.onValueKnob = function (index, value) {};
