@@ -4,7 +4,7 @@
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
 var PUSH_BUTTON_TAP				= 3;
-var PUSH_BUTTON_CLICK           = 9;
+var PUSH_BUTTON_METRONOME       = 9;
 var PUSH_BUTTON_MASTER          = 28;
 var PUSH_BUTTON_STOP            = 29;
 var PUSH_BUTTON_LEFT            = 44;
@@ -113,7 +113,7 @@ function Push (output, input)
 	this.buttons =
 	[
 		PUSH_BUTTON_TAP,
-		PUSH_BUTTON_CLICK,
+		PUSH_BUTTON_METRONOME,
 		PUSH_BUTTON_MASTER,
 		PUSH_BUTTON_STOP,
 		PUSH_BUTTON_LEFT,
@@ -442,8 +442,8 @@ Push.prototype.handleEvent = function (cc, value)
 			break;
 	
 		// Click
-		case PUSH_BUTTON_CLICK:
-			view.onClick (event);
+		case PUSH_BUTTON_METRONOME:
+			view.onMetronome (event);
 			break;
 
 		// Small knob 1 (rastered)
