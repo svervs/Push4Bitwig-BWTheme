@@ -68,7 +68,7 @@ View.prototype.onAccent = function (event) {};
 View.prototype.onOctaveDown = function (event) {};
 View.prototype.onOctaveUp = function (event) {};
 
-View.prototype.onAddFX = function (event) {};
+View.prototype.onAddEffect = function (event) {};
 View.prototype.onAddTrack = function (event) {};
 View.prototype.onNote = function (event) {};
 View.prototype.onSession = function (event) {};

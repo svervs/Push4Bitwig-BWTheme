@@ -429,7 +429,7 @@ BaseView.prototype.onScales = function (event)
 	}
 };
 
-BaseView.prototype.onAddFX = function (event)
+BaseView.prototype.onAddEffect = function (event)
 {
 	if (!event.isDown ())
 		return;

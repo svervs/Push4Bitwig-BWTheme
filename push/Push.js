@@ -536,7 +536,7 @@ Push.prototype.handleEvent = function (cc, value)
 
 		// Add FX
 		case PUSH_BUTTON_ADD_EFFECT:
-			view.onAddFX (event);
+			view.onAddEffect (event);
 			break;
 			
 		// Add Track
