@@ -44,6 +44,13 @@ SessionView.prototype.updateDevice = function ()
 		for (var i = 0; i < 8; i++)
 			this.push.setButton (102 + i, PUSH_COLOR_GREEN_HI);
 	}
+	else
+	{
+		// TODO this can be removed when the bug in super is found
+		var tb = this.model.getTrackBank ();
+		for (var i = 0; i < 8; i++)
+			this.push.setButton (102 + i, tb.getTrack (i).recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
+	}
 };
 
 SessionView.prototype.updateArrows = function ()

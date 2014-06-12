@@ -5,8 +5,11 @@
 
 function CursorDeviceProxy ()
 {
+	// TODO when parameter page enabled bug is fixed, these will be used
+	// for knowing when to show 'Next' and 'Previous' entries
 	this.hasNextParameterPage = false;
 	this.hasPreviousParamPage = false;
+
 	this.selectedParameterPage = -1;
 	this.presetWidth = 16;
 	this.fxparams = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
@@ -117,20 +120,9 @@ function CursorDeviceProxy ()
 	}));
 }
 
-CursorDeviceProxy.prototype.getSelectedDevice = function ()
-{
-	return this.selectedDevice;
-};
-
-CursorDeviceProxy.prototype.getFXParam = function (index)
-{
-	return this.fxparams[index];
-};
-
-CursorDeviceProxy.prototype.getParameter = function (indexInPage)
-{
-	return this.cursorDevice.getParameter (indexInPage);
-};
+//--------------------------------------
+// Bitwig Device API
+//--------------------------------------
 
 CursorDeviceProxy.prototype.getCommonParameter = function (index)
 {
@@ -152,24 +144,34 @@ CursorDeviceProxy.prototype.getModulationSource = function (index)
 	return this.cursorDevice.getModulationSource (index)
 };
 
-CursorDeviceProxy.prototype.switchToNextPresetCategory = function ()
+CursorDeviceProxy.prototype.getParameter = function (indexInPage)
 {
-	return this.cursorDevice.switchToNextPresetCategory ();
+	return this.cursorDevice.getParameter (indexInPage);
 };
 
-CursorDeviceProxy.prototype.switchToPreviousPresetCategory = function ()
+CursorDeviceProxy.prototype.nextParameterPage = function ()
 {
-	return this.cursorDevice.switchToPreviousPresetCategory ();
+	return this.cursorDevice.nextParameterPage ();
 };
 
-CursorDeviceProxy.prototype.switchToNextPresetCreator = function ()
+CursorDeviceProxy.prototype.previousParameterPage = function ()
 {
-	return this.cursorDevice.switchToNextPresetCreator ();
+	return this.cursorDevice.previousParameterPage ();
 };
 
-CursorDeviceProxy.prototype.switchToPreviousPresetCreator = function ()
+CursorDeviceProxy.prototype.setParameterPage = function (index)
 {
-	return this.cursorDevice.switchToPreviousPresetCreator ();
+	return this.cursorDevice.setParameterPage (index);
+};
+
+CursorDeviceProxy.prototype.setPresetCategory = function (index)
+{
+	return this.cursorDevice.setPresetCategory (index)
+};
+
+CursorDeviceProxy.prototype.setPresetCreator = function (index)
+{
+	return this.cursorDevice.setPresetCreator (index)
 };
 
 CursorDeviceProxy.prototype.switchToNextPreset = function ()
@@ -177,10 +179,39 @@ CursorDeviceProxy.prototype.switchToNextPreset = function ()
 	return this.cursorDevice.switchToNextPreset ();
 };
 
+CursorDeviceProxy.prototype.switchToNextPresetCategory = function ()
+{
+	return this.cursorDevice.switchToNextPresetCategory ();
+};
+
+CursorDeviceProxy.prototype.switchToNextPresetCreator = function ()
+{
+	return this.cursorDevice.switchToNextPresetCreator ();
+};
+
 CursorDeviceProxy.prototype.switchToPreviousPreset = function ()
 {
 	return this.cursorDevice.switchToPreviousPreset ();
 };
+
+CursorDeviceProxy.prototype.switchToPreviousPresetCategory = function ()
+{
+	return this.cursorDevice.switchToPreviousPresetCategory ();
+};
+
+CursorDeviceProxy.prototype.switchToPreviousPresetCreator = function ()
+{
+	return this.cursorDevice.switchToPreviousPresetCreator ();
+};
+
+CursorDeviceProxy.prototype.toggleEnabledState = function ()
+{
+	return this.cursorDevice.toggleEnabledState ();
+};
+
+//--------------------------------------
+// Bitwig CursorDevice API
+//--------------------------------------
 
 CursorDeviceProxy.prototype.selectNext = function ()
 {
@@ -192,28 +223,28 @@ CursorDeviceProxy.prototype.selectPrevious = function ()
 	return this.cursorDevice.selectPrevious ();
 };
 
-CursorDeviceProxy.prototype.previousParameterPage = function ()
+//--------------------------------------
+// Public API
+//--------------------------------------
+
+CursorDeviceProxy.prototype.getSelectedDevice = function ()
 {
-	return this.cursorDevice.previousParameterPage ();
+	return this.selectedDevice;
 };
 
-CursorDeviceProxy.prototype.nextParameterPage = function ()
+CursorDeviceProxy.prototype.getFXParam = function (index)
 {
-	return this.cursorDevice.nextParameterPage ();
-};
-
-CursorDeviceProxy.prototype.toggleEnabledState = function ()
-{
-	return this.cursorDevice.toggleEnabledState ();
+	return this.fxparams[index];
 };
 
 CursorDeviceProxy.prototype.hasPreviousParameterPage = function ()
 {
-	// return this.hasPreviousParamPage;
 	return this.selectedParameterPage > 0;
 };
 
-
+//--------------------------------------
+// PresetProvider Class
+//--------------------------------------
 
 function PresetProvider (kind)
 {
@@ -231,11 +262,13 @@ PresetProvider.Kind =
 	PRESET:   2
 };
 
-PresetProvider.prototype.getSelectedIndex = function (index)
+// Not used
+PresetProvider.prototype.getSelectedIndex = function ()
 {
 	return this.selectedIndex;
 };
 
+// Not used
 PresetProvider.prototype.getSelectedItem = function ()
 {
 	return this.selectedItem;
