@@ -747,7 +747,7 @@ Push.prototype.handleTouch = function (knob, value)
 			break;
 			
 		case PUSH_SMALL_KNOB2_TOUCH:
-			view.onSmallKnob1Touch (value == 127);
+			view.onSmallKnob2Touch (value == 127);
 			break;
 	}
 };
