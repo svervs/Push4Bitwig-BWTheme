@@ -20,6 +20,44 @@ function GrooveProxy ()
 	}));
 }
 
+//--------------------------------------
+// Bitwig Groove API
+//--------------------------------------
+
+GrooveProxy.prototype.getAccentAmount = function ()
+{
+	return this.groove.getAccentAmount ();
+};
+
+GrooveProxy.prototype.getAccentPhase = function ()
+{
+	return this.groove.getAccentPhase ();
+};
+
+GrooveProxy.prototype.getAccentRate = function ()
+{
+	return this.groove.getAccentRate ();
+};
+
+GrooveProxy.prototype.getEnabled = function ()
+{
+	return this.groove.getEnabled ();
+};
+
+GrooveProxy.prototype.getShuffleAmount = function ()
+{
+	return this.groove.getShuffleAmount ();
+};
+
+GrooveProxy.prototype.getShuffleRate = function ()
+{
+	return this.groove.getShuffleRate ();
+};
+
+//--------------------------------------
+// Public API
+//--------------------------------------
+
 GrooveProxy.prototype.isEnabled = function (kind)
 {
 	return this.enabled;
@@ -31,33 +69,12 @@ GrooveProxy.prototype.toggleEnabled = function ()
 	this.groove.getEnabled ().set (this.enabled ? 127 : 0, 128);
 };
 
-GrooveProxy.prototype.addValue = function (kind)
-{
-	this.values[kind] = new GrooveValue (kind);
-
-	var v = this.getRangedValue (kind);
-
-	v.addNameObserver (8, '', doObject (this, function (name)
-	{
-		this.values[kind].name = name;
-	}));
-
-	v.addValueObserver (128, doObject (this, function (value)
-	{
-		this.values[kind].value = value;
-	}));
-
-	v.addValueDisplayObserver (8, '',  doObject (this, function (value)
-	{
-		this.values[kind].valueString = value;
-	}));
-};
-
 GrooveProxy.prototype.getValue = function (kind)
 {
 	return this.values[kind];
 };
 
+// This majic exists for controller modes that use lists for execution
 GrooveProxy.prototype.getRangedValue = function (kind)
 {
 	switch (kind)
@@ -85,6 +102,35 @@ GrooveProxy.prototype.setIndication = function (enable)
 		this.getRangedValue (g).setIndication (enable);
 };
 
+//--------------------------------------
+// Private API
+//--------------------------------------
+
+GrooveProxy.prototype.addValue = function (kind)
+{
+	this.values[kind] = new GrooveValue (kind);
+
+	var v = this.getRangedValue (kind);
+
+	v.addNameObserver (8, '', doObject (this, function (name)
+	{
+		this.values[kind].name = name;
+	}));
+
+	v.addValueObserver (128, doObject (this, function (value)
+	{
+		this.values[kind].value = value;
+	}));
+
+	v.addValueDisplayObserver (8, '',  doObject (this, function (value)
+	{
+		this.values[kind].valueString = value;
+	}));
+};
+
+//--------------------------------------
+// GrooveValue Class
+//--------------------------------------
 
 function GrooveValue (kind)
 {
