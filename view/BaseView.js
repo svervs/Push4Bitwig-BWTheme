@@ -37,18 +37,9 @@ BaseView.prototype.updateDevice = function ()
 	this.updateArrows ();
 };
 
-BaseView.prototype.updateArrows = function ()
-{
-	this.push.setButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-	this.push.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-	this.push.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-	this.push.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-};
-
-BaseView.prototype.updateNoteMapping = function ()
-{
-	this.push.setKeyTranslationTable (initArray (-1, 128));
-};
+//--------------------------------------
+// Group 1
+//--------------------------------------
 
 BaseView.prototype.onPlay = function (event)
 {
@@ -79,17 +70,6 @@ BaseView.prototype.onRecord = function (event)
 		this.model.getTransport ().toggleClipOverdub ();
 	else
 		this.model.getTransport ().record ();
-};
-
-BaseView.prototype.onStop = function (event)
-{
-	if (this.push.isShiftPressed ())
-	{
-		this.model.getTrackBank ().getClipLauncherScenes ().stop ();
-		return;
-	}
-	this.stopPressed = event.isDown ();
-	this.push.setButton (PUSH_BUTTON_STOP, this.stopPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 BaseView.prototype.onNew = function (event)
@@ -145,6 +125,10 @@ BaseView.prototype.onFixedLength = function (event)
 		this.push.setPendingMode (event.isDown () ? MODE_FIXED : this.push.getPreviousMode ());
 };
 
+//--------------------------------------
+// Group 2
+//--------------------------------------
+
 BaseView.prototype.onQuantize = function (event)
 {
 	if (!event.isDown ())
@@ -182,7 +166,10 @@ BaseView.prototype.onUndo = function (event)
 		this.model.getApplication ().undo ();
 };
 
-// Set tempo
+//--------------------------------------
+// Group 3
+//--------------------------------------
+
 BaseView.prototype.onSmallKnob1 = function (increase)
 {
 	this.model.getTransport( ).changeTempo (increase);
@@ -199,6 +186,12 @@ BaseView.prototype.onSmallKnob2 = function (increase)
 	this.model.getTransport ().changePosition (increase, this.push.isShiftPressed ());
 };
 
+// BaseView.prototype.onSmallKnob2Touch = function (isTouched) {};
+
+//--------------------------------------
+// Group 4
+//--------------------------------------
+
 BaseView.prototype.onMetronome = function (event)
 {
 	if (event.isDown ())
@@ -211,18 +204,18 @@ BaseView.prototype.onTapTempo = function (event)
 		return;
 
 	var millis = new Date ().getTime ();
-	
+
 	// First press?
 	if (this.ttLastMillis == -1)
 	{
 		this.ttLastMillis = millis;
 		return;
-	}	
-	
+	}
+
 	// Calc the difference
 	var diff = millis - this.ttLastMillis;
 	this.ttLastMillis = millis;
-	
+
 	// Store up to 8 differences for average calculation
 	this.ttHistory.push (diff);
 	if (this.ttHistory.length > 8)
@@ -234,7 +227,7 @@ BaseView.prototype.onTapTempo = function (event)
 		sum += this.ttHistory[i];
 	var average = sum / this.ttHistory.length;
 	var bpm = 60000 / average;
-	
+
 	// If the deviation is greater 20bpm, reset history
 	if (this.ttLastBPM != -1 && Math.abs (this.ttLastBPM - bpm) > 20)
 	{
@@ -248,6 +241,10 @@ BaseView.prototype.onTapTempo = function (event)
 	}
 };
 
+//--------------------------------------
+// Group 5
+//--------------------------------------
+
 BaseView.prototype.onValueKnob = function (index, value)
 {
 	var m = this.push.getActiveMode ();
@@ -255,7 +252,8 @@ BaseView.prototype.onValueKnob = function (index, value)
 		m.onValueKnob (index, value);
 };
 
-// Master Volume
+// BaseView.prototype.onValueKnobTouch = function (knob, isTouched) {};
+
 BaseView.prototype.onValueKnob9 = function (value)
 {
 	this.model.getMasterTrack ().incVolume (value);
@@ -264,8 +262,8 @@ BaseView.prototype.onValueKnob9 = function (value)
 BaseView.prototype.onValueKnob9Touch = function (isTouched)
 {
 	if (isTouched && this.push.getCurrentMode () == MODE_MASTER)
-        return;
-    this.push.setPendingMode (isTouched ? MODE_MASTER : this.push.getPreviousMode ());
+		return;
+	this.push.setPendingMode (isTouched ? MODE_MASTER : this.push.getPreviousMode ());
 };
 
 BaseView.prototype.onFirstRow = function (index)
@@ -281,6 +279,10 @@ BaseView.prototype.onSecondRow = function (index)
 	if (m != null)
 		m.onSecondRow (index);
 };
+
+//--------------------------------------
+// Group 6
+//--------------------------------------
 
 BaseView.prototype.onMaster = function (event)
 {
@@ -306,6 +308,23 @@ BaseView.prototype.onMaster = function (event)
 			break;
 	}
 };
+
+BaseView.prototype.onStop = function (event)
+{
+	if (this.push.isShiftPressed ())
+	{
+		this.model.getTrackBank ().getClipLauncherScenes ().stop ();
+		return;
+	}
+	this.stopPressed = event.isDown ();
+	this.push.setButton (PUSH_BUTTON_STOP, this.stopPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+};
+
+// BaseView.prototype.onScene = function (index) {};
+
+//--------------------------------------
+// Group 7
+//--------------------------------------
 
 BaseView.prototype.onVolume = function (event)
 {
@@ -337,6 +356,8 @@ BaseView.prototype.onTrack = function (event)
 		this.push.setPendingMode (MODE_TRACK);
 };
 
+// BaseView.prototype.onClip = function (event) {};
+
 BaseView.prototype.onDevice = function (event)
 {
 	if (!event.isDown ())
@@ -360,7 +381,10 @@ BaseView.prototype.onBrowse = function (event)
 		this.model.getApplication ().toggleBrowserVisibility (); // Track
 };
 
-// Dec Track or Device Parameter Bank
+//--------------------------------------
+// Group 8
+//--------------------------------------
+
 BaseView.prototype.onDeviceLeft = function (event)
 {
 	if (!event.isDown ())
@@ -374,7 +398,6 @@ BaseView.prototype.onDeviceLeft = function (event)
 	}
 };
 
-// Inc Track or Device Parameter Bank
 BaseView.prototype.onDeviceRight = function (event)
 {
 	if (!event.isDown ())
@@ -429,7 +452,42 @@ BaseView.prototype.onScales = function (event)
 	}
 };
 
-BaseView.prototype.onAddFX = function (event)
+// BaseView.prototype.onUser = function (event) {};
+
+// BaseView.prototype.onRepeat = function (event) {};
+
+BaseView.prototype.onAccent = function (event)
+{
+	switch (event.getState ())
+	{
+		case ButtonEvent.DOWN:
+			this.quitAccentMode = false;
+			break;
+		case ButtonEvent.LONG:
+			this.quitAccentMode = true;
+			this.push.setPendingMode (MODE_ACCENT);
+			break;
+		case ButtonEvent.UP:
+			if (this.quitAccentMode)
+				this.push.setPendingMode (this.push.getPreviousMode ());
+			else
+			{
+				Config.accentActive = !Config.accentActive;
+				this.push.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+			}
+			break;
+	}
+};
+
+// BaseView.prototype.onOctaveDown = function (event) {};
+
+// BaseView.prototype.onOctaveUp = function (event) {};
+
+//--------------------------------------
+// Group 9
+//--------------------------------------
+
+BaseView.prototype.onAddEffect = function (event)
 {
 	if (!event.isDown ())
 		return;
@@ -462,28 +520,7 @@ BaseView.prototype.onSession = function (event)
 	this.push.setActiveView (VIEW_SESSION);
 };
 
-BaseView.prototype.onAccent = function (event)
-{
-	switch (event.getState ())
-	{
-		case ButtonEvent.DOWN:
-			this.quitAccentMode = false;
-			break;
-		case ButtonEvent.LONG:
-			this.quitAccentMode = true;
-			this.push.setPendingMode (MODE_ACCENT);
-			break;
-		case ButtonEvent.UP:
-			if (this.quitAccentMode)
-				this.push.setPendingMode (this.push.getPreviousMode ());
-			else
-			{
-				Config.accentActive = !Config.accentActive;
-				this.push.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-			}
-			break;
-	}
-};
+// BaseView.prototype.onSelect = function (event) {};
 
 BaseView.prototype.onShift = function (event)
 {
@@ -496,9 +533,44 @@ BaseView.prototype.onShift = function (event)
 		this.push.setPendingMode (MODE_SCALES);
 };
 
+//--------------------------------------
+// Group 10
+//--------------------------------------
+
+// BaseView.prototype.onUp = function (event) {};
+
+// BaseView.prototype.onDown = function (event) {};
+
+// BaseView.prototype.onLeft = function (event) {};
+
+// BaseView.prototype.onRight = function (event) {};
+
+//--------------------------------------
+// Group 11
+//--------------------------------------
+
+// BaseView.prototype.onFootswitch1 = function (value) {};
+
 BaseView.prototype.onFootswitch2 = function (value)
 {
 	this.onNew (new ButtonEvent (value == 127 ? ButtonEvent.DOWN : ButtonEvent.UP));
+};
+
+//--------------------------------------
+// Protected API
+//--------------------------------------
+
+BaseView.prototype.selectTrack = function (index)
+{
+	this.model.getTrackBank ().selectTrack (index);
+};
+
+BaseView.prototype.updateArrows = function ()
+{
+	this.push.setButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	this.push.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	this.push.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+	this.push.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
 };
 
 BaseView.prototype.getSelectedSlot = function (track)
@@ -509,17 +581,16 @@ BaseView.prototype.getSelectedSlot = function (track)
 	return -1;
 };
 
+BaseView.prototype.updateNoteMapping = function ()
+{
+	this.push.setKeyTranslationTable (initArray (-1, 128));
+};
+
 BaseView.prototype.turnOffBlink = function ()
 {
 	for (var i = 36; i < 100; i++)
 		this.push.pads.blink (i, PUSH_COLOR_BLACK);
 };
-
-BaseView.prototype.selectTrack = function (index)
-{
-	this.model.getTrackBank ().selectTrack (index);
-}
-
 
 BaseView.prototype.doubleClickTest = function ()
 {

@@ -536,7 +536,7 @@ Push.prototype.handleEvent = function (cc, value)
 
 		// Add FX
 		case PUSH_BUTTON_ADD_EFFECT:
-			view.onAddFX (event);
+			view.onAddEffect (event);
 			break;
 			
 		// Add Track
@@ -747,7 +747,7 @@ Push.prototype.handleTouch = function (knob, value)
 			break;
 			
 		case PUSH_SMALL_KNOB2_TOUCH:
-			view.onSmallKnob1Touch (value == 127);
+			view.onSmallKnob2Touch (value == 127);
 			break;
 	}
 };
