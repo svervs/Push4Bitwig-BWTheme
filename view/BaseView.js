@@ -67,7 +67,7 @@ BaseView.prototype.onRecord = function (event)
 	if (!event.isDown ())
 		return;
 	if (this.push.isShiftPressed ())
-		this.model.getTransport ().toggleClipOverdub ();
+		this.model.getTransport ().toggleLauncherOverdub ();
 	else
 		this.model.getTransport ().record ();
 };

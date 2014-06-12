@@ -39,25 +39,48 @@ function TransportProxy ()
 	}));
 }
 
+//--------------------------------------
+// Bitwig Transport API
+//--------------------------------------
+
+TransportProxy.prototype.fastForward = function ()
+{
+	this.transport.fastForward ();
+};
+
+TransportProxy.prototype.getInPosition = function ()
+{
+	this.transport.getInPosition ();
+};
+
+TransportProxy.prototype.getOutPosition = function ()
+{
+	this.transport.getOutPosition ();
+};
+
+TransportProxy.prototype.getPosition = function ()
+{
+	this.transport.getPosition ();
+};
+
+TransportProxy.prototype.getTempo = function ()
+{
+	this.transport.getTempo ();
+};
+
+TransportProxy.prototype.incPosition = function (deltaBase, snap)
+{
+	this.transport.incPosition (deltaBase, snap);
+};
+
+TransportProxy.prototype.increaseTempo = function (amount, range)
+{
+	this.transport.increaseTempo (amount, range)
+};
+
 TransportProxy.prototype.play = function ()
 {
 	this.transport.play ();
-};
-
-TransportProxy.prototype.stop = function ()
-{
-	this.transport.stop ();
-};
-
-TransportProxy.prototype.stopAndRewind = function ()
-{
-	this.transport.stop ();
-	this.transport.setPosition (0);
-};
-
-TransportProxy.prototype.restart = function ()
-{
-	this.transport.restart ();
 };
 
 TransportProxy.prototype.record = function ()
@@ -65,9 +88,64 @@ TransportProxy.prototype.record = function ()
 	this.transport.record ();
 };
 
-TransportProxy.prototype.toggleLoop = function ()
+TransportProxy.prototype.resetAutomationOverrides = function ()
 {
-	this.transport.toggleLoop ();
+	this.transport.resetAutomationOverrides ();
+};
+
+TransportProxy.prototype.restart = function ()
+{
+	this.transport.restart ();
+};
+
+TransportProxy.prototype.returnToArrangement = function ()
+{
+	this.transport.returnToArrangement ();
+};
+
+TransportProxy.prototype.rewind = function ()
+{
+	this.transport.rewind ();
+};
+
+TransportProxy.prototype.setAutomationWriteMode = function (mode)
+{
+	this.transport.setAutomationWriteMode (mode);
+};
+
+TransportProxy.prototype.setClick = function (on)
+{
+	this.transport.setClick (on);
+};
+
+TransportProxy.prototype.setLauncherOverdub = function (on)
+{
+	this.transport.setLauncherOverdub (on);
+};
+
+TransportProxy.prototype.setLoop = function (on)
+{
+	this.transport.setLoop (on);
+};
+
+TransportProxy.prototype.setMetronomeValue = function (amount, range)
+{
+	this.transport.setMetronomeValue (amount, range);
+};
+
+TransportProxy.prototype.setOverdub = function (on)
+{
+	this.transport.setOverdub (on);
+};
+
+TransportProxy.prototype.setPosition = function (beats)
+{
+	this.transport.setPosition (beats);
+};
+
+TransportProxy.prototype.stop = function ()
+{
+	this.transport.stop ();
 };
 
 TransportProxy.prototype.toggleClick = function ()
@@ -75,14 +153,64 @@ TransportProxy.prototype.toggleClick = function ()
 	this.transport.toggleClick ();
 };
 
-TransportProxy.prototype.toggleClipOverdub = function ()
+TransportProxy.prototype.toggleLatchAutomationWriteMode = function ()
+{
+	this.transport.toggleLatchAutomationWriteMode ();
+};
+
+TransportProxy.prototype.toggleLauncherOverdub = function ()
 {
 	this.transport.toggleLauncherOverdub ();
+};
+
+TransportProxy.prototype.toggleLoop = function ()
+{
+	this.transport.toggleLoop ();
+};
+
+TransportProxy.prototype.toggleMetronomeTicks = function ()
+{
+	this.transport.toggleMetronomeTicks ();
+};
+
+TransportProxy.prototype.toggleOverdub = function ()
+{
+	this.transport.toggleOverdub ();
+};
+
+TransportProxy.prototype.togglePlay = function ()
+{
+	this.transport.togglePlay ();
+};
+
+TransportProxy.prototype.togglePunchIn = function ()
+{
+	this.transport.togglePunchIn ();
+};
+
+TransportProxy.prototype.togglePunchOut = function ()
+{
+	this.transport.togglePunchOut ();
 };
 
 TransportProxy.prototype.toggleWriteArrangerAutomation = function ()
 {
 	this.transport.toggleWriteArrangerAutomation ();
+};
+
+TransportProxy.prototype.toggleWriteClipLauncherAutomation = function ()
+{
+	this.transport.toggleWriteClipLauncherAutomation ();
+};
+
+//--------------------------------------
+// Public API
+//--------------------------------------
+
+TransportProxy.prototype.stopAndRewind = function ()
+{
+	this.transport.stop ();
+	this.transport.setPosition (0);
 };
 
 TransportProxy.prototype.changePosition = function (increase, slow)
