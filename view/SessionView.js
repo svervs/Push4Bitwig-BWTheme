@@ -88,6 +88,13 @@ SessionView.prototype.onGrid = function (note, velocity)
 	var index = note - 36;
 	var t = index % 8;
 	var s = 7 - Math.floor (index / 8);
+	
+	if (this.flip)
+	{
+		var dummy = t;
+		t = s;
+		s = dummy;
+	}
 
 	var tb = this.model.getTrackBank ();
 	var slot = tb.getTrack (t).slots[s];
