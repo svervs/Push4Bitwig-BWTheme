@@ -5,7 +5,7 @@
 
 function MidiInput ()
 {
-	this.port = host.getMidiInPort (0);
+    this.port = host.getMidiInPort (0);
 }
 
 /**
@@ -13,7 +13,7 @@ function MidiInput ()
  */
 MidiInput.prototype.getPort = function ()
 {
-	return this.port;
+    return this.port;
 };
 
 MidiInput.prototype.setMidiCallback = function (f)
@@ -24,6 +24,6 @@ MidiInput.prototype.setMidiCallback = function (f)
 MidiInput.prototype.createNoteInput = function ()
 {
     var noteInput = this.port.createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
-	noteInput.setShouldConsumeEvents (false);
+    noteInput.setShouldConsumeEvents (false);
     return noteInput;
 };

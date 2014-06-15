@@ -24,7 +24,7 @@ host.addDeviceNameBasedDiscoveryPair (["Ableton Push MIDI 2"], ["Ableton Push MI
 function init ()
 {
     controller = new Controller ();
-	println ("Initialized.");
+    println ("Initialized.");
 }
 
 function exit ()
@@ -34,5 +34,5 @@ function exit ()
 
 function flush ()
 {
-	controller.flush ();
+    controller.flush ();
 }

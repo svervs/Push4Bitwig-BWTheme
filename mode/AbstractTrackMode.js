@@ -5,7 +5,7 @@
 
 function AbstractTrackMode (model)
 {
-	BaseMode.call (this, model);
+    BaseMode.call (this, model);
     this.hasSecondRowPriority = false;
     this.isTemporary = false;
 }
@@ -13,5 +13,5 @@ AbstractTrackMode.prototype = new BaseMode ();
 
 AbstractTrackMode.prototype.onSecondRow = function (index)
 {
-	this.model.getTrackBank ().toggleArm (index);
+    this.model.getTrackBank ().toggleArm (index);
 };

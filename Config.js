@@ -12,8 +12,8 @@ Config.INC_FRACTION_VALUE = 1;
 
 Config.setAccentValue = function (value)
 {
-	Config.fixedAccentValue = value;
-	Config.notifyListeners (Config.FIXED_ACCENT_VALUE);
+    Config.fixedAccentValue = value;
+    Config.notifyListeners (Config.FIXED_ACCENT_VALUE);
 }
 
 
@@ -23,18 +23,18 @@ Config.setAccentValue = function (value)
 
 Config.listeners = [];
 for (var i = Config.FIXED_ACCENT_VALUE; i <= Config.FIXED_ACCENT_VALUE; i++)
-	Config.listeners[i] = [];
+    Config.listeners[i] = [];
 
 Config.addPropertyListener = function (property, listener)
 {
-	Config.listeners[property].push (listener);
+    Config.listeners[property].push (listener);
 };
 
 Config.notifyListeners = function (property)
 {
-	var ls = Config.listeners[property];
-	for (var i = 0; i < ls.length; i++)
-		ls[i].call (null);
+    var ls = Config.listeners[property];
+    for (var i = 0; i < ls.length; i++)
+        ls[i].call (null);
 }
 
 function Config () {}

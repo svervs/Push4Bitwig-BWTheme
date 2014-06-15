@@ -5,119 +5,119 @@
 
 function CursorDeviceProxy ()
 {
-	// TODO when parameter page enabled bug is fixed, these will be used
-	// for knowing when to show 'Next' and 'Previous' entries
-	this.hasNextParameterPage = false;
-	this.hasPreviousParamPage = false;
+    // TODO when parameter page enabled bug is fixed, these will be used
+    // for knowing when to show 'Next' and 'Previous' entries
+    this.hasNextParameterPage = false;
+    this.hasPreviousParamPage = false;
 
-	this.selectedParameterPage = -1;
-	this.presetWidth = 16;
-	this.fxparams = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
-	this.selectedDevice =
-	{
-		name: 'None',
+    this.selectedParameterPage = -1;
+    this.presetWidth = 16;
+    this.fxparams = [ { index: 0, name: '' }, { index: 1, name: '' }, { index: 2, name: '' }, { index: 3, name: '' }, { index: 4, name: '' }, { index: 5, name: '' }, { index: 6, name: '' }, { index: 7, name: '' } ];
+    this.selectedDevice =
+    {
+        name: 'None',
         enabled: false,
-		hasPreviousDevice: false,
-		hasNextDevice: false
-	};
+        hasPreviousDevice: false,
+        hasNextDevice: false
+    };
     
-	this.cursorDevice = host.createCursorDevice ();
+    this.cursorDevice = host.createCursorDevice ();
 
-	this.cursorDevice.addIsEnabledObserver (doObject (this, function (isEnabled)
-	{
-		this.selectedDevice.enabled = isEnabled;
-	}));
-	this.cursorDevice.addNameObserver (34, 'None', doObject (this, function (name)
-	{
-		this.selectedDevice.name = name;
-	}));
+    this.cursorDevice.addIsEnabledObserver (doObject (this, function (isEnabled)
+    {
+        this.selectedDevice.enabled = isEnabled;
+    }));
+    this.cursorDevice.addNameObserver (34, 'None', doObject (this, function (name)
+    {
+        this.selectedDevice.name = name;
+    }));
 
-	// TODO (mschmalle) These don't seem to work, when working, the Next, Previous visibilities
-	// can be managed correctly, right now just using selectedParameterPage
-	this.cursorDevice.addPreviousParameterPageEnabledObserver (doObject (this, function (isEnabled)
-	{
-		this.hasPreviousParamPage = isEnabled;
-	}));
-	this.cursorDevice.addNextParameterPageEnabledObserver (doObject (this, function (isEnabled)
-	{
-		this.hasNextParameterPage = isEnabled;
-	}));
-	this.cursorDevice.addSelectedPageObserver (-1, doObject (this, function (page)
-	{
-		this.selectedParameterPage = page;
-	}));
+    // TODO (mschmalle) These don't seem to work, when working, the Next, Previous visibilities
+    // can be managed correctly, right now just using selectedParameterPage
+    this.cursorDevice.addPreviousParameterPageEnabledObserver (doObject (this, function (isEnabled)
+    {
+        this.hasPreviousParamPage = isEnabled;
+    }));
+    this.cursorDevice.addNextParameterPageEnabledObserver (doObject (this, function (isEnabled)
+    {
+        this.hasNextParameterPage = isEnabled;
+    }));
+    this.cursorDevice.addSelectedPageObserver (-1, doObject (this, function (page)
+    {
+        this.selectedParameterPage = page;
+    }));
 
-	for (var i = 0; i < 8; i++)
-	{
-		var p = this.getParameter (i);
+    for (var i = 0; i < 8; i++)
+    {
+        var p = this.getParameter (i);
 
-		// Parameter name
-		p.addNameObserver (8, '', doObjectIndex (this, i, function (index, name)
-		{
-			this.fxparams[index].name = name;
-		}));
-		p.addValueObserver (128, doObjectIndex (this, i, function (index, value)
-		{
-			this.fxparams[index].value = value;
-		}));
-		// Parameter value text
-		p.addValueDisplayObserver (8, '',  doObjectIndex (this, i, function (index, value)
-		{
-			this.fxparams[index].valueStr = value;
-		}));
-	}
+        // Parameter name
+        p.addNameObserver (8, '', doObjectIndex (this, i, function (index, name)
+        {
+            this.fxparams[index].name = name;
+        }));
+        p.addValueObserver (128, doObjectIndex (this, i, function (index, value)
+        {
+            this.fxparams[index].value = value;
+        }));
+        // Parameter value text
+        p.addValueDisplayObserver (8, '',  doObjectIndex (this, i, function (index, value)
+        {
+            this.fxparams[index].valueStr = value;
+        }));
+    }
 
-	//----------------------------------
-	// Presets
-	//----------------------------------
+    //----------------------------------
+    // Presets
+    //----------------------------------
 
-	this.currentPreset = null;
+    this.currentPreset = null;
 
-	this.categoryProvider = new PresetProvider (PresetProvider.Kind.CATEGORY);
-	this.creatorProvider = new PresetProvider (PresetProvider.Kind.CREATOR);
-	//this.presetProvider = new PresetProvider (PresetProvider.Kind.PRESET);
+    this.categoryProvider = new PresetProvider (PresetProvider.Kind.CATEGORY);
+    this.creatorProvider = new PresetProvider (PresetProvider.Kind.CREATOR);
+    //this.presetProvider = new PresetProvider (PresetProvider.Kind.PRESET);
 
-	// - Category
-	this.cursorDevice.addPresetCategoriesObserver (doObject (this, function ()
-	{
-		this.categoryProvider.setItems (arguments);
-	}));
+    // - Category
+    this.cursorDevice.addPresetCategoriesObserver (doObject (this, function ()
+    {
+        this.categoryProvider.setItems (arguments);
+    }));
 
-	// This allows matching from selection made in DAW (full name)
-	this.cursorDevice.addPresetCategoryObserver (100, '', doObject (this, function (name)
-	{
-		this.categoryProvider.setSelectedItemVerbose (name);
-	}));
+    // This allows matching from selection made in DAW (full name)
+    this.cursorDevice.addPresetCategoryObserver (100, '', doObject (this, function (name)
+    {
+        this.categoryProvider.setSelectedItemVerbose (name);
+    }));
 
-	// Character display
-	this.cursorDevice.addPresetCategoryObserver (this.presetWidth, '', doObject (this, function (name)
-	{
-		this.categoryProvider.setSelectedItem (name);
-	}));
+    // Character display
+    this.cursorDevice.addPresetCategoryObserver (this.presetWidth, '', doObject (this, function (name)
+    {
+        this.categoryProvider.setSelectedItem (name);
+    }));
 
-	// - Creator
-	this.cursorDevice.addPresetCreatorsObserver (doObject (this, function ()
-	{
-		this.creatorProvider.setItems(arguments);
-	}));
+    // - Creator
+    this.cursorDevice.addPresetCreatorsObserver (doObject (this, function ()
+    {
+        this.creatorProvider.setItems(arguments);
+    }));
 
-	// This allows matching from selection made in DAW (full name)
-	this.cursorDevice.addPresetCreatorObserver (100, '', doObject (this, function (name)
-	{
-		this.creatorProvider.setSelectedItemVerbose(name);
-	}));
+    // This allows matching from selection made in DAW (full name)
+    this.cursorDevice.addPresetCreatorObserver (100, '', doObject (this, function (name)
+    {
+        this.creatorProvider.setSelectedItemVerbose(name);
+    }));
 
-	// Character display
-	this.cursorDevice.addPresetCreatorObserver (this.presetWidth, '', doObject (this, function (name)
-	{
-		this.creatorProvider.setSelectedItem(name);
-	}));
+    // Character display
+    this.cursorDevice.addPresetCreatorObserver (this.presetWidth, '', doObject (this, function (name)
+    {
+        this.creatorProvider.setSelectedItem(name);
+    }));
 
-	// - Preset
-	this.cursorDevice.addPresetNameObserver (this.presetWidth, '', doObject (this, function (name)
-	{
-		this.currentPreset = name;
-	}));
+    // - Preset
+    this.cursorDevice.addPresetNameObserver (this.presetWidth, '', doObject (this, function (name)
+    {
+        this.currentPreset = name;
+    }));
 }
 
 //--------------------------------------
@@ -126,87 +126,87 @@ function CursorDeviceProxy ()
 
 CursorDeviceProxy.prototype.getCommonParameter = function (index)
 {
-	return this.cursorDevice.getCommonParameter (index);
+    return this.cursorDevice.getCommonParameter (index);
 };
 
 CursorDeviceProxy.prototype.getEnvelopeParameter = function (index)
 {
-	return this.cursorDevice.getEnvelopeParameter (index);
+    return this.cursorDevice.getEnvelopeParameter (index);
 };
 
 CursorDeviceProxy.prototype.getMacro = function (index)
 {
-	return this.cursorDevice.getMacro (index)
+    return this.cursorDevice.getMacro (index)
 };
 
 CursorDeviceProxy.prototype.getModulationSource = function (index)
 {
-	return this.cursorDevice.getModulationSource (index)
+    return this.cursorDevice.getModulationSource (index)
 };
 
 CursorDeviceProxy.prototype.getParameter = function (indexInPage)
 {
-	return this.cursorDevice.getParameter (indexInPage);
+    return this.cursorDevice.getParameter (indexInPage);
 };
 
 CursorDeviceProxy.prototype.nextParameterPage = function ()
 {
-	return this.cursorDevice.nextParameterPage ();
+    return this.cursorDevice.nextParameterPage ();
 };
 
 CursorDeviceProxy.prototype.previousParameterPage = function ()
 {
-	return this.cursorDevice.previousParameterPage ();
+    return this.cursorDevice.previousParameterPage ();
 };
 
 CursorDeviceProxy.prototype.setParameterPage = function (index)
 {
-	return this.cursorDevice.setParameterPage (index);
+    return this.cursorDevice.setParameterPage (index);
 };
 
 CursorDeviceProxy.prototype.setPresetCategory = function (index)
 {
-	return this.cursorDevice.setPresetCategory (index)
+    return this.cursorDevice.setPresetCategory (index)
 };
 
 CursorDeviceProxy.prototype.setPresetCreator = function (index)
 {
-	return this.cursorDevice.setPresetCreator (index)
+    return this.cursorDevice.setPresetCreator (index)
 };
 
 CursorDeviceProxy.prototype.switchToNextPreset = function ()
 {
-	return this.cursorDevice.switchToNextPreset ();
+    return this.cursorDevice.switchToNextPreset ();
 };
 
 CursorDeviceProxy.prototype.switchToNextPresetCategory = function ()
 {
-	return this.cursorDevice.switchToNextPresetCategory ();
+    return this.cursorDevice.switchToNextPresetCategory ();
 };
 
 CursorDeviceProxy.prototype.switchToNextPresetCreator = function ()
 {
-	return this.cursorDevice.switchToNextPresetCreator ();
+    return this.cursorDevice.switchToNextPresetCreator ();
 };
 
 CursorDeviceProxy.prototype.switchToPreviousPreset = function ()
 {
-	return this.cursorDevice.switchToPreviousPreset ();
+    return this.cursorDevice.switchToPreviousPreset ();
 };
 
 CursorDeviceProxy.prototype.switchToPreviousPresetCategory = function ()
 {
-	return this.cursorDevice.switchToPreviousPresetCategory ();
+    return this.cursorDevice.switchToPreviousPresetCategory ();
 };
 
 CursorDeviceProxy.prototype.switchToPreviousPresetCreator = function ()
 {
-	return this.cursorDevice.switchToPreviousPresetCreator ();
+    return this.cursorDevice.switchToPreviousPresetCreator ();
 };
 
 CursorDeviceProxy.prototype.toggleEnabledState = function ()
 {
-	return this.cursorDevice.toggleEnabledState ();
+    return this.cursorDevice.toggleEnabledState ();
 };
 
 //--------------------------------------
@@ -215,12 +215,12 @@ CursorDeviceProxy.prototype.toggleEnabledState = function ()
 
 CursorDeviceProxy.prototype.selectNext = function ()
 {
-	return this.cursorDevice.selectNext ();
+    return this.cursorDevice.selectNext ();
 };
 
 CursorDeviceProxy.prototype.selectPrevious = function ()
 {
-	return this.cursorDevice.selectPrevious ();
+    return this.cursorDevice.selectPrevious ();
 };
 
 //--------------------------------------
@@ -229,17 +229,17 @@ CursorDeviceProxy.prototype.selectPrevious = function ()
 
 CursorDeviceProxy.prototype.getSelectedDevice = function ()
 {
-	return this.selectedDevice;
+    return this.selectedDevice;
 };
 
 CursorDeviceProxy.prototype.getFXParam = function (index)
 {
-	return this.fxparams[index];
+    return this.fxparams[index];
 };
 
 CursorDeviceProxy.prototype.hasPreviousParameterPage = function ()
 {
-	return this.selectedParameterPage > 0;
+    return this.selectedParameterPage > 0;
 };
 
 //--------------------------------------
@@ -248,71 +248,71 @@ CursorDeviceProxy.prototype.hasPreviousParameterPage = function ()
 
 function PresetProvider (kind)
 {
-	this.kind = kind;
-	this.items = [];
-	this.selectedItem = null;
-	this.selectedItemVerbose = null;
-	this.selectedIndex = -1;
+    this.kind = kind;
+    this.items = [];
+    this.selectedItem = null;
+    this.selectedItemVerbose = null;
+    this.selectedIndex = -1;
 }
 
 PresetProvider.Kind =
 {
-	CATEGORY: 0,
-	CREATOR:  1,
-	PRESET:   2
+    CATEGORY: 0,
+    CREATOR:  1,
+    PRESET:   2
 };
 
 // Not used
 PresetProvider.prototype.getSelectedIndex = function ()
 {
-	return this.selectedIndex;
+    return this.selectedIndex;
 };
 
 // Not used
 PresetProvider.prototype.getSelectedItem = function ()
 {
-	return this.selectedItem;
+    return this.selectedItem;
 };
 
 PresetProvider.prototype.setSelectedItem = function (item)
 {
-	this.selectedItem = item;
+    this.selectedItem = item;
 };
 
 PresetProvider.prototype.setSelectedItemVerbose = function (selectedItemVerbose)
 {
-	this.selectedItemVerbose = selectedItemVerbose;
-	this.itemsChanged ();
+    this.selectedItemVerbose = selectedItemVerbose;
+    this.itemsChanged ();
 };
 
 PresetProvider.prototype.getView = function (length)
 {
-	var result = [];
-	for (var i = this.selectedIndex; i < this.selectedIndex + length; i++)
-		result.push (this.items[i]);
-	return result;
+    var result = [];
+    for (var i = this.selectedIndex; i < this.selectedIndex + length; i++)
+        result.push (this.items[i]);
+    return result;
 };
 
 PresetProvider.prototype.setItems = function (items)
 {
-	this.items = items;
-	this.itemsChanged ();
+    this.items = items;
+    this.itemsChanged ();
 };
 
 PresetProvider.prototype.itemsChanged = function ()
 {
-	this.selectedIndex = 0;
+    this.selectedIndex = 0;
 
-	if (this.items == null)
-		return;
+    if (this.items == null)
+        return;
 
-	var len = this.items.length;
-	for (var i = 0; i < len; i++)
-	{
-		if (this.items[i] == this.selectedItemVerbose)
-		{
-			this.selectedIndex = i;
-			break;
-		}
-	}
+    var len = this.items.length;
+    for (var i = 0; i < len; i++)
+    {
+        if (this.items[i] == this.selectedItemVerbose)
+        {
+            this.selectedIndex = i;
+            break;
+        }
+    }
 };

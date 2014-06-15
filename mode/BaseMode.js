@@ -5,8 +5,8 @@
 
 function BaseMode (model)
 {
-	this.model = model;
-	this.id = null;
+    this.model = model;
+    this.id = null;
     // True if a specific mode always needs the 2nd button row
     this.hasSecondRowPriority = true;
     this.isTemporary = true;
@@ -14,7 +14,7 @@ function BaseMode (model)
 
 BaseMode.prototype.attachTo = function (push)
 {
-	this.push = push;
+    this.push = push;
 };
 
 BaseMode.prototype.getId = function ()
@@ -37,22 +37,22 @@ BaseMode.prototype.updateDisplay = function () {};
 BaseMode.prototype.drawTrackNames = function ()
 {
     var tb = this.model.getTrackBank ()
-	var selTrack = tb.getSelectedTrack ();
+    var selTrack = tb.getSelectedTrack ();
     
-	// Format track names
-	var selIndex = selTrack == null ? -1 : selTrack.index;
-	var d = this.push.display;
-	for (var i = 0; i < 8; i++)
-	{
-		var isSel = i == selIndex;
-		var t = tb.getTrack (i);
-		var n = optimizeName (t.name, isSel ? 7 : 8);
-		d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
-		
-		// Light up selection and record buttons
-		this.push.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
+    // Format track names
+    var selIndex = selTrack == null ? -1 : selTrack.index;
+    var d = this.push.display;
+    for (var i = 0; i < 8; i++)
+    {
+        var isSel = i == selIndex;
+        var t = tb.getTrack (i);
+        var n = optimizeName (t.name, isSel ? 7 : 8);
+        d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
+        
+        // Light up selection and record buttons
+        this.push.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
         if (!this.hasSecondRowPriority)
             this.push.setButton (102 + i, t.recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
-	}
-	d.done (3);
+    }
+    d.done (3);
 };

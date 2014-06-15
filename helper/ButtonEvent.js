@@ -9,25 +9,25 @@ ButtonEvent.LONG = 2;
 
 function ButtonEvent (aState)
 {
-	this.state = aState;
+    this.state = aState;
 }
 
 ButtonEvent.prototype.getState = function ()
 {
-	return this.state;
+    return this.state;
 };
 
 ButtonEvent.prototype.isDown = function ()
 {
-	return this.state == ButtonEvent.DOWN;
+    return this.state == ButtonEvent.DOWN;
 };
 
 ButtonEvent.prototype.isUp = function ()
 {
-	return this.state == ButtonEvent.UP;
+    return this.state == ButtonEvent.UP;
 };
 
 ButtonEvent.prototype.isLong = function ()
 {
-	return this.state == ButtonEvent.LONG;
+    return this.state == ButtonEvent.LONG;
 };

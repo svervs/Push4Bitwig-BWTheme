@@ -5,96 +5,96 @@
 
 function toggleValue (value)
 {
-	return !value;
+    return !value;
 }
 
 function changeValue (control, value)
 {
-	return control <= 61 ? Math.min (value + Config.fractionValue, 127) : Math.max (value - Config.fractionValue, 0);
+    return control <= 61 ? Math.min (value + Config.fractionValue, 127) : Math.max (value - Config.fractionValue, 0);
 }
 
 function doObject (object, f)
 {
-	return function ()
-	{
-		f.apply (object, arguments);
-	};
+    return function ()
+    {
+        f.apply (object, arguments);
+    };
 }
 
 function doIndex (index, f)
 {
-	return function ()
-	{
-		var args = [index];
-		for (var i = 0; i < arguments.length; i++)
-			args[i + 1] = arguments[i];
-		f.apply (null, args);
-	};
+    return function ()
+    {
+        var args = [index];
+        for (var i = 0; i < arguments.length; i++)
+            args[i + 1] = arguments[i];
+        f.apply (null, args);
+    };
 }
 
 function doObjectIndex (object, index, f)
 {
-	return function ()
-	{
-		var args = [index];
-		for (var i = 0; i < arguments.length; i++)
-			args[i + 1] = arguments[i];
-		f.apply (object, args);
-	};
+    return function ()
+    {
+        var args = [index];
+        for (var i = 0; i < arguments.length; i++)
+            args[i + 1] = arguments[i];
+        f.apply (object, args);
+    };
 }
 
 function doDoubleIndex (index1, index2, f)
 {
-	return function ()
-	{
-		var args = [index1, index2];
-		for (var i = 0; i < arguments.length; i++)
-			args[i + 2] = arguments[i];
-		f.apply (null, args);
-	};
+    return function ()
+    {
+        var args = [index1, index2];
+        for (var i = 0; i < arguments.length; i++)
+            args[i + 2] = arguments[i];
+        f.apply (null, args);
+    };
 }
 
 function doObjectDoubleIndex (object, index1, index2, f)
 {
-	return function ()
-	{
-		var args = [index1, index2];
-		for (var i = 0; i < arguments.length; i++)
-			args[i + 2] = arguments[i];
-		f.apply (object, args);
-	};
+    return function ()
+    {
+        var args = [index1, index2];
+        for (var i = 0; i < arguments.length; i++)
+            args[i + 2] = arguments[i];
+        f.apply (object, args);
+    };
 }
 
 function toHexStr (data)
 {
-	var sysex = "";
-	for (i in data)
-	{
-		var v = data[i].toString (16).toUpperCase ();
-		if (v.length < 2)
-			v = '0' + v;
-		sysex += v + ' ';
-	}
-	return sysex;
+    var sysex = "";
+    for (i in data)
+    {
+        var v = data[i].toString (16).toUpperCase ();
+        if (v.length < 2)
+            v = '0' + v;
+        sysex += v + ' ';
+    }
+    return sysex;
 }
 
 var REMOVABLE_CHARS = [' ', 'e', 'a', 'u', 'i'];
 function optimizeName (name, length)
 {
-	if (!name)
-		return '';
-	
-	for (var i = 0; i < REMOVABLE_CHARS.length; i++)
-	{
-		if (name.length <= length)
-			return name;
-		var pos = -1;
-		while ((pos = name.indexOf (REMOVABLE_CHARS[i])) != -1)
-		{
-			name = name.substring (0, pos) + name.substring (pos + 1, name.length);
-			if (name.length <= length)
-				return name;
-		}
-	}
-	return name;
+    if (!name)
+        return '';
+    
+    for (var i = 0; i < REMOVABLE_CHARS.length; i++)
+    {
+        if (name.length <= length)
+            return name;
+        var pos = -1;
+        while ((pos = name.indexOf (REMOVABLE_CHARS[i])) != -1)
+        {
+            name = name.substring (0, pos) + name.substring (pos + 1, name.length);
+            if (name.length <= length)
+                return name;
+        }
+    }
+    return name;
 }

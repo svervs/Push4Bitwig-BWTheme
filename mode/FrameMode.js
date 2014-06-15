@@ -8,63 +8,63 @@ FrameMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO - 4;
 
 function FrameMode (model)
 {
-	BaseMode.call (this, model);
-	this.id = MODE_FRAME;
-	this.bottomItems = [];
+    BaseMode.call (this, model);
+    this.id = MODE_FRAME;
+    this.bottomItems = [];
 }
 FrameMode.prototype = new BaseMode ();
 
 FrameMode.prototype.attachTo = function (push)
 {
-	BaseMode.prototype.attachTo.call (this, push);
+    BaseMode.prototype.attachTo.call (this, push);
 
-	this.addFirstRowCommand ('Arrange ', doObject (this, function () { this.model.getApplication ().setPerspective ('ARRANGE'); }));
-	this.addFirstRowCommand ('  Mix   ', doObject (this, function () { this.model.getApplication ().setPerspective ('MIX'); }));
-	this.addFirstRowCommand ('  Edit  ', doObject (this, function () { this.model.getApplication ().setPerspective ('EDIT'); }));
-	this.addFirstRowCommand ('NoteEdit', doObject (this, function () { this.model.getApplication ().toggleNoteEditor (); }));
-	this.addFirstRowCommand ('Automate', doObject (this, function () { this.model.getApplication ().toggleAutomationEditor (); }));
-	this.addFirstRowCommand (' Device ', doObject (this, function () { this.model.getApplication ().toggleDevices (); }));
-	this.addFirstRowCommand (' Mixer  ', doObject (this, function () { this.model.getApplication ().toggleMixer (); }));
-	this.addFirstRowCommand ('  Full  ', doObject (this, function () { this.model.getApplication ().toggleFullScreen (); }));
+    this.addFirstRowCommand ('Arrange ', doObject (this, function () { this.model.getApplication ().setPerspective ('ARRANGE'); }));
+    this.addFirstRowCommand ('  Mix   ', doObject (this, function () { this.model.getApplication ().setPerspective ('MIX'); }));
+    this.addFirstRowCommand ('  Edit  ', doObject (this, function () { this.model.getApplication ().setPerspective ('EDIT'); }));
+    this.addFirstRowCommand ('NoteEdit', doObject (this, function () { this.model.getApplication ().toggleNoteEditor (); }));
+    this.addFirstRowCommand ('Automate', doObject (this, function () { this.model.getApplication ().toggleAutomationEditor (); }));
+    this.addFirstRowCommand (' Device ', doObject (this, function () { this.model.getApplication ().toggleDevices (); }));
+    this.addFirstRowCommand (' Mixer  ', doObject (this, function () { this.model.getApplication ().toggleMixer (); }));
+    this.addFirstRowCommand ('  Full  ', doObject (this, function () { this.model.getApplication ().toggleFullScreen (); }));
 };
 
 FrameMode.prototype.onFirstRow = function (index) 
 {
-	this.bottomItems[index].execute ();
+    this.bottomItems[index].execute ();
 };
 
 FrameMode.prototype.updateDisplay = function () 
 {
-	var d = this.push.display;
+    var d = this.push.display;
 
-	d.clear ().setBlock (0, 0, "Perspectives:").setCell (0, 3, "Panels:");
-	
-	for (var i = 0; i < this.bottomItems.length; i++)
-		d.setCell (3, i, this.bottomItems[i].getLabel ());
-	
-	for (var i = 20; i < 28; i++)
-		this.push.setButton (i, FrameMode.firstRowButtonColor);
-	
-	d.allDone ();
+    d.clear ().setBlock (0, 0, "Perspectives:").setCell (0, 3, "Panels:");
+    
+    for (var i = 0; i < this.bottomItems.length; i++)
+        d.setCell (3, i, this.bottomItems[i].getLabel ());
+    
+    for (var i = 20; i < 28; i++)
+        this.push.setButton (i, FrameMode.firstRowButtonColor);
+    
+    d.allDone ();
 };
 
 FrameMode.prototype.addFirstRowCommand = function (label, command)
 {
-	this.bottomItems.push (new FrameToggleCommand (label, command));
+    this.bottomItems.push (new FrameToggleCommand (label, command));
 };
 
 function FrameToggleCommand (label, command)
 {
-	this.label = label;
-	this.command = command;
+    this.label = label;
+    this.command = command;
 }
 
 FrameToggleCommand.prototype.getLabel = function ()
 {
-	return this.label;
+    return this.label;
 };
 
 FrameToggleCommand.prototype.execute = function ()
 {
-	this.command.call (this);
+    this.command.call (this);
 };

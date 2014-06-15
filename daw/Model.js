@@ -5,17 +5,17 @@
 
 function Model (userCCStart)
 {
-	this.application = host.createApplication ();
+    this.application = host.createApplication ();
 
-	this.transport = new TransportProxy ();
-	this.groove = new GrooveProxy ();
-	this.masterTrack = new MasterTrackProxy ();
-	this.trackBank = new TrackBankProxy ();
+    this.transport = new TransportProxy ();
+    this.groove = new GrooveProxy ();
+    this.masterTrack = new MasterTrackProxy ();
+    this.trackBank = new TrackBankProxy ();
 
-	this.userControlBank = new UserControlBankProxy (userCCStart);
-	this.cursorDevice = new CursorDeviceProxy ();
+    this.userControlBank = new UserControlBankProxy (userCCStart);
+    this.cursorDevice = new CursorDeviceProxy ();
 
-	this.scales = new Scales ();
+    this.scales = new Scales ();
 }
 
 /**
@@ -23,17 +23,17 @@ function Model (userCCStart)
  */
 Model.prototype.getScales = function ()
 {
-	return this.scales;
+    return this.scales;
 };
 
 Model.prototype.hasSelectedDevice = function ()
 {
-	return this.cursorDevice.getSelectedDevice ().name != 'None';
+    return this.cursorDevice.getSelectedDevice ().name != 'None';
 };
 
 Model.prototype.getSelectedDevice = function ()
 {
-	return this.cursorDevice.getSelectedDevice ();
+    return this.cursorDevice.getSelectedDevice ();
 };
 
 /**
@@ -69,5 +69,5 @@ Model.prototype.getUserControlBank = function () { return this.userControlBank; 
 
 Model.prototype.getApplication = function ()
 {
-	return this.application;
+    return this.application;
 };

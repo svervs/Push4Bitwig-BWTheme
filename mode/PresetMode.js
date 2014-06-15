@@ -5,20 +5,20 @@
 
 function PresetMode (model)
 {
-	BaseMode.call (this, model);
-	this.id = MODE_PRESET;
+    BaseMode.call (this, model);
+    this.id = MODE_PRESET;
 
-	this.knobInvalidated = false;
-	
-	this.firstRowButtons = [];
-	this.firstRowButtons[22] = {};
-	this.firstRowButtons[24] = {};
-	this.firstRowButtons[26] = {};
-	
-	this.secondRowButtons = [];
-	this.secondRowButtons[104] = {};
-	this.secondRowButtons[106] = {};
-	this.secondRowButtons[108] = {};
+    this.knobInvalidated = false;
+    
+    this.firstRowButtons = [];
+    this.firstRowButtons[22] = {};
+    this.firstRowButtons[24] = {};
+    this.firstRowButtons[26] = {};
+    
+    this.secondRowButtons = [];
+    this.secondRowButtons[104] = {};
+    this.secondRowButtons[106] = {};
+    this.secondRowButtons[108] = {};
 }
 PresetMode.prototype = new BaseMode ();
 
@@ -32,81 +32,81 @@ PresetMode.prototype.onActivate = function ()
 
 PresetMode.prototype.onValueKnob = function (index, value)
 {
-	if (this.knobInvalidated)
-		return;
-	
-	this.knobInvalidated = true;
+    if (this.knobInvalidated)
+        return;
+    
+    this.knobInvalidated = true;
 
-	host.scheduleTask (doObject (this, function ()
-	{
-		if (value >= 61)
-			this.onFirstRow (index);
-		else
-			this.onSecondRow (index);
-		this.knobInvalidated = false;
-	}), null, PresetMode.knobDuration - (this.push.isShiftPressed ()) ? 100 : 0);
+    host.scheduleTask (doObject (this, function ()
+    {
+        if (value >= 61)
+            this.onFirstRow (index);
+        else
+            this.onSecondRow (index);
+        this.knobInvalidated = false;
+    }), null, PresetMode.knobDuration - (this.push.isShiftPressed ()) ? 100 : 0);
 };
 
 PresetMode.prototype.onFirstRow = function (index)
 {
-	if (index == 2)
-		this.model.getCursorDevice ().switchToPreviousPresetCategory ();
-	else if (index == 4)
-		this.model.getCursorDevice ().switchToPreviousPresetCreator ();
-	else if (index == 6)
-		this.model.getCursorDevice ().switchToPreviousPreset ();
+    if (index == 2)
+        this.model.getCursorDevice ().switchToPreviousPresetCategory ();
+    else if (index == 4)
+        this.model.getCursorDevice ().switchToPreviousPresetCreator ();
+    else if (index == 6)
+        this.model.getCursorDevice ().switchToPreviousPreset ();
 };
 
 PresetMode.prototype.onSecondRow = function (index)
 {
-	if (index == 2)
-		this.model.getCursorDevice ().switchToNextPresetCategory ();
-	else if (index == 4)
-		this.model.getCursorDevice ().switchToNextPresetCreator ();
-	else if (index == 6)
-		this.model.getCursorDevice ().switchToNextPreset ();
+    if (index == 2)
+        this.model.getCursorDevice ().switchToNextPresetCategory ();
+    else if (index == 4)
+        this.model.getCursorDevice ().switchToNextPresetCreator ();
+    else if (index == 6)
+        this.model.getCursorDevice ().switchToNextPreset ();
 };
 
 PresetMode.prototype.updateDisplay = function ()
 {
-	var d = this.push.display;
+    var d = this.push.display;
 
-	if (!this.model.hasSelectedDevice ())
-	{
-		d.clear ()
-		 .setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ')
-		 .allDone ();
-		return;
-	}
+    if (!this.model.hasSelectedDevice ())
+    {
+        d.clear ()
+         .setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ')
+         .allDone ();
+        return;
+    }
 
-	d.clearColumn (0).setBlock ( 0, 0, "Select Preset:")
-	 .setBlock (3, 0, "Device: " + this.model.getSelectedDevice ().name);
-	
-	var view = this.model.getCursorDevice ().categoryProvider.getView (4);
-	for (var i = 0; i < 4; i++)
-	{
-		var value = (view[i] != null) ? view[i] : "";
-		if (i == 0)
-			d.setBlock (i, 1, Display.RIGHT_ARROW + value);
-		else
-			d.setBlock (i, 1, ' ' + value);
-	}
-	
-	var view = this.model.getCursorDevice ().creatorProvider.getView (4);
-	for (var i = 0; i < 4; i++)
-	{
-		var value = (view[i] != null) ? view[i] : "";
-		if (i == 0)
-			d.setBlock (i, 2, Display.RIGHT_ARROW + value);
-		else
-			d.setBlock (i, 2, ' ' + value);
-	}
+    d.clearColumn (0).setBlock ( 0, 0, "Select Preset:")
+     .setBlock (3, 0, "Device: " + this.model.getSelectedDevice ().name);
+    
+    var view = this.model.getCursorDevice ().categoryProvider.getView (4);
+    for (var i = 0; i < 4; i++)
+    {
+        var value = (view[i] != null) ? view[i] : "";
+        if (i == 0)
+            d.setBlock (i, 1, Display.RIGHT_ARROW + value);
+        else
+            d.setBlock (i, 1, ' ' + value);
+    }
+    
+    var view = this.model.getCursorDevice ().creatorProvider.getView (4);
+    for (var i = 0; i < 4; i++)
+    {
+        var value = (view[i] != null) ? view[i] : "";
+        if (i == 0)
+            d.setBlock (i, 2, Display.RIGHT_ARROW + value);
+        else
+            d.setBlock (i, 2, ' ' + value);
+    }
 
-	d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.model.getCursorDevice ().currentPreset).allDone ();
-	
-	for (var i = 20; i < 28; i++)
-		this.push.setButton (i, this.firstRowButtons[i] != null ? PresetMode.firstRowButtonColor : PUSH_COLOR_BLACK);
-	
-	for (var i = 104; i < 110; i++)
-		this.push.setButton (i, this.secondRowButtons[i] != null ? PresetMode.secondRowButtonColor : PUSH_COLOR_BLACK);
+    d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.model.getCursorDevice ().currentPreset).allDone ();
+    
+    for (var i = 20; i < 28; i++)
+        this.push.setButton (i, this.firstRowButtons[i] != null ? PresetMode.firstRowButtonColor : PUSH_COLOR_BLACK);
+    
+    for (var i = 104; i < 110; i++)
+        this.push.setButton (i, this.secondRowButtons[i] != null ? PresetMode.secondRowButtonColor : PUSH_COLOR_BLACK);
 };

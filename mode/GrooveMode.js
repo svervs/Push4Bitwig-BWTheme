@@ -5,53 +5,53 @@
 
 function GrooveMode (model)
 {
-	BaseMode.call (this, model);
-	this.id = MODE_GROOVE;
+    BaseMode.call (this, model);
+    this.id = MODE_GROOVE;
 }
 GrooveMode.prototype = new BaseMode ();
 
 GrooveMode.prototype.onValueKnob = function (index, value)
 {
-	var v = this.model.getGroove ().getValue (index);
-	v.value = changeValue (value, v.value);
-	this.model.getGroove ().getRangedValue (index).set (v.value, 128);
+    var v = this.model.getGroove ().getValue (index);
+    v.value = changeValue (value, v.value);
+    this.model.getGroove ().getRangedValue (index).set (v.value, 128);
 };
 
 GrooveMode.prototype.onFirstRow = function (index)
 {
-	switch (index)
-	{
-		case 7:
-			this.model.getGroove ().toggleEnabled ();
-			break;
-	}
+    switch (index)
+    {
+        case 7:
+            this.model.getGroove ().toggleEnabled ();
+            break;
+    }
 };
 
 GrooveMode.prototype.updateDisplay = function ()
 {
-	var d = this.push.display;
-	var g = this.model.getGroove ();;
+    var d = this.push.display;
+    var g = this.model.getGroove ();;
 
-	d.clear ();
+    d.clear ();
 
-	var kinds = GrooveValue.Kind.values ();
-	for (var i = 0; i < kinds.length; i++)
-	{
-		var v = g.getValue (i);
-		d.setCell (0, i, v.name, Display.FORMAT_RAW)
-		 .setCell (1, i, v.valueString, Display.FORMAT_RAW)
-		 .setCell (2, i, v.value, Display.FORMAT_VALUE);
-	}
+    var kinds = GrooveValue.Kind.values ();
+    for (var i = 0; i < kinds.length; i++)
+    {
+        var v = g.getValue (i);
+        d.setCell (0, i, v.name, Display.FORMAT_RAW)
+         .setCell (1, i, v.valueString, Display.FORMAT_RAW)
+         .setCell (2, i, v.value, Display.FORMAT_VALUE);
+    }
 
-	d.setBlock (3, 0, "Global Groove:")
-	 .setCell (3, 7, g.isEnabled () ? 'Enabled' : 'Disabled')
-	 .allDone ();
+    d.setBlock (3, 0, "Global Groove:")
+     .setCell (3, 7, g.isEnabled () ? 'Enabled' : 'Disabled')
+     .allDone ();
 
-	for (var i = 0; i < 7; i++)
-		this.push.setButton (20 + i, PUSH_COLOR_BLACK);
+    for (var i = 0; i < 7; i++)
+        this.push.setButton (20 + i, PUSH_COLOR_BLACK);
 
-	for (var i = 0; i < 8; i++)
-		this.push.setButton (102 + i, PUSH_COLOR_BLACK);
+    for (var i = 0; i < 8; i++)
+        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
 
-	this.push.setButton (27, g.isEnabled () ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
+    this.push.setButton (27, g.isEnabled () ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
 };

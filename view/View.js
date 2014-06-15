@@ -4,17 +4,17 @@
 
 function View ()
 {
-	this.push = null;
+    this.push = null;
 }
 
 View.prototype.attachTo = function (push)
 {
-	this.push = push;
+    this.push = push;
 };
 
 View.prototype.usesButton = function (buttonID)
 {
-	return true;
+    return true;
 };
 
 View.prototype.onActivate = function () {};

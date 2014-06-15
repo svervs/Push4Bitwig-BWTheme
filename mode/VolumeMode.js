@@ -8,27 +8,27 @@ VolumeMode.PARAM_NAMES = 'Volume   Volume  Volume   Volume  Volume   Volume  Vol
 
 function VolumeMode (model)
 {
-	AbstractTrackMode.call (this, model);
-	this.id = MODE_VOLUME;
+    AbstractTrackMode.call (this, model);
+    this.id = MODE_VOLUME;
 }
 VolumeMode.prototype = new AbstractTrackMode ();
 
 VolumeMode.prototype.onValueKnob = function (index, value)
 {
-	this.model.getTrackBank ().setVolume (index, value);
+    this.model.getTrackBank ().setVolume (index, value);
 };
 
 VolumeMode.prototype.updateDisplay = function ()
 {
     this.drawTrackNames ();
 
-	var d = this.push.display;
-	var tb = this.model.getTrackBank ();
-	for (var i = 0; i < 8; i++)
-	{
-		var t = tb.getTrack (i);
-		d.setCell (1, i, t.volumeStr, Display.FORMAT_RAW)
-		 .setCell (2, i, this.push.showVU ? t.vu : t.volume, Display.FORMAT_VALUE);
-	}
-	d.setRow (0, VolumeMode.PARAM_NAMES).done (1).done (2);
+    var d = this.push.display;
+    var tb = this.model.getTrackBank ();
+    for (var i = 0; i < 8; i++)
+    {
+        var t = tb.getTrack (i);
+        d.setCell (1, i, t.volumeStr, Display.FORMAT_RAW)
+         .setCell (2, i, this.push.showVU ? t.vu : t.volume, Display.FORMAT_VALUE);
+    }
+    d.setRow (0, VolumeMode.PARAM_NAMES).done (1).done (2);
 };

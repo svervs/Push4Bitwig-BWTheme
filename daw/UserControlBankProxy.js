@@ -5,10 +5,10 @@
 
 function UserControlBankProxy (ccStart)
 {
-	this.userControlBank = host.createUserControls (8);
+    this.userControlBank = host.createUserControls (8);
 
-	for (var i = 0; i < 8; i++)
-		this.userControlBank.getControl (i).setLabel ("CC" + (i + ccStart));
+    for (var i = 0; i < 8; i++)
+        this.userControlBank.getControl (i).setLabel ("CC" + (i + ccStart));
 }
 
 /**
@@ -17,5 +17,5 @@ function UserControlBankProxy (ccStart)
  */
 UserControlBankProxy.prototype.getControl = function (index)
 {
-	return this.userControlBank.getControl (index);
+    return this.userControlBank.getControl (index);
 };

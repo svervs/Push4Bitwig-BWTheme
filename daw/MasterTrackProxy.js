@@ -5,72 +5,72 @@
 
 function MasterTrackProxy ()
 {
-	this.masterTrack = host.createMasterTrack (0);
+    this.masterTrack = host.createMasterTrack (0);
     this.listeners = [];
-	this.name = null;
-	this.vu = null;
-	this.mute = null;
-	this.solo = null;
-	this.pan = null;
-	this.panStr = null;
-	this.volume = null;
-	this.volumeStr = null;
-	this.selected = false;
+    this.name = null;
+    this.vu = null;
+    this.mute = null;
+    this.solo = null;
+    this.pan = null;
+    this.panStr = null;
+    this.volume = null;
+    this.volumeStr = null;
+    this.selected = false;
 
-	// Master Track name
-	this.masterTrack.addNameObserver (8, '', doObject (this, function (name)
-	{
-		this.name = name;
-	}));
-	// Master Track selection
-	this.masterTrack.addIsSelectedObserver (doObject (this, function (isSelected)
-	{
-		this.selected = isSelected;
+    // Master Track name
+    this.masterTrack.addNameObserver (8, '', doObject (this, function (name)
+    {
+        this.name = name;
+    }));
+    // Master Track selection
+    this.masterTrack.addIsSelectedObserver (doObject (this, function (isSelected)
+    {
+        this.selected = isSelected;
         for (var l = 0; l < this.listeners.length; l++)
             this.listeners[l].call (null, isSelected);
-	}));
-	this.masterTrack.addVuMeterObserver (128, -1, true, doObject (this, function (value)
-	{
-		this.vu = value;
-	}));
+    }));
+    this.masterTrack.addVuMeterObserver (128, -1, true, doObject (this, function (value)
+    {
+        this.vu = value;
+    }));
 
-	// Master Track Mute
-	this.masterTrack.getMute ().addValueObserver (doObject (this, function (isMuted)
-	{
-		this.mute = isMuted;
-	}));
-	// Master Track Solo
-	this.masterTrack.getSolo ().addValueObserver (doObject (this, function (isSoloed)
-	{
-		this.solo = isSoloed;
-	}));
-	// Master Track Arm
-	this.masterTrack.getArm ().addValueObserver (doObject (this, function (isArmed)
-	{
-		this.recarm = isArmed;
-	}));
+    // Master Track Mute
+    this.masterTrack.getMute ().addValueObserver (doObject (this, function (isMuted)
+    {
+        this.mute = isMuted;
+    }));
+    // Master Track Solo
+    this.masterTrack.getSolo ().addValueObserver (doObject (this, function (isSoloed)
+    {
+        this.solo = isSoloed;
+    }));
+    // Master Track Arm
+    this.masterTrack.getArm ().addValueObserver (doObject (this, function (isArmed)
+    {
+        this.recarm = isArmed;
+    }));
 
-	// Master Track Pan value & text
-	var p = this.masterTrack.getPan ();
-	p.addValueObserver (128, doObject (this, function (value)
-	{
-		this.pan = value;
-	}));
-	p.addValueDisplayObserver (8, '', doObject (this, function (text)
-	{
-		this.panStr = text;
-	}));
+    // Master Track Pan value & text
+    var p = this.masterTrack.getPan ();
+    p.addValueObserver (128, doObject (this, function (value)
+    {
+        this.pan = value;
+    }));
+    p.addValueDisplayObserver (8, '', doObject (this, function (text)
+    {
+        this.panStr = text;
+    }));
 
-	// Master Track volume value & text
-	var v = this.masterTrack.getVolume ();
-	v.addValueObserver (128, doObject (this, function (value)
-	{
-		this.volume = value;
-	}));
-	v.addValueDisplayObserver (8, '', doObject (this, function (text)
-	{
-		this.volumeStr = text;
-	}));
+    // Master Track volume value & text
+    var v = this.masterTrack.getVolume ();
+    v.addValueObserver (128, doObject (this, function (value)
+    {
+        this.volume = value;
+    }));
+    v.addValueDisplayObserver (8, '', doObject (this, function (text)
+    {
+        this.volumeStr = text;
+    }));
 }
 
 // listener has 1 parameter: [boolean] isSelected
@@ -95,8 +95,8 @@ MasterTrackProxy.prototype.getVolumeString = function () { return this.volumeStr
 
 MasterTrackProxy.prototype.setVolume = function (value)
 {
-	this.volume = changeValue (value, this.volume);
-	this.masterTrack.getVolume ().set (this.volume, 128);
+    this.volume = changeValue (value, this.volume);
+    this.masterTrack.getVolume ().set (this.volume, 128);
 };
 
 MasterTrackProxy.prototype.setVolumeIndication = function (indicate)
@@ -106,8 +106,8 @@ MasterTrackProxy.prototype.setVolumeIndication = function (indicate)
 
 MasterTrackProxy.prototype.setPan = function (value)
 {
-	this.pan = changeValue (value, this.pan);
-	this.masterTrack.getPan ().set (this.pan, 128);
+    this.pan = changeValue (value, this.pan);
+    this.masterTrack.getPan ().set (this.pan, 128);
 };
 
 MasterTrackProxy.prototype.setPanIndication = function (indicate)
@@ -122,10 +122,10 @@ MasterTrackProxy.prototype.setPanIndication = function (indicate)
 
 MasterTrackProxy.prototype.incVolume = function (value)
 {
-	this.masterTrack.getVolume ().inc (value <= 61 ? 1 : -1, 128);
+    this.masterTrack.getVolume ().inc (value <= 61 ? 1 : -1, 128);
 };
 
 MasterTrackProxy.prototype.select = function ()
 {
-	this.masterTrack.select ();
+    this.masterTrack.select ();
 };
