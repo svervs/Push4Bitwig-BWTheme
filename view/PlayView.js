@@ -24,7 +24,7 @@ PlayView.prototype.updateNoteMapping = function ()
     var t = this.model.getTrackBank ().getSelectedTrack ();
     this.noteMap = t != null && t.canHoldNotes ? this.scales.getNoteMatrix () : this.scales.getEmptyMatrix ();
     // Workaround: https://github.com/git-moss/Push4Bitwig/issues/7
-    host.scheduleTask (doObject (this, function () { this.push.setKeyTranslationTable (this.noteMap); }), null, 100);
+    scheduleTask (doObject (this, function () { this.push.setKeyTranslationTable (this.noteMap); }), null, 100);
 };
 
 PlayView.prototype.onActivate = function ()
@@ -140,7 +140,7 @@ PlayView.prototype.onLeft = function (event)
             if (!this.model.getTrackBank ().canScrollTracksUp ())
                 return;
             this.model.getTrackBank ().scrollTracksPageUp ();
-            host.scheduleTask (doObject (this, this.selectTrack), [7], 100);
+            scheduleTask (doObject (this, this.selectTrack), [7], 100);
             return;
         }
         this.selectTrack (index);
@@ -164,7 +164,7 @@ PlayView.prototype.onRight = function (event)
             if (!tb.canScrollTracksDown ())
                 return;
             tb.scrollTracksPageDown ();
-            host.scheduleTask (doObject (this, this.selectTrack), [0], 100);
+            scheduleTask (doObject (this, this.selectTrack), [0], 100);
         }
         this.selectTrack (index);
     }

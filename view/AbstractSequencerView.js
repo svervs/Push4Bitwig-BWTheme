@@ -22,6 +22,7 @@ function AbstractSequencerView (model, rows, cols)
     for (var y = 0; y < this.rows; y++)
         this.data[y] = initArray (false, this.cols);
 
+    // TODO move to daw package
     this.clip = host.createCursorClip (this.cols, this.rows);
     this.clip.setStepSize (this.resolutions[4]);
 

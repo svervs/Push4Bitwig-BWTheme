@@ -169,7 +169,7 @@ Push.prototype.flush = function ()
     if (!this.displayScheduled)
     {
         this.displayScheduled = true;
-        host.scheduleTask (doObject (this, function ()
+        scheduleTask (doObject (this, function ()
         {
             this.scheduledFlush ();
             this.displayScheduled = false;
@@ -416,7 +416,7 @@ Push.prototype.handleCC = function (cc, value)
         this.buttonStates[cc] = value == 127 ? ButtonEvent.DOWN : ButtonEvent.UP;
         if (this.buttonStates[cc] == ButtonEvent.DOWN)
         {
-            host.scheduleTask (function (object, buttonID)
+            scheduleTask (function (object, buttonID)
             {
                 object.checkButtonState (buttonID);
             }, [this, cc], 400);

@@ -71,3 +71,8 @@ Model.prototype.getApplication = function ()
 {
     return this.application;
 };
+
+Model.prototype.showNotification = function (message)
+{
+    host.showPopupNotification (message);
+};

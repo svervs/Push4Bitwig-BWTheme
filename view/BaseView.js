@@ -100,14 +100,14 @@ BaseView.prototype.onNew = function (event)
             }
         }
     }
-    host.showPopupNotification ("In the current selected grid view there is no empty slot. Please scroll down.");
+    this.model.showNotification ("In the current selected grid view there is no empty slot. Please scroll down.");
 };
 
 BaseView.prototype.onDuplicate = function (event)
 {
     if (!event.isDown ())
         return;
-    host.showPopupNotification ("Duplicate: Function not supported (yet).");
+    this.model.showNotification ("Duplicate: Function not supported (yet).");
 };
 
 BaseView.prototype.onAutomation = function (event)
@@ -137,7 +137,7 @@ BaseView.prototype.onQuantize = function (event)
     if (this.push.isShiftPressed ())
         this.push.setPendingMode (MODE_GROOVE);
     else
-        host.showPopupNotification ("Quantize: Function not supported (yet).");
+        this.model.showNotification ("Quantize: Function not supported (yet).");
 };
 
 BaseView.prototype.onDouble = function (event)
@@ -394,7 +394,7 @@ BaseView.prototype.onDeviceLeft = function (event)
     if (tb.canScrollTracksUp ())
     {
         tb.scrollTracksPageUp ();
-        host.scheduleTask (doObject (this, this.selectTrack), [7], 100);
+        scheduleTask (doObject (this, this.selectTrack), [7], 100);
     }
 };
 
@@ -407,7 +407,7 @@ BaseView.prototype.onDeviceRight = function (event)
     if (tb.canScrollTracksDown ())
     {
         tb.scrollTracksPageDown ();
-        host.scheduleTask (doObject (this, this.selectTrack), [0], 100);
+        scheduleTask (doObject (this, this.selectTrack), [0], 100);
     }
 };
 
@@ -491,14 +491,14 @@ BaseView.prototype.onAddEffect = function (event)
 {
     if (!event.isDown ())
         return;
-    host.showPopupNotification ("Add Effect: Function not supported (yet).");
+    this.model.showNotification ("Add Effect: Function not supported (yet).");
 };
 
 BaseView.prototype.onAddTrack = function (event)
 {
     if (!event.isDown ())
         return;
-    host.showPopupNotification ("Add Track: Function not supported (yet).");
+    this.model.showNotification ("Add Track: Function not supported (yet).");
 };
 
 BaseView.prototype.onNote = function (event)
@@ -595,7 +595,7 @@ BaseView.prototype.turnOffBlink = function ()
 BaseView.prototype.doubleClickTest = function ()
 {
     this.restartFlag = true;
-    host.scheduleTask (doObject (this, function ()
+    scheduleTask (doObject (this, function ()
     {
         this.restartFlag = false;
     }), null, 250);

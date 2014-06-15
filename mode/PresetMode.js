@@ -37,7 +37,7 @@ PresetMode.prototype.onValueKnob = function (index, value)
     
     this.knobInvalidated = true;
 
-    host.scheduleTask (doObject (this, function ()
+    scheduleTask (doObject (this, function ()
     {
         if (value >= 61)
             this.onFirstRow (index);
