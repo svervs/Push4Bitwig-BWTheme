@@ -8,14 +8,6 @@ function MidiInput ()
     this.port = host.getMidiInPort (0);
 }
 
-/**
- * @returns {MidiIn}
- */
-MidiInput.prototype.getPort = function ()
-{
-    return this.port;
-};
-
 MidiInput.prototype.setMidiCallback = function (f)
 {
     this.port.setMidiCallback (f);
