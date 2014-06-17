@@ -5,13 +5,11 @@
 
 function Model (userCCStart)
 {
-    this.application = host.createApplication ();
-
+    this.application = new ApplicationProxy ();
     this.transport = new TransportProxy ();
     this.groove = new GrooveProxy ();
     this.masterTrack = new MasterTrackProxy ();
     this.trackBank = new TrackBankProxy ();
-
     this.userControlBank = new UserControlBankProxy (userCCStart);
     this.cursorDevice = new CursorDeviceProxy ();
 

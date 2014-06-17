@@ -4,10 +4,11 @@
 // Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
 
 load ("Globals.js");
-load ("Model.js");
+load ("ApplicationProxy.js");
 load ("TransportProxy.js");
 load ("CursorDeviceProxy.js");
 load ("GrooveProxy.js");
 load ("MasterTrackProxy.js");
 load ("TrackBankProxy.js");
 load ("UserControlBankProxy.js");
+load ("Model.js");

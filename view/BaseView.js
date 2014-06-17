@@ -148,12 +148,8 @@ BaseView.prototype.onDouble = function (event)
 
 BaseView.prototype.onDelete = function (event)
 {
-    if (!event.isDown ())
-        return;
-    // Weird workaround as 'delete' is a reserved word in JS
-    var app = this.model.getApplication ();
-    var deleteFunction = app['delete'];
-    deleteFunction.call (app);
+    if (event.isDown ())
+        this.model.getApplication ().deleteSelection ();
 };
 
 BaseView.prototype.onUndo = function (event)
