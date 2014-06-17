@@ -100,14 +100,13 @@ BaseView.prototype.onNew = function (event)
             }
         }
     }
-    this.model.showNotification ("In the current selected grid view there is no empty slot. Please scroll down.");
+    displayNotification ("In the current selected grid view there is no empty slot. Please scroll down.");
 };
 
 BaseView.prototype.onDuplicate = function (event)
 {
-    if (!event.isDown ())
-        return;
-    this.model.showNotification ("Duplicate: Function not supported (yet).");
+    if (event.isDown ())
+        this.model.getApplication ().doubleClip ();
 };
 
 BaseView.prototype.onAutomation = function (event)
@@ -137,7 +136,7 @@ BaseView.prototype.onQuantize = function (event)
     if (this.push.isShiftPressed ())
         this.push.setPendingMode (MODE_GROOVE);
     else
-        this.model.showNotification ("Quantize: Function not supported (yet).");
+        this.model.getApplication ().quantize ();
 };
 
 BaseView.prototype.onDouble = function (event)
@@ -485,16 +484,14 @@ BaseView.prototype.onAccent = function (event)
 
 BaseView.prototype.onAddEffect = function (event)
 {
-    if (!event.isDown ())
-        return;
-    this.model.showNotification ("Add Effect: Function not supported (yet).");
+    if (event.isDown ())
+        this.model.getApplication ().addEffect ();
 };
 
 BaseView.prototype.onAddTrack = function (event)
 {
-    if (!event.isDown ())
-        return;
-    this.model.showNotification ("Add Track: Function not supported (yet).");
+    if (event.isDown ())
+        this.model.getApplication ().addTrack ();
 };
 
 BaseView.prototype.onNote = function (event)

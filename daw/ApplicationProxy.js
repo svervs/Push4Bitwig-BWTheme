@@ -48,6 +48,13 @@ ApplicationProxy.prototype.duplicate = function ()
     this.application.duplicate ();
 };
 
+ApplicationProxy.prototype.doubleClip = function ()
+{
+    // See Push manual, if we duplicate the Push functionality 
+    // this function must be somewhere else, e.g. in TrackBankProxy
+    displayNotification ("Duplicate: Function not supported (yet).");
+};
+
 ApplicationProxy.prototype.deleteSelection = function ()
 {
     // Weird workaround as 'delete' is a reserved word in JS
@@ -63,6 +70,21 @@ ApplicationProxy.prototype.redo = function ()
 ApplicationProxy.prototype.undo = function ()
 {
     this.application.undo ();
+};
+
+ApplicationProxy.prototype.quantize = function ()
+{
+    displayNotification ("Quantize: Function not supported (yet).");
+};
+
+ApplicationProxy.prototype.addEffect = function ()
+{
+    displayNotification ("Add Effect: Function not supported (yet).");
+};
+
+ApplicationProxy.prototype.addTrack = function ()
+{
+    displayNotification ("Add Track: Function not supported (yet).");
 };
 
 ApplicationProxy.prototype.arrowKeyLeft = function ()
