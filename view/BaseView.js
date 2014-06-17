@@ -14,10 +14,6 @@ function BaseView (model)
 
     this.restartFlag   = false;
     this.stopPressed   = false;
-    
-    this.ttLastMillis = -1;
-    this.ttLastBPM    = -1;
-    this.ttHistory    = [];
 }
 BaseView.prototype = new View ();
 BaseView.prototype.constructor = BaseView;
@@ -195,45 +191,8 @@ BaseView.prototype.onMetronome = function (event)
 
 BaseView.prototype.onTapTempo = function (event)
 {
-    if (!event.isDown ())
-        return;
-
-    var millis = new Date ().getTime ();
-
-    // First press?
-    if (this.ttLastMillis == -1)
-    {
-        this.ttLastMillis = millis;
-        return;
-    }
-
-    // Calc the difference
-    var diff = millis - this.ttLastMillis;
-    this.ttLastMillis = millis;
-
-    // Store up to 8 differences for average calculation
-    this.ttHistory.push (diff);
-    if (this.ttHistory.length > 8)
-        this.ttHistory.shift ();
-
-    // Calculate the new average difference
-    var sum = 0;
-    for (var i = 0; i < this.ttHistory.length; i++)
-        sum += this.ttHistory[i];
-    var average = sum / this.ttHistory.length;
-    var bpm = 60000 / average;
-
-    // If the deviation is greater 20bpm, reset history
-    if (this.ttLastBPM != -1 && Math.abs (this.ttLastBPM - bpm) > 20)
-    {
-        this.ttHistory.length = 0;
-        this.ttLastBPM = -1;
-    }
-    else
-    {
-        this.ttLastBPM = bpm;
-        this.model.getTransport ().setTempo (bpm);
-    }
+    if (event.isDown ())
+        this.model.getTransport ().tapTempo ();
 };
 
 //--------------------------------------
