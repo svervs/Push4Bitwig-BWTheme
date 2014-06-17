@@ -63,19 +63,9 @@ TransportProxy.prototype.getPosition = function ()
     this.transport.getPosition ();
 };
 
-TransportProxy.prototype.getTempo = function ()
-{
-    this.transport.getTempo ();
-};
-
 TransportProxy.prototype.incPosition = function (deltaBase, snap)
 {
     this.transport.incPosition (deltaBase, snap);
-};
-
-TransportProxy.prototype.increaseTempo = function (amount, range)
-{
-    this.transport.increaseTempo (amount, range)
 };
 
 TransportProxy.prototype.play = function ()
@@ -235,15 +225,13 @@ TransportProxy.prototype.setTempoIndication = function (isTouched)
     this.transport.getTempo ().setIndication (isTouched);
 };
 
+TransportProxy.prototype.setInternalTempo = function (t)
+{
+    this.tempo = t;
+};
+
 TransportProxy.prototype.setLauncherOverdub = function (on)
 {
     // Note: This is a bug: On and off are switched
     this.transport.setLauncherOverdub (!on);
-};
-
-TransportProxy.prototype.setInternalTempo = function (t)
-{
-    this.tempo = t;
-    // TODO quarterNoteInMillis is not used anywhere
-    this.quarterNoteInMillis = 60000 / (t + 20);
 };
