@@ -514,7 +514,7 @@ BaseView.prototype.onFootswitch2 = function (value)
 
 BaseView.prototype.selectTrack = function (index)
 {
-    this.model.getTrackBank ().selectTrack (index);
+    this.model.getTrackBank ().select (index);
 };
 
 BaseView.prototype.updateArrows = function ()

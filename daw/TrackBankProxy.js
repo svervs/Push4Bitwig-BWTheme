@@ -214,7 +214,7 @@ TrackBankProxy.prototype.getSelectedTrack = function ()
     return null;
 };
 
-TrackBankProxy.prototype.selectTrack = function (index)
+TrackBankProxy.prototype.select = function (index)
 {
     var t = this.trackBank.getTrack (index);
     if (t != null)
@@ -294,11 +294,6 @@ TrackBankProxy.prototype.setSendIndication = function (index, sendIndex, indicat
 TrackBankProxy.prototype.stop = function (index)
 {
     this.trackBank.getTrack (index).stop ();
-};
-
-TrackBankProxy.prototype.select = function (index)
-{
-    this.trackBank.getTrack (index).select ();
 };
 
 TrackBankProxy.prototype.launchScene = function (scene)
