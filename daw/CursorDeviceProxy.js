@@ -149,6 +149,16 @@ CursorDeviceProxy.prototype.getParameter = function (indexInPage)
     return this.cursorDevice.getParameter (indexInPage);
 };
 
+CursorDeviceProxy.prototype.setParameter = function (index, value)
+{
+    this.getParameter (index).set (value, 128);
+};
+
+CursorDeviceProxy.prototype.resetParameter = function (index)
+{
+    this.getParameter (index).reset ();
+};
+
 CursorDeviceProxy.prototype.nextParameterPage = function ()
 {
     return this.cursorDevice.nextParameterPage ();

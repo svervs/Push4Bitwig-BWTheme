@@ -14,13 +14,13 @@ DeviceMode.prototype.onValueKnob = function (index, value)
 {
     var param = this.model.getCursorDevice ().getFXParam (index);
     param.value = changeValue (value, param.value);
-    this.model.getCursorDevice ().getParameter (index).set (param.value, 128);
+    this.model.getCursorDevice ().setParameter (index, param.value);
 };
 
 DeviceMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
     if (this.push.isDeletePressed ())
-        this.model.getCursorDevice ().getParameter (index).reset ();
+        this.model.getCursorDevice ().resetParameter (index);
 };
 
 DeviceMode.prototype.onFirstRow = function (index)
