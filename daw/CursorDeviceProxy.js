@@ -56,7 +56,7 @@ function CursorDeviceProxy ()
         {
             this.fxparams[index].name = name;
         }));
-        p.addValueObserver (128, doObjectIndex (this, i, function (index, value)
+        p.addValueObserver (Config.maxParameterValue, doObjectIndex (this, i, function (index, value)
         {
             this.fxparams[index].value = value;
         }));
@@ -151,7 +151,7 @@ CursorDeviceProxy.prototype.getParameter = function (indexInPage)
 
 CursorDeviceProxy.prototype.setParameter = function (index, value)
 {
-    this.getParameter (index).set (value, 128);
+    this.getParameter (index).set (value, Config.maxParameterValue);
 };
 
 CursorDeviceProxy.prototype.resetParameter = function (index)

@@ -1,13 +1,15 @@
 // Accent button active
-Config.accentActive     = false;
+Config.accentActive      = false;
 // Fixed velocity value for accent
-Config.fixedAccentValue = 127;
+Config.fixedAccentValue  = 127;
 // Inc/Dec of knobs
-Config.fractionValue    = 1;
+Config.fractionValue     = 1;
+Config.maxParameterValue = 128;
 
 
-Config.FIXED_ACCENT_VALUE = 0;
-Config.INC_FRACTION_VALUE = 1;
+Config.FIXED_ACCENT_VALUE  = 0;
+Config.INC_FRACTION_VALUE  = 1;
+Config.MAX_PARAMETER_VALUE = 2;
 
 
 Config.setAccentValue = function (value)

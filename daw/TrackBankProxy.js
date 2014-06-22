@@ -64,7 +64,7 @@ function TrackBankProxy ()
             for (var l = 0; l < this.listeners.length; l++)
                 this.listeners[l].call (null, index, isSelected);
         }));
-        t.addVuMeterObserver (128, -1, true, doObjectIndex (this, i, function (index, value)
+        t.addVuMeterObserver (Config.maxParameterValue, -1, true, doObjectIndex (this, i, function (index, value)
         {
             this.tracks[index].vu = value;
         }));
@@ -87,7 +87,7 @@ function TrackBankProxy ()
 
         // Track volume value & text
         var v = t.getVolume ();
-        v.addValueObserver (128, doObjectIndex (this, i, function (index, value)
+        v.addValueObserver (Config.maxParameterValue, doObjectIndex (this, i, function (index, value)
         {
             this.tracks[index].volume = value;
         }));
@@ -98,7 +98,7 @@ function TrackBankProxy ()
 
         // Track Pan value & text
         var p = t.getPan ();
-        p.addValueObserver (128, doObjectIndex (this, i, function (index, value)
+        p.addValueObserver (Config.maxParameterValue, doObjectIndex (this, i, function (index, value)
         {
             this.tracks[index].pan = value;
         }));
@@ -145,7 +145,7 @@ function TrackBankProxy ()
         for (var j = 0; j < 6; j++)
         {
             var s = t.getSend (j);
-            s.addValueObserver (128, doObjectDoubleIndex (this, i, j, function (index1, index2, value)
+            s.addValueObserver (Config.maxParameterValue, doObjectDoubleIndex (this, i, j, function (index1, index2, value)
             {
                 this.tracks[index1].sends[index2].volume = value;
             }));
@@ -225,7 +225,7 @@ TrackBankProxy.prototype.setVolume = function (index, value)
 {
     var t = this.getTrack (index);
     t.volume = changeValue (value, t.volume);
-    this.trackBank.getTrack (t.index).getVolume ().set (t.volume, 128);
+    this.trackBank.getTrack (t.index).getVolume ().set (t.volume, Config.maxParameterValue);
 };
 
 TrackBankProxy.prototype.setVolumeIndication = function (index, indicate)
@@ -237,7 +237,7 @@ TrackBankProxy.prototype.setPan = function (index, value)
 {
     var t = this.getTrack (index);
     t.pan = changeValue (value, t.pan);
-    this.trackBank.getTrack (t.index).getPan ().set (t.pan, 128);
+    this.trackBank.getTrack (t.index).getPan ().set (t.pan, Config.maxParameterValue);
 };
 
 TrackBankProxy.prototype.setPanIndication = function (index, indicate)
@@ -283,7 +283,7 @@ TrackBankProxy.prototype.setSend = function (index, sendIndex, value)
     var t = this.getTrack (index);
     var send = t.sends[sendIndex];
     send.volume = changeValue (value, send.volume);
-    this.trackBank.getTrack (t.index).getSend (sendIndex).set (send.volume, 128);
+    this.trackBank.getTrack (t.index).getSend (sendIndex).set (send.volume, Config.maxParameterValue);
 };
 
 TrackBankProxy.prototype.setSendIndication = function (index, sendIndex, indicate)

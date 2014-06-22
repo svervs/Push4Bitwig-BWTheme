@@ -47,7 +47,7 @@ ParamPageMode.prototype.attachTo = function (push)
         }
         else
         {
-            p.addValueObserver (128, doObjectIndex (this, i, function (index, value)
+            p.addValueObserver (Config.maxParameterValue, doObjectIndex (this, i, function (index, value)
             {
                 this.params[index].value = value;
             }));
@@ -104,7 +104,7 @@ ParamPageMode.prototype.onValueKnob = function (index, value)
         return;
     }
     this.params[index].value = changeValue (value, this.params[index].value);
-    this.getParameter (index).set (this.params[index].value, 128);
+    this.getParameter (index).set (this.params[index].value, Config.maxParameterValue);
 };
 
 ParamPageMode.prototype.updateDisplay = function ()

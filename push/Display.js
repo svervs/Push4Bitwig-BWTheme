@@ -171,7 +171,7 @@ Display.prototype.flush = function (row)
 
 Display.prototype.formatValue = function (value)
 {
-    var noOfBars = Math.round (16 * value / 128);
+    var noOfBars = Math.round (16 * value / Config.maxParameterValue);
     var n = '';
     for (var j = 0; j < Math.floor (noOfBars / 2); j++)
         n += Display.BARS_TWO;
@@ -186,7 +186,7 @@ Display.prototype.formatPan = function (pan)
          return Display.NON_4 + Display.NON_4;
     var isLeft = pan < 64;
     var pos = isLeft ? 64 - pan : pan - 64;
-    var noOfBars = Math.round (16 * pos / 128);
+    var noOfBars = Math.round (16 * pos / Config.maxParameterValue);
     var n = '';
     for (var i = 0; i < Math.floor (noOfBars / 2); i++)
         n += Display.BARS_TWO;
@@ -217,7 +217,7 @@ Display.prototype.formatStr = function (value, format)
         case Display.FORMAT_PAN:
             return this.formatPan (value);
         default:
-            return value.toString ();
+            return value ? value.toString () : "";
     }
 };
 

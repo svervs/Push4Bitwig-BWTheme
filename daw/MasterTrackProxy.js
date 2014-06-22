@@ -29,7 +29,7 @@ function MasterTrackProxy ()
         for (var l = 0; l < this.listeners.length; l++)
             this.listeners[l].call (null, isSelected);
     }));
-    this.masterTrack.addVuMeterObserver (128, -1, true, doObject (this, function (value)
+    this.masterTrack.addVuMeterObserver (Config.maxParameterValue, -1, true, doObject (this, function (value)
     {
         this.vu = value;
     }));
@@ -52,7 +52,7 @@ function MasterTrackProxy ()
 
     // Master Track Pan value & text
     var p = this.masterTrack.getPan ();
-    p.addValueObserver (128, doObject (this, function (value)
+    p.addValueObserver (Config.maxParameterValue, doObject (this, function (value)
     {
         this.pan = value;
     }));
@@ -63,7 +63,7 @@ function MasterTrackProxy ()
 
     // Master Track volume value & text
     var v = this.masterTrack.getVolume ();
-    v.addValueObserver (128, doObject (this, function (value)
+    v.addValueObserver (Config.maxParameterValue, doObject (this, function (value)
     {
         this.volume = value;
     }));
@@ -96,7 +96,7 @@ MasterTrackProxy.prototype.getVolumeString = function () { return this.volumeStr
 MasterTrackProxy.prototype.setVolume = function (value)
 {
     this.volume = changeValue (value, this.volume);
-    this.masterTrack.getVolume ().set (this.volume, 128);
+    this.masterTrack.getVolume ().set (this.volume, Config.maxParameterValue);
 };
 
 MasterTrackProxy.prototype.setVolumeIndication = function (indicate)
@@ -107,7 +107,7 @@ MasterTrackProxy.prototype.setVolumeIndication = function (indicate)
 MasterTrackProxy.prototype.setPan = function (value)
 {
     this.pan = changeValue (value, this.pan);
-    this.masterTrack.getPan ().set (this.pan, 128);
+    this.masterTrack.getPan ().set (this.pan, Config.maxParameterValue);
 };
 
 MasterTrackProxy.prototype.setPanIndication = function (indicate)
@@ -122,7 +122,7 @@ MasterTrackProxy.prototype.setPanIndication = function (indicate)
 
 MasterTrackProxy.prototype.incVolume = function (value)
 {
-    this.masterTrack.getVolume ().inc (value <= 61 ? 1 : -1, 128);
+    this.masterTrack.getVolume ().inc (value <= 61 ? 1 : -1, Config.maxParameterValue);
 };
 
 MasterTrackProxy.prototype.select = function ()

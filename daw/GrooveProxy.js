@@ -14,7 +14,7 @@ function GrooveProxy ()
     this.addValue (GrooveValue.Kind.ACCENT_AMOUNT);
     this.addValue (GrooveValue.Kind.ACCENT_PHASE);
 
-    this.groove.getEnabled ().addValueObserver (128, doObject (this, function (enabled)
+    this.groove.getEnabled ().addValueObserver (Config.maxParameterValue, doObject (this, function (enabled)
     {
         this.enabled = enabled == 127;
     }));
@@ -117,7 +117,7 @@ GrooveProxy.prototype.addValue = function (kind)
         this.values[kind].name = name;
     }));
 
-    v.addValueObserver (128, doObject (this, function (value)
+    v.addValueObserver (Config.maxParameterValue, doObject (this, function (value)
     {
         this.values[kind].value = value;
     }));
