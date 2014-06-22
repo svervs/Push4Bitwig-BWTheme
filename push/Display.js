@@ -182,10 +182,11 @@ Display.prototype.formatValue = function (value)
 
 Display.prototype.formatPan = function (pan)
 {
-    if (pan == 64)
+    var middle = Config.maxParameterValue / 2;
+    if (pan == middle)
          return Display.NON_4 + Display.NON_4;
-    var isLeft = pan < 64;
-    var pos = isLeft ? 64 - pan : pan - 64;
+    var isLeft = pan < middle;
+    var pos = isLeft ? middle - pan : pan - middle;
     var noOfBars = Math.round (16 * pos / Config.maxParameterValue);
     var n = '';
     for (var i = 0; i < Math.floor (noOfBars / 2); i++)
