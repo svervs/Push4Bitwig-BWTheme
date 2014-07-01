@@ -31,7 +31,7 @@ VolumeMode.prototype.updateDisplay = function ()
         d.setCell (1, i, t.volumeStr, Display.FORMAT_RAW)
          .setCell (2, i, this.push.showVU ? t.vu : t.volume, Display.FORMAT_VALUE);
 
-        this.push.setButton (102 + i, !t.mute ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
+        this.push.setButton (102 + i, t.name != '' && !t.mute ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
     }
     d.setRow (0, VolumeMode.PARAM_NAMES).done (1).done (2);
 };
