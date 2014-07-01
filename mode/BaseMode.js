@@ -36,7 +36,7 @@ BaseMode.prototype.updateDisplay = function () {};
 
 BaseMode.prototype.drawTrackNames = function ()
 {
-    var tb = this.model.getTrackBank ()
+    var tb = this.model.getTrackBank ();
     var selTrack = tb.getSelectedTrack ();
     
     // Format track names
