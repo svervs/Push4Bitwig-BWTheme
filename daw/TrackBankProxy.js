@@ -53,6 +53,15 @@ function TrackBankProxy ()
         var t = this.trackBank.getTrack (i);
 
         // Track name
+        t.addNoteObserver(doObjectIndex (this, i, function (index, pressed, note, velocity)
+        {
+            // on/off bool, key [0..127], velocity [0...1]
+            //this.tracks[index].name = name;
+            //println(note);
+
+        }));
+
+        // Track name
         t.addNameObserver (8, '', doObjectIndex (this, i, function (index, name)
         {
             this.tracks[index].name = name;
@@ -404,4 +413,5 @@ TrackBankProxy.prototype.createTracks = function (count)
                 slots: [{ index: 0 }, { index: 1 }, { index: 2 }, { index: 3 }, { index: 4 }, { index: 5 }, { index: 6 }, { index: 7 }]
             });
     }
-    return tracks;};
+    return tracks;
+};
