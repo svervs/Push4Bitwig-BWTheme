@@ -87,10 +87,8 @@ DrumView.prototype.onOctaveUp = function (event)
     this.updateNoteMapping ();
 };
 
-DrumView.prototype.onLeft = function (event)
+DrumView.prototype.scrollLeft = function (event)
 {
-    if (!event.isDown ())
-        return;
     var newOffset = this.offsetX - DrumView.NUM_DISPLAY_COLS;
     if (newOffset < 0)
         this.offsetX = 0;
@@ -101,10 +99,8 @@ DrumView.prototype.onLeft = function (event)
     }
 };
 
-DrumView.prototype.onRight = function (event)
+DrumView.prototype.scrollRight = function (event)
 {
-    if (!event.isDown ())
-        return;
     this.offsetX = this.offsetX + DrumView.NUM_DISPLAY_COLS;
     this.clip.scrollStepsPageForward ();
 };

@@ -8,6 +8,8 @@ function SessionView (model)
     BaseView.call (this, model);
 
     this.flip = false;
+
+    this.scrollerInterval = Config.sceneScrollInterval;
 }
 SessionView.prototype = new BaseView ();
 
@@ -37,20 +39,20 @@ SessionView.prototype.updateDevice = function ()
 {
     // TODO this super call was making the buttons flash green, just updating arrows here
     // must be in the updateDisplay() code
-    //BaseView.prototype.updateDevice.call (this);
-    this.updateArrows ();
-    if (this.flip && !this.push.getMode (this.push.getCurrentMode ()).hasSecondRowPriority)
-    {
-        for (var i = 0; i < 8; i++)
-            this.push.setButton (102 + i, PUSH_COLOR_GREEN_HI);
-    }
-    else
-    {
-        // TODO this can be removed when the bug in super is found
-        var tb = this.model.getTrackBank ();
-        for (var i = 0; i < 8; i++)
-            this.push.setButton (102 + i, tb.getTrack (i).recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
-    }
+    BaseView.prototype.updateDevice.call (this);
+//    this.updateArrows ();
+//    if (this.flip && !this.push.getMode (this.push.getCurrentMode ()).hasSecondRowPriority)
+//    {
+//        for (var i = 0; i < 8; i++)
+//            this.push.setButton (102 + i, PUSH_COLOR_GREEN_MD);
+//    }
+//    else
+//    {
+//        // TODO this can be removed when the bug in super is found
+//        var tb = this.model.getTrackBank ();
+//        for (var i = 0; i < 8; i++)
+//            this.push.setButton (102 + i, tb.getTrack (i).recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
+//    }
 };
 
 SessionView.prototype.updateArrows = function ()
@@ -147,11 +149,8 @@ SessionView.prototype.onSession = function (event)
     this.drawSceneButtons ();
 };
 
-SessionView.prototype.onLeft = function (event)
+SessionView.prototype.scrollLeft = function (event)
 {
-    if (!event.isDown ())
-        return;
-
     var tb = this.model.getTrackBank ();
     if (this.flip)
     {
@@ -169,11 +168,8 @@ SessionView.prototype.onLeft = function (event)
     }
 };
 
-SessionView.prototype.onRight = function (event)
+SessionView.prototype.scrollRight = function (event)
 {
-    if (!event.isDown ())
-        return;
-
     var tb = this.model.getTrackBank ();
     if (this.flip)
     {
@@ -191,11 +187,8 @@ SessionView.prototype.onRight = function (event)
     }
 };
 
-SessionView.prototype.onUp = function (event)
+SessionView.prototype.scrollUp = function (event)
 {
-    if (!event.isDown ())
-        return;
-
     var tb = this.model.getTrackBank ();
     if (this.flip)
     {
@@ -213,11 +206,8 @@ SessionView.prototype.onUp = function (event)
     }
 };
 
-SessionView.prototype.onDown = function (event)
+SessionView.prototype.scrollDown = function (event)
 {
-    if (!event.isDown ())
-        return;
-
     var tb = this.model.getTrackBank ();
     if (this.flip)
     {

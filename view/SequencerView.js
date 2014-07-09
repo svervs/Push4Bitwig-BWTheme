@@ -70,10 +70,9 @@ SequencerView.prototype.onGrid = function (note, velocity)
     this.clip.toggleStep (x, this.noteMap[y], Config.accentActive ? Config.fixedAccentValue : velocity);
 };
 
-SequencerView.prototype.onLeft = function (event)
+
+SequencerView.prototype.scrollLeft = function (event)
 {
-    if (!event.isDown ())
-        return;
     var newOffset = this.offsetX - SequencerView.NUM_DISPLAY_COLS;
     if (newOffset < 0)
         this.offsetX = 0;
@@ -84,26 +83,20 @@ SequencerView.prototype.onLeft = function (event)
     }
 };
 
-SequencerView.prototype.onRight = function (event)
+SequencerView.prototype.scrollRight = function (event)
 {
-    if (!event.isDown ())
-        return;
     this.offsetX = this.offsetX + SequencerView.NUM_DISPLAY_COLS;
     this.clip.scrollStepsPageForward ();
 };
 
-SequencerView.prototype.onUp = function (event)
+SequencerView.prototype.scrollUp = function (event)
 {
-    if (!event.isDown ())
-        return;
     this.offsetY = Math.min (this.rows - SequencerView.NUM_OCTAVE, this.offsetY + SequencerView.NUM_OCTAVE);
     this.updateScale ();
 };
 
-SequencerView.prototype.onDown = function (event)
+SequencerView.prototype.scrollDown = function (event)
 {
-    if (!event.isDown ())
-        return;
     this.offsetY = Math.max (0, this.offsetY - SequencerView.NUM_OCTAVE);
     this.updateScale ();
 };
