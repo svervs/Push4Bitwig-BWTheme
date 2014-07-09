@@ -6,6 +6,9 @@ Config.fixedAccentValue  = 127;
 Config.fractionValue     = 1;
 Config.maxParameterValue = 128;
 
+// How fast the track and scene arrows scroll the banks/scenes
+Config.trackScrollInterval = 100;
+Config.sceneScrollInterval = 100;
 
 Config.FIXED_ACCENT_VALUE  = 0;
 Config.INC_FRACTION_VALUE  = 1;

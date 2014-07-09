@@ -5,4 +5,5 @@
 
 load ("ButtonEvent.js");
 load ("Scales.js");
+load ("TimerTask.js");
 load ("Utilities.js");

@@ -14,6 +14,15 @@ function BaseView (model)
 
     this.restartFlag   = false;
     this.stopPressed   = false;
+
+    // override in subclass with specific Config value
+    // TODO Eventually needs to listen to a config property change
+    this.scrollerInterval = 100;
+
+    this.scrollerLeft = new TimerTask (this, this.scrollLeft, this.scrollerInterval);
+    this.scrollerRight = new TimerTask (this, this.scrollRight, this.scrollerInterval);
+    this.scrollerUp = new TimerTask (this, this.scrollUp, this.scrollerInterval);
+    this.scrollerDown = new TimerTask (this, this.scrollDown, this.scrollerInterval);
 }
 BaseView.prototype = new View ();
 BaseView.prototype.constructor = BaseView;
@@ -489,13 +498,69 @@ BaseView.prototype.onShift = function (event)
 // Group 10
 //--------------------------------------
 
-// BaseView.prototype.onUp = function (event) {};
+BaseView.prototype.onUp = function (event)
+{
+    if (event.isDown ())
+    {
+        this.scrollUp (event);
+    }
+    else if (event.isLong ())
+    {
+        this.scrollerUp.start ([event]);
+    }
+    else if (event.isUp ())
+    {
+        this.scrollerUp.stop ();
+    }
+};
 
-// BaseView.prototype.onDown = function (event) {};
+BaseView.prototype.onDown = function (event)
+{
+    if (event.isDown ())
+    {
+        this.scrollDown (event);
+    }
+    else if (event.isLong ())
+    {
+        this.scrollerDown.start ([event]);
+    }
+    else if (event.isUp ())
+    {
+        this.scrollerDown.stop ();
+    }
+};
 
-// BaseView.prototype.onLeft = function (event) {};
+BaseView.prototype.onLeft = function (event)
+{
+    if (event.isDown ())
+    {
+        this.scrollLeft (event);
+    }
+    else if (event.isLong ())
+    {
+        this.scrollerLeft.start ([event]);
+    }
+    else if (event.isUp ())
+    {
+        this.scrollerLeft.stop ();
+    }
+};
 
-// BaseView.prototype.onRight = function (event) {};
+BaseView.prototype.onRight = function (event)
+{
+    if (event.isDown ())
+    {
+        this.scrollRight (event);
+    }
+    else if (event.isLong ())
+    {
+        this.scrollerRight.start ([event]);
+    }
+    else if (event.isUp ())
+    {
+        this.scrollerRight.stop ();
+    }
+};
 
 //--------------------------------------
 // Group 11
@@ -511,6 +576,12 @@ BaseView.prototype.onFootswitch2 = function (value)
 //--------------------------------------
 // Protected API
 //--------------------------------------
+
+// implemented for Arrow scrolling in subclass Views
+BaseView.prototype.scrollUp = function (event) {};
+BaseView.prototype.scrollDown = function (event) {};
+BaseView.prototype.scrollLeft = function (event) {};
+BaseView.prototype.scrollRight = function (event) {};
 
 BaseView.prototype.selectTrack = function (index)
 {

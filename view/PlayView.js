@@ -16,6 +16,8 @@ function PlayView (model)
     {
         this.initMaxVelocity ();
     }));
+
+    this.scrollerInterval = Config.trackScrollInterval;
 }
 PlayView.prototype = new BaseView ();
 
@@ -104,31 +106,24 @@ PlayView.prototype.onOctaveUp = function (event)
     this.updateNoteMapping ();
 };
 
-PlayView.prototype.onUp = function (event)
+PlayView.prototype.scrollUp = function (event)
 {
-    if (!event.isDown ())
-        return;
     if (this.push.isShiftPressed ())
         this.model.getApplication ().arrowKeyLeft ();
     else
         this.model.getApplication ().arrowKeyUp ();
 };
 
-PlayView.prototype.onDown = function (event)
+PlayView.prototype.scrollDown = function (event)
 {
-    if (!event.isDown ())
-        return;
     if (this.push.isShiftPressed ())
         this.model.getApplication ().arrowKeyRight ();
     else
         this.model.getApplication ().arrowKeyDown ();
 };
 
-PlayView.prototype.onLeft = function (event)
+PlayView.prototype.scrollLeft = function (event)
 {
-    if (!event.isDown ())
-        return;
-
     if (this.push.getCurrentMode () == MODE_BANK_DEVICE || this.push.getCurrentMode () == MODE_PRESET)
         this.model.getCursorDevice ().selectPrevious ();
     else
@@ -140,18 +135,15 @@ PlayView.prototype.onLeft = function (event)
             if (!this.model.getTrackBank ().canScrollTracksUp ())
                 return;
             this.model.getTrackBank ().scrollTracksPageUp ();
-            scheduleTask (doObject (this, this.selectTrack), [7], 100);
+            scheduleTask (doObject (this, this.selectTrack), [7], 75);
             return;
         }
         this.selectTrack (index);
     }
 };
 
-PlayView.prototype.onRight = function (event)
+PlayView.prototype.scrollRight = function (event)
 {
-    if (!event.isDown ())
-        return;
-
     if (this.push.getCurrentMode () == MODE_BANK_DEVICE || this.push.getCurrentMode () == MODE_PRESET)
         this.model.getCursorDevice ().selectNext ();
     else
@@ -164,7 +156,7 @@ PlayView.prototype.onRight = function (event)
             if (!tb.canScrollTracksDown ())
                 return;
             tb.scrollTracksPageDown ();
-            scheduleTask (doObject (this, this.selectTrack), [0], 100);
+            scheduleTask (doObject (this, this.selectTrack), [0], 75);
         }
         this.selectTrack (index);
     }
