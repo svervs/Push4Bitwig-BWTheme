@@ -10,6 +10,7 @@ function AbstractSequencerView (model, rows, cols)
     BaseView.call (this, model);
         
     this.resolutions = [ 1, 2/3, 1/2, 1/3, 1/4, 1/6, 1/8, 1/12 ];
+    this.selectedIndex = 4;
     this.scales = model.getScales ();
     this.rows = rows;
     this.cols = cols;
@@ -24,13 +25,13 @@ function AbstractSequencerView (model, rows, cols)
 
     // TODO move to daw package
     this.clip = host.createCursorClip (this.cols, this.rows);
-    this.clip.setStepSize (this.resolutions[4]);
+    this.clip.setStepSize (this.resolutions[this.selectedIndex]);
 
     this.clip.addPlayingStepObserver (doObject (this, function (step)
     {
         this.step = step;
     }));
-    
+
     this.clip.addStepDataObserver (doObject (this, function (column, row, state)
     {
         this.data[column][row] = state;
@@ -46,11 +47,20 @@ AbstractSequencerView.prototype.onActivate = function ()
     this.push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
     this.push.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     this.model.getTrackBank ().setIndication (false);
-    for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-        this.push.setButton (i, PUSH_COLOR_SCENE_GREEN);
+    this.drawSceneButtons ();
 };
 
 AbstractSequencerView.prototype.onScene = function (index)
 {
-    this.clip.setStepSize (this.resolutions[7 - index]);
+    this.selectedIndex = 7 - index;
+    this.clip.setStepSize (this.resolutions[this.selectedIndex]);
+    this.drawSceneButtons ();
+};
+
+AbstractSequencerView.prototype.drawSceneButtons = function ()
+{
+    for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
+    {
+        this.push.setButton (i, i == PUSH_BUTTON_SCENE1 + this.selectedIndex ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN);
+    }
 };
