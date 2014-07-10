@@ -59,6 +59,15 @@ AbstractSequencerView.prototype.onScene = function (index)
 
 AbstractSequencerView.prototype.drawSceneButtons = function ()
 {
+    var t = this.model.getTrackBank ().getSelectedTrack ();
+    var isKeyboardEnabled = t != null && t.canHoldNotes;
+    if (!isKeyboardEnabled)
+    {
+        for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
+            this.push.setButton (i, PUSH_BUTTON_STATE_OFF);
+        return;
+    }
+
     for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
     {
         this.push.setButton (i, i == PUSH_BUTTON_SCENE1 + this.selectedIndex ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN);
