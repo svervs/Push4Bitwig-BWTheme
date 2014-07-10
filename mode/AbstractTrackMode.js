@@ -15,7 +15,7 @@ AbstractTrackMode.prototype.onFirstRow = function (index)
 {
     var tb = this.model.getTrackBank ();
     var selTrack = tb.getSelectedTrack ();
-    if (selTrack.index == index)
+    if ((selTrack != null && selTrack.index == index) || this.push.isShiftPressed ())
     {
         this.model.getTrackBank ().toggleArm (index);
     }
