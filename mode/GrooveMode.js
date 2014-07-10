@@ -13,7 +13,7 @@ GrooveMode.prototype = new BaseMode ();
 GrooveMode.prototype.onValueKnob = function (index, value)
 {
     var v = this.model.getGroove ().getValue (index);
-    v.value = changeValue (value, v.value);
+    v.value = this.push.changeValue (value, v.value);
     this.model.getGroove ().getRangedValue (index).set (v.value, Config.maxParameterValue);
 };
 

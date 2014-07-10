@@ -103,7 +103,7 @@ ParamPageMode.prototype.onValueKnob = function (index, value)
             this.getParameter (index).toggleIsMapping ();
         return;
     }
-    this.params[index].value = changeValue (value, this.params[index].value);
+    this.params[index].value = this.push.changeValue (value, this.params[index].value);
     this.getParameter (index).set (this.params[index].value, Config.maxParameterValue);
 };
 

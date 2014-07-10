@@ -20,11 +20,11 @@ TrackMode.prototype.onValueKnob = function (index, value)
     if (selectedTrack == null)
         return;
     if (index == 0)
-        tb.setVolume (selectedTrack.index, value);
+        tb.setVolume (selectedTrack.index, value, this.push.getFractionValue ());
     else if (index == 1)
-        tb.setPan (selectedTrack.index, value);
+        tb.setPan (selectedTrack.index, value, this.push.getFractionValue ());
     else
-        tb.setSend (selectedTrack.index, index - 2, value);
+        tb.setSend (selectedTrack.index, index - 2, value, this.push.getFractionValue ());
 };
 
 TrackMode.prototype.updateDisplay = function ()

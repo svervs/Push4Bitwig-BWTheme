@@ -12,7 +12,8 @@ AccentMode.prototype = new BaseMode ();
 
 AccentMode.prototype.onValueKnob = function (index, value)
 {
-    var v = changeValue (value, Config.fixedAccentValue);
+    // will never need fine increments on accent velocity since they are integers
+    var v = changeValue (value, Config.fixedAccentValue, 1, Config.maxParameterValue);
     Config.setAccentValue (v == 0 ? 1 : v);
 };
 

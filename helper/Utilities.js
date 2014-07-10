@@ -8,9 +8,9 @@ function toggleValue (value)
     return !value;
 }
 
-function changeValue (control, value)
+function changeValue (control, value, fractionValue, maxParameterValue)
 {
-    return control <= 61 ? Math.min (value + Config.fractionValue, Config.maxParameterValue - Config.fractionValue) : Math.max (value - Config.fractionValue, 0);
+    return control <= 61 ? Math.min (value + fractionValue, maxParameterValue - fractionValue) : Math.max (value - fractionValue, 0);
 }
 
 function doObject (object, f)
