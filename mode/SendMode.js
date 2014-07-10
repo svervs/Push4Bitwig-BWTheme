@@ -23,7 +23,7 @@ SendMode.prototype = new AbstractTrackMode ();
 SendMode.prototype.onValueKnob = function (index, value)
 {
     var sendIndex = this.getCurrentSendIndex ();
-    this.model.getTrackBank ().setSend (index, sendIndex, value);
+    this.model.getTrackBank ().setSend (index, sendIndex, value, this.push.getFractionValue ());
 };
 
 SendMode.prototype.updateDisplay = function ()

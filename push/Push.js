@@ -765,3 +765,13 @@ Push.prototype.isButton = function (cc)
 {
     return typeof (this.buttonStates[cc]) != 'undefined';
 };
+
+Push.prototype.getFractionValue = function ()
+{
+    return this.isShiftPressed () ? Config.fractionMinValue : Config.fractionValue;
+};
+
+Push.prototype.changeValue = function (control, value)
+{
+    return changeValue (control, value, this.getFractionValue (), Config.maxParameterValue);
+}
