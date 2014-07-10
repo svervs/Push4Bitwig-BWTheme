@@ -65,14 +65,6 @@ DeviceMode.prototype.updateDisplay = function ()
                 d.clearCell (2, i);
             else
                 d.setCell (2, i, param.value, Display.FORMAT_VALUE);
-
-            // Light up fx selection buttons
-            //if (i < 5)
-            //    this.push.setButton (20 + i, PUSH_COLOR_BLACK);
-            //if (i == 7 && selectedDevice.enabled)
-            //    this.push.setButton (27, PUSH_COLOR_GREEN_LO - 4);
-
-            //this.push.setButton (102 + i, PUSH_COLOR_BLACK);
         }
     }
     else
@@ -94,9 +86,6 @@ DeviceMode.prototype.updateDisplay = function ()
 
         d.setCell (3, 6, ' Next > ', Display.FORMAT_RAW)
          .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
-
-        //this.push.setButton (25, hasPrevious ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
-        //this.push.setButton (26, PUSH_COLOR_ORANGE_LO);
     }
 };
 
@@ -113,6 +102,11 @@ DeviceMode.prototype.updateFirstRow = function ()
         this.push.setButton (25, this.model.getCursorDevice ().hasPreviousParameterPage () ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
         this.push.setButton (26, PUSH_COLOR_ORANGE_LO);
         this.push.setButton (27, selectedDevice.enabled ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
+    }
+    else
+    {
+        for (var i = 0; i < 8; i++)
+            this.push.setButton (20 + i, PUSH_COLOR_BLACK);
     }
 };
 

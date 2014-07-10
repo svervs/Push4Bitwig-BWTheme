@@ -5,7 +5,6 @@
 
 VolumeMode.PARAM_NAMES = 'Volume   Volume  Volume   Volume  Volume   Volume  Volume   Volume  ';
 
-
 function VolumeMode (model)
 {
     AbstractTrackMode.call (this, model);
@@ -19,42 +18,28 @@ VolumeMode.prototype.onValueKnob = function (index, value)
     this.model.getTrackBank ().setVolume (index, value, this.push.getFractionValue ());
 };
 
-VolumeMode.prototype.onFirstRow = function (index) {};
+// VolumeMode.prototype.onFirstRow = function (index) {};
 
-VolumeMode.prototype.onSecondRow = function (index)
-{
-    this.model.getTrackBank ().toggleMute (index);
-};
+// VolumeMode.prototype.onSecondRow = function (index) {};
 
 VolumeMode.prototype.updateDisplay = function ()
 {
-    this.drawTrackNames ();
-
     var d = this.push.display;
     var tb = this.model.getTrackBank ();
+
+    d.setRow (0, VolumeMode.PARAM_NAMES);
+
     for (var i = 0; i < 8; i++)
     {
         var t = tb.getTrack (i);
         d.setCell (1, i, t.volumeStr, Display.FORMAT_RAW)
          .setCell (2, i, this.push.showVU ? t.vu : t.volume, Display.FORMAT_VALUE);
-
-
     }
-    d.setRow (0, VolumeMode.PARAM_NAMES).done (1).done (2);
+    d.done (1).done (2);
+
+    this.drawRow4 ();
 };
 
-VolumeMode.prototype.updateFirstRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.push.setButton (20 + i, PUSH_COLOR_BLACK);
-};
+// VolumeMode.prototype.updateFirstRow = function () {};
 
-VolumeMode.prototype.updateSecondRow = function ()
-{
-    var tb = this.model.getTrackBank ();
-    for (var i = 0; i < 8; i++)
-    {
-        var t = tb.getTrack (i);
-        this.push.setButton (102 + i, t.name != '' && !t.mute ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
-    }
-};
+// VolumeMode.prototype.updateSecondRow = function () {};

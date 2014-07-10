@@ -27,18 +27,17 @@ TrackMode.prototype.onValueKnob = function (index, value)
         tb.setSend (selectedTrack.index, index - 2, value, this.push.getFractionValue ());
 };
 
-TrackMode.prototype.onFirstRow = function (index) {};
+// TrackMode.prototype.onFirstRow = function (index) {};
 
-TrackMode.prototype.onSecondRow = function (index) {};
+// TrackMode.prototype.onSecondRow = function (index) {};
 
 TrackMode.prototype.updateDisplay = function ()
 {
-    this.drawTrackNames ();
-
     var t = this.model.getTrackBank ().getSelectedTrack ();
     var d = this.push.display;
     
     d.setRow (0, TrackMode.PARAM_NAMES);
+
     if (t == null)
         d.clearRow (1).done (1).clearRow (2).done (2);
     else
@@ -63,16 +62,10 @@ TrackMode.prototype.updateDisplay = function ()
          .setCell (2, 7, t.sends[5].volume, Display.FORMAT_VALUE)
          .done (2);
     }
+
+    this.drawRow4 ();
 };
 
-TrackMode.prototype.updateFirstRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.push.setButton (20 + i, PUSH_COLOR_BLACK);
-};
+// TrackMode.prototype.updateFirstRow = function () {};
 
-TrackMode.prototype.updateSecondRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
-};
+// TrackMode.prototype.updateSecondRow = function () {};

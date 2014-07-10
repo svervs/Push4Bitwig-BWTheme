@@ -134,6 +134,12 @@ Display.prototype.clearCell = function (row, cell)
     return this;
 };
 
+/**
+ * done() should not be called with setRow().
+ * This function turns the row's cells into the row's message.
+ * @param row
+ * @returns {Display}
+ */
 Display.prototype.done = function (row)
 {
     var index = row * 8;

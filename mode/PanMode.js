@@ -17,33 +17,28 @@ PanMode.prototype.onValueKnob = function (index, value)
     this.model.getTrackBank ().setPan (index, value, this.push.getFractionValue ());
 };
 
-PanMode.prototype.onFirstRow = function (index) {};
+// PanMode.prototype.onFirstRow = function (index) {};
 
-PanMode.prototype.onSecondRow = function (index) {};
+// PanMode.prototype.onSecondRow = function (index) {};
 
 PanMode.prototype.updateDisplay = function ()
 {
-    this.drawTrackNames ();
-
     var d = this.push.display;
     var tb = this.model.getTrackBank ();
+
+    d.setRow (0, PanMode.PARAM_NAMES);
+
     for (var i = 0; i < 8; i++)
     {
         var t = tb.getTrack (i);
         d.setCell (1, i, t.panStr, Display.FORMAT_RAW)
          .setCell (2, i, t.pan, Display.FORMAT_PAN);
     }
-    d.setRow (0, PanMode.PARAM_NAMES).done (1).done (2);
+    d.done (1).done (2);
+
+    this.drawRow4 ();
 };
 
-PanMode.prototype.updateFirstRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.push.setButton (20 + i, PUSH_COLOR_BLACK);
-};
+// PanMode.prototype.updateFirstRow = function () {};
 
-PanMode.prototype.updateSecondRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
-};
+// PanMode.prototype.updateSecondRow = function () {};
