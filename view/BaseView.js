@@ -39,7 +39,6 @@ BaseView.prototype.updateDevice = function ()
     var m = this.push.getActiveMode ();
     if (m != null)
     {
-        // TODO make one call back in BaseMode
         m.updateDisplay ();
         m.updateFirstRow ();
         m.updateSecondRow ();

@@ -37,22 +37,25 @@ SessionView.prototype.drawSceneButtons = function ()
 
 SessionView.prototype.updateDevice = function ()
 {
-    // TODO this super call was making the buttons flash green, just updating arrows here
-    // must be in the updateDisplay() code
-    BaseView.prototype.updateDevice.call (this);
-//    this.updateArrows ();
-//    if (this.flip && !this.push.getMode (this.push.getCurrentMode ()).hasSecondRowPriority)
-//    {
-//        for (var i = 0; i < 8; i++)
-//            this.push.setButton (102 + i, PUSH_COLOR_GREEN_MD);
-//    }
-//    else
-//    {
-//        // TODO this can be removed when the bug in super is found
-//        var tb = this.model.getTrackBank ();
-//        for (var i = 0; i < 8; i++)
-//            this.push.setButton (102 + i, tb.getTrack (i).recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
-//    }
+    var m = this.push.getActiveMode ();
+    if (m != null)
+    {
+        m.updateDisplay ();
+        //m.updateFirstRow ();
+        m.updateSecondRow ();
+    }
+
+    if (this.flip && !this.push.getMode (this.push.getCurrentMode ()).hasSecondRowPriority)
+    {
+        for (var i = 0; i < 8; i++)
+            this.push.setButton (20 + i, PUSH_COLOR_GREEN_MD);
+    }
+    else
+    {
+        m.updateFirstRow ();
+    }
+
+    this.updateArrows ();
 };
 
 SessionView.prototype.updateArrows = function ()
@@ -63,6 +66,8 @@ SessionView.prototype.updateArrows = function ()
     this.canScrollLeft = this.flip ? tb.canScrollScenesDown () : tb.canScrollTracksUp ();
     this.canScrollRight = this.flip ? tb.canScrollScenesUp () : tb.canScrollTracksDown ();
     BaseView.prototype.updateArrows.call (this);
+    // TODO flipped scene buttons are not updated unless we redraw them here
+    this.drawSceneButtons();
 };
 
 SessionView.prototype.usesButton = function (buttonID)
@@ -227,19 +232,19 @@ SessionView.prototype.scrollDown = function (event)
 
 SessionView.prototype.onScene = function (scene)
 {
-    this.sceneOrSecondRowButtonPressed (scene, !this.flip);
+    this.sceneOrFirstRowButtonPressed (scene, !this.flip);
 };
 
-SessionView.prototype.onSecondRow = function (index)
+SessionView.prototype.onFirstRow = function (index)
 {
     if (this.push.getMode (this.push.getCurrentMode ()).hasSecondRowPriority)
-        BaseView.prototype.onSecondRow.call (this, index);
+        BaseView.prototype.onFirstRow.call (this, index);
     else
-        this.sceneOrSecondRowButtonPressed (index, this.flip);
+        this.sceneOrFirstRowButtonPressed (index, this.flip);
 };
 
 // Rec-Enable and Scene Start are flipped
-SessionView.prototype.sceneOrSecondRowButtonPressed = function (index, isScene)
+SessionView.prototype.sceneOrFirstRowButtonPressed = function (index, isScene)
 {
     if (isScene)
         this.model.getTrackBank ().launchScene (index);
@@ -251,9 +256,25 @@ SessionView.prototype.sceneOrSecondRowButtonPressed = function (index, isScene)
             this.model.getTrackBank ().returnToArrangement (index);
         else
         {
-            BaseView.prototype.onSecondRow.call (this, index);
+            this._onFirstRow (index);
             this.drawSceneButtons ();
         }
+    }
+};
+
+// the logic for arming a track moved to AbstractTrackMode.onFirstRow()
+// still, just reimplementing the logic here doesn't seem 'bad'
+SessionView.prototype._onFirstRow = function (index)
+{
+    var tb = this.model.getTrackBank ();
+    var selTrack = tb.getSelectedTrack ();
+    if ((selTrack != null && selTrack.index == index) || this.push.isShiftPressed ())
+    {
+        this.model.getTrackBank ().toggleArm (index);
+    }
+    else
+    {
+        this.model.getTrackBank ().select (index);
     }
 };
 
