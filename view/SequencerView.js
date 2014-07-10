@@ -31,7 +31,8 @@ SequencerView.prototype.updateNoteMapping = function ()
 
 SequencerView.prototype.updateScale = function ()
 {
-    this.noteMap = this.scales.getSequencerMatrix (SequencerView.NUM_DISPLAY_ROWS, this.offsetY);
+    var t = this.model.getTrackBank ().getSelectedTrack ();
+    this.noteMap = t != null && t.canHoldNotes ? this.scales.getSequencerMatrix (SequencerView.NUM_DISPLAY_ROWS, this.offsetY) : this.scales.getEmptyMatrix ();
 };
 
 SequencerView.prototype.updateArrows = function ()
@@ -40,6 +41,8 @@ SequencerView.prototype.updateArrows = function ()
     this.canScrollDown = this.offsetY - SequencerView.NUM_OCTAVE >= 0;
     this.canScrollLeft = this.offsetX > 0;
     BaseView.prototype.updateArrows.call (this);
+    // TODO we need a track change callbck, this belongs in it
+    this.drawSceneButtons ();
 };
 
 SequencerView.prototype.usesButton = function (buttonID)
@@ -69,7 +72,6 @@ SequencerView.prototype.onGrid = function (note, velocity)
     var y = Math.floor (index / 8);
     this.clip.toggleStep (x, this.noteMap[y], Config.accentActive ? Config.fixedAccentValue : velocity);
 };
-
 
 SequencerView.prototype.scrollLeft = function (event)
 {
@@ -105,6 +107,9 @@ SequencerView.prototype.drawGrid = function ()
 {
     this.turnOffBlink ();
 
+    var t = this.model.getTrackBank ().getSelectedTrack ();
+    var isKeyboardEnabled = t != null && t.canHoldNotes;
+
     var hiStep = this.isInXRange (this.step) ? this.step % SequencerView.NUM_DISPLAY_COLS : -1;
     for (var x = 0; x < SequencerView.NUM_DISPLAY_COLS; x++)
     {
@@ -113,7 +118,10 @@ SequencerView.prototype.drawGrid = function ()
             var row = this.noteMap[y];
             var isSet = this.data[x][row];
             var hilite = x == hiStep;
-            this.push.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLUE_HI) : hilite ? PUSH_COLOR_GREEN_HI : this.scales.getSequencerColor (this.noteMap, y));
+            if (isKeyboardEnabled)
+                this.push.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLUE_HI) : hilite ? PUSH_COLOR_GREEN_HI : this.scales.getSequencerColor (this.noteMap, y));
+            else
+                this.push.pads.lightEx (x, y, PUSH_COLOR_BLACK);
         }
     }
 };
