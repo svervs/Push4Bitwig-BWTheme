@@ -32,7 +32,32 @@ BaseMode.prototype.onFirstRow = function (index)
 };
 
 BaseMode.prototype.onSecondRow = function (index) {};
+
 BaseMode.prototype.updateDisplay = function () {};
+
+BaseMode.prototype.updateFirstRow = function ()
+{
+    var tb = this.model.getTrackBank ();
+    var selTrack = tb.getSelectedTrack ();
+    var selIndex = selTrack == null ? -1 : selTrack.index;
+    for (var i = 0; i < 8; i++)
+    {
+        var isSel = i == selIndex;
+        // Light up selection and record buttons
+        this.push.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
+    }
+};
+
+BaseMode.prototype.updateSecondRow = function ()
+{
+    var tb = this.model.getTrackBank ();
+    for (var i = 0; i < 8; i++)
+    {
+        var t = tb.getTrack (i);
+        if (!this.hasSecondRowPriority)
+            this.push.setButton (102 + i, t.recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
+    }
+};
 
 BaseMode.prototype.drawTrackNames = function ()
 {
@@ -48,11 +73,6 @@ BaseMode.prototype.drawTrackNames = function ()
         var t = tb.getTrack (i);
         var n = optimizeName (t.name, isSel ? 7 : 8);
         d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
-        
-        // Light up selection and record buttons
-        this.push.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
-        if (!this.hasSecondRowPriority)
-            this.push.setButton (102 + i, t.recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
     }
     d.done (3);
 };

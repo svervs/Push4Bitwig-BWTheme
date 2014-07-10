@@ -26,21 +26,32 @@ SendMode.prototype.onValueKnob = function (index, value)
     this.model.getTrackBank ().setSend (index, sendIndex, value, this.push.getFractionValue ());
 };
 
+// SendMode.prototype.onFirstRow = function (index) {};
+
+// SendMode.prototype.onSecondRow = function (index) {};
+
 SendMode.prototype.updateDisplay = function ()
 {
-    this.drawTrackNames ();
-
     var d = this.push.display;
     var sendIndex = this.getCurrentSendIndex ();
     var tb = this.model.getTrackBank ();
+
+    d.setRow (0, SendMode.PARAM_NAMES[sendIndex]);
+
     for (var i = 0; i < 8; i++)
     {
         var t = tb.getTrack (i);
         d.setCell (1, i, t.sends[sendIndex].volumeStr, Display.FORMAT_RAW)
          .setCell (2, i, t.sends[sendIndex].volume, Display.FORMAT_VALUE);
     }
-    d.setRow (0, SendMode.PARAM_NAMES[sendIndex]).done (1).done (2);
+    d.done (1).done (2);
+
+    this.drawRow4 ();
 };
+
+// SendMode.prototype.updateFirstRow = function () {};
+
+// SendMode.prototype.updateSecondRow = function () {};
 
 SendMode.prototype.getCurrentSendIndex = function ()
 {

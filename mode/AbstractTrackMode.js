@@ -11,7 +11,76 @@ function AbstractTrackMode (model)
 }
 AbstractTrackMode.prototype = new BaseMode ();
 
+AbstractTrackMode.prototype.onFirstRow = function (index)
+{
+    var tb = this.model.getTrackBank ();
+    var selTrack = tb.getSelectedTrack ();
+    if (selTrack.index == index)
+    {
+        this.model.getTrackBank ().toggleArm (index);
+    }
+    else
+    {
+        this.model.getTrackBank ().select (index);
+    }
+};
+
 AbstractTrackMode.prototype.onSecondRow = function (index)
 {
-    this.model.getTrackBank ().toggleArm (index);
+    this.model.getTrackBank ().toggleMute (index);
+};
+
+AbstractTrackMode.prototype.updateFirstRow = function ()
+{
+    var tb = this.model.getTrackBank ();
+    for (var i = 0; i < 8; i++)
+    {
+        // Light up selection and record buttons
+        this.push.setButton (20 + i, this.getTrackButtonColor (tb.getTrack (i)));
+    }
+};
+
+AbstractTrackMode.prototype.updateSecondRow = function ()
+{
+    var tb = this.model.getTrackBank ();
+    for (var i = 0; i < 8; i++)
+    {
+        var t = tb.getTrack (i);
+        this.push.setButton (102 + i, t.name != '' && !t.mute ? PUSH_COLOR2_YELLOW_HI : PUSH_COLOR_BLACK);
+    }
+};
+
+AbstractTrackMode.prototype.drawRow4 = function ()
+{
+    var tb = this.model.getTrackBank ();
+    var selTrack = tb.getSelectedTrack ();
+
+    // Format track names
+    var selIndex = selTrack == null ? -1 : selTrack.index;
+    var d = this.push.display;
+    for (var i = 0; i < 8; i++)
+    {
+        var isSel = i == selIndex;
+        var t = tb.getTrack (i);
+        var n = optimizeName (t.name, isSel ? 7 : 8);
+        d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
+    }
+    d.done (3);
+};
+
+AbstractTrackMode.prototype.getTrackButtonColor = function (track)
+{
+    var exists = track.name != '';
+    if (!exists)
+        return PUSH_COLOR_BLACK;
+
+    var tb = this.model.getTrackBank ();
+    var selTrack = tb.getSelectedTrack ();
+    var selIndex = selTrack == null ? -1 : selTrack.index;
+    var isSel = track.index == selIndex;
+
+    if (track.recarm)
+        return isSel ? PUSH_COLOR_RED_HI : PUSH_COLOR_RED_LO;
+
+    return isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_YELLOW_LO;
 };
