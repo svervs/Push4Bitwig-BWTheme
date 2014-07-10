@@ -243,6 +243,14 @@ SessionView.prototype.onFirstRow = function (index)
         this.sceneOrFirstRowButtonPressed (index, this.flip);
 };
 
+SessionView.prototype.onSecondRow = function (index)
+{
+    if (this.push.isShiftPressed ())
+        this.model.getTrackBank ().returnToArrangement (index);
+    else
+        BaseView.prototype.onSecondRow.call (this, index);
+};
+
 // Rec-Enable and Scene Start are flipped
 SessionView.prototype.sceneOrFirstRowButtonPressed = function (index, isScene)
 {
@@ -252,8 +260,6 @@ SessionView.prototype.sceneOrFirstRowButtonPressed = function (index, isScene)
     {
         if (this.push.isPressed (PUSH_BUTTON_STOP))
             this.model.getTrackBank ().stop (index);
-        else if (this.push.isShiftPressed ())
-            this.model.getTrackBank ().returnToArrangement (index);
         else
         {
             this._onFirstRow (index);
