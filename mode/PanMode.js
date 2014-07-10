@@ -5,7 +5,6 @@
 
 PanMode.PARAM_NAMES = 'Pan      Pan     Pan      Pan     Pan      Pan     Pan      Pan     ';
 
-
 function PanMode (model)
 {
     AbstractTrackMode.call (this, model);
@@ -17,6 +16,10 @@ PanMode.prototype.onValueKnob = function (index, value)
 {
     this.model.getTrackBank ().setPan (index, value, this.push.getFractionValue ());
 };
+
+PanMode.prototype.onFirstRow = function (index) {};
+
+PanMode.prototype.onSecondRow = function (index) {};
 
 PanMode.prototype.updateDisplay = function ()
 {
@@ -31,4 +34,16 @@ PanMode.prototype.updateDisplay = function ()
          .setCell (2, i, t.pan, Display.FORMAT_PAN);
     }
     d.setRow (0, PanMode.PARAM_NAMES).done (1).done (2);
+};
+
+PanMode.prototype.updateFirstRow = function ()
+{
+    for (var i = 0; i < 8; i++)
+        this.push.setButton (20 + i, PUSH_COLOR_BLACK);
+};
+
+PanMode.prototype.updateSecondRow = function ()
+{
+    for (var i = 0; i < 8; i++)
+        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
 };

@@ -72,7 +72,10 @@ ParamPageSelectMode.prototype.updateDisplay = function ()
     for (var i = 0; i < this.bottomItems.length; i++)
         d.setCell (3, i, this.bottomItems[i].getLabel ());
     d.allDone ();
+};
 
+ParamPageSelectMode.prototype.updateFirstRow = function ()
+{
     for (var i = 20; i < 28; i++)
     {
         if (i == 20 + this.selectedIndex)
@@ -80,7 +83,10 @@ ParamPageSelectMode.prototype.updateDisplay = function ()
         else
             this.push.setButton(i, ParamPageSelectMode.firstRowButtonColorUp);
     }
+};
 
+ParamPageSelectMode.prototype.updateSecondRow = function ()
+{
     for (var i = 102; i < 110; i++)
         this.push.setButton (i, PUSH_COLOR_BLACK);
 };

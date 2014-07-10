@@ -19,6 +19,8 @@ ScaleLayoutMode.prototype.onFirstRow = function (index)
     this.push.getActiveView ().updateNoteMapping ();
 };
 
+ScaleLayoutMode.prototype.onSecondRow = function (index) {};
+
 ScaleLayoutMode.prototype.updateDisplay = function ()
 {
     var d = this.push.display;
@@ -32,9 +34,19 @@ ScaleLayoutMode.prototype.updateDisplay = function ()
             d.clearCell (3, i);
         else
             d.setCell (3, i, (isSel ? Display.RIGHT_ARROW : ' ') + Scales.LAYOUT_NAMES[i]);
-            
-        this.push.setButton (20 + i, i > 5 ? PUSH_COLOR_BLACK : (sl == i ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN));
-        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
     }
     d.allDone ();
+};
+
+ScaleLayoutMode.prototype.updateFirstRow = function ()
+{
+    var sl = this.scales.getScaleLayout ();
+    for (var i = 0; i < 8; i++)
+        this.push.setButton (20 + i, i > 5 ? PUSH_COLOR_BLACK : (sl == i ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN));
+};
+
+ScaleLayoutMode.prototype.updateSecondRow = function ()
+{
+    for (var i = 0; i < 8; i++)
+        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
 };

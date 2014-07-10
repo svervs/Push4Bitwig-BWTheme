@@ -11,6 +11,7 @@ function ScalesMode (model)
 }
 ScalesMode.prototype = new BaseMode ();
 
+// TODO change SKIPPER to a scheduled task
 var SKIPPER = false;
 ScalesMode.prototype.onValueKnob = function (index, value)
 {
@@ -76,11 +77,24 @@ ScalesMode.prototype.updateDisplay = function ()
     for (var i = 6; i < 12; i++)
         d.setCell (3, i - 5, '  ' + (offset == i ? Display.RIGHT_ARROW : ' ') + Scales.BASES[i]);
     d.setCell (3, 7, this.scales.isChromatic () ? 'Chromatc' : 'In Key').done (3);
+};
 
+ScalesMode.prototype.updateFirstRow = function ()
+{
+    var offset = this.scales.getScaleOffset ();
     for (var i = 0; i < 8; i++)
     {
         var isFirstOrLast = i == 0 || i == 7;
-        this.push.setButton (20 + i, i == 7 ? PUSH_COLOR_BLACK : (isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == i - 1 ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN)));
-        this.push.setButton (102 + i, isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == (i - 1) + 6 ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO));
+        this.push.setButton(20 + i, i == 7 ? PUSH_COLOR_BLACK : (isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == i - 1 ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN)));
+    }
+};
+
+ScalesMode.prototype.updateSecondRow = function ()
+{
+    var offset = this.scales.getScaleOffset ();
+    for (var i = 0; i < 8; i++)
+    {
+        var isFirstOrLast = i == 0 || i == 7;
+        this.push.setButton(102 + i, isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == (i - 1) + 6 ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO));
     }
 };

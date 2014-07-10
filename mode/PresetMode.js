@@ -103,10 +103,16 @@ PresetMode.prototype.updateDisplay = function ()
     }
 
     d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.model.getCursorDevice ().currentPreset).allDone ();
-    
+};
+
+PresetMode.prototype.updateFirstRow = function ()
+{
     for (var i = 20; i < 28; i++)
         this.push.setButton (i, this.firstRowButtons[i] != null ? PresetMode.firstRowButtonColor : PUSH_COLOR_BLACK);
-    
+};
+
+PresetMode.prototype.updateSecondRow = function ()
+{
     for (var i = 104; i < 110; i++)
         this.push.setButton (i, this.secondRowButtons[i] != null ? PresetMode.secondRowButtonColor : PUSH_COLOR_BLACK);
 };

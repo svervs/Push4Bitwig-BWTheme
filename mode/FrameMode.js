@@ -33,6 +33,8 @@ FrameMode.prototype.onFirstRow = function (index)
     this.bottomItems[index].execute ();
 };
 
+FrameMode.prototype.onSecondRow = function (index) {};
+
 FrameMode.prototype.updateDisplay = function () 
 {
     var d = this.push.display;
@@ -41,11 +43,20 @@ FrameMode.prototype.updateDisplay = function ()
     
     for (var i = 0; i < this.bottomItems.length; i++)
         d.setCell (3, i, this.bottomItems[i].getLabel ());
-    
-    for (var i = 20; i < 28; i++)
-        this.push.setButton (i, FrameMode.firstRowButtonColor);
-    
+
     d.allDone ();
+};
+
+FrameMode.prototype.updateFirstRow = function ()
+{
+    for (var i = 0; i < 8; i++)
+        this.push.setButton (20 + i, FrameMode.firstRowButtonColor);
+};
+
+FrameMode.prototype.updateSecondRow = function ()
+{
+    for (var i = 0; i < 8; i++)
+        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
 };
 
 FrameMode.prototype.addFirstRowCommand = function (label, command)

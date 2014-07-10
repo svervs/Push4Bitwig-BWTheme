@@ -107,6 +107,10 @@ ParamPageMode.prototype.onValueKnob = function (index, value)
     this.getParameter (index).set (this.params[index].value, Config.maxParameterValue);
 };
 
+ParamPageMode.prototype.onFirstRow = function (index) {};
+
+ParamPageMode.prototype.onSecondRow = function (index) {};
+
 ParamPageMode.prototype.updateDisplay = function ()
 {
     this.drawTrackNames ();
@@ -134,6 +138,18 @@ ParamPageMode.prototype.updateDisplay = function ()
          .setCell (1, 3, 'No ' + this.name).setCell (1, 4, 'Assigned');
     }
     d.done (0).done (1).done (2);
+};
+
+ParamPageMode.prototype.updateFirstRow = function ()
+{
+    for (var i = 0; i < 8; i++)
+        this.push.setButton (20 + i, PUSH_COLOR_BLACK);
+};
+
+ParamPageMode.prototype.updateSecondRow = function ()
+{
+    for (var i = 0; i < 8; i++)
+        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
 };
 
 ParamPageMode.prototype.hasParams = function ()

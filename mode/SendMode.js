@@ -26,6 +26,10 @@ SendMode.prototype.onValueKnob = function (index, value)
     this.model.getTrackBank ().setSend (index, sendIndex, value, this.push.getFractionValue ());
 };
 
+SendMode.prototype.onFirstRow = function (index) {};
+
+SendMode.prototype.onSecondRow = function (index) {};
+
 SendMode.prototype.updateDisplay = function ()
 {
     this.drawTrackNames ();
@@ -45,4 +49,16 @@ SendMode.prototype.updateDisplay = function ()
 SendMode.prototype.getCurrentSendIndex = function ()
 {
     return this.push.getCurrentMode () - MODE_SEND1;
+};
+
+SendMode.prototype.updateFirstRow = function ()
+{
+    for (var i = 0; i < 8; i++)
+        this.push.setButton (20 + i, PUSH_COLOR_BLACK);
+};
+
+SendMode.prototype.updateSecondRow = function ()
+{
+    for (var i = 0; i < 8; i++)
+        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
 };
