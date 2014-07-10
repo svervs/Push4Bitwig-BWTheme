@@ -8,7 +8,7 @@ function DeviceMode (model)
     BaseMode.call (this, model);
     this.id = MODE_BANK_DEVICE;
 }
-DeviceMode.prototype = new BaseMode ();
+DeviceMode.prototype = new AbstractTrackMode ();
 
 DeviceMode.prototype.onValueKnob = function (index, value)
 {
@@ -43,7 +43,7 @@ DeviceMode.prototype.onFirstRow = function (index)
     }
 };
 
-DeviceMode.prototype.onSecondRow = function (index) {};
+// DeviceMode.prototype.onSecondRow = function (index) {};
 
 DeviceMode.prototype.updateDisplay = function () 
 {
@@ -110,8 +110,4 @@ DeviceMode.prototype.updateFirstRow = function ()
     }
 };
 
-DeviceMode.prototype.updateSecondRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
-};
+// DeviceMode.prototype.updateSecondRow = function () {};
