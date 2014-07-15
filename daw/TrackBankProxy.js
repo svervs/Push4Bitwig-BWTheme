@@ -42,7 +42,7 @@ function TrackBankProxy ()
     this.canScrollScenesUpFlag   = false;
     this.canScrollScenesDownFlag = false;
 
-    this.muteStateFlag = true;
+    this.trackState = TrackBankProxy.TrackState.MUTE;
     
     this.newClipLength = 2; // 1 Bar
     this.recCount = 64;
@@ -187,12 +187,17 @@ function TrackBankProxy ()
 
 TrackBankProxy.prototype.isMuteState = function ()
 {
-    return this.muteStateFlag;
+    return this.trackState == TrackBankProxy.TrackState.MUTE;
 };
 
-TrackBankProxy.prototype.setMuteState = function (mute)
+TrackBankProxy.prototype.isSoloState = function ()
 {
-    this.muteStateFlag = mute;
+    return this.trackState == TrackBankProxy.TrackState.SOLO;
+};
+
+TrackBankProxy.prototype.setTrackState = function (state)
+{
+    this.trackState = state;
 };
 
 TrackBankProxy.prototype.isClipRecording = function () { return this.recCount != 0; };
@@ -240,7 +245,7 @@ TrackBankProxy.prototype.select = function (index)
     var t = this.trackBank.getTrack (index);
     if (t != null)
         t.select ();
-}
+};
 
 TrackBankProxy.prototype.setVolume = function (index, value, fractionValue)
 {
@@ -426,4 +431,11 @@ TrackBankProxy.prototype.createTracks = function (count)
             });
     }
     return tracks;
+};
+
+TrackBankProxy.TrackState =
+{
+    NONE: 0,
+    MUTE: 1,
+    SOLO: 2
 };

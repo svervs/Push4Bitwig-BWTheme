@@ -381,12 +381,12 @@ BaseView.prototype.onDeviceRight = function (event)
 
 BaseView.prototype.onMute = function (event)
 {
-    this.model.getTrackBank ().setMuteState (true);
+    this.model.getTrackBank ().setTrackState (TrackBankProxy.TrackState.MUTE);
 };
 
 BaseView.prototype.onSolo = function (event)
 {
-    this.model.getTrackBank ().setMuteState (false);
+    this.model.getTrackBank ().setTrackState (TrackBankProxy.TrackState.SOLO);
 };
 
 BaseView.prototype.onScales = function (event)
