@@ -43,6 +43,7 @@ BaseView.prototype.updateDevice = function ()
         m.updateFirstRow ();
         m.updateSecondRow ();
     }
+    this.updateButtons ();
     this.updateArrows ();
 };
 
@@ -380,25 +381,12 @@ BaseView.prototype.onDeviceRight = function (event)
 
 BaseView.prototype.onMute = function (event)
 {
-    if (!event.isDown ())
-        return;
-    var tb = this.model.getTrackBank ();
-    var selectedTrack = tb.getSelectedTrack ();
-    if (selectedTrack == null)
-        return;
-    tb.toggleMute (selectedTrack.index);
-    this.push.setButton (PUSH_BUTTON_MUTE, selectedTrack.mute ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.model.getTrackBank ().setMuteState (true);
 };
 
 BaseView.prototype.onSolo = function (event)
 {
-    if (!event.isDown ())
-        return;
-    var selectedTrack = this.model.getTrackBank ().getSelectedTrack ();
-    if (selectedTrack == null)
-        return;
-    this.model.getTrackBank ().toggleSolo (selectedTrack.index);
-    this.push.setButton (PUSH_BUTTON_SOLO, selectedTrack.solo ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.model.getTrackBank ().setMuteState (false);
 };
 
 BaseView.prototype.onScales = function (event)
@@ -590,6 +578,14 @@ BaseView.prototype.scrollRight = function (event) {};
 BaseView.prototype.selectTrack = function (index)
 {
     this.model.getTrackBank ().select (index);
+};
+
+BaseView.prototype.updateButtons = function ()
+{
+    var tb = this.model.getTrackBank ();
+    var isMuteState = tb.isMuteState ();
+    this.push.setButton (PUSH_BUTTON_MUTE, isMuteState ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.push.setButton (PUSH_BUTTON_SOLO, !isMuteState ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 BaseView.prototype.updateArrows = function ()

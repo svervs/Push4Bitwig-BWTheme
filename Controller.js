@@ -84,14 +84,10 @@ Controller.prototype.flush = function ()
     var track = this.model.getTrackBank ().getSelectedTrack ();
     if (track == null)
     {
-        this.push.setButton (PUSH_BUTTON_MUTE, PUSH_BUTTON_STATE_OFF);
-        this.push.setButton (PUSH_BUTTON_SOLO, PUSH_BUTTON_STATE_OFF);
         this.push.setButton (PUSH_BUTTON_AUTOMATION, PUSH_BUTTON_STATE_OFF);
     }
     else
     {
-        this.push.setButton (PUSH_BUTTON_MUTE, track.mute ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-        this.push.setButton (PUSH_BUTTON_SOLO, track.solo ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
         this.push.setButton (PUSH_BUTTON_AUTOMATION, track.autowrite ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     }
 };

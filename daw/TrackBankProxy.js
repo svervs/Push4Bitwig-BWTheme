@@ -41,6 +41,8 @@ function TrackBankProxy ()
     this.canScrollTracksDownFlag = false;
     this.canScrollScenesUpFlag   = false;
     this.canScrollScenesDownFlag = false;
+
+    this.muteStateFlag = true;
     
     this.newClipLength = 2; // 1 Bar
     this.recCount = 64;
@@ -182,6 +184,16 @@ function TrackBankProxy ()
         this.canScrollScenesDownFlag = canScroll;
     }));
 }
+
+TrackBankProxy.prototype.isMuteState = function ()
+{
+    return this.muteStateFlag;
+};
+
+TrackBankProxy.prototype.setMuteState = function (mute)
+{
+    this.muteStateFlag = mute;
+};
 
 TrackBankProxy.prototype.isClipRecording = function () { return this.recCount != 0; };
 

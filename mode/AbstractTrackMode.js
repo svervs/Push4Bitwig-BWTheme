@@ -16,18 +16,18 @@ AbstractTrackMode.prototype.onFirstRow = function (index)
     var tb = this.model.getTrackBank ();
     var selTrack = tb.getSelectedTrack ();
     if ((selTrack != null && selTrack.index == index) || this.push.isShiftPressed ())
-    {
         this.model.getTrackBank ().toggleArm (index);
-    }
     else
-    {
         this.model.getTrackBank ().select (index);
-    }
 };
 
 AbstractTrackMode.prototype.onSecondRow = function (index)
 {
-    this.model.getTrackBank ().toggleMute (index);
+    var tb = this.model.getTrackBank ();
+    if (tb.isMuteState ())
+        tb.toggleMute (index);
+    else
+        tb.toggleSolo (index);
 };
 
 AbstractTrackMode.prototype.updateFirstRow = function ()
@@ -43,10 +43,12 @@ AbstractTrackMode.prototype.updateFirstRow = function ()
 AbstractTrackMode.prototype.updateSecondRow = function ()
 {
     var tb = this.model.getTrackBank ();
+    var muteState = tb.isMuteState ();
     for (var i = 0; i < 8; i++)
     {
         var t = tb.getTrack (i);
-        this.push.setButton (102 + i, t.name != '' && !t.mute ? PUSH_COLOR2_YELLOW_HI : PUSH_COLOR_BLACK);
+        this.push.setButton (102 + i, t.name != '' && !(muteState ? t.mute : t.solo) ?
+            muteState ? PUSH_COLOR2_YELLOW_HI : PUSH_COLOR2_BLUE_HI : PUSH_COLOR_BLACK);
     }
 };
 
