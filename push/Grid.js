@@ -41,6 +41,7 @@ var PUSH_COLOR2_RED_HI = 5; // 6
 var PUSH_COLOR2_RED_MD = 7;
 var PUSH_COLOR2_ORANGE_LO = 8;
 var PUSH_COLOR2_YELLOW_HI = 13;
+var PUSH_COLOR2_BLUE_HI = 45;
 
 var PUSH_COLOR_SCENE_RED                  = 1;
 var PUSH_COLOR_SCENE_RED_BLINK            = 2;

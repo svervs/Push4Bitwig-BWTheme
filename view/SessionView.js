@@ -55,6 +55,7 @@ SessionView.prototype.updateDevice = function ()
         m.updateFirstRow ();
     }
 
+    this.updateButtons ();
     this.updateArrows ();
 };
 
