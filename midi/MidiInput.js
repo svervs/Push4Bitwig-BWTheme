@@ -5,8 +5,12 @@
 
 function MidiInput ()
 {
-    this.port = host.getMidiInPort (0);
 }
+
+MidiInput.prototype.init = function (f)
+{
+    this.port = host.getMidiInPort (0);
+};
 
 MidiInput.prototype.setMidiCallback = function (f)
 {
