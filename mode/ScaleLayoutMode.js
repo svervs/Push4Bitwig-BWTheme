@@ -42,11 +42,11 @@ ScaleLayoutMode.prototype.updateFirstRow = function ()
 {
     var sl = this.scales.getScaleLayout ();
     for (var i = 0; i < 8; i++)
-        this.push.setButton (20 + i, i > 5 ? PUSH_COLOR_BLACK : (sl == i ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN));
+        this.push.setButton (20 + i, i > 5 ? PUSH_COLOR_BLACK : (sl == i ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO));
 };
 
 ScaleLayoutMode.prototype.updateSecondRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
+        this.push.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

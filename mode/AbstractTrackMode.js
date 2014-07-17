@@ -84,5 +84,5 @@ AbstractTrackMode.prototype.getTrackButtonColor = function (track)
     if (track.recarm)
         return isSel ? PUSH_COLOR_RED_HI : PUSH_COLOR_RED_LO;
 
-    return isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_YELLOW_LO;
+    return isSel ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO;
 };

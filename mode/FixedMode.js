@@ -34,11 +34,11 @@ FixedMode.prototype.updateDisplay = function ()
 FixedMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (20 + i, PUSH_COLOR_GREEN_LO - 4);
+        this.push.setButton (20 + i, PUSH_COLOR_GREEN_LO);
 };
 
 FixedMode.prototype.updateSecondRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
+        this.push.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

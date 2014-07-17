@@ -99,9 +99,9 @@ DeviceMode.prototype.updateFirstRow = function ()
         this.push.setButton (22, PUSH_COLOR_BLACK);
         this.push.setButton (23, PUSH_COLOR_BLACK);
         this.push.setButton (24, PUSH_COLOR_BLACK);
-        this.push.setButton (25, this.model.getCursorDevice ().hasPreviousParameterPage () ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
-        this.push.setButton (26, PUSH_COLOR_ORANGE_LO);
-        this.push.setButton (27, selectedDevice.enabled ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
+        this.push.setButton (25, this.model.getCursorDevice ().hasPreviousParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
+        this.push.setButton (26, PUSH_COLOR_ORANGE_HI);
+        this.push.setButton (27, selectedDevice.enabled ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
     }
     else
     {

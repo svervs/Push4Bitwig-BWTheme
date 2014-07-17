@@ -39,5 +39,5 @@ AccentMode.prototype.updateFirstRow = function ()
 AccentMode.prototype.updateSecondRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
+        this.push.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

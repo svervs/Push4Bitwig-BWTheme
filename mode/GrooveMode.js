@@ -56,11 +56,11 @@ GrooveMode.prototype.updateFirstRow = function ()
         this.push.setButton (20 + i, PUSH_COLOR_BLACK);
 
     var g = this.model.getGroove ();
-    this.push.setButton (27, g.isEnabled () ? PUSH_COLOR_GREEN_LO - 4 : PUSH_COLOR_BLACK);
+    this.push.setButton (27, g.isEnabled () ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
 };
 
 GrooveMode.prototype.updateSecondRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
+        this.push.setButton (102 + i, PUSH_COLOR2_BLACK);
 };
