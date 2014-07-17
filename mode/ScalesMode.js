@@ -85,7 +85,7 @@ ScalesMode.prototype.updateFirstRow = function ()
     for (var i = 0; i < 8; i++)
     {
         var isFirstOrLast = i == 0 || i == 7;
-        this.push.setButton(20 + i, i == 7 ? PUSH_COLOR_BLACK : (isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == i - 1 ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN)));
+        this.push.setButton(20 + i, i == 7 ? PUSH_COLOR_BLACK : (isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == i - 1 ? PUSH_COLOR_YELLOW_MD : PUSH_COLOR_GREEN_LO)));
     }
 };
 
@@ -95,6 +95,6 @@ ScalesMode.prototype.updateSecondRow = function ()
     for (var i = 0; i < 8; i++)
     {
         var isFirstOrLast = i == 0 || i == 7;
-        this.push.setButton(102 + i, isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == (i - 1) + 6 ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO));
+        this.push.setButton(102 + i, isFirstOrLast ? PUSH_COLOR2_AMBER : (offset == (i - 1) + 6 ? PUSH_COLOR2_YELLOW_HI : PUSH_COLOR2_GREEN_LO));
     }
 };

@@ -88,7 +88,7 @@ ParamPageSelectMode.prototype.updateFirstRow = function ()
 ParamPageSelectMode.prototype.updateSecondRow = function ()
 {
     for (var i = 102; i < 110; i++)
-        this.push.setButton (i, PUSH_COLOR_BLACK);
+        this.push.setButton (i, PUSH_COLOR2_BLACK);
 };
 
 ParamPageSelectMode.prototype.onFirstRow = function (index)

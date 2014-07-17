@@ -71,9 +71,9 @@ PlayView.prototype.drawGrid = function ()
     for (var i = 36; i < 100; i++)
     {
         this.push.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ?
-            (isRecording ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : 
-            this.scales.getColor (this.noteMap, i)) : PUSH_COLOR_BLACK);
-        this.push.pads.blink (i, PUSH_COLOR_BLACK);
+            (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI) :
+            this.scales.getColor (this.noteMap, i)) : PUSH_COLOR2_BLACK);
+        this.push.pads.blink (i, PUSH_COLOR2_BLACK);
     }
 };
 

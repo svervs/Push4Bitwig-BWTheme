@@ -23,8 +23,8 @@ function PresetMode (model)
 PresetMode.prototype = new BaseMode ();
 
 PresetMode.knobDuration = 150;
-PresetMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO-4;
-PresetMode.secondRowButtonColor = PUSH_COLOR_GREEN_LO;
+PresetMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO;
+PresetMode.secondRowButtonColor = PUSH_COLOR2_GREEN_LO;
 
 PresetMode.prototype.onActivate = function ()
 {
@@ -113,6 +113,6 @@ PresetMode.prototype.updateFirstRow = function ()
 
 PresetMode.prototype.updateSecondRow = function ()
 {
-    for (var i = 104; i < 110; i++)
+    for (var i = 102; i < 110; i++)
         this.push.setButton (i, this.secondRowButtons[i] != null ? PresetMode.secondRowButtonColor : PUSH_COLOR_BLACK);
 };

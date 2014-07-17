@@ -55,7 +55,7 @@ BaseMode.prototype.updateSecondRow = function ()
     {
         var t = tb.getTrack (i);
         if (!this.hasSecondRowPriority)
-            this.push.setButton (102 + i, t.recarm ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK);
+            this.push.setButton (102 + i, t.recarm ? PUSH_COLOR2_RED_LO : PUSH_COLOR2_BLACK);
     }
 };
 

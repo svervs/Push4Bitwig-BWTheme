@@ -116,7 +116,7 @@ DrumView.prototype.drawGrid = function ()
         {
             var index = x + y * 4;
             var p = this.pads[index];
-            var c = this.playedPad == index ? PUSH_COLOR_GREEN_HI : (this.selectedPad == index ? PUSH_COLOR_BLUE_HI : (p.exists ? (p.mute ? PUSH_COLOR_ORANGE_LO : (p.solo ? PUSH_COLOR_BLUE_LO : PUSH_COLOR_YELLOW_HI)) : PUSH_COLOR_YELLOW_LO));
+            var c = this.playedPad == index ? PUSH_COLOR2_GREEN_HI : (this.selectedPad == index ? PUSH_COLOR2_BLUE_HI : (p.exists ? (p.mute ? PUSH_COLOR2_AMBER_LO : (p.solo ? PUSH_COLOR2_BLUE_LO : PUSH_COLOR2_YELLOW_HI)) : PUSH_COLOR_YELLOW_LO));
             this.push.pads.lightEx (x, y, c);
         }
     }
@@ -134,7 +134,7 @@ DrumView.prototype.drawGrid = function ()
         var hilite = col == hiStep;
         var x = col % 8;
         var y = 7 - Math.floor (col / 8);
-        this.push.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLUE_HI) : hilite ? PUSH_COLOR_GREEN_HI : PUSH_COLOR_BLACK);
+        this.push.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR2_GREEN_LO : PUSH_COLOR2_BLUE_HI) : hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLACK);
     }
 };
 

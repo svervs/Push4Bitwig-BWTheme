@@ -119,9 +119,9 @@ SequencerView.prototype.drawGrid = function ()
             var isSet = this.data[x][row];
             var hilite = x == hiStep;
             if (isKeyboardEnabled)
-                this.push.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLUE_HI) : hilite ? PUSH_COLOR_GREEN_HI : this.scales.getSequencerColor (this.noteMap, y));
+                this.push.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLUE) : hilite ? PUSH_COLOR2_GREEN_HI : this.scales.getSequencerColor (this.noteMap, y));
             else
-                this.push.pads.lightEx (x, y, PUSH_COLOR_BLACK);
+                this.push.pads.lightEx (x, y, PUSH_COLOR2_BLACK);
         }
     }
 };

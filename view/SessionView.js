@@ -48,7 +48,7 @@ SessionView.prototype.updateDevice = function ()
     if (this.flip && !this.push.getMode (this.push.getCurrentMode ()).hasSecondRowPriority)
     {
         for (var i = 0; i < 8; i++)
-            this.push.setButton (20 + i, PUSH_COLOR_GREEN_MD);
+            this.push.setButton (20 + i, PUSH_COLOR_GREEN_HI);
     }
     else
     {
