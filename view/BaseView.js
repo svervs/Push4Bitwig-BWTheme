@@ -47,6 +47,11 @@ BaseView.prototype.updateDevice = function ()
     this.updateArrows ();
 };
 
+BaseView.prototype.onPitchbend = function (data1, data2)
+{
+    this.push.sendMidiEvent (0xE0, data1, data2);
+};
+
 //--------------------------------------
 // Group 1
 //--------------------------------------

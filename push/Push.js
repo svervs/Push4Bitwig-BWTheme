@@ -208,6 +208,13 @@ Push.prototype.setVelocityTranslationTable = function (table)
     this.noteInput.setVelocityTranslationTable (table);
 };
 
+// Note: Weird to send to the DAW via Push...
+Push.prototype.sendMidiEvent = function (status, data1, data2)
+{
+    this.noteInput.sendRawMidiEvent (status, data1, data2);
+};
+
+
 //--------------------------------------
 // ViewState
 //--------------------------------------
@@ -398,6 +405,13 @@ Push.prototype.handleMidi = function (status, data1, data2)
 
         case 0xB0:
             this.handleCC (data1, data2);
+            break;
+            
+        // Pitch Bend
+        case 0xE0:
+            var view = this.getActiveView ();
+            if (view != null)
+                view.onPitchbend (data1, data2);
             break;
     }
 };

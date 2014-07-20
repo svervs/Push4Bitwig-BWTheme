@@ -12,7 +12,7 @@ PushMidiInput.prototype = new MidiInput();
 
 PushMidiInput.prototype.createNoteInput = function ()
 {
-    var noteInput = this.port.createNoteInput ("Ableton Push", "80????", "90????", "E0????", "B040??" /* Sustainpedal */);
+    var noteInput = this.port.createNoteInput ("Ableton Push", "80????", "90????", /*"E0????",*/ "B040??" /* Sustainpedal */);
     noteInput.setShouldConsumeEvents (false);
     return noteInput;
 };

@@ -23,6 +23,8 @@ View.prototype.updateDevice = function () {};
 View.prototype.drawGrid = function () {};
 View.prototype.onGrid = function (note, velocity) {};
 
+View.prototype.onPitchbend = function (data1, data2) {};
+
 //--------------------------------------
 // Group 1
 //--------------------------------------
