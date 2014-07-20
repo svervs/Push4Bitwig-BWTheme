@@ -43,7 +43,10 @@ DeviceMode.prototype.onFirstRow = function (index)
     }
 };
 
-// DeviceMode.prototype.onSecondRow = function (index) {};
+DeviceMode.prototype.onSecondRow = function (index)
+{
+  this.model.getCursorDevice ().getMacro(index).getModulationSource().toggleIsMapping();
+};
 
 DeviceMode.prototype.updateDisplay = function () 
 {
@@ -78,7 +81,8 @@ DeviceMode.prototype.updateDisplay = function ()
     {
         d.setCell (3, 0, 'Selected', Display.FORMAT_RAW).setCell (3, 1, 'Device: ', Display.FORMAT_RAW)
          .setBlock (3, 1, selectedDevice.name)
-         .clearBlock (3, 2).clearCell (3, 6);
+         .setCell (3, 4, this.model.getCursorDevice ().getSelectedParameterPageName (), Display.FORMAT_RAW)
+         .clearCell(3, 5).clearCell(3, 6);
 
         var hasPrevious = this.model.getCursorDevice ().hasPreviousParameterPage ();
         if (hasPrevious)
@@ -110,4 +114,8 @@ DeviceMode.prototype.updateFirstRow = function ()
     }
 };
 
-// DeviceMode.prototype.updateSecondRow = function () {};
+DeviceMode.prototype.updateSecondRow = function ()
+{
+    for (var i = 0; i < 8; i++)
+        this.push.setButton (102 + i, this.model.getCursorDevice().isMacroMapping(i) ? PUSH_COLOR_GREEN_HI_FBLINK : PUSH_COLOR_BLACK);
+};
