@@ -15,7 +15,7 @@ VolumeMode.prototype = new AbstractTrackMode ();
 
 VolumeMode.prototype.onValueKnob = function (index, value)
 {
-    this.model.getTrackBank ().setVolume (index, value, this.push.getFractionValue ());
+    this.model.getTrackBank ().changeVolume (index, value, this.push.getFractionValue ());
 };
 
 // VolumeMode.prototype.onFirstRow = function (index) {};

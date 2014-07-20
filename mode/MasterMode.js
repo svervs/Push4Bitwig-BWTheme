@@ -15,9 +15,9 @@ MasterMode.prototype = new BaseMode ();
 MasterMode.prototype.onValueKnob = function (index, value)
 {
     if (index == 0)
-        this.model.getMasterTrack ().setVolume (value, this.push.getFractionValue ());
+        this.model.getMasterTrack ().changeVolume (value, this.push.getFractionValue ());
     else if (index == 1)
-        this.model.getMasterTrack ().setPan (value, this.push.getFractionValue ());
+        this.model.getMasterTrack ().changePan (value, this.push.getFractionValue ());
 };
 
 MasterMode.prototype.onFirstRow = function (index) {};

@@ -14,7 +14,7 @@ PanMode.prototype = new AbstractTrackMode ();
 
 PanMode.prototype.onValueKnob = function (index, value)
 {
-    this.model.getTrackBank ().setPan (index, value, this.push.getFractionValue ());
+    this.model.getTrackBank ().changePan (index, value, this.push.getFractionValue ());
 };
 
 // PanMode.prototype.onFirstRow = function (index) {};

@@ -20,11 +20,11 @@ TrackMode.prototype.onValueKnob = function (index, value)
     if (selectedTrack == null)
         return;
     if (index == 0)
-        tb.setVolume (selectedTrack.index, value, this.push.getFractionValue ());
+        tb.changeVolume (selectedTrack.index, value, this.push.getFractionValue ());
     else if (index == 1)
-        tb.setPan (selectedTrack.index, value, this.push.getFractionValue ());
+        tb.changePan (selectedTrack.index, value, this.push.getFractionValue ());
     else
-        tb.setSend (selectedTrack.index, index - 2, value, this.push.getFractionValue ());
+        tb.changeSend (selectedTrack.index, index - 2, value, this.push.getFractionValue ());
 };
 
 // TrackMode.prototype.onFirstRow = function (index) {};
@@ -39,29 +39,26 @@ TrackMode.prototype.updateDisplay = function ()
     d.setRow (0, TrackMode.PARAM_NAMES);
 
     if (t == null)
-        d.clearRow (1).done (1).clearRow (2).done (2);
+        d.clearRow (1).clearRow (2);
     else
     {
-        d.setCell (1, 0, t.volumeStr, Display.FORMAT_RAW)
-         .setCell (1, 1, t.panStr, Display.FORMAT_RAW)
-         .setCell (1, 2, t.sends[0].volumeStr, Display.FORMAT_RAW)
-         .setCell (1, 3, t.sends[1].volumeStr, Display.FORMAT_RAW)
-         .setCell (1, 4, t.sends[2].volumeStr, Display.FORMAT_RAW)
-         .setCell (1, 5, t.sends[3].volumeStr, Display.FORMAT_RAW)
-         .setCell (1, 6, t.sends[4].volumeStr, Display.FORMAT_RAW)
-         .setCell (1, 7, t.sends[5].volumeStr, Display.FORMAT_RAW)
-         .done (1)
+        // Note: The Sends name is not send (always "Send")
         
+        //d.setCell (0, 0, "Volume", Display.FORMAT_RAW)
+        d.setCell (1, 0, t.volumeStr, Display.FORMAT_RAW)
          .setCell (2, 0, this.push.showVU ? t.vu : t.volume, Display.FORMAT_VALUE)
-         .setCell (2, 1, t.pan, Display.FORMAT_PAN)
-         .setCell (2, 2, t.sends[0].volume, Display.FORMAT_VALUE)
-         .setCell (2, 3, t.sends[1].volume, Display.FORMAT_VALUE)
-         .setCell (2, 4, t.sends[2].volume, Display.FORMAT_VALUE)
-         .setCell (2, 5, t.sends[3].volume, Display.FORMAT_VALUE)
-         .setCell (2, 6, t.sends[4].volume, Display.FORMAT_VALUE)
-         .setCell (2, 7, t.sends[5].volume, Display.FORMAT_VALUE)
-         .done (2);
+        // .setCell (0, 1, "Pan", Display.FORMAT_RAW)
+         .setCell (1, 1, t.panStr, Display.FORMAT_RAW)
+         .setCell (2, 1, t.pan, Display.FORMAT_PAN);
+         
+        for (var i = 0; i < 6; i++)
+        {
+            //d.setCell (0, 2 + i, t.sends[i].name, Display.FORMAT_RAW)
+            d.setCell (1, 2 + i, t.sends[i].volumeStr, Display.FORMAT_RAW)
+             .setCell (2, 2 + i, t.sends[i].volume, Display.FORMAT_VALUE);
+        }
     }
+    d.done (1).done (2);
 
     this.drawRow4 ();
 };
