@@ -39,7 +39,7 @@ Display.DASHES =
     Display.BARS_NON + Display.BARS_NON + Display.BARS_NON + Display.BARS_NON + Display.BARS_NON + Display.BARS_NON + Display.BARS_NON + Display.BARS_NON + Display.BARS_NON
 ];
 
-Display.SYSEX_CLEAR =
+Display.SYSEX_MESSAGE =
 [
     "F0 47 7F 15 18 00 45 00 ",
     "F0 47 7F 15 19 00 45 00 ",
@@ -47,7 +47,7 @@ Display.SYSEX_CLEAR =
     "F0 47 7F 15 1B 00 45 00 "
 ];
 
-Display.SYSEX_MESSAGE =
+Display.SYSEX_CLEAR =
 [
     "F0 47 7F 15 1C 00 00 F7",
     "F0 47 7F 15 1D 00 00 F7",
@@ -170,7 +170,7 @@ Display.prototype.flush = function (row)
             var array = [];
             for (var i = 0; i < this.currentMessage[row].length; i++)
                 array[i] = this.currentMessage[row].charCodeAt(i);
-            this.output.sendSysex (Display.SYSEX_CLEAR[row] + toHexStr (array) + "F7");
+            this.output.sendSysex (Display.SYSEX_MESSAGE[row] + toHexStr (array) + "F7");
         }
     }
 };
