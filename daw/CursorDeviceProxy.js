@@ -49,7 +49,8 @@ function CursorDeviceProxy ()
     {
         this.selectedParameterPage = page;
     }));
-    this.cursorDevice.addPageNamesObserver(doObject (this,  function () {
+    this.cursorDevice.addPageNamesObserver(doObject (this,  function ()
+    {
         this.parameterPageNames = arguments;
     }));
 
@@ -266,8 +267,7 @@ CursorDeviceProxy.prototype.hasPreviousParameterPage = function ()
 
 CursorDeviceProxy.prototype.getSelectedParameterPageName = function ()
 {
-    return (this.selectedParameterPage >= 0) ?
-        this.parameterPageNames[this.selectedParameterPage] : "";
+    return this.selectedParameterPage >= 0 ? this.parameterPageNames[this.selectedParameterPage] : "";
 };
 
 CursorDeviceProxy.prototype.isMacroMapping = function (index)

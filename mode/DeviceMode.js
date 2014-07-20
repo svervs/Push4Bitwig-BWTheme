@@ -29,7 +29,7 @@ DeviceMode.prototype.onFirstRow = function (index)
     {
         case 5:
             //if (hasPreviousParameterPage)
-                this.model.getCursorDevice ().previousParameterPage ();
+            this.model.getCursorDevice ().previousParameterPage ();
             break;
 
         case 6:
@@ -45,7 +45,7 @@ DeviceMode.prototype.onFirstRow = function (index)
 
 DeviceMode.prototype.onSecondRow = function (index)
 {
-  this.model.getCursorDevice ().getMacro(index).getModulationSource().toggleIsMapping();
+  this.model.getCursorDevice ().getMacro (index).getModulationSource ().toggleIsMapping ();
 };
 
 DeviceMode.prototype.updateDisplay = function () 
@@ -69,28 +69,22 @@ DeviceMode.prototype.updateDisplay = function ()
             else
                 d.setCell (2, i, param.value, Display.FORMAT_VALUE);
         }
-    }
-    else
-        d.clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ');
 
-    d.done (0).done (1).done (2);
-
-    if (!hasDevice)
-        d.clearRow (3).done (3);
-    else
-    {
         d.setCell (3, 0, 'Selected', Display.FORMAT_RAW).setCell (3, 1, 'Device: ', Display.FORMAT_RAW)
          .setBlock (3, 1, selectedDevice.name)
-         .setCell (3, 4, this.model.getCursorDevice ().getSelectedParameterPageName (), Display.FORMAT_RAW)
-         .clearCell(3, 5).clearCell(3, 6);
+         .setCell (3, 4, cursorDevice.getSelectedParameterPageName (), Display.FORMAT_RAW)
+         .clearCell (3, 5).clearCell (3, 6);
 
-        var hasPrevious = this.model.getCursorDevice ().hasPreviousParameterPage ();
-        if (hasPrevious)
+        if (cursorDevice.hasPreviousParameterPage ())
             d.setCell (3, 5, ' < Prev ', Display.FORMAT_RAW);
 
         d.setCell (3, 6, ' Next > ', Display.FORMAT_RAW)
          .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
     }
+    else
+        d.clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ').clearRow (3);
+
+    d.allDone ();
 };
 
 DeviceMode.prototype.updateFirstRow = function ()
