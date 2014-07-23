@@ -9,7 +9,8 @@ function Controller ()
     var input = new PushMidiInput ();
     input.init ();
 
-    this.model = new Model (PUSH_KNOB1);
+    var scales = new Scales (36, 100, 8, 8);
+    this.model = new Model (PUSH_KNOB1, scales);
     this.model.getTrackBank ().addTrackSelectionListener (doObject (this, function (index, isSelected)
     {
         if (isSelected && this.push.isActiveMode (MODE_MASTER))

@@ -59,9 +59,13 @@ Scales.LAYOUT_NAMES  = [ '4th ^', '4th >', '3rd ^', '3rd >', 'Seqent^', 'Seqent>
 Scales.ORIENT_UP     = 0;
 Scales.ORIENT_RIGHT  = 1;
 
-
-function Scales ()
+function Scales (startNote, endNote, numColumns, numRows)
 {
+    this.startNote     = startNote;
+    this.endNote       = endNote; // last note + 1
+    this.numColumns    = numColumns;
+    this.numRows       = numRows;
+
     this.selectedScale = 0;      // Major
     this.scaleOffset   = 0;      // C
     this.scaleLayout   = Scales.FOURTH_UP;
@@ -243,13 +247,14 @@ Scales.prototype.getSequencerColor = function (noteMap, note)
     return PUSH_COLOR2_WHITE;
 };
 
+
 Scales.prototype.getNoteMatrix = function ()
 {
     var matrix = this.getActiveMatrix ();
     var noteMap = this.getEmptyMatrix ();
-    for (var note = 36; note < 100; note++)
+    for (var note = this.startNote; note < this.endNote; note++)
     {
-        var n = matrix[note - 36] + Scales.OFFSETS[this.scaleOffset] + 36 + this.octave * 12;
+        var n = matrix[note - this.startNote] + Scales.OFFSETS[this.scaleOffset] + this.startNote + this.octave * 12;
         noteMap[note] = n < 0 || n > 127 ? -1 : n;
     }
     return noteMap;
@@ -276,9 +281,9 @@ Scales.prototype.getDrumMatrix = function ()
 {
     var matrix = Scales.DRUM_MATRIX;
     var noteMap = this.getEmptyMatrix ();
-    for (var note = 36; note < 100; note++)
+    for (var note = this.startNote; note < this.endNote; note++)
     {
-        var n = matrix[note - 36] == -1 ? -1 : matrix[note - 36] + 36 + this.drumOctave * 16;
+        var n = matrix[note - this.startNote] == -1 ? -1 : matrix[note - this.startNote] + this.startNote + this.drumOctave * 16;
         noteMap[note] = n < 0 || n > 127 ? -1 : n;
     }
     return noteMap;
@@ -294,7 +299,7 @@ Scales.prototype.getRangeText = function ()
 Scales.prototype.formatNote = function (note)
 {
     return Scales.NOTE_NAMES[note % 12] + (2 + Math.floor (note / 12) + this.octave);
-}
+};
 
 Scales.prototype.createScale = function (scale)
 {
@@ -302,15 +307,15 @@ Scales.prototype.createScale = function (scale)
     var matrix = [];
     var chromatic = [];
     var isUp = this.orientation == Scales.ORIENT_UP;
-    for (var row = 0; row < 8; row++)
+    for (var row = 0; row < this.numRows; row++)
     {
-        for (var column = 0; column < 8; column++)
+        for (var column = 0; column < this.numColumns; column++)
         {
             var y = isUp ? row : column;
             var x = isUp ? column : row;
             var offset = y * this.shift + x;
             matrix.push ((Math.floor (offset / len)) * 12 + scale.notes[offset % len]);
-            chromatic.push (y * (this.shift == 8 ? 8 : scale.notes[this.shift % len]) + x);
+            chromatic.push (y * (this.shift == this.numRows ? this.numRows : scale.notes[this.shift % len]) + x);
         }
     }
     return { name: scale.name, matrix: matrix, chromatic: chromatic };
@@ -327,3 +332,5 @@ Scales.prototype.generateMatrices = function ()
     for (var i = 0; i < Scales.INTERVALS.length; i++)
         this.scales.push (this.createScale (Scales.INTERVALS[i]));
 };
+
+
