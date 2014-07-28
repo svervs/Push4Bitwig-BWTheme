@@ -128,13 +128,14 @@ PlayView.prototype.scrollLeft = function (event)
         this.model.getCursorDevice ().selectPrevious ();
     else
     {
-        var sel = this.model.getTrackBank ().getSelectedTrack ();
+        var tb = this.model.getTrackBank ();
+        var sel = tb.getSelectedTrack ();
         var index = sel == null ? 0 : sel.index - 1;
         if (index == -1)
         {
-            if (!this.model.getTrackBank ().canScrollTracksUp ())
+            if (!tb.canScrollTracksUp ())
                 return;
-            this.model.getTrackBank ().scrollTracksPageUp ();
+            tb.scrollTracksPageUp ();
             scheduleTask (doObject (this, this.selectTrack), [7], 75);
             return;
         }
@@ -148,11 +149,11 @@ PlayView.prototype.scrollRight = function (event)
         this.model.getCursorDevice ().selectNext ();
     else
     {
-        var sel = this.model.getTrackBank ().getSelectedTrack ();
+        var tb = this.model.getTrackBank ();
+        var sel = tb.getSelectedTrack ();
         var index = sel == null ? 0 : sel.index + 1;
         if (index == 8)
         {
-            var tb = this.model.getTrackBank ();
             if (!tb.canScrollTracksDown ())
                 return;
             tb.scrollTracksPageDown ();
