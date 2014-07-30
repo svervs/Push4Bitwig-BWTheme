@@ -42,6 +42,7 @@ function Controller ()
     this.push.addMode (MODE_SCALE_LAYOUT, new ScaleLayoutMode (this.model));
     this.push.addMode (MODE_ACCENT, new AccentMode (this.model));
     this.push.addMode (MODE_FIXED, new FixedMode (this.model));
+    this.push.addMode (MODE_RIBBON, new RibbonMode (this.model));
     this.push.addMode (MODE_GROOVE, new GrooveMode (this.model));
 
     this.push.addMode (MODE_PARAM_PAGE_SELECT, new ParamPageSelectMode (this.model));

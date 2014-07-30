@@ -49,7 +49,37 @@ BaseView.prototype.updateDevice = function ()
 
 BaseView.prototype.onPitchbend = function (data1, data2)
 {
-    this.push.sendMidiEvent (0xE0, data1, data2);
+    if (this.push.isShiftPressed ())
+    {
+        if (this.push.getCurrentMode () != MODE_RIBBON)
+            this.push.setPendingMode (MODE_RIBBON);
+        return;
+    }
+
+    switch (Config.ribbonMode)
+    {
+        case Config.RIBBON_MODE_PITCH:
+            this.push.sendMidiEvent (0xE0, data1, data2);
+            break;
+
+        case Config.RIBBON_MODE_CC:
+            if (data2 == 64)    // Overwrite automatic recentering on release
+                data2 = 0;
+            this.push.sendMidiEvent (0xB0, Config.ribbonModeCCVal, data2);
+            break;
+
+        case Config.RIBBON_MODE_MIXED:
+            if (data2 > 64)
+                this.push.sendMidiEvent (0xE0, data1, data2);
+            else if (data2 < 64)
+                this.push.sendMidiEvent (0xB0, Config.ribbonModeCCVal, 127 - data2 * 2);
+            else
+            {
+                this.push.sendMidiEvent (0xE0, data1, data2);
+                this.push.sendMidiEvent (0xB0, Config.ribbonModeCCVal, 0);
+            }
+            break;
+    }
 };
 
 //--------------------------------------
