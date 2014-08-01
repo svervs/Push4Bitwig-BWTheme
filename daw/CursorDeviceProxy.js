@@ -17,9 +17,7 @@ function CursorDeviceProxy ()
     this.selectedDevice =
     {
         name: 'None',
-        enabled: false,
-        hasPreviousDevice: false,
-        hasNextDevice: false
+        enabled: false
     };
 
     this.isMacroMappings = initArray(false, 8);
