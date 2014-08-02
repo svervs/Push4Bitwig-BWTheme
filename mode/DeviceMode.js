@@ -25,27 +25,30 @@ DeviceMode.prototype.onValueKnobTouch = function (index, isTouched)
 
 DeviceMode.prototype.onFirstRow = function (index)
 {
+    var device = this.model.getCursorDevice ();
     switch (index)
     {
         case 5:
-            //if (hasPreviousParameterPage)
-            this.model.getCursorDevice ().previousParameterPage ();
+            if (device.hasPreviousParameterPage ())
+                device.previousParameterPage ();
             break;
 
         case 6:
-            //if (hasNextParameterPage)
-            this.model.getCursorDevice ().nextParameterPage ();
+            if (device.hasNextParameterPage ())
+                device.nextParameterPage ();
             break;
 
         case 7:
-            this.model.getCursorDevice ().toggleEnabledState ();
+            device.toggleEnabledState ();
             break;
     }
 };
 
 DeviceMode.prototype.onSecondRow = function (index)
 {
-  this.model.getCursorDevice ().getMacro (index).getModulationSource ().toggleIsMapping ();
+    var macro = this.model.getCursorDevice ().getMacro (index);
+    if (macro)
+        macro.getModulationSource ().toggleIsMapping ();
 };
 
 DeviceMode.prototype.updateDisplay = function () 
@@ -77,9 +80,10 @@ DeviceMode.prototype.updateDisplay = function ()
 
         if (cursorDevice.hasPreviousParameterPage ())
             d.setCell (3, 5, ' < Prev ', Display.FORMAT_RAW);
+        if (cursorDevice.hasNextParameterPage ())
+            d.setCell (3, 6, ' Next > ', Display.FORMAT_RAW);
 
-        d.setCell (3, 6, ' Next > ', Display.FORMAT_RAW)
-         .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
+        d.setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
     }
     else
         d.clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ').clearRow (3);
@@ -98,7 +102,7 @@ DeviceMode.prototype.updateFirstRow = function ()
         this.push.setButton (23, PUSH_COLOR_BLACK);
         this.push.setButton (24, PUSH_COLOR_BLACK);
         this.push.setButton (25, this.model.getCursorDevice ().hasPreviousParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
-        this.push.setButton (26, PUSH_COLOR_ORANGE_HI);
+        this.push.setButton (26, this.model.getCursorDevice ().hasNextParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
         this.push.setButton (27, selectedDevice.enabled ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
     }
     else

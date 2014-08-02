@@ -7,7 +7,7 @@ function CursorDeviceProxy ()
 {
     // TODO when parameter page enabled bug is fixed, these will be used
     // for knowing when to show 'Next' and 'Previous' entries
-    this.hasNextParameterPage = false;
+    this.hasNextParamPage = false;
     this.hasPreviousParamPage = false;
 
     this.selectedParameterPage = -1;
@@ -41,7 +41,7 @@ function CursorDeviceProxy ()
     }));
     this.cursorDevice.addNextParameterPageEnabledObserver (doObject (this, function (isEnabled)
     {
-        this.hasNextParameterPage = isEnabled;
+        this.hasNextParamPage = isEnabled;
     }));
     this.cursorDevice.addSelectedPageObserver (-1, doObject (this, function (page)
     {
@@ -261,6 +261,11 @@ CursorDeviceProxy.prototype.getFXParam = function (index)
 CursorDeviceProxy.prototype.hasPreviousParameterPage = function ()
 {
     return this.selectedParameterPage > 0;
+};
+
+CursorDeviceProxy.prototype.hasNextParameterPage = function ()
+{
+    return true;
 };
 
 CursorDeviceProxy.prototype.getSelectedParameterPageName = function ()
