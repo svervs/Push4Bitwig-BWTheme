@@ -102,7 +102,7 @@ PresetMode.prototype.updateDisplay = function ()
             d.setBlock (i, 2, ' ' + value);
     }
 
-    d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.model.getCursorDevice ().currentPreset).allDone ();
+    d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.model.getCursorDevice ().getCurrentPreset ()).allDone ();
 };
 
 PresetMode.prototype.updateFirstRow = function ()
