@@ -387,6 +387,11 @@ Push.prototype.scheduledFlush = function ()
     this.display.flush ();
 };
 
+Push.prototype.toggleVU = function ()
+{
+    this.showVU = !this.showVU;
+};
+
 //--------------------------------------
 // Handlers
 //--------------------------------------

@@ -297,7 +297,7 @@ BaseView.prototype.onMaster = function (event)
             break;
         case ButtonEvent.DOWN:
             if (this.push.isActiveMode (MODE_MASTER))
-                this.push.showVU = !this.push.showVU;
+                this.push.toggleVU ();
             else
             {
                 this.push.setPendingMode (MODE_MASTER);
@@ -306,7 +306,7 @@ BaseView.prototype.onMaster = function (event)
             break;
         case ButtonEvent.LONG:
             // Toggle back since it was toggled on DOWN
-            this.push.showVU = !this.push.showVU;
+            this.push.toggleVU ();
             this.push.setPendingMode (MODE_FRAME);
             break;
     }
@@ -334,7 +334,7 @@ BaseView.prototype.onVolume = function (event)
     if (!event.isDown ())
         return;
     if (this.push.isActiveMode (MODE_VOLUME))
-        this.push.showVU = !this.push.showVU;
+        this.push.toggleVU ();
     else
         this.push.setPendingMode (MODE_VOLUME);
 };
@@ -354,7 +354,7 @@ BaseView.prototype.onTrack = function (event)
     if (!event.isDown ())
         return;
     if (this.push.isActiveMode (MODE_TRACK))
-        this.push.showVU = !this.push.showVU;
+        this.push.toggleVU ();
     else
         this.push.setPendingMode (MODE_TRACK);
 };
