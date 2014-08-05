@@ -63,7 +63,7 @@ SequencerView.prototype.usesButton = function (buttonID)
     return true;
 };
 
-SequencerView.prototype.onGrid = function (note, velocity)
+SequencerView.prototype.onGridNote = function (note, velocity)
 {
     if (velocity == 0)
         return;
@@ -119,9 +119,9 @@ SequencerView.prototype.drawGrid = function ()
             var isSet = this.data[x][row];
             var hilite = x == hiStep;
             if (isKeyboardEnabled)
-                this.push.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLUE) : hilite ? PUSH_COLOR2_GREEN_HI : this.scales.getSequencerColor (this.noteMap, y));
+                this.surface.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLUE) : hilite ? PUSH_COLOR2_GREEN_HI : this.scales.getSequencerColor (this.noteMap, y));
             else
-                this.push.pads.lightEx (x, y, PUSH_COLOR2_BLACK);
+                this.surface.pads.lightEx (x, y, PUSH_COLOR2_BLACK);
         }
     }
 };

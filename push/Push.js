@@ -82,104 +82,69 @@ var PUSH_BUTTON_STATE_OFF = 0;
 var PUSH_BUTTON_STATE_ON  = 1;
 var PUSH_BUTTON_STATE_HI  = 4;
 
+var PUSH_BUTTONS_ALL =
+[
+    PUSH_BUTTON_TAP,
+    PUSH_BUTTON_METRONOME,
+    PUSH_BUTTON_MASTER,
+    PUSH_BUTTON_STOP,
+    PUSH_BUTTON_LEFT,
+    PUSH_BUTTON_RIGHT,
+    PUSH_BUTTON_UP,
+    PUSH_BUTTON_DOWN,
+    PUSH_BUTTON_SELECT,
+    PUSH_BUTTON_SHIFT,
+    PUSH_BUTTON_NOTE,
+    PUSH_BUTTON_SESSION,
+    PUSH_BUTTON_ADD_EFFECT,
+    PUSH_BUTTON_ADD_TRACK,
+    PUSH_BUTTON_OCTAVE_DOWN,
+    PUSH_BUTTON_OCTAVE_UP,
+    PUSH_BUTTON_REPEAT,
+    PUSH_BUTTON_ACCENT,
+    PUSH_BUTTON_SCALES,
+    PUSH_BUTTON_USER_MODE,
+    PUSH_BUTTON_MUTE,
+    PUSH_BUTTON_SOLO,
+    PUSH_BUTTON_DEVICE_LEFT,
+    PUSH_BUTTON_DEVICE_RIGHT,
+    PUSH_BUTTON_PLAY,
+    PUSH_BUTTON_RECORD,
+    PUSH_BUTTON_NEW,
+    PUSH_BUTTON_DUPLICATE,
+    PUSH_BUTTON_AUTOMATION,
+    PUSH_BUTTON_FIXED_LENGTH,
+    PUSH_BUTTON_DEVICE,
+    PUSH_BUTTON_BROWSE,
+    PUSH_BUTTON_TRACK,
+    PUSH_BUTTON_CLIP,
+    PUSH_BUTTON_VOLUME,
+    PUSH_BUTTON_PAN_SEND,
+    PUSH_BUTTON_QUANTIZE,
+    PUSH_BUTTON_DOUBLE,
+    PUSH_BUTTON_DELETE,
+    PUSH_BUTTON_UNDO
+];
+
 
 function Push (output, input)
 {
-    this.output = output;
+    AbstractControlSurface.call (this, output, input, PUSH_BUTTONS_ALL);
+    
+    for (var i = 36; i < 100; i++)
+        this.gridNotes.push (i);
+    
+    this.selectButtonId = PUSH_BUTTON_SELECT;
+    this.shiftButtonId  = PUSH_BUTTON_SHIFT;
+
     this.pads    = new Grid (output);
     this.display = new Display (output);
     
-    this.input  = input;
-    this.input.setMidiCallback (doObject (this, this.handleMidi));
-    this.noteInput = this.input.createNoteInput ();
-    
-    this.showVU           = true;
-    this.displayScheduled = false;
-    this.taskReturning    = false;
-
-    // Mode related
-    this.previousMode  = null;
-    this.currentMode   = null;
-    this.defaultMode   = null;
-    this.activeModeId  = -1;
-    this.modes         = [];
-    this.modeListeners = [];
-
-    // View related
-    this.activeViewId = -1;
-    this.views = [];
-    
-    // Button related
-    this.buttons =
-    [
-        PUSH_BUTTON_TAP,
-        PUSH_BUTTON_METRONOME,
-        PUSH_BUTTON_MASTER,
-        PUSH_BUTTON_STOP,
-        PUSH_BUTTON_LEFT,
-        PUSH_BUTTON_RIGHT,
-        PUSH_BUTTON_UP,
-        PUSH_BUTTON_DOWN,
-        PUSH_BUTTON_SELECT,
-        PUSH_BUTTON_SHIFT,
-        PUSH_BUTTON_NOTE,
-        PUSH_BUTTON_SESSION,
-        PUSH_BUTTON_ADD_EFFECT,
-        PUSH_BUTTON_ADD_TRACK,
-        PUSH_BUTTON_OCTAVE_DOWN,
-        PUSH_BUTTON_OCTAVE_UP,
-        PUSH_BUTTON_REPEAT,
-        PUSH_BUTTON_ACCENT,
-        PUSH_BUTTON_SCALES,
-        PUSH_BUTTON_USER_MODE,
-        PUSH_BUTTON_MUTE,
-        PUSH_BUTTON_SOLO,
-        PUSH_BUTTON_DEVICE_LEFT,
-        PUSH_BUTTON_DEVICE_RIGHT,
-        PUSH_BUTTON_PLAY,
-        PUSH_BUTTON_RECORD,
-        PUSH_BUTTON_NEW,
-        PUSH_BUTTON_DUPLICATE,
-        PUSH_BUTTON_AUTOMATION,
-        PUSH_BUTTON_FIXED_LENGTH,
-        PUSH_BUTTON_DEVICE,
-        PUSH_BUTTON_BROWSE,
-        PUSH_BUTTON_TRACK,
-        PUSH_BUTTON_CLIP,
-        PUSH_BUTTON_VOLUME,
-        PUSH_BUTTON_PAN_SEND,
-        PUSH_BUTTON_QUANTIZE,
-        PUSH_BUTTON_DOUBLE,
-        PUSH_BUTTON_DELETE,
-        PUSH_BUTTON_UNDO
-    ];
-    this.buttonStates = [];
-    for (var i = 0; i < this.buttons.length; i++)
-        this.buttonStates[this.buttons[i]] = ButtonEvent.UP;
+    this.showVU = true;
 }
+Push.prototype = new AbstractControlSurface ();
 
-Push.prototype.flush = function ()
-{
-    if (this.taskReturning)
-    {
-        this.taskReturning = false;
-        return;
-    }
-
-    if (!this.displayScheduled)
-    {
-        this.displayScheduled = true;
-        scheduleTask (doObject (this, function ()
-        {
-            this.scheduledFlush ();
-            this.displayScheduled = false;
-            this.taskReturning = true;
-        }), null, 5);
-    }
-    this.redrawGrid ();
-};
-
-Push.prototype.turnOff = function ()
+Push.prototype.shutdown = function ()
 {
     // Clear display
     for (var i = 0; i < 4; i++)
@@ -198,16 +163,6 @@ Push.prototype.turnOff = function ()
     this.pads.turnOff ();
 };
 
-Push.prototype.setKeyTranslationTable = function (table)
-{
-    this.noteInput.setKeyTranslationTable (table);
-};
-
-Push.prototype.setVelocityTranslationTable = function (table)
-{
-    this.noteInput.setVelocityTranslationTable (table);
-};
-
 // Note: Weird to send to the DAW via Push...
 Push.prototype.sendMidiEvent = function (status, data1, data2)
 {
@@ -219,146 +174,20 @@ Push.prototype.sendMidiEvent = function (status, data1, data2)
 // ViewState
 //--------------------------------------
 
-Push.prototype.addView = function (viewId, view)
+Push.prototype.updateButtons = function ()
 {
-    view.attachTo (this);
-    this.views[viewId] = view;
-};
-
-Push.prototype.setActiveView = function (viewId)
-{
-    this.activeViewId = viewId;
-
     var view = this.getActiveView ();
-    if (view == null)
-    {
-        this.turnOff ();
-        return;
-    }
-
     for (var i = 0; i < this.buttons.length; i++)
         this.setButton (this.buttons[i], view.usesButton (this.buttons[i]) ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
-
-    view.onActivate ();
-};
-
-Push.prototype.getActiveView = function ()
-{
-    if (this.activeViewId < 0)
-        return null;
-    var view = this.views[this.activeViewId];
-    return view ? view : null;
-};
-
-Push.prototype.isActiveView = function (viewId)
-{
-    return this.activeViewId == viewId;
-};
-
-//--------------------------------------
-// ModeState
-//--------------------------------------
-
-Push.prototype.addMode = function (modeId, mode)
-{
-    mode.attachTo (this);
-    this.modes[modeId] = mode;
-};
-
-// listener must be a 2 parameter function: [int] oldMode, [int] newMode
-Push.prototype.addModeListener = function (listener)
-{
-    this.modeListeners.push (listener);
-};
-
-Push.prototype.setDefaultMode = function (mode)
-{
-    this.defaultMode = mode;
-    if (this.currentMode == null)
-        this.currentMode = this.defaultMode;
-    if (this.previousMode == null)
-        this.previousMode = this.defaultMode;
-};
-
-Push.prototype.setPendingMode = function (mode)
-{
-    if (mode == null)
-        mode = this.defaultMode;
-
-    if (mode != this.currentMode)
-    {
-        if (!this.getMode (this.currentMode).isTemporary)
-            this.previousMode = this.currentMode;
-        this.currentMode = mode;
-        this.setActiveMode (this.currentMode);
-    }
-    
-    // Notify all mode change listeners
-    for (var i = 0; i < this.modeListeners.length; i++)
-        this.modeListeners[i].call (null, this.previousMode, this.currentMode);
-}
-
-Push.prototype.getPreviousMode = function ()
-{
-    return this.previousMode;
-};
-
-Push.prototype.getCurrentMode = function ()
-{
-    return this.currentMode;
-};
-
-Push.prototype.getActiveMode = function ()
-{
-    if (this.activeModeId < 0)
-        return null;
-    var mode = this.modes[this.activeModeId];
-    return mode ? mode : null;
-};
-
-Push.prototype.setActiveMode = function (modeId)
-{
-    this.activeModeId = modeId;
-
-    var mode = this.getActiveMode ();
-    if (mode == null)
-        return;
-
-    mode.onActivate ();
-};
-
-Push.prototype.isActiveMode = function (modeId)
-{
-    return this.activeModeId == modeId;
-};
-
-Push.prototype.getMode = function (modeId)
-{
-    return this.modes[modeId];
 };
 
 //--------------------------------------
 // Gesture
 //--------------------------------------
 
-Push.prototype.isSelectPressed = function ()
-{
-    return this.isPressed (PUSH_BUTTON_SELECT);
-};
-
-Push.prototype.isShiftPressed = function ()
-{
-    return this.isPressed (PUSH_BUTTON_SHIFT);
-};
-
 Push.prototype.isDeletePressed = function ()
 {
     return this.isPressed (PUSH_BUTTON_DELETE);
-};
-
-Push.prototype.isPressed = function (button)
-{
-    return this.buttonStates[button] != ButtonEvent.UP;
 };
 
 //--------------------------------------
@@ -370,23 +199,6 @@ Push.prototype.setButton = function (button, state)
     this.output.sendCC (button, state);
 };
 
-Push.prototype.redrawGrid = function ()
-{
-    var view = this.getActiveView ();
-    if (view == null)
-        return;
-    view.drawGrid ();
-    this.pads.flush ();
-};
-
-Push.prototype.scheduledFlush = function ()
-{
-    var view = this.getActiveView ();
-    if (view != null)
-        view.updateDevice ();
-    this.display.flush ();
-};
-
 Push.prototype.toggleVU = function ()
 {
     this.showVU = !this.showVU;
@@ -395,55 +207,6 @@ Push.prototype.toggleVU = function ()
 //--------------------------------------
 // Handlers
 //--------------------------------------
-
-Push.prototype.handleMidi = function (status, data1, data2)
-{
-    switch (status & 0xF0)
-    {    
-        case 0x80:
-        case 0x90:
-            if (data1 >= 36 && data1 < 100)
-                this.handleGrid (data1, data2);
-            else
-                this.handleTouch (data1, data2);
-            break;
-
-        case 0xB0:
-            this.handleCC (data1, data2);
-            break;
-            
-        // Pitch Bend
-        case 0xE0:
-            var view = this.getActiveView ();
-            if (view != null)
-                view.onPitchbend (data1, data2);
-            break;
-    }
-};
-
-Push.prototype.handleGrid = function (note, velocity)
-{
-    var view = this.getActiveView ();
-    if (view != null)
-        view.onGrid (note, velocity);
-};
-
-Push.prototype.handleCC = function (cc, value)
-{
-    if (this.isButton (cc))
-    {
-        this.buttonStates[cc] = value == 127 ? ButtonEvent.DOWN : ButtonEvent.UP;
-        if (this.buttonStates[cc] == ButtonEvent.DOWN)
-        {
-            scheduleTask (function (object, buttonID)
-            {
-                object.checkButtonState (buttonID);
-            }, [this, cc], 400);
-        }
-    }
-    
-    this.handleEvent (cc, value);
-};
 
 Push.prototype.handleEvent = function (cc, value)
 {
@@ -770,27 +533,3 @@ Push.prototype.handleTouch = function (knob, value)
             break;
     }
 };
-
-Push.prototype.checkButtonState = function (buttonID)
-{
-    if (this.buttonStates[buttonID] != ButtonEvent.DOWN)
-        return;
-        
-    this.buttonStates[buttonID] = ButtonEvent.LONG;
-    this.handleEvent (buttonID, 127);
-};
-
-Push.prototype.isButton = function (cc)
-{
-    return typeof (this.buttonStates[cc]) != 'undefined';
-};
-
-Push.prototype.getFractionValue = function ()
-{
-    return this.isShiftPressed () ? Config.fractionMinValue : Config.fractionValue;
-};
-
-Push.prototype.changeValue = function (control, value)
-{
-    return changeValue (control, value, this.getFractionValue (), Config.maxParameterValue);
-}

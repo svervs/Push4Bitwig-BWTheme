@@ -15,9 +15,9 @@ MasterMode.prototype = new BaseMode ();
 MasterMode.prototype.onValueKnob = function (index, value)
 {
     if (index == 0)
-        this.model.getMasterTrack ().changeVolume (value, this.push.getFractionValue ());
+        this.model.getMasterTrack ().changeVolume (value, this.surface.getFractionValue ());
     else if (index == 1)
-        this.model.getMasterTrack ().changePan (value, this.push.getFractionValue ());
+        this.model.getMasterTrack ().changePan (value, this.surface.getFractionValue ());
 };
 
 MasterMode.prototype.onFirstRow = function (index) {};
@@ -26,7 +26,7 @@ MasterMode.prototype.onSecondRow = function (index) {};
 
 MasterMode.prototype.updateDisplay = function ()
 {
-    var d = this.push.display;
+    var d = this.surface.display;
     var master = this.model.getMasterTrack ();
     
     d.setRow (0, MasterMode.PARAM_NAMES)
@@ -35,7 +35,7 @@ MasterMode.prototype.updateDisplay = function ()
      .clearCell (1, 2).clearCell (1, 3).clearCell (1, 4).clearCell (1, 5)
      .clearCell (1, 6).clearCell (1, 7).done (1)
     
-     .setCell (2, 0, this.push.showVU ? master.getVU () : master.getVolume (), Display.FORMAT_VALUE)
+     .setCell (2, 0, this.surface.showVU ? master.getVU () : master.getVolume (), Display.FORMAT_VALUE)
      .setCell (2, 1, master.getPan (), Display.FORMAT_PAN)
      .clearCell (2, 2).clearCell (2, 3).clearCell (2, 4).clearCell (2, 5)
      .clearCell (2, 6).clearCell (2, 7).done (2)
@@ -48,11 +48,11 @@ MasterMode.prototype.updateDisplay = function ()
 MasterMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (20 + i, PUSH_COLOR_BLACK);
+        this.surface.setButton (20 + i, PUSH_COLOR_BLACK);
 };
 
 MasterMode.prototype.updateSecondRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR2_BLACK);
+        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

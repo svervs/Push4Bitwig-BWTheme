@@ -44,7 +44,7 @@ PresetMode.prototype.onValueKnob = function (index, value)
         else
             this.onSecondRow (index);
         this.knobInvalidated = false;
-    }), null, PresetMode.knobDuration - (this.push.isShiftPressed ()) ? 100 : 0);
+    }), null, PresetMode.knobDuration - (this.surface.isShiftPressed ()) ? 100 : 0);
 };
 
 PresetMode.prototype.onFirstRow = function (index)
@@ -69,7 +69,7 @@ PresetMode.prototype.onSecondRow = function (index)
 
 PresetMode.prototype.updateDisplay = function ()
 {
-    var d = this.push.display;
+    var d = this.surface.display;
 
     if (!this.model.hasSelectedDevice ())
     {
@@ -108,11 +108,11 @@ PresetMode.prototype.updateDisplay = function ()
 PresetMode.prototype.updateFirstRow = function ()
 {
     for (var i = 20; i < 28; i++)
-        this.push.setButton (i, this.firstRowButtons[i] != null ? PresetMode.firstRowButtonColor : PUSH_COLOR_BLACK);
+        this.surface.setButton (i, this.firstRowButtons[i] != null ? PresetMode.firstRowButtonColor : PUSH_COLOR_BLACK);
 };
 
 PresetMode.prototype.updateSecondRow = function ()
 {
     for (var i = 102; i < 110; i++)
-        this.push.setButton (i, this.secondRowButtons[i] != null ? PresetMode.secondRowButtonColor : PUSH_COLOR_BLACK);
+        this.surface.setButton (i, this.secondRowButtons[i] != null ? PresetMode.secondRowButtonColor : PUSH_COLOR_BLACK);
 };

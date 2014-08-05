@@ -13,13 +13,13 @@ DeviceMode.prototype = new AbstractTrackMode ();
 DeviceMode.prototype.onValueKnob = function (index, value)
 {
     var param = this.model.getCursorDevice ().getFXParam (index);
-    param.value = this.push.changeValue (value, param.value);
+    param.value = this.surface.changeValue (value, param.value);
     this.model.getCursorDevice ().setParameter (index, param.value);
 };
 
 DeviceMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
-    if (this.push.isDeletePressed ())
+    if (this.surface.isDeletePressed ())
         this.model.getCursorDevice ().resetParameter (index);
 };
 
@@ -53,7 +53,7 @@ DeviceMode.prototype.onSecondRow = function (index)
 
 DeviceMode.prototype.updateDisplay = function () 
 {
-    var d = this.push.display;
+    var d = this.surface.display;
     var selectedDevice = this.model.getSelectedDevice ();
     var hasDevice = this.model.hasSelectedDevice ();
 
@@ -96,24 +96,24 @@ DeviceMode.prototype.updateFirstRow = function ()
     var selectedDevice = this.model.getSelectedDevice ();
     if (this.model.hasSelectedDevice ())
     {
-        this.push.setButton (20, PUSH_COLOR_BLACK);
-        this.push.setButton (21, PUSH_COLOR_BLACK);
-        this.push.setButton (22, PUSH_COLOR_BLACK);
-        this.push.setButton (23, PUSH_COLOR_BLACK);
-        this.push.setButton (24, PUSH_COLOR_BLACK);
-        this.push.setButton (25, this.model.getCursorDevice ().hasPreviousParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
-        this.push.setButton (26, this.model.getCursorDevice ().hasNextParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
-        this.push.setButton (27, selectedDevice.enabled ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
+        this.surface.setButton (20, PUSH_COLOR_BLACK);
+        this.surface.setButton (21, PUSH_COLOR_BLACK);
+        this.surface.setButton (22, PUSH_COLOR_BLACK);
+        this.surface.setButton (23, PUSH_COLOR_BLACK);
+        this.surface.setButton (24, PUSH_COLOR_BLACK);
+        this.surface.setButton (25, this.model.getCursorDevice ().hasPreviousParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
+        this.surface.setButton (26, this.model.getCursorDevice ().hasNextParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
+        this.surface.setButton (27, selectedDevice.enabled ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
     }
     else
     {
         for (var i = 0; i < 8; i++)
-            this.push.setButton (20 + i, PUSH_COLOR_BLACK);
+            this.surface.setButton (20 + i, PUSH_COLOR_BLACK);
     }
 };
 
 DeviceMode.prototype.updateSecondRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, this.model.getCursorDevice().isMacroMapping(i) ? PUSH_COLOR_GREEN_HI_FBLINK : PUSH_COLOR_BLACK);
+        this.surface.setButton (102 + i, this.model.getCursorDevice().isMacroMapping(i) ? PUSH_COLOR_GREEN_HI_FBLINK : PUSH_COLOR_BLACK);
 };

@@ -26,16 +26,16 @@ PlayView.prototype.updateNoteMapping = function ()
     var t = this.model.getTrackBank ().getSelectedTrack ();
     this.noteMap = t != null && t.canHoldNotes ? this.scales.getNoteMatrix () : this.scales.getEmptyMatrix ();
     // Workaround: https://github.com/git-moss/Push4Bitwig/issues/7
-    scheduleTask (doObject (this, function () { this.push.setKeyTranslationTable (this.noteMap); }), null, 100);
+    scheduleTask (doObject (this, function () { this.surface.setKeyTranslationTable (this.noteMap); }), null, 100);
 };
 
 PlayView.prototype.onActivate = function ()
 {
     BaseView.prototype.onActivate.call (this);
 
-    this.push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
-    this.push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
-    this.push.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
+    this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     this.model.getTrackBank ().setIndication (false);
     this.updateSceneButtons ();
     this.initMaxVelocity ();
@@ -44,7 +44,7 @@ PlayView.prototype.onActivate = function ()
 PlayView.prototype.updateSceneButtons = function (buttonID)
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_BLACK);
+        this.surface.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_BLACK);
 };
 
 PlayView.prototype.usesButton = function (buttonID)
@@ -70,14 +70,14 @@ PlayView.prototype.drawGrid = function ()
     var isRecording = this.model.getTransport ().isRecording || this.model.getTrackBank ().isClipRecording ();
     for (var i = 36; i < 100; i++)
     {
-        this.push.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ?
+        this.surface.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ?
             (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI) :
             this.scales.getColor (this.noteMap, i)) : PUSH_COLOR2_BLACK);
-        this.push.pads.blink (i, PUSH_COLOR2_BLACK);
+        this.surface.pads.blink (i, PUSH_COLOR2_BLACK);
     }
 };
 
-PlayView.prototype.onGrid = function (note, velocity)
+PlayView.prototype.onGridNote = function (note, velocity)
 {
     var t = this.model.getTrackBank ().getSelectedTrack ();
     if (t == null || !t.canHoldNotes)
@@ -108,7 +108,7 @@ PlayView.prototype.onOctaveUp = function (event)
 
 PlayView.prototype.scrollUp = function (event)
 {
-    if (this.push.isShiftPressed ())
+    if (this.surface.isShiftPressed ())
         this.model.getApplication ().arrowKeyLeft ();
     else
         this.model.getApplication ().arrowKeyUp ();
@@ -116,7 +116,7 @@ PlayView.prototype.scrollUp = function (event)
 
 PlayView.prototype.scrollDown = function (event)
 {
-    if (this.push.isShiftPressed ())
+    if (this.surface.isShiftPressed ())
         this.model.getApplication ().arrowKeyRight ();
     else
         this.model.getApplication ().arrowKeyDown ();
@@ -124,7 +124,7 @@ PlayView.prototype.scrollDown = function (event)
 
 PlayView.prototype.scrollLeft = function (event)
 {
-    if (this.push.getCurrentMode () == MODE_BANK_DEVICE || this.push.getCurrentMode () == MODE_PRESET)
+    if (this.surface.getCurrentMode () == MODE_BANK_DEVICE || this.surface.getCurrentMode () == MODE_PRESET)
         this.model.getCursorDevice ().selectPrevious ();
     else
     {
@@ -145,7 +145,7 @@ PlayView.prototype.scrollLeft = function (event)
 
 PlayView.prototype.scrollRight = function (event)
 {
-    if (this.push.getCurrentMode () == MODE_BANK_DEVICE || this.push.getCurrentMode () == MODE_PRESET)
+    if (this.surface.getCurrentMode () == MODE_BANK_DEVICE || this.surface.getCurrentMode () == MODE_PRESET)
         this.model.getCursorDevice ().selectNext ();
     else
     {
@@ -174,5 +174,5 @@ PlayView.prototype.initMaxVelocity = function ()
 {
     this.maxVelocity = initArray (Config.fixedAccentValue, 128);
     this.maxVelocity[0] = 0;
-    this.push.setVelocityTranslationTable (Config.accentActive ? this.maxVelocity : this.defaultVelocity);
+    this.surface.setVelocityTranslationTable (Config.accentActive ? this.maxVelocity : this.defaultVelocity);
 };

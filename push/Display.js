@@ -67,7 +67,6 @@ function Display (output)
     this.output = output;
     this.currentMessage = initArray (null, 4);
     this.message = initArray (null, 4);
-    
     this.cells = initArray (null, 4 * 8);
 }
 

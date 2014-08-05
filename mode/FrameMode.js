@@ -14,9 +14,9 @@ function FrameMode (model)
 }
 FrameMode.prototype = new BaseMode ();
 
-FrameMode.prototype.attachTo = function (push)
+FrameMode.prototype.attachTo = function (surface)
 {
-    BaseMode.prototype.attachTo.call (this, push);
+    BaseMode.prototype.attachTo.call (this, surface);
 
     this.addFirstRowCommand ('Arrange ', doObject (this, function () { this.model.getApplication ().setPerspective ('ARRANGE'); }));
     this.addFirstRowCommand ('  Mix   ', doObject (this, function () { this.model.getApplication ().setPerspective ('MIX'); }));
@@ -37,7 +37,7 @@ FrameMode.prototype.onSecondRow = function (index) {};
 
 FrameMode.prototype.updateDisplay = function () 
 {
-    var d = this.push.display;
+    var d = this.surface.display;
 
     d.clear ().setBlock (0, 0, "Perspectives:").setCell (0, 3, "Panels:");
     
@@ -50,13 +50,13 @@ FrameMode.prototype.updateDisplay = function ()
 FrameMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (20 + i, FrameMode.firstRowButtonColor);
+        this.surface.setButton (20 + i, FrameMode.firstRowButtonColor);
 };
 
 FrameMode.prototype.updateSecondRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR_BLACK);
+        this.surface.setButton (102 + i, PUSH_COLOR_BLACK);
 };
 
 FrameMode.prototype.addFirstRowCommand = function (label, command)

@@ -20,11 +20,11 @@ TrackMode.prototype.onValueKnob = function (index, value)
     if (selectedTrack == null)
         return;
     if (index == 0)
-        tb.changeVolume (selectedTrack.index, value, this.push.getFractionValue ());
+        tb.changeVolume (selectedTrack.index, value, this.surface.getFractionValue ());
     else if (index == 1)
-        tb.changePan (selectedTrack.index, value, this.push.getFractionValue ());
+        tb.changePan (selectedTrack.index, value, this.surface.getFractionValue ());
     else
-        tb.changeSend (selectedTrack.index, index - 2, value, this.push.getFractionValue ());
+        tb.changeSend (selectedTrack.index, index - 2, value, this.surface.getFractionValue ());
 };
 
 // TrackMode.prototype.onFirstRow = function (index) {};
@@ -34,7 +34,7 @@ TrackMode.prototype.onValueKnob = function (index, value)
 TrackMode.prototype.updateDisplay = function ()
 {
     var t = this.model.getTrackBank ().getSelectedTrack ();
-    var d = this.push.display;
+    var d = this.surface.display;
     
     d.setRow (0, TrackMode.PARAM_NAMES);
 
@@ -46,7 +46,7 @@ TrackMode.prototype.updateDisplay = function ()
         
         //d.setCell (0, 0, "Volume", Display.FORMAT_RAW)
         d.setCell (1, 0, t.volumeStr, Display.FORMAT_RAW)
-         .setCell (2, 0, this.push.showVU ? t.vu : t.volume, Display.FORMAT_VALUE)
+         .setCell (2, 0, this.surface.showVU ? t.vu : t.volume, Display.FORMAT_VALUE)
         // .setCell (0, 1, "Pan", Display.FORMAT_RAW)
          .setCell (1, 1, t.panStr, Display.FORMAT_RAW)
          .setCell (2, 1, t.pan, Display.FORMAT_PAN);

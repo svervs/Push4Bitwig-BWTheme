@@ -23,7 +23,7 @@ SendMode.prototype = new AbstractTrackMode ();
 SendMode.prototype.onValueKnob = function (index, value)
 {
     var sendIndex = this.getCurrentSendIndex ();
-    this.model.getTrackBank ().changeSend (index, sendIndex, value, this.push.getFractionValue ());
+    this.model.getTrackBank ().changeSend (index, sendIndex, value, this.surface.getFractionValue ());
 };
 
 // SendMode.prototype.onFirstRow = function (index) {};
@@ -32,7 +32,7 @@ SendMode.prototype.onValueKnob = function (index, value)
 
 SendMode.prototype.updateDisplay = function ()
 {
-    var d = this.push.display;
+    var d = this.surface.display;
     var sendIndex = this.getCurrentSendIndex ();
     var tb = this.model.getTrackBank ();
 
@@ -55,5 +55,5 @@ SendMode.prototype.updateDisplay = function ()
 
 SendMode.prototype.getCurrentSendIndex = function ()
 {
-    return this.push.getCurrentMode () - MODE_SEND1;
+    return this.surface.getCurrentMode () - MODE_SEND1;
 };

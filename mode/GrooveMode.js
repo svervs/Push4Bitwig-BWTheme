@@ -13,7 +13,7 @@ GrooveMode.prototype = new BaseMode ();
 GrooveMode.prototype.onValueKnob = function (index, value)
 {
     var v = this.model.getGroove ().getValue (index);
-    v.value = this.push.changeValue (value, v.value);
+    v.value = this.surface.changeValue (value, v.value);
     this.model.getGroove ().getRangedValue (index).set (v.value, Config.maxParameterValue);
 };
 
@@ -31,7 +31,7 @@ GrooveMode.prototype.onSecondRow = function (index) {};
 
 GrooveMode.prototype.updateDisplay = function ()
 {
-    var d = this.push.display;
+    var d = this.surface.display;
     var g = this.model.getGroove ();;
 
     d.clear ();
@@ -53,14 +53,14 @@ GrooveMode.prototype.updateDisplay = function ()
 GrooveMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (20 + i, PUSH_COLOR_BLACK);
+        this.surface.setButton (20 + i, PUSH_COLOR_BLACK);
 
     var g = this.model.getGroove ();
-    this.push.setButton (27, g.isEnabled () ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
+    this.surface.setButton (27, g.isEnabled () ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
 };
 
 GrooveMode.prototype.updateSecondRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR2_BLACK);
+        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

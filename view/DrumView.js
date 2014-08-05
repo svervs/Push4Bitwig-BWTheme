@@ -27,7 +27,7 @@ DrumView.prototype.updateNoteMapping = function ()
 {
     var t = this.model.getTrackBank ().getSelectedTrack ();
     var noteMap = t != null && t.canHoldNotes ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
-    this.push.setKeyTranslationTable (noteMap);
+    this.surface.setKeyTranslationTable (noteMap);
 };
 
 DrumView.prototype.usesButton = function (buttonID)
@@ -46,7 +46,7 @@ DrumView.prototype.usesButton = function (buttonID)
     return true;
 };
 
-DrumView.prototype.onGrid = function (note, velocity)
+DrumView.prototype.onGridNote = function (note, velocity)
 {
     var index = note - 36;
     var x = index % 8;
@@ -117,14 +117,14 @@ DrumView.prototype.drawGrid = function ()
             var index = x + y * 4;
             var p = this.pads[index];
             var c = this.playedPad == index ? PUSH_COLOR2_GREEN_HI : (this.selectedPad == index ? PUSH_COLOR2_BLUE_HI : (p.exists ? (p.mute ? PUSH_COLOR2_AMBER_LO : (p.solo ? PUSH_COLOR2_BLUE_LO : PUSH_COLOR2_YELLOW_HI)) : PUSH_COLOR_YELLOW_LO));
-            this.push.pads.lightEx (x, y, c);
+            this.surface.pads.lightEx (x, y, c);
         }
     }
     
     // Clip length/loop
     for (var x = 4; x < 8; x++)
         for (var y = 0; y < 4; y++)
-            this.push.pads.lightEx (x, y, PUSH_COLOR_BLACK);
+            this.surface.pads.lightEx (x, y, PUSH_COLOR_BLACK);
             
     // Paint the sequencer steps
     var hiStep = this.isInXRange (this.step) ? this.step % DrumView.NUM_DISPLAY_COLS : -1;
@@ -134,7 +134,7 @@ DrumView.prototype.drawGrid = function ()
         var hilite = col == hiStep;
         var x = col % 8;
         var y = 7 - Math.floor (col / 8);
-        this.push.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR2_GREEN_LO : PUSH_COLOR2_BLUE_HI) : hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLACK);
+        this.surface.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR2_GREEN_LO : PUSH_COLOR2_BLUE_HI) : hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLACK);
     }
 };
 

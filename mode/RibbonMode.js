@@ -19,7 +19,7 @@ RibbonMode.prototype.onFirstRow = function (index)
     else if (index > 3)
         Config.ribbonModeCCVal = RibbonMode.MIDI_CCS[index - 4];
     else
-        this.push.setPendingMode (this.push.getPreviousMode ());
+        this.surface.setPendingMode (this.surface.getPreviousMode ());
 };
 
 RibbonMode.prototype.onValueKnob = function (index, value)
@@ -30,7 +30,7 @@ RibbonMode.prototype.onValueKnob = function (index, value)
 
 RibbonMode.prototype.updateDisplay = function ()
 {
-    var d = this.push.display;
+    var d = this.surface.display;
     d.clearRow (0).clearRow (1).clearRow (2)
      .setCell (0, 4, 'Midi CC')
      .setCell (1, 4, Config.ribbonModeCCVal)
@@ -45,14 +45,14 @@ RibbonMode.prototype.updateDisplay = function ()
 RibbonMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 3; i++)
-        this.push.setButton (20 + i, PUSH_COLOR_ORANGE_LO);
-    this.push.setButton (23, PUSH_COLOR_RED_LO);
+        this.surface.setButton (20 + i, PUSH_COLOR_ORANGE_LO);
+    this.surface.setButton (23, PUSH_COLOR_RED_LO);
     for (var i = 4; i < 8; i++)
-        this.push.setButton (20 + i, PUSH_COLOR_GREEN_LO);
+        this.surface.setButton (20 + i, PUSH_COLOR_GREEN_LO);
 };
 
 RibbonMode.prototype.updateSecondRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR2_BLACK);
+        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

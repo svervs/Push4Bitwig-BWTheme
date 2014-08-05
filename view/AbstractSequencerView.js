@@ -4,6 +4,7 @@
 
 function AbstractSequencerView (model, rows, cols)
 {
+// TODO check if it can be removed
     if (!model) // Called on first prototype creation
         return;
         
@@ -11,9 +12,9 @@ function AbstractSequencerView (model, rows, cols)
         
     this.resolutions = [ 1, 2/3, 1/2, 1/3, 1/4, 1/6, 1/8, 1/12 ];
     this.selectedIndex = 4;
-    this.scales = model.getScales ();
     this.rows = rows;
     this.cols = cols;
+    this.scales = this.model.getScales ();
 
     this.offsetX = 0;
     this.offsetY = 0;
@@ -43,9 +44,9 @@ AbstractSequencerView.prototype.onActivate = function ()
 {
     BaseView.prototype.onActivate.call (this);
 
-    this.push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
-    this.push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
-    this.push.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
+    this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     this.model.getTrackBank ().setIndication (false);
     this.drawSceneButtons ();
 };
@@ -64,12 +65,10 @@ AbstractSequencerView.prototype.drawSceneButtons = function ()
     if (!isKeyboardEnabled)
     {
         for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-            this.push.setButton (i, PUSH_BUTTON_STATE_OFF);
+            this.surface.setButton (i, PUSH_BUTTON_STATE_OFF);
         return;
     }
 
     for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-    {
-        this.push.setButton (i, i == PUSH_BUTTON_SCENE1 + this.selectedIndex ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN);
-    }
+        this.surface.setButton (i, i == PUSH_BUTTON_SCENE1 + this.selectedIndex ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN);
 };

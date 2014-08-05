@@ -25,7 +25,7 @@ ParamPageSelectMode.prototype.setCurrentMode = function (mode)
 {
     this.currentMode = mode;
     this.currentModeChanged ();
-    this.push.setPendingMode (this.currentMode);
+    this.surface.setPendingMode (this.currentMode);
 };
 
 ParamPageSelectMode.prototype.isPageMode = function (mode)
@@ -51,9 +51,9 @@ ParamPageSelectMode.prototype.currentModeChanged = function ()
     }
 };
 
-ParamPageSelectMode.prototype.attachTo = function (push)
+ParamPageSelectMode.prototype.attachTo = function (surface)
 {
-    BaseMode.prototype.attachTo.call (this, push);
+    BaseMode.prototype.attachTo.call (this, surface);
 
     this.addFirstRowCommand (' Device ', MODE_BANK_DEVICE);
     this.addFirstRowCommand (' Common ', MODE_BANK_COMMON);
@@ -67,7 +67,7 @@ ParamPageSelectMode.prototype.attachTo = function (push)
 
 ParamPageSelectMode.prototype.updateDisplay = function ()
 {
-    var d = this.push.display;
+    var d = this.surface.display;
     d.clear ().setBlock (0, 0, "Parameter Banks:");
     for (var i = 0; i < this.bottomItems.length; i++)
         d.setCell (3, i, this.bottomItems[i].getLabel ());
@@ -79,16 +79,16 @@ ParamPageSelectMode.prototype.updateFirstRow = function ()
     for (var i = 20; i < 28; i++)
     {
         if (i == 20 + this.selectedIndex)
-            this.push.setButton (i, ParamPageSelectMode.firstRowButtonColorSelected);
+            this.surface.setButton (i, ParamPageSelectMode.firstRowButtonColorSelected);
         else
-            this.push.setButton(i, ParamPageSelectMode.firstRowButtonColorUp);
+            this.surface.setButton(i, ParamPageSelectMode.firstRowButtonColorUp);
     }
 };
 
 ParamPageSelectMode.prototype.updateSecondRow = function ()
 {
     for (var i = 102; i < 110; i++)
-        this.push.setButton (i, PUSH_COLOR2_BLACK);
+        this.surface.setButton (i, PUSH_COLOR2_BLACK);
 };
 
 ParamPageSelectMode.prototype.onFirstRow = function (index)
@@ -98,7 +98,7 @@ ParamPageSelectMode.prototype.onFirstRow = function (index)
 
 ParamPageSelectMode.prototype.addFirstRowCommand = function (label, modeId)
 {
-    this.bottomItems.push(new ModeToggleCommand(label, modeId,
+    this.bottomItems.push (new ModeToggleCommand (label, modeId,
         doObject (this, function () { this.setCurrentMode (modeId) })));
 };
 

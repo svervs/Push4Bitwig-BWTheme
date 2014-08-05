@@ -25,7 +25,7 @@ ScalesMode.prototype.onValueKnob = function (index, value)
             this.scales.nextScale ();
         else
             this.scales.prevScale ();
-        this.push.getActiveView ().updateNoteMapping ();
+        this.surface.getActiveView ().updateNoteMapping ();
     }
 };
 
@@ -35,7 +35,7 @@ ScalesMode.prototype.onFirstRow = function (index)
         this.scales.prevScale ();
     else if (index > 0 && index < 7)
         this.scales.setScaleOffset (index - 1);
-    this.push.getActiveView ().updateNoteMapping ();
+    this.surface.getActiveView ().updateNoteMapping ();
 };
 
 ScalesMode.prototype.onSecondRow = function (index)
@@ -47,12 +47,12 @@ ScalesMode.prototype.onSecondRow = function (index)
     else
         this.scales.setScaleOffset (index + 5);
 
-    this.push.getActiveView ().updateNoteMapping ();
+    this.surface.getActiveView ().updateNoteMapping ();
 };
 
 ScalesMode.prototype.updateDisplay = function ()
 {
-    var d = this.push.display;
+    var d = this.surface.display;
     var scale = this.scales.getSelectedScale ();
     var offset = this.scales.getScaleOffset ();
     
@@ -85,7 +85,7 @@ ScalesMode.prototype.updateFirstRow = function ()
     for (var i = 0; i < 8; i++)
     {
         var isFirstOrLast = i == 0 || i == 7;
-        this.push.setButton(20 + i, i == 7 ? PUSH_COLOR_BLACK : (isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == i - 1 ? PUSH_COLOR_YELLOW_MD : PUSH_COLOR_GREEN_LO)));
+        this.surface.setButton(20 + i, i == 7 ? PUSH_COLOR_BLACK : (isFirstOrLast ? PUSH_COLOR_ORANGE_LO : (offset == i - 1 ? PUSH_COLOR_YELLOW_MD : PUSH_COLOR_GREEN_LO)));
     }
 };
 
@@ -95,6 +95,6 @@ ScalesMode.prototype.updateSecondRow = function ()
     for (var i = 0; i < 8; i++)
     {
         var isFirstOrLast = i == 0 || i == 7;
-        this.push.setButton(102 + i, isFirstOrLast ? PUSH_COLOR2_AMBER : (offset == (i - 1) + 6 ? PUSH_COLOR2_YELLOW_HI : PUSH_COLOR2_GREEN_LO));
+        this.surface.setButton(102 + i, isFirstOrLast ? PUSH_COLOR2_AMBER : (offset == (i - 1) + 6 ? PUSH_COLOR2_YELLOW_HI : PUSH_COLOR2_GREEN_LO));
     }
 };

@@ -21,7 +21,7 @@ FixedMode.prototype.onSecondRow = function (index) {};
 
 FixedMode.prototype.updateDisplay = function ()
 {
-    var d = this.push.display;
+    var d = this.surface.display;
     d.clearRow (0).done (0).clearRow (1).done (1)
      .setBlock (2, 0, 'New Clip Length:').clearBlock (2, 1).clearBlock (2, 2).clearBlock (2, 3)
      .done (2);
@@ -34,11 +34,11 @@ FixedMode.prototype.updateDisplay = function ()
 FixedMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (20 + i, PUSH_COLOR_GREEN_LO);
+        this.surface.setButton (20 + i, PUSH_COLOR_GREEN_LO);
 };
 
 FixedMode.prototype.updateSecondRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR2_BLACK);
+        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

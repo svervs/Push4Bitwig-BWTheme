@@ -17,8 +17,8 @@ SessionView.prototype.onActivate = function ()
 {
     BaseView.prototype.onActivate.call (this);
 
-    this.push.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
-    this.push.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
+    this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
     this.model.getTrackBank ().setIndication (true);
     this.drawSceneButtons ();
 };
@@ -29,15 +29,15 @@ SessionView.prototype.drawSceneButtons = function ()
     for (var i = 0; i < 8; i++)
     {
         if (this.flip)
-            this.push.setButton (PUSH_BUTTON_SCENE1 + (7 - i), tb.getTrack (i).recarm ? PUSH_COLOR_SCENE_RED : PUSH_COLOR_BLACK);
+            this.surface.setButton (PUSH_BUTTON_SCENE1 + (7 - i), tb.getTrack (i).recarm ? PUSH_COLOR_SCENE_RED : PUSH_COLOR_BLACK);
         else
-            this.push.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_SCENE_GREEN);
+            this.surface.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_SCENE_GREEN);
     }
 };
 
 SessionView.prototype.updateDevice = function ()
 {
-    var m = this.push.getActiveMode ();
+    var m = this.surface.getActiveMode ();
     if (m != null)
     {
         m.updateDisplay ();
@@ -45,10 +45,10 @@ SessionView.prototype.updateDevice = function ()
         m.updateSecondRow ();
     }
 
-    if (this.flip && !this.push.getMode (this.push.getCurrentMode ()).hasSecondRowPriority)
+    if (this.flip && !this.surface.getMode (this.surface.getCurrentMode ()).hasSecondRowPriority)
     {
         for (var i = 0; i < 8; i++)
-            this.push.setButton (20 + i, PUSH_COLOR_GREEN_HI);
+            this.surface.setButton (20 + i, PUSH_COLOR_GREEN_HI);
     }
     else
     {
@@ -88,7 +88,7 @@ SessionView.prototype.usesButton = function (buttonID)
     return true;
 };
 
-SessionView.prototype.onGrid = function (note, velocity)
+SessionView.prototype.onGridNote = function (note, velocity)
 {
     if (velocity == 0)
         return;
@@ -108,7 +108,7 @@ SessionView.prototype.onGrid = function (note, velocity)
     var slot = tb.getTrack (t).slots[s];
     var slots = tb.getClipLauncherSlots (t);
     
-    if (!this.push.isSelectPressed ())
+    if (!this.surface.isSelectPressed ())
     {
         if (tb.getTrack (t).recarm)
         {
@@ -160,14 +160,14 @@ SessionView.prototype.scrollLeft = function (event)
     var tb = this.model.getTrackBank ();
     if (this.flip)
     {
-        if (this.push.isShiftPressed ())
+        if (this.surface.isShiftPressed ())
             tb.scrollScenesPageUp ();
         else
             tb.scrollScenesUp ();
     }
     else
     {
-        if (this.push.isShiftPressed ())
+        if (this.surface.isShiftPressed ())
             tb.scrollTracksPageUp ();
         else
             tb.scrollTracksUp ();
@@ -179,14 +179,14 @@ SessionView.prototype.scrollRight = function (event)
     var tb = this.model.getTrackBank ();
     if (this.flip)
     {
-        if (this.push.isShiftPressed ())
+        if (this.surface.isShiftPressed ())
             tb.scrollScenesPageDown ();
         else
             tb.scrollScenesDown ();
     }
     else
     {
-        if (this.push.isShiftPressed ())
+        if (this.surface.isShiftPressed ())
             tb.scrollTracksPageDown ();
         else
             tb.scrollTracksDown ();
@@ -198,14 +198,14 @@ SessionView.prototype.scrollUp = function (event)
     var tb = this.model.getTrackBank ();
     if (this.flip)
     {
-        if (this.push.isShiftPressed ())
+        if (this.surface.isShiftPressed ())
             tb.scrollTracksPageUp ();
         else
             tb.scrollTracksUp ();
     }
     else
     {
-        if (this.push.isShiftPressed ())
+        if (this.surface.isShiftPressed ())
             tb.scrollScenesPageUp ();
         else
             tb.scrollScenesUp ();
@@ -217,14 +217,14 @@ SessionView.prototype.scrollDown = function (event)
     var tb = this.model.getTrackBank ();
     if (this.flip)
     {
-        if (this.push.isShiftPressed ())
+        if (this.surface.isShiftPressed ())
             tb.scrollTracksPageDown ();
         else
             tb.scrollTracksDown ();
     }
     else
     {
-        if (this.push.isShiftPressed ())
+        if (this.surface.isShiftPressed ())
             tb.scrollScenesPageDown ();
         else
             tb.scrollScenesDown ();
@@ -238,7 +238,7 @@ SessionView.prototype.onScene = function (scene)
 
 SessionView.prototype.onFirstRow = function (index)
 {
-    if (this.push.getMode (this.push.getCurrentMode ()).hasSecondRowPriority)
+    if (this.surface.getMode (this.surface.getCurrentMode ()).hasSecondRowPriority)
         BaseView.prototype.onFirstRow.call (this, index);
     else
         this.sceneOrFirstRowButtonPressed (index, this.flip);
@@ -246,7 +246,7 @@ SessionView.prototype.onFirstRow = function (index)
 
 SessionView.prototype.onSecondRow = function (index)
 {
-    if (this.push.isShiftPressed ())
+    if (this.surface.isShiftPressed ())
         this.model.getTrackBank ().returnToArrangement (index);
     else
         BaseView.prototype.onSecondRow.call (this, index);
@@ -259,7 +259,7 @@ SessionView.prototype.sceneOrFirstRowButtonPressed = function (index, isScene)
         this.model.getTrackBank ().launchScene (index);
     else
     {
-        if (this.push.isPressed (PUSH_BUTTON_STOP))
+        if (this.surface.isPressed (PUSH_BUTTON_STOP))
             this.model.getTrackBank ().stop (index);
         else
         {
@@ -275,7 +275,7 @@ SessionView.prototype._onFirstRow = function (index)
 {
     var tb = this.model.getTrackBank ();
     var selTrack = tb.getSelectedTrack ();
-    if ((selTrack != null && selTrack.index == index) || this.push.isShiftPressed ())
+    if ((selTrack != null && selTrack.index == index) || this.surface.isShiftPressed ())
     {
         this.model.getTrackBank ().toggleArm (index);
     }
@@ -303,6 +303,6 @@ SessionView.prototype.drawPad = function (slot, x, y, isArmed)
             (slot.color ? slot.color : PUSH_COLOR_ORANGE_HI) :
             (isArmed ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK));
     var n = 92 + x - 8 * y;
-    this.push.pads.light (n, color);
-    this.push.pads.blink (n, (slot.isQueued || slot.isPlaying) ? (slot.isRecording ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : PUSH_COLOR_BLACK, slot.isQueued);
+    this.surface.pads.light (n, color);
+    this.surface.pads.blink (n, (slot.isQueued || slot.isPlaying) ? (slot.isRecording ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : PUSH_COLOR_BLACK, slot.isQueued);
 };

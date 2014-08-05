@@ -5,35 +5,9 @@
 
 function BaseMode (model)
 {
-    this.model = model;
-    this.id = null;
-    // True if a specific mode always needs the 2nd button row
-    this.hasSecondRowPriority = true;
-    this.isTemporary = true;
+    AbstractMode.call (this, model);
 }
-
-BaseMode.prototype.attachTo = function (push)
-{
-    this.push = push;
-};
-
-BaseMode.prototype.getId = function ()
-{
-    return this.id;
-};
-
-BaseMode.prototype.onActivate = function () {};
-BaseMode.prototype.onValueKnob = function (index, value) {};
-BaseMode.prototype.onValueKnobTouch = function (index, isTouched) {};
-
-BaseMode.prototype.onFirstRow = function (index)
-{
-    this.model.getTrackBank ().select (index);
-};
-
-BaseMode.prototype.onSecondRow = function (index) {};
-
-BaseMode.prototype.updateDisplay = function () {};
+BaseMode.prototype = new AbstractMode ();
 
 BaseMode.prototype.updateFirstRow = function ()
 {
@@ -44,7 +18,7 @@ BaseMode.prototype.updateFirstRow = function ()
     {
         var isSel = i == selIndex;
         // Light up selection and record buttons
-        this.push.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
+        this.surface.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
     }
 };
 
@@ -55,24 +29,6 @@ BaseMode.prototype.updateSecondRow = function ()
     {
         var t = tb.getTrack (i);
         if (!this.hasSecondRowPriority)
-            this.push.setButton (102 + i, t.recarm ? PUSH_COLOR2_RED_LO : PUSH_COLOR2_BLACK);
+            this.surface.setButton (102 + i, t.recarm ? PUSH_COLOR2_RED_LO : PUSH_COLOR2_BLACK);
     }
-};
-
-BaseMode.prototype.drawTrackNames = function ()
-{
-    var tb = this.model.getTrackBank ();
-    var selTrack = tb.getSelectedTrack ();
-    
-    // Format track names
-    var selIndex = selTrack == null ? -1 : selTrack.index;
-    var d = this.push.display;
-    for (var i = 0; i < 8; i++)
-    {
-        var isSel = i == selIndex;
-        var t = tb.getTrack (i);
-        var n = optimizeName (t.name, isSel ? 7 : 8);
-        d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
-    }
-    d.done (3);
 };

@@ -12,9 +12,9 @@ function ParamPageMode (model, mode, name)
 }
 ParamPageMode.prototype = new BaseMode ();
 
-ParamPageMode.prototype.attachTo = function (push)
+ParamPageMode.prototype.attachTo = function (surface)
 {
-    BaseMode.prototype.attachTo.call (this, push);
+    BaseMode.prototype.attachTo.call (this, surface);
     
     for (var i = 0; i < 8; i++)
     {
@@ -103,7 +103,7 @@ ParamPageMode.prototype.onValueKnob = function (index, value)
             this.getParameter (index).toggleIsMapping ();
         return;
     }
-    this.params[index].value = this.push.changeValue (value, this.params[index].value);
+    this.params[index].value = this.surface.changeValue (value, this.params[index].value);
     this.getParameter (index).set (this.params[index].value, Config.maxParameterValue);
 };
 
@@ -115,7 +115,7 @@ ParamPageMode.prototype.updateDisplay = function ()
 {
     this.drawTrackNames ();
 
-    var d = this.push.display;
+    var d = this.surface.display;
     if (this.hasParams ())
     {
         for (var i = 0; i < 8; i++)
@@ -143,13 +143,13 @@ ParamPageMode.prototype.updateDisplay = function ()
 ParamPageMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (20 + i, PUSH_COLOR_BLACK);
+        this.surface.setButton (20 + i, PUSH_COLOR_BLACK);
 };
 
 ParamPageMode.prototype.updateSecondRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.push.setButton (102 + i, PUSH_COLOR2_BLACK);
+        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
 };
 
 ParamPageMode.prototype.hasParams = function ()

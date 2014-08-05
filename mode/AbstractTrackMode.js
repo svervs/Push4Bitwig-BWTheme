@@ -15,7 +15,7 @@ AbstractTrackMode.prototype.onFirstRow = function (index)
 {
     var tb = this.model.getTrackBank ();
     var selTrack = tb.getSelectedTrack ();
-    if ((selTrack != null && selTrack.index == index) || this.push.isShiftPressed ())
+    if ((selTrack != null && selTrack.index == index) || this.surface.isShiftPressed ())
         this.model.getTrackBank ().toggleArm (index);
     else
         this.model.getTrackBank ().select (index);
@@ -36,7 +36,7 @@ AbstractTrackMode.prototype.updateFirstRow = function ()
     for (var i = 0; i < 8; i++)
     {
         // Light up selection and record buttons
-        this.push.setButton (20 + i, this.getTrackButtonColor (tb.getTrack (i)));
+        this.surface.setButton (20 + i, this.getTrackButtonColor (tb.getTrack (i)));
     }
 };
 
@@ -47,7 +47,7 @@ AbstractTrackMode.prototype.updateSecondRow = function ()
     for (var i = 0; i < 8; i++)
     {
         var t = tb.getTrack (i);
-        this.push.setButton (102 + i, t.name != '' && !(muteState ? t.mute : t.solo) ?
+        this.surface.setButton (102 + i, t.name != '' && !(muteState ? t.mute : t.solo) ?
             muteState ? PUSH_COLOR2_YELLOW_HI : PUSH_COLOR2_BLUE_HI : PUSH_COLOR_BLACK);
     }
 };
@@ -59,7 +59,7 @@ AbstractTrackMode.prototype.drawRow4 = function ()
 
     // Format track names
     var selIndex = selTrack == null ? -1 : selTrack.index;
-    var d = this.push.display;
+    var d = this.surface.display;
     for (var i = 0; i < 8; i++)
     {
         var isSel = i == selIndex;
