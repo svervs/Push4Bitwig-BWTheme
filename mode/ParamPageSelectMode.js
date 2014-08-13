@@ -28,11 +28,11 @@ ParamPageSelectMode.prototype.setCurrentMode = function (mode)
     this.surface.setPendingMode (this.currentMode);
 };
 
-ParamPageSelectMode.prototype.isPageMode = function (mode)
+ParamPageSelectMode.prototype.isPageMode = function (modeId)
 {
     for (var i = 0; i < this.bottomItems.length; i++)
     {
-        if (this.bottomItems[i].getModeId () == mode)
+        if (this.bottomItems[i].getModeId () == modeId)
             return true;
     }
     return false;
