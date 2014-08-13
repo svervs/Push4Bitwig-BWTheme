@@ -5,7 +5,7 @@
 
 function DeviceMode (model)
 {
-    BaseMode.call (this, model);
+    AbstractTrackMode.call (this, model);
     this.id = MODE_BANK_DEVICE;
 }
 DeviceMode.prototype = new AbstractTrackMode ();

@@ -5,10 +5,11 @@
 
 MasterMode.PARAM_NAMES = 'Volume   Pan                                                        ';
 
-function MasterMode (model)
+function MasterMode (model, isTemporary)
 {
     BaseMode.call (this, model);
     this.id = MODE_MASTER;
+    this.isTemporary = isTemporary;
 }
 MasterMode.prototype = new BaseMode ();
 

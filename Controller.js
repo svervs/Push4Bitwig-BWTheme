@@ -35,7 +35,10 @@ function Controller ()
     this.surface.addMode (MODE_SEND4, modeSend);
     this.surface.addMode (MODE_SEND5, modeSend);
     this.surface.addMode (MODE_SEND6, modeSend);
-    this.surface.addMode (MODE_MASTER, new MasterMode (this.model));
+    this.surface.addMode (MODE_MASTER, new MasterMode (this.model, false));
+    this.surface.addMode (MODE_MASTER_TEMP, new MasterMode (this.model, true));
+
+
     this.surface.addMode (MODE_TRACK, new TrackMode (this.model));
     this.surface.addMode (MODE_FRAME, new FrameMode (this.model));
     this.surface.addMode (MODE_SCALES, new ScalesMode (this.model));
