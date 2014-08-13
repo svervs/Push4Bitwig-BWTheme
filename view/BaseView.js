@@ -233,9 +233,8 @@ BaseView.prototype.onValueKnob9Touch = function (isTouched)
 
     if (isTouched)
         this.surface.setPendingMode (MODE_MASTER_TEMP);
-    else
-        if (!isMasterMode)
-            this.surface.setPendingMode (this.surface.getPreviousMode ());
+    else if (!isMasterMode)
+        this.surface.setPendingMode (this.surface.getPreviousMode ());
 };
 
 BaseView.prototype.onFirstRow = function (index)
