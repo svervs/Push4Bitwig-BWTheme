@@ -8,6 +8,9 @@ function BaseView (model)
     AbstractView.call (this, model);
 
     this.stopPressed = false;
+    // TODO can this be integrated into the event system so all long presses
+    // record the mode at the start of the touch down event
+    this.longPressPreviousMode = null;
 }
 BaseView.prototype = new AbstractView ();
 BaseView.prototype.constructor = BaseView;
@@ -258,8 +261,13 @@ BaseView.prototype.onMaster = function (event)
     switch (event.getState ())
     {
         case ButtonEvent.UP:
+            var restoredMode = this.longPressPreviousMode != null ?
+                this.longPressPreviousMode : this.surface.getPreviousMode ();
+
             if (this.surface.getCurrentMode () == MODE_FRAME)
-                this.surface.setPendingMode (this.surface.getPreviousMode ());
+                this.surface.setPendingMode (restoredMode);
+
+            this.longPressPreviousMode = null;
             break;
         case ButtonEvent.DOWN:
             if (this.surface.isActiveMode (MODE_MASTER))
@@ -271,6 +279,7 @@ BaseView.prototype.onMaster = function (event)
             }
             break;
         case ButtonEvent.LONG:
+            this.longPressPreviousMode = this.surface.getPreviousMode ();
             // Toggle back since it was toggled on DOWN
             this.surface.toggleVU ();
             this.surface.setPendingMode (MODE_FRAME);
