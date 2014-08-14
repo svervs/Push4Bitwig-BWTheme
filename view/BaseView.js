@@ -182,7 +182,7 @@ BaseView.prototype.onUndo = function (event)
 
 BaseView.prototype.onSmallKnob1 = function (increase)
 {
-    this.model.getTransport( ).changeTempo (increase);
+    this.model.getTransport ().changeTempo (increase);
 };
 
 BaseView.prototype.onSmallKnob1Touch = function (isTouched)

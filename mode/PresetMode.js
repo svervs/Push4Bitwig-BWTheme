@@ -70,6 +70,7 @@ PresetMode.prototype.onSecondRow = function (index)
 PresetMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
+    var cd = this.model.getCursorDevice ();
 
     if (!this.model.hasSelectedDevice ())
     {
@@ -82,7 +83,7 @@ PresetMode.prototype.updateDisplay = function ()
     d.clearColumn (0).setBlock ( 0, 0, "Select Preset:")
      .setBlock (3, 0, "Device: " + this.model.getSelectedDevice ().name);
     
-    var view = this.model.getCursorDevice ().categoryProvider.getView (4);
+    var view = cd.categoryProvider.getView (4);
     for (var i = 0; i < 4; i++)
     {
         var value = (view[i] != null) ? view[i] : "";
@@ -92,7 +93,7 @@ PresetMode.prototype.updateDisplay = function ()
             d.setBlock (i, 1, ' ' + value);
     }
     
-    var view = this.model.getCursorDevice ().creatorProvider.getView (4);
+    var view = cd.creatorProvider.getView (4);
     for (var i = 0; i < 4; i++)
     {
         var value = (view[i] != null) ? view[i] : "";
@@ -102,7 +103,7 @@ PresetMode.prototype.updateDisplay = function ()
             d.setBlock (i, 2, ' ' + value);
     }
 
-    d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + this.model.getCursorDevice ().getCurrentPreset ()).allDone ();
+    d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + cd.getCurrentPreset ()).allDone ();
 };
 
 PresetMode.prototype.updateFirstRow = function ()

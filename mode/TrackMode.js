@@ -27,21 +27,18 @@ TrackMode.prototype.onValueKnob = function (index, value)
         tb.changeSend (selectedTrack.index, index - 2, value, this.surface.getFractionValue ());
 };
 
-// TrackMode.prototype.onFirstRow = function (index) {};
-
-// TrackMode.prototype.onSecondRow = function (index) {};
-
 TrackMode.prototype.updateDisplay = function ()
 {
     var t = this.model.getTrackBank ().getSelectedTrack ();
     var d = this.surface.getDisplay ();
     
-    d.setRow (0, TrackMode.PARAM_NAMES);
-
     if (t == null)
-        d.clearRow (1).clearRow (2);
+        d.setRow (1, "                     Please selecta track...                        ")
+         .clearRow (0).clearRow (2).done (0).done (2);
     else
     {
+        d.setRow (0, TrackMode.PARAM_NAMES);
+
         // Note: The Sends name is not send (always "Send")
         
         //d.setCell (0, 0, "Volume", Display.FORMAT_RAW)
@@ -57,12 +54,8 @@ TrackMode.prototype.updateDisplay = function ()
             d.setCell (1, 2 + i, t.sends[i].volumeStr, Display.FORMAT_RAW)
              .setCell (2, 2 + i, t.sends[i].volume, Display.FORMAT_VALUE);
         }
+        d.done (1).done (2);
     }
-    d.done (1).done (2);
 
     this.drawRow4 ();
 };
-
-// TrackMode.prototype.updateFirstRow = function () {};
-
-// TrackMode.prototype.updateSecondRow = function () {};
