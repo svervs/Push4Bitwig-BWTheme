@@ -47,53 +47,22 @@ Display.SYSEX_MESSAGE =
     "F0 47 7F 15 1B 00 45 00 "
 ];
 
-Display.SYSEX_CLEAR =
-[
-    "F0 47 7F 15 1C 00 00 F7",
-    "F0 47 7F 15 1D 00 00 F7",
-    "F0 47 7F 15 1E 00 00 F7",
-    "F0 47 7F 15 1F 00 00 F7"
-];
-
-Display.FORMAT_RAW   = 0;
-Display.FORMAT_VALUE = 1;
-Display.FORMAT_PAN   = 2;
-
 
 // 4 rows (0-3) with 4 blocks (0-3). Each block consists of 
 // 17 characters or 2 cells (0-7).
 function Display (output)
 {
-    this.output = output;
-    this.currentMessage = initArray (null, 4);
-    this.message = initArray (null, 4);
-    this.cells = initArray (null, 4 * 8);
+    AbstractDisplay.call (this, output, 4 /* No of rows */, 4 /* No of blocks */, 8 /* No of cells */);
 }
+Display.prototype = new AbstractDisplay ();
+Display.FORMAT_RAW = AbstractDisplay.FORMAT_RAW;
+Display.FORMAT_VALUE = AbstractDisplay.FORMAT_VALUE;
+Display.FORMAT_PAN = AbstractDisplay.FORMAT_PAN;
 
-Display.prototype.setRow = function (row, str)
-{
-    this.message[row] = str;
-    return this;
-};
 
-Display.prototype.clear = function ()
+Display.prototype.clearCell = function (row, cell)
 {
-    for (var i = 0; i < 4; i++)
-        this.clearRow (i);
-    return this;
-};
-
-Display.prototype.clearRow = function (row)
-{
-    for (var i = 0; i < 4; i++)
-        this.clearBlock (row, i);
-    return this;
-};
-
-Display.prototype.clearColumn = function (column)
-{
-    for (var i = 0; i < 4; i++)
-        this.clearBlock (i, column);
+    this.cells[row * 8 + cell] = cell % 2 == 0 ? '         ' : '        ';
     return this;
 };
 
@@ -113,65 +82,18 @@ Display.prototype.setBlock = function (row, block, value)
     return this;
 };
 
-Display.prototype.clearBlock = function (row, block)
-{
-    var cell = 2 * block;
-    this.clearCell (row, cell);
-    this.clearCell (row, cell + 1);
-    return this;
-};
-
 Display.prototype.setCell = function (row, cell, value, format)
 {
     this.cells[row * 8 + cell] = this.pad (this.formatStr (value, format), 8, ' ') + (cell % 2 == 0 ? ' ' : '');
     return this;
 };
 
-Display.prototype.clearCell = function (row, cell)
+Display.prototype.writeLine = function (row, text)
 {
-    this.cells[row * 8 + cell] = cell % 2 == 0 ? '         ' : '        ';
-    return this;
-};
-
-/**
- * done() should not be called with setRow().
- * This function turns the row's cells into the row's message.
- * @param row
- * @returns {Display}
- */
-Display.prototype.done = function (row)
-{
-    var index = row * 8;
-    this.message[row] = '';
-    for (var i = 0; i < 8; i++)
-        this.message[row] += this.cells[index + i];
-    return this;
-};
-
-Display.prototype.allDone = function ()
-{
-    for (var row = 0; row < 4; row++)
-        this.done (row);
-    return this;
-};
-
-Display.prototype.flush = function (row)
-{
-    for (var row = 0; row < 4; row++)
-    {
-        if (this.currentMessage[row] == this.message[row])
-            continue;
-        this.currentMessage[row] = this.message[row];
-        if (this.currentMessage[row] == null)
-            this.output.sendSysex (Display.SYSEX_CLEAR[row]);
-        else
-        {
-            var array = [];
-            for (var i = 0; i < this.currentMessage[row].length; i++)
-                array[i] = this.currentMessage[row].charCodeAt(i);
-            this.output.sendSysex (Display.SYSEX_MESSAGE[row] + toHexStr (array) + "F7");
-        }
-    }
+    var array = [];
+    for (var i = 0; i < text.length; i++)
+        array[i] = text.charCodeAt(i);
+    this.output.sendSysex (Display.SYSEX_MESSAGE[row] + toHexStr (array) + "F7");
 };
 
 Display.prototype.formatValue = function (value)
@@ -225,12 +147,4 @@ Display.prototype.formatStr = function (value, format)
         default:
             return value ? value.toString () : "";
     }
-};
-
-Display.prototype.reverseStr = function (str)
-{
-    var r = '';
-    for (var i = 0; i < str.length; i++)
-        r = str[i] + r;
-    return r;
 };

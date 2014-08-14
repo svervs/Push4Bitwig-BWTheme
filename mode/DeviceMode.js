@@ -53,7 +53,7 @@ DeviceMode.prototype.onSecondRow = function (index)
 
 DeviceMode.prototype.updateDisplay = function () 
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     var selectedDevice = this.model.getSelectedDevice ();
     var hasDevice = this.model.hasSelectedDevice ();
 

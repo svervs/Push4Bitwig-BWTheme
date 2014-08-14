@@ -23,7 +23,7 @@ PanMode.prototype.onValueKnob = function (index, value)
 
 PanMode.prototype.updateDisplay = function ()
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     var tb = this.model.getTrackBank ();
 
     d.setRow (0, PanMode.PARAM_NAMES);

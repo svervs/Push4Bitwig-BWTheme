@@ -67,7 +67,7 @@ ParamPageSelectMode.prototype.attachTo = function (surface)
 
 ParamPageSelectMode.prototype.updateDisplay = function ()
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     d.clear ().setBlock (0, 0, "Parameter Banks:");
     for (var i = 0; i < this.bottomItems.length; i++)
         d.setCell (3, i, this.bottomItems[i].getLabel ());

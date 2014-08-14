@@ -37,7 +37,7 @@ FrameMode.prototype.onSecondRow = function (index) {};
 
 FrameMode.prototype.updateDisplay = function () 
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
 
     d.clear ().setBlock (0, 0, "Perspectives:").setCell (0, 3, "Panels:");
     

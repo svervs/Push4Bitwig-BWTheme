@@ -59,7 +59,7 @@ AbstractTrackMode.prototype.drawRow4 = function ()
 
     // Format track names
     var selIndex = selTrack == null ? -1 : selTrack.index;
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     for (var i = 0; i < 8; i++)
     {
         var isSel = i == selIndex;

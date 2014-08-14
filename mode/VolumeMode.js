@@ -24,7 +24,7 @@ VolumeMode.prototype.onValueKnob = function (index, value)
 
 VolumeMode.prototype.updateDisplay = function ()
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     var tb = this.model.getTrackBank ();
 
     d.setRow (0, VolumeMode.PARAM_NAMES);

@@ -31,7 +31,7 @@ GrooveMode.prototype.onSecondRow = function (index) {};
 
 GrooveMode.prototype.updateDisplay = function ()
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     var g = this.model.getGroove ();;
 
     d.clear ();

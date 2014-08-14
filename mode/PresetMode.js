@@ -69,7 +69,7 @@ PresetMode.prototype.onSecondRow = function (index)
 
 PresetMode.prototype.updateDisplay = function ()
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
 
     if (!this.model.hasSelectedDevice ())
     {

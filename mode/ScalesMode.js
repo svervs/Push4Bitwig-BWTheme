@@ -52,7 +52,7 @@ ScalesMode.prototype.onSecondRow = function (index)
 
 ScalesMode.prototype.updateDisplay = function ()
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     var scale = this.scales.getSelectedScale ();
     var offset = this.scales.getScaleOffset ();
     

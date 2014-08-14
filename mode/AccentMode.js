@@ -23,7 +23,7 @@ AccentMode.prototype.onSecondRow = function (index) {};
 
 AccentMode.prototype.updateDisplay = function () 
 {
-    this.surface.display.clear ()
+    this.surface.getDisplay ().clear ()
         .setCell (0, 7, "Accent", Display.FORMAT_RAW)
         .setCell (1, 7, Config.fixedAccentValue, Display.FORMAT_RAW)
         .setCell (2, 7, Config.fixedAccentValue, Display.FORMAT_VALUE)

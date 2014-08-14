@@ -30,7 +30,7 @@ RibbonMode.prototype.onValueKnob = function (index, value)
 
 RibbonMode.prototype.updateDisplay = function ()
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     d.clearRow (0).clearRow (1).clearRow (2)
      .setCell (0, 4, 'Midi CC')
      .setCell (1, 4, Config.ribbonModeCCVal)

@@ -140,7 +140,7 @@ function Push (output, input)
     this.pads    = new Grid (output);
     this.display = new Display (output);
     
-    this.showVU = true;
+    this.showVU = false;
 }
 Push.prototype = new AbstractControlSurface ();
 

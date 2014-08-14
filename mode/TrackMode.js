@@ -34,7 +34,7 @@ TrackMode.prototype.onValueKnob = function (index, value)
 TrackMode.prototype.updateDisplay = function ()
 {
     var t = this.model.getTrackBank ().getSelectedTrack ();
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     
     d.setRow (0, TrackMode.PARAM_NAMES);
 

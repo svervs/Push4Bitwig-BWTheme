@@ -23,7 +23,7 @@ ScaleLayoutMode.prototype.onSecondRow = function (index) {};
 
 ScaleLayoutMode.prototype.updateDisplay = function ()
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     d.clearRow (0).clearRow (1).clearRow (2).setBlock (2, 0, 'Scale layout:');
 
     var sl = this.scales.getScaleLayout ();

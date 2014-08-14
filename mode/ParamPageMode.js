@@ -115,7 +115,7 @@ ParamPageMode.prototype.updateDisplay = function ()
 {
     this.drawTrackNames ();
 
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     if (this.hasParams ())
     {
         for (var i = 0; i < 8; i++)

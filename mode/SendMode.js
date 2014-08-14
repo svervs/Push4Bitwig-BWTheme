@@ -32,7 +32,7 @@ SendMode.prototype.onValueKnob = function (index, value)
 
 SendMode.prototype.updateDisplay = function ()
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     var sendIndex = this.getCurrentSendIndex ();
     var tb = this.model.getTrackBank ();
 

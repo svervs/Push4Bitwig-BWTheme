@@ -27,7 +27,7 @@ MasterMode.prototype.onSecondRow = function (index) {};
 
 MasterMode.prototype.updateDisplay = function ()
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     var master = this.model.getMasterTrack ();
     
     d.setRow (0, MasterMode.PARAM_NAMES)

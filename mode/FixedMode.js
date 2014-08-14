@@ -21,7 +21,7 @@ FixedMode.prototype.onSecondRow = function (index) {};
 
 FixedMode.prototype.updateDisplay = function ()
 {
-    var d = this.surface.display;
+    var d = this.surface.getDisplay ();
     d.clearRow (0).done (0).clearRow (1).done (1)
      .setBlock (2, 0, 'New Clip Length:').clearBlock (2, 1).clearBlock (2, 2).clearBlock (2, 3)
      .done (2);
