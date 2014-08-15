@@ -67,7 +67,7 @@ SessionView.prototype.updateArrows = function ()
     this.canScrollLeft = this.flip ? tb.canScrollScenesDown () : tb.canScrollTracksUp ();
     this.canScrollRight = this.flip ? tb.canScrollScenesUp () : tb.canScrollTracksDown ();
     BaseView.prototype.updateArrows.call (this);
-    // TODO flipped scene buttons are not updated unless we redraw them here
+    // Flipped scene buttons are not updated unless we redraw them here
     this.drawSceneButtons();
 };
 

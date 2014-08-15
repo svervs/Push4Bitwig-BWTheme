@@ -531,3 +531,11 @@ BaseView.prototype.turnOffBlink = function ()
     for (var i = 36; i < 100; i++)
         this.surface.pads.blink (i, PUSH_COLOR_BLACK);
 };
+
+BaseView.prototype.getSelectedSlot = function (track)
+{
+    for (var i = 0; i < track.slots.length; i++)
+        if (track.slots[i].isSelected)
+            return i;
+    return -1;
+};

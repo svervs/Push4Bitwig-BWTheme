@@ -9,11 +9,9 @@ SequencerView.START_KEY = 36;
 
 function SequencerView (model)
 {
-    AbstractSequencerView.call (this, model, 128, 8);
-    this.scales = model.getScales ();
+    AbstractSequencerView.call (this, model, 128, SequencerView.NUM_DISPLAY_COLS);
     this.offsetY = SequencerView.START_KEY;
-    this.clip.scrollToKey (SequencerView.START_KEY);
-    this.clip.scrollToStep (0);
+    this.clip.scrollTo (0, SequencerView.START_KEY);
 }
 SequencerView.prototype = new AbstractSequencerView ();
 
@@ -21,6 +19,15 @@ SequencerView.prototype.onActivate = function ()
 {
     this.updateScale ();
     AbstractSequencerView.prototype.onActivate.call (this);
+};
+
+SequencerView.prototype.updateArrows = function ()
+{
+    this.canScrollUp = this.offsetY + SequencerView.NUM_OCTAVE <= this.clip.getRowSize () - SequencerView.NUM_OCTAVE;
+    this.canScrollDown = this.offsetY - SequencerView.NUM_OCTAVE >= 0;
+    this.canScrollLeft = this.offsetX > 0;
+    BaseView.prototype.updateArrows.call (this);
+    this.drawSceneButtons ();
 };
 
 SequencerView.prototype.updateNoteMapping = function ()
@@ -33,16 +40,6 @@ SequencerView.prototype.updateScale = function ()
 {
     var t = this.model.getTrackBank ().getSelectedTrack ();
     this.noteMap = t != null && t.canHoldNotes ? this.scales.getSequencerMatrix (SequencerView.NUM_DISPLAY_ROWS, this.offsetY) : this.scales.getEmptyMatrix ();
-};
-
-SequencerView.prototype.updateArrows = function ()
-{
-    this.canScrollUp = this.offsetY + SequencerView.NUM_OCTAVE <= this.rows - SequencerView.NUM_OCTAVE;
-    this.canScrollDown = this.offsetY - SequencerView.NUM_OCTAVE >= 0;
-    this.canScrollLeft = this.offsetX > 0;
-    BaseView.prototype.updateArrows.call (this);
-    // TODO we need a track change callbck, this belongs in it
-    this.drawSceneButtons ();
 };
 
 SequencerView.prototype.usesButton = function (buttonID)
@@ -70,30 +67,12 @@ SequencerView.prototype.onGridNote = function (note, velocity)
     var index = note - 36;
     var x = index % 8;
     var y = Math.floor (index / 8);
-    this.clip.toggleStep (x, this.noteMap[y], Config.accentActive ? Config.fixedAccentValue : velocity);
-};
-
-SequencerView.prototype.scrollLeft = function (event)
-{
-    var newOffset = this.offsetX - SequencerView.NUM_DISPLAY_COLS;
-    if (newOffset < 0)
-        this.offsetX = 0;
-    else
-    {
-        this.offsetX = newOffset;
-        this.clip.scrollStepsPageBackwards ();
-    }
-};
-
-SequencerView.prototype.scrollRight = function (event)
-{
-    this.offsetX = this.offsetX + SequencerView.NUM_DISPLAY_COLS;
-    this.clip.scrollStepsPageForward ();
+    this.clip.setStep (x, this.noteMap[y], Config.accentActive ? Config.fixedAccentValue : velocity);
 };
 
 SequencerView.prototype.scrollUp = function (event)
 {
-    this.offsetY = Math.min (this.rows - SequencerView.NUM_OCTAVE, this.offsetY + SequencerView.NUM_OCTAVE);
+    this.offsetY = Math.min (this.clip.getRowSize () - SequencerView.NUM_OCTAVE, this.offsetY + SequencerView.NUM_OCTAVE);
     this.updateScale ();
 };
 
@@ -110,13 +89,14 @@ SequencerView.prototype.drawGrid = function ()
     var t = this.model.getTrackBank ().getSelectedTrack ();
     var isKeyboardEnabled = t != null && t.canHoldNotes;
 
-    var hiStep = this.isInXRange (this.step) ? this.step % SequencerView.NUM_DISPLAY_COLS : -1;
+    var step = this.clip.getCurrentStep ();
+    var hiStep = this.isInXRange (step) ? step % SequencerView.NUM_DISPLAY_COLS : -1;
     for (var x = 0; x < SequencerView.NUM_DISPLAY_COLS; x++)
     {
         for (var y = 0; y < SequencerView.NUM_DISPLAY_ROWS; y++)
         {
             var row = this.noteMap[y];
-            var isSet = this.data[x][row];
+            var isSet = this.clip.getStep (x, row);
             var hilite = x == hiStep;
             if (isKeyboardEnabled)
                 this.surface.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLUE) : hilite ? PUSH_COLOR2_GREEN_HI : this.scales.getSequencerColor (this.noteMap, y));
@@ -124,9 +104,4 @@ SequencerView.prototype.drawGrid = function ()
                 this.surface.pads.lightEx (x, y, PUSH_COLOR2_BLACK);
         }
     }
-};
-
-SequencerView.prototype.isInXRange = function (x)
-{
-    return x >= this.offsetX && x < this.offsetX + SequencerView.NUM_DISPLAY_COLS;
 };

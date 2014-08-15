@@ -7,13 +7,12 @@ DrumView.DRUM_START_KEY = 36;
 
 function DrumView (model)
 {
-    AbstractSequencerView.call (this, model, 128, 32);
+    AbstractSequencerView.call (this, model, 128, DrumView.NUM_DISPLAY_COLS);
+    this.offsetY = DrumView.DRUM_START_KEY;
     this.canScrollUp = false;
     this.canScrollDown = false;
-
     this.pads = initArray ({ exists: false, solo: false, mute: false }, 16);
     this.selectedPad = 0;
-    this.offsetY = DrumView.DRUM_START_KEY;
 }
 DrumView.prototype = new AbstractSequencerView ();
 
@@ -64,7 +63,7 @@ DrumView.prototype.onGridNote = function (note, velocity)
         if (velocity != 0)
         {
             var col = 8 * (7 - y) + x;
-            this.clip.toggleStep (col, this.offsetY + this.selectedPad, Config.accentActive ? Config.fixedAccentValue : velocity);
+            this.clip.setStep (col, this.offsetY + this.selectedPad, Config.accentActive ? Config.fixedAccentValue : velocity);
         }
     }
 };
@@ -85,24 +84,6 @@ DrumView.prototype.onOctaveUp = function (event)
     this.scales.incDrumOctave ();
     this.offsetY = DrumView.DRUM_START_KEY + this.scales.getDrumOctave () * 16;
     this.updateNoteMapping ();
-};
-
-DrumView.prototype.scrollLeft = function (event)
-{
-    var newOffset = this.offsetX - DrumView.NUM_DISPLAY_COLS;
-    if (newOffset < 0)
-        this.offsetX = 0;
-    else
-    {
-        this.offsetX = newOffset;
-        this.clip.scrollStepsPageBackwards ();
-    }
-};
-
-DrumView.prototype.scrollRight = function (event)
-{
-    this.offsetX = this.offsetX + DrumView.NUM_DISPLAY_COLS;
-    this.clip.scrollStepsPageForward ();
 };
 
 DrumView.prototype.drawGrid = function ()
@@ -127,18 +108,14 @@ DrumView.prototype.drawGrid = function ()
             this.surface.pads.lightEx (x, y, PUSH_COLOR_BLACK);
             
     // Paint the sequencer steps
-    var hiStep = this.isInXRange (this.step) ? this.step % DrumView.NUM_DISPLAY_COLS : -1;
+    var step = this.clip.getCurrentStep ();
+    var hiStep = this.isInXRange (step) ? step % DrumView.NUM_DISPLAY_COLS : -1;
     for (var col = 0; col < DrumView.NUM_DISPLAY_COLS; col++)
     {
-        var isSet = this.data[col][this.offsetY + this.selectedPad];
+        var isSet = this.clip.getStep (col, this.offsetY + this.selectedPad);
         var hilite = col == hiStep;
         var x = col % 8;
         var y = 7 - Math.floor (col / 8);
         this.surface.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR2_GREEN_LO : PUSH_COLOR2_BLUE_HI) : hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLACK);
     }
-};
-
-DrumView.prototype.isInXRange = function (x)
-{
-    return x >= this.offsetX && x < this.offsetX + DrumView.NUM_DISPLAY_COLS;
 };

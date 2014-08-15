@@ -11,22 +11,15 @@ function ScalesMode (model)
 }
 ScalesMode.prototype = new BaseMode ();
 
-// TODO change SKIPPER to a scheduled task
-var SKIPPER = false;
 ScalesMode.prototype.onValueKnob = function (index, value)
 {
-    if (index == 0)
-    {
-        // Slow down scrolling
-        SKIPPER = !SKIPPER;
-        if (SKIPPER)
-            return;
-        if (value <= 61)
-            this.scales.nextScale ();
-        else
-            this.scales.prevScale ();
-        this.surface.getActiveView ().updateNoteMapping ();
-    }
+    if (index != 0)
+        return;
+        
+    var scale = this.scales.getSelectedScale ();
+    scale = changeValue (value, scale, 1, this.scales.getScaleSize ());
+    this.scales.setScale (scale);
+    this.surface.getActiveView ().updateNoteMapping ();
 };
 
 ScalesMode.prototype.onFirstRow = function (index)
