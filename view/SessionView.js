@@ -10,6 +10,7 @@ function SessionView (model)
     this.flip = false;
 
     this.scrollerInterval = Config.sceneScrollInterval;
+    this.isTemporary = false;
 }
 SessionView.prototype = new BaseView ();
 
@@ -142,17 +143,27 @@ SessionView.prototype.onAccent = function (event)
 
 SessionView.prototype.onSession = function (event)
 {
-    if (!event.isDown ())
-        return;
-        
-    this.flip = !this.flip;
-    var dUp   = this.canScrollUp;
-    var dDown = this.canScrollDown;
-    this.canScrollUp = this.canScrollLeft;
-    this.canScrollDown = this.canScrollRight;
-    this.canScrollLeft = dUp;
-    this.canScrollRight = dDown;
-    this.drawSceneButtons ();
+    if (event.isLong ())
+        this.isTemporary = true;
+    else if (event.isUp ())
+    {
+        if (this.isTemporary)
+        {
+            this.isTemporary = false;
+            this.surface.setActiveView (BaseView.lastNoteView);
+        }
+    }
+    else if (event.isDown ())
+    {
+        this.flip = !this.flip;
+        var dUp   = this.canScrollUp;
+        var dDown = this.canScrollDown;
+        this.canScrollUp = this.canScrollLeft;
+        this.canScrollDown = this.canScrollRight;
+        this.canScrollLeft = dUp;
+        this.canScrollRight = dDown;
+        this.drawSceneButtons ();
+    }
 };
 
 SessionView.prototype.scrollLeft = function (event)

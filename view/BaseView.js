@@ -475,8 +475,6 @@ BaseView.prototype.onSession = function (event)
 {
     if (!event.isDown ())
         return;
-    if (this.surface.isActiveView (VIEW_SESSION))
-        return;
     BaseView.lastNoteView = this.surface.isActiveView (VIEW_PLAY) ? VIEW_PLAY : (this.surface.isActiveView (VIEW_DRUM) ? VIEW_DRUM : VIEW_SEQUENCER);
     this.surface.setActiveView (VIEW_SESSION);
 };
