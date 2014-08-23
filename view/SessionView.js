@@ -121,7 +121,7 @@ SessionView.prototype.onGridNote = function (note, velocity)
         else
             slots.launch (s);
     }
-     slots.select (s);
+    slots.select (s);
 };
 
 SessionView.prototype.onClip = function (event)
@@ -287,13 +287,9 @@ SessionView.prototype._onFirstRow = function (index)
     var tb = this.model.getTrackBank ();
     var selTrack = tb.getSelectedTrack ();
     if ((selTrack != null && selTrack.index == index) || this.surface.isShiftPressed ())
-    {
         this.model.getTrackBank ().toggleArm (index);
-    }
     else
-    {
         this.model.getTrackBank ().select (index);
-    }
 };
 
 SessionView.prototype.drawGrid = function ()
