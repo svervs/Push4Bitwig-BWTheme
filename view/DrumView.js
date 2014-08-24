@@ -55,6 +55,13 @@ DrumView.prototype.onGridNote = function (note, velocity)
     {
         this.selectedPad = 4 * y + x;
         this.playedPad = velocity == 0 ? -1 : this.selectedPad;
+        
+        // Delete all of the notes on that 'pad'
+        if (this.playedPad >= 0 && this.surface.isDeletePressed ())
+        {
+            this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+            this.clip.clearRow (this.offsetY + this.selectedPad);
+        }
         return;
     }
     
