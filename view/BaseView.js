@@ -162,7 +162,7 @@ BaseView.prototype.onDouble = function (event)
 
 BaseView.prototype.onDelete = function (event)
 {
-    if (event.isDown ())
+    if (event.isUp ())
         this.model.getApplication ().deleteSelection ();
 };
 
@@ -218,7 +218,12 @@ BaseView.prototype.onTapTempo = function (event)
 // Group 5
 //--------------------------------------
 
-BaseView.prototype.onValueKnobTouch = function (knob, isTouched) {};
+BaseView.prototype.onValueKnobTouch = function (knob, isTouched)
+{
+    var m = this.surface.getActiveMode ();
+    if (m != null)
+        m.onValueKnobTouch (knob, isTouched);
+};
 
 BaseView.prototype.onValueKnob9 = function (value)
 {

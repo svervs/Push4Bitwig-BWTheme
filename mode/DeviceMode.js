@@ -20,7 +20,10 @@ DeviceMode.prototype.onValueKnob = function (index, value)
 DeviceMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
     if (this.surface.isDeletePressed ())
+    {
+        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
         this.model.getCursorDevice ().resetParameter (index);
+    }
 };
 
 DeviceMode.prototype.onFirstRow = function (index)
