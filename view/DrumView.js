@@ -25,7 +25,7 @@ DrumView.prototype.updateArrows = function ()
 DrumView.prototype.updateNoteMapping = function ()
 {
     var t = this.model.getTrackBank ().getSelectedTrack ();
-    var noteMap = t != null && t.canHoldNotes ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
+    var noteMap = t != null && t.canHoldNotes && !this.surface.isSelectPressed () ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
     this.surface.setKeyTranslationTable (noteMap);
 };
 
@@ -45,12 +45,17 @@ DrumView.prototype.usesButton = function (buttonID)
     return true;
 };
 
+DrumView.prototype.onSelect = function (event)
+{
+    this.updateNoteMapping ();
+};
+
 DrumView.prototype.onGridNote = function (note, velocity)
 {
     var index = note - 36;
     var x = index % 8;
     var y = Math.floor (index / 8);
-    
+
     if (x < 4 && y < 4)
     {
         this.selectedPad = 4 * y + x;
