@@ -1,6 +1,6 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
 // (c) 2014
-// Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
+// Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 function AbstractSequencerView (model, rows, cols)
 {

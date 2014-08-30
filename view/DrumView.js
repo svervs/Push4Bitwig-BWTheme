@@ -1,6 +1,6 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
 // (c) 2014
-// Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
+// Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 DrumView.NUM_DISPLAY_COLS = 32;
 DrumView.DRUM_START_KEY = 36;

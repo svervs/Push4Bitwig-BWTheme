@@ -1,7 +1,7 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
 //            Michael Schmalle - teotigraphix.com
 // (c) 2014
-// Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
+// Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 function SessionView (model)
 {
@@ -122,6 +122,14 @@ SessionView.prototype.onGridNote = function (note, velocity)
             slots.launch (s);
     }
     slots.select (s);
+    
+    /* TODO Focus must be on clip launcher!
+    
+    if (this.surface.isDeletePressed ())
+    {
+        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+        this.model.getApplication ().deleteSelection ();
+    }*/
 };
 
 SessionView.prototype.onClip = function (event)

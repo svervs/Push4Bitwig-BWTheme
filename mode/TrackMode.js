@@ -1,7 +1,7 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
 //            Michael Schmalle - teotigraphix.com
 // (c) 2014
-// Licensed under GPLv3 - http://www.gnu.org/licenses/gpl.html
+// Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 TrackMode.PARAM_NAMES = 'Volume   Pan     Send 1   Send 2  Send 3   Send 4  Send 5   Send 6  ';
 
