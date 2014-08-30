@@ -75,7 +75,7 @@ DrumView.prototype.onGridNote = function (note, velocity)
         if (velocity != 0)
         {
             var col = 8 * (7 - y) + x;
-            this.clip.setStep (col, this.offsetY + this.selectedPad, Config.accentActive ? Config.fixedAccentValue : velocity);
+            this.clip.toggleStep (col, this.offsetY + this.selectedPad, Config.accentActive ? Config.fixedAccentValue : velocity);
         }
     }
 };

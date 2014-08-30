@@ -67,7 +67,7 @@ SequencerView.prototype.onGridNote = function (note, velocity)
     var index = note - 36;
     var x = index % 8;
     var y = Math.floor (index / 8);
-    this.clip.setStep (x, this.noteMap[y], Config.accentActive ? Config.fixedAccentValue : velocity);
+    this.clip.toggleStep (x, this.noteMap[y], Config.accentActive ? Config.fixedAccentValue : velocity);
 };
 
 SequencerView.prototype.scrollUp = function (event)
