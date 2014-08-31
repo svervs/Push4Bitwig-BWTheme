@@ -16,6 +16,20 @@ function PlayView (model)
     {
         this.initMaxVelocity ();
     }));
+    var tb = model.getTrackBank ();
+    tb.addNoteListener (doObject (this, function (pressed, note, velocity)
+    {
+        // Light notes send from the sequencer
+        for (var i = 0; i < 128; i++)
+        {
+            if (this.noteMap[i] == note)
+                this.pressedKeys[i] = pressed ? velocity : 0;
+        }
+    }));
+    tb.addTrackSelectionListener (doObject (this, function (index, isSelected)
+    {
+        this.clearPressedKeys ();
+    }));
 
     this.scrollerInterval = Config.trackScrollInterval;
 }
@@ -94,6 +108,7 @@ PlayView.prototype.onOctaveDown = function (event)
 {
     if (!event.isDown ())
         return;
+    this.clearPressedKeys ();
     this.scales.decOctave ();
     this.updateNoteMapping ();
 };
@@ -102,6 +117,7 @@ PlayView.prototype.onOctaveUp = function (event)
 {
     if (!event.isDown ())
         return;
+    this.clearPressedKeys ();
     this.scales.incOctave ();
     this.updateNoteMapping ();
 };
@@ -176,3 +192,9 @@ PlayView.prototype.initMaxVelocity = function ()
     this.maxVelocity[0] = 0;
     this.surface.setVelocityTranslationTable (Config.accentActive ? this.maxVelocity : this.defaultVelocity);
 };
+
+PlayView.prototype.clearPressedKeys = function ()
+{
+    for (var i = 0; i < 128; i++)
+        this.pressedKeys[i] = 0;
+}

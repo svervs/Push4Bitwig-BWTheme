@@ -11,7 +11,7 @@ function Controller ()
 
     var scales = new Scales (36, 100, 8, 8);
     this.model = new Model (PUSH_KNOB1, scales);
-    this.model.getCurrentTrackBank ().addTrackSelectionListener (doObject (this, function (index, isSelected)
+    this.model.getTrackBank ().addTrackSelectionListener (doObject (this, function (index, isSelected)
     {
         if (isSelected && this.surface.isActiveMode (MODE_MASTER))
             this.surface.setPendingMode (MODE_TRACK);

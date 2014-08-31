@@ -13,6 +13,19 @@ function DrumView (model)
     this.canScrollDown = false;
     this.pads = initArray ({ exists: false, solo: false, mute: false }, 16);
     this.selectedPad = 0;
+    this.pressedKeys = initArray (0, 128);
+    this.noteMap = this.scales.getEmptyMatrix ();
+
+    var tb = model.getTrackBank ();
+    tb.addNoteListener (doObject (this, function (pressed, note, velocity)
+    {
+        // Light notes send from the sequencer
+        this.pressedKeys[note] = pressed ? velocity : 0;
+    }));
+    tb.addTrackSelectionListener (doObject (this, function (index, isSelected)
+    {
+        this.clearPressedKeys ();
+    }));
 }
 DrumView.prototype = new AbstractSequencerView ();
 
@@ -25,8 +38,8 @@ DrumView.prototype.updateArrows = function ()
 DrumView.prototype.updateNoteMapping = function ()
 {
     var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
-    var noteMap = t != null && t.canHoldNotes && !this.surface.isSelectPressed () ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
-    this.surface.setKeyTranslationTable (noteMap);
+    this.noteMap = t != null && t.canHoldNotes && !this.surface.isSelectPressed () ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
+    this.surface.setKeyTranslationTable (this.noteMap);
 };
 
 DrumView.prototype.usesButton = function (buttonID)
@@ -58,11 +71,14 @@ DrumView.prototype.onGridNote = function (note, velocity)
 
     if (x < 4 && y < 4)
     {
-        this.selectedPad = 4 * y + x;
-        this.playedPad = velocity == 0 ? -1 : this.selectedPad;
+        this.selectedPad = 4 * y + x;   // 0-16
+        var playedPad = velocity == 0 ? -1 : this.selectedPad;
         
+        // Mark selected note
+        this.pressedKeys[this.offsetY + this.selectedPad] = velocity;
+
         // Delete all of the notes on that 'pad'
-        if (this.playedPad >= 0 && this.surface.isDeletePressed ())
+        if (playedPad >= 0 && this.surface.isDeletePressed ())
         {
             this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
             this.clip.clearRow (this.offsetY + this.selectedPad);
@@ -84,6 +100,7 @@ DrumView.prototype.onOctaveDown = function (event)
 {
     if (!event.isDown ())
         return;
+    this.clearPressedKeys ();
     this.scales.decDrumOctave ();
     this.offsetY = DrumView.DRUM_START_KEY + this.scales.getDrumOctave () * 16;
     this.updateNoteMapping ();
@@ -93,6 +110,7 @@ DrumView.prototype.onOctaveUp = function (event)
 {
     if (!event.isDown ())
         return;
+    this.clearPressedKeys ();
     this.scales.incDrumOctave ();
     this.offsetY = DrumView.DRUM_START_KEY + this.scales.getDrumOctave () * 16;
     this.updateNoteMapping ();
@@ -101,15 +119,16 @@ DrumView.prototype.onOctaveUp = function (event)
 DrumView.prototype.drawGrid = function ()
 {
     this.turnOffBlink ();
+    var isRecording = this.model.getTransport ().isRecording || this.model.getCurrentTrackBank ().isClipRecording ();
 
     // 4x4 Grid
-    for (var x = 0; x < 4; x++)
+    for (var y = 0; y < 4; y++)
     {
-        for (var y = 0; y < 4; y++)
+        for (var x = 0; x < 4; x++)
         {
-            var index = x + y * 4;
+            var index = 4 * y + x;
             var p = this.pads[index];
-            var c = this.playedPad == index ? PUSH_COLOR2_GREEN_HI : (this.selectedPad == index ? PUSH_COLOR2_BLUE_HI : (p.exists ? (p.mute ? PUSH_COLOR2_AMBER_LO : (p.solo ? PUSH_COLOR2_BLUE_LO : PUSH_COLOR2_YELLOW_HI)) : PUSH_COLOR_YELLOW_LO));
+            var c = this.pressedKeys[this.offsetY + index] > 0 ? (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI) : (this.selectedPad == index ? PUSH_COLOR2_BLUE_HI : (p.exists ? (p.mute ? PUSH_COLOR2_AMBER_LO : (p.solo ? PUSH_COLOR2_BLUE_LO : PUSH_COLOR2_YELLOW_HI)) : PUSH_COLOR_YELLOW_LO));
             this.surface.pads.lightEx (x, y, c);
         }
     }
@@ -131,3 +150,9 @@ DrumView.prototype.drawGrid = function ()
         this.surface.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR2_GREEN_LO : PUSH_COLOR2_BLUE_HI) : hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLACK);
     }
 };
+
+DrumView.prototype.clearPressedKeys = function ()
+{
+    for (var i = 0; i < 128; i++)
+        this.pressedKeys[i] = 0;
+}
