@@ -72,8 +72,7 @@ AbstractTrackMode.prototype.drawRow4 = function ()
 
 AbstractTrackMode.prototype.getTrackButtonColor = function (track)
 {
-    var exists = track.name != '';
-    if (!exists)
+    if (!track.exists)
         return PUSH_COLOR_BLACK;
 
     var tb = this.model.getCurrentTrackBank ();

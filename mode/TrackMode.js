@@ -3,9 +3,6 @@
 // (c) 2014
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-TrackMode.PARAM_NAMES = 'Volume   Pan     Send 1   Send 2  Send 3   Send 4  Send 5   Send 6  ';
-
-
 function TrackMode (model)
 {
     AbstractTrackMode.call (this, model);
@@ -29,32 +26,33 @@ TrackMode.prototype.onValueKnob = function (index, value)
 
 TrackMode.prototype.updateDisplay = function ()
 {
-    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
+    var currentTrackBank = this.model.getCurrentTrackBank ();
+    var t = currentTrackBank.getSelectedTrack ();
+    var fxTrackBank = this.model.getEffectTrackBank ();
     var d = this.surface.getDisplay ();
+    var isFX = currentTrackBank === fxTrackBank;
     
     if (t == null)
         d.setRow (1, "                     Please selecta track...                        ")
          .clearRow (0).clearRow (2).done (0).done (2);
     else
     {
-        d.setRow (0, TrackMode.PARAM_NAMES);
-
-        // Note: The Sends name is not send (always "Send")
-        
-        //d.setCell (0, 0, "Volume", Display.FORMAT_RAW)
-        d.setCell (1, 0, t.volumeStr, Display.FORMAT_RAW)
+        d.setCell (0, 0, "Volume", Display.FORMAT_RAW)
+         .setCell (1, 0, t.volumeStr, Display.FORMAT_RAW)
          .setCell (2, 0, this.surface.showVU ? t.vu : t.volume, Display.FORMAT_VALUE)
-        // .setCell (0, 1, "Pan", Display.FORMAT_RAW)
+         .setCell (0, 1, "Pan", Display.FORMAT_RAW)
          .setCell (1, 1, t.panStr, Display.FORMAT_RAW)
          .setCell (2, 1, t.pan, Display.FORMAT_PAN);
-         
+        
         for (var i = 0; i < 6; i++)
         {
-            //d.setCell (0, 2 + i, t.sends[i].name, Display.FORMAT_RAW)
-            d.setCell (1, 2 + i, t.sends[i].volumeStr, Display.FORMAT_RAW)
-             .setCell (2, 2 + i, t.sends[i].volume, Display.FORMAT_VALUE);
+            var fxTrack = fxTrackBank.getTrack (i);
+            var isEmpty = isFX || !fxTrack.exists;
+            d.setCell (0, 2 + i, isEmpty ? "" : fxTrack.name, Display.FORMAT_RAW)
+             .setCell (1, 2 + i, isEmpty ? "" : t.sends[i].volumeStr, Display.FORMAT_RAW)
+             .setCell (2, 2 + i, isEmpty ? "" : t.sends[i].volume, isEmpty ? Display.FORMAT_RAW : Display.FORMAT_VALUE);
         }
-        d.done (1).done (2);
+        d.done (0).done (1).done (2);
     }
 
     this.drawRow4 ();

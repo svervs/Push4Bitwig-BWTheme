@@ -3,16 +3,6 @@
 // (c) 2014
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-SendMode.PARAM_NAMES   =
-[
-    'Send 1   Send 1  Send 1   Send 1  Send 1   Send 1  Send 1   Send 1  ',
-    'Send 2   Send 2  Send 2   Send 2  Send 2   Send 2  Send 2   Send 2  ',
-    'Send 3   Send 3  Send 3   Send 3  Send 3   Send 3  Send 3   Send 3  ',
-    'Send 4   Send 4  Send 4   Send 4  Send 4   Send 4  Send 4   Send 4  ',
-    'Send 5   Send 5  Send 5   Send 5  Send 5   Send 5  Send 5   Send 5  ',
-    'Send 6   Send 6  Send 6   Send 6  Send 6   Send 6  Send 6   Send 6  '
-];
-
 function SendMode (model)
 {
     AbstractTrackMode.call (this, model);
@@ -26,32 +16,24 @@ SendMode.prototype.onValueKnob = function (index, value)
     this.model.getCurrentTrackBank ().changeSend (index, sendIndex, value, this.surface.getFractionValue ());
 };
 
-// SendMode.prototype.onFirstRow = function (index) {};
-
-// SendMode.prototype.onSecondRow = function (index) {};
-
 SendMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
     var sendIndex = this.getCurrentSendIndex ();
     var tb = this.model.getCurrentTrackBank ();
-
-    d.setRow (0, SendMode.PARAM_NAMES[sendIndex]);
+    var fxTrackBank = this.model.getEffectTrackBank ();
 
     for (var i = 0; i < 8; i++)
     {
         var t = tb.getTrack (i);
-        d.setCell (1, i, t.sends[sendIndex].volumeStr, Display.FORMAT_RAW)
-         .setCell (2, i, t.sends[sendIndex].volume, Display.FORMAT_VALUE);
+        d.setCell (0, i, t.exists ? fxTrackBank.getTrack (sendIndex).name : "", Display.FORMAT_RAW)
+         .setCell (1, i, t.sends[sendIndex].volumeStr, Display.FORMAT_RAW)
+         .setCell (2, i, t.exists ? t.sends[sendIndex].volume : "", t.exists ? Display.FORMAT_VALUE : Display.FORMAT_RAW);
     }
-    d.done (1).done (2);
+    d.done (0).done (1).done (2);
 
     this.drawRow4 ();
 };
-
-// SendMode.prototype.updateFirstRow = function () {};
-
-// SendMode.prototype.updateSecondRow = function () {};
 
 SendMode.prototype.getCurrentSendIndex = function ()
 {

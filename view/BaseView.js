@@ -313,9 +313,21 @@ BaseView.prototype.onPanAndSend = function (event)
 {
     if (!event.isDown ())
         return;
-    var mode = this.surface.getCurrentMode () + 1;
-    if (mode < MODE_PAN || mode > MODE_SEND6)
+     
+    // No Sends on FX tracks
+    var fxTrackBank = this.model.getEffectTrackBank ();
+    if (this.model.getCurrentTrackBank () === fxTrackBank)
         mode = MODE_PAN;
+    else
+    {
+        var mode = this.surface.getCurrentMode () + 1;
+        // Wrap
+        if (mode < MODE_PAN || mode > MODE_SEND6)
+            mode = MODE_PAN;
+        // Check if Send channel exists
+        if (mode >= MODE_SEND1 && mode <= MODE_SEND6 && !fxTrackBank.getTrack (mode - MODE_SEND1).exists)
+            mode = MODE_PAN;
+    }
     this.surface.setPendingMode (mode);
 };
 

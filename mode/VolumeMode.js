@@ -3,8 +3,6 @@
 // (c) 2014
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-VolumeMode.PARAM_NAMES = 'Volume   Volume  Volume   Volume  Volume   Volume  Volume   Volume  ';
-
 function VolumeMode (model)
 {
     AbstractTrackMode.call (this, model);
@@ -18,28 +16,19 @@ VolumeMode.prototype.onValueKnob = function (index, value)
     this.model.getCurrentTrackBank ().changeVolume (index, value, this.surface.getFractionValue ());
 };
 
-// VolumeMode.prototype.onFirstRow = function (index) {};
-
-// VolumeMode.prototype.onSecondRow = function (index) {};
-
 VolumeMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
     var tb = this.model.getCurrentTrackBank ();
 
-    d.setRow (0, VolumeMode.PARAM_NAMES);
-
     for (var i = 0; i < 8; i++)
     {
         var t = tb.getTrack (i);
-        d.setCell (1, i, t.volumeStr, Display.FORMAT_RAW)
-         .setCell (2, i, this.surface.showVU ? t.vu : t.volume, Display.FORMAT_VALUE);
+        d.setCell (0, i, t.exists ? "Volume" : "", Display.FORMAT_RAW)
+         .setCell (1, i, t.volumeStr, Display.FORMAT_RAW)
+         .setCell (2, i, t.exists ? (this.surface.showVU ? t.vu : t.volume) : "", t.exists ? Display.FORMAT_VALUE : Display.FORMAT_RAW);
     }
-    d.done (1).done (2);
+    d.done (0).done (1).done (2);
 
     this.drawRow4 ();
 };
-
-// VolumeMode.prototype.updateFirstRow = function () {};
-
-// VolumeMode.prototype.updateSecondRow = function () {};
