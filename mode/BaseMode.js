@@ -11,7 +11,7 @@ BaseMode.prototype = new AbstractMode ();
 
 BaseMode.prototype.updateFirstRow = function ()
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     var selTrack = tb.getSelectedTrack ();
     var selIndex = selTrack == null ? -1 : selTrack.index;
     for (var i = 0; i < 8; i++)
@@ -24,7 +24,7 @@ BaseMode.prototype.updateFirstRow = function ()
 
 BaseMode.prototype.updateSecondRow = function ()
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     for (var i = 0; i < 8; i++)
     {
         var t = tb.getTrack (i);

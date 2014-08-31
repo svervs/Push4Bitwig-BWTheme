@@ -11,7 +11,7 @@ function Controller ()
 
     var scales = new Scales (36, 100, 8, 8);
     this.model = new Model (PUSH_KNOB1, scales);
-    this.model.getTrackBank ().addTrackSelectionListener (doObject (this, function (index, isSelected)
+    this.model.getCurrentTrackBank ().addTrackSelectionListener (doObject (this, function (index, isSelected)
     {
         if (isSelected && this.surface.isActiveMode (MODE_MASTER))
             this.surface.setPendingMode (MODE_TRACK);
@@ -82,7 +82,7 @@ Controller.prototype.flush = function ()
     this.surface.setButton (PUSH_BUTTON_RECORD, t.isRecording ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     
     // Send, Mute, Automation
-    var track = this.model.getTrackBank ().getSelectedTrack ();
+    var track = this.model.getCurrentTrackBank ().getSelectedTrack ();
     if (track == null)
         this.surface.setButton (PUSH_BUTTON_AUTOMATION, PUSH_BUTTON_STATE_OFF);
     else
@@ -124,7 +124,7 @@ Controller.prototype.updateIndication = function (mode)
     var isVolume = mode == MODE_VOLUME;
     var isPan    = mode == MODE_PAN;
     
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     var selectedTrack = tb.getSelectedTrack ();
     for (var i = 0; i < 8; i++)
     {

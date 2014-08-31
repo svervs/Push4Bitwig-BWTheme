@@ -20,13 +20,13 @@ SessionView.prototype.onActivate = function ()
 
     this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
     this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
-    this.model.getTrackBank ().setIndication (true);
+    this.model.getCurrentTrackBank ().setIndication (true);
     this.drawSceneButtons ();
 };
 
 SessionView.prototype.drawSceneButtons = function ()
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     for (var i = 0; i < 8; i++)
     {
         if (this.flip)
@@ -62,7 +62,7 @@ SessionView.prototype.updateDevice = function ()
 
 SessionView.prototype.updateArrows = function ()
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     this.canScrollUp = this.flip ? tb.canScrollTracksUp () : tb.canScrollScenesDown ();
     this.canScrollDown = this.flip ? tb.canScrollTracksDown () : tb.canScrollScenesUp ();
     this.canScrollLeft = this.flip ? tb.canScrollScenesDown () : tb.canScrollTracksUp ();
@@ -105,7 +105,7 @@ SessionView.prototype.onGridNote = function (note, velocity)
         s = dummy;
     }
 
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     var slot = tb.getTrack (t).slots[s];
     var slots = tb.getClipLauncherSlots (t);
     
@@ -136,12 +136,12 @@ SessionView.prototype.onClip = function (event)
 {
     if (!event.isDown ())
         return;
-    var t = this.model.getTrackBank ().getSelectedTrack ();
+    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
     if (t == null)
         return;
     var slot = this.getSelectedSlot (t);
     if (slot != -1)
-        this.model.getTrackBank ().getClipLauncherSlots (t.index).showInEditor (slot);
+        this.model.getCurrentTrackBank ().getClipLauncherSlots (t.index).showInEditor (slot);
 };
 
 SessionView.prototype.onAccent = function (event)
@@ -176,7 +176,7 @@ SessionView.prototype.onSession = function (event)
 
 SessionView.prototype.scrollLeft = function (event)
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     if (this.flip)
     {
         if (this.surface.isShiftPressed ())
@@ -195,7 +195,7 @@ SessionView.prototype.scrollLeft = function (event)
 
 SessionView.prototype.scrollRight = function (event)
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     if (this.flip)
     {
         if (this.surface.isShiftPressed ())
@@ -214,7 +214,7 @@ SessionView.prototype.scrollRight = function (event)
 
 SessionView.prototype.scrollUp = function (event)
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     if (this.flip)
     {
         if (this.surface.isShiftPressed ())
@@ -233,7 +233,7 @@ SessionView.prototype.scrollUp = function (event)
 
 SessionView.prototype.scrollDown = function (event)
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     if (this.flip)
     {
         if (this.surface.isShiftPressed ())
@@ -266,7 +266,7 @@ SessionView.prototype.onFirstRow = function (index)
 SessionView.prototype.onSecondRow = function (index)
 {
     if (this.surface.isShiftPressed ())
-        this.model.getTrackBank ().returnToArrangement (index);
+        this.model.getCurrentTrackBank ().returnToArrangement (index);
     else
         BaseView.prototype.onSecondRow.call (this, index);
 };
@@ -275,11 +275,11 @@ SessionView.prototype.onSecondRow = function (index)
 SessionView.prototype.sceneOrFirstRowButtonPressed = function (index, isScene)
 {
     if (isScene)
-        this.model.getTrackBank ().launchScene (index);
+        this.model.getCurrentTrackBank ().launchScene (index);
     else
     {
         if (this.surface.isPressed (PUSH_BUTTON_STOP))
-            this.model.getTrackBank ().stop (index);
+            this.model.getCurrentTrackBank ().stop (index);
         else
         {
             this._onFirstRow (index);
@@ -292,17 +292,17 @@ SessionView.prototype.sceneOrFirstRowButtonPressed = function (index, isScene)
 // still, just reimplementing the logic here doesn't seem 'bad'
 SessionView.prototype._onFirstRow = function (index)
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     var selTrack = tb.getSelectedTrack ();
     if ((selTrack != null && selTrack.index == index) || this.surface.isShiftPressed ())
-        this.model.getTrackBank ().toggleArm (index);
+        this.model.getCurrentTrackBank ().toggleArm (index);
     else
-        this.model.getTrackBank ().select (index);
+        this.model.getCurrentTrackBank ().select (index);
 };
 
 SessionView.prototype.drawGrid = function ()
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     for (var x = 0; x < 8; x++)
     {
         var t = tb.getTrack (x);

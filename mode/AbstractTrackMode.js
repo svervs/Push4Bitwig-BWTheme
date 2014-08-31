@@ -13,17 +13,17 @@ AbstractTrackMode.prototype = new BaseMode ();
 
 AbstractTrackMode.prototype.onFirstRow = function (index)
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     var selTrack = tb.getSelectedTrack ();
     if ((selTrack != null && selTrack.index == index) || this.surface.isShiftPressed ())
-        this.model.getTrackBank ().toggleArm (index);
+        this.model.getCurrentTrackBank ().toggleArm (index);
     else
-        this.model.getTrackBank ().select (index);
+        this.model.getCurrentTrackBank ().select (index);
 };
 
 AbstractTrackMode.prototype.onSecondRow = function (index)
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     if (tb.isMuteState ())
         tb.toggleMute (index);
     else
@@ -32,7 +32,7 @@ AbstractTrackMode.prototype.onSecondRow = function (index)
 
 AbstractTrackMode.prototype.updateFirstRow = function ()
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     for (var i = 0; i < 8; i++)
     {
         // Light up selection and record buttons
@@ -42,7 +42,7 @@ AbstractTrackMode.prototype.updateFirstRow = function ()
 
 AbstractTrackMode.prototype.updateSecondRow = function ()
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     var muteState = tb.isMuteState ();
     for (var i = 0; i < 8; i++)
     {
@@ -54,7 +54,7 @@ AbstractTrackMode.prototype.updateSecondRow = function ()
 
 AbstractTrackMode.prototype.drawRow4 = function ()
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     var selTrack = tb.getSelectedTrack ();
 
     // Format track names
@@ -76,7 +76,7 @@ AbstractTrackMode.prototype.getTrackButtonColor = function (track)
     if (!exists)
         return PUSH_COLOR_BLACK;
 
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     var selTrack = tb.getSelectedTrack ();
     var selIndex = selTrack == null ? -1 : selTrack.index;
     var isSel = track.index == selIndex;

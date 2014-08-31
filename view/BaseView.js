@@ -91,7 +91,7 @@ BaseView.prototype.onNew = function (event)
 {
     if (!event.isDown ())
         return;
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     var t = tb.getSelectedTrack ();
     if (t != null)
     {
@@ -128,7 +128,7 @@ BaseView.prototype.onAutomation = function (event)
 {
     if (!event.isDown ())
         return;
-    var selectedTrack = this.model.getTrackBank ().getSelectedTrack ();
+    var selectedTrack = this.model.getCurrentTrackBank ().getSelectedTrack ();
     if (selectedTrack != null)
         this.model.getTransport ().toggleWriteArrangerAutomation ();
 };
@@ -273,19 +273,14 @@ BaseView.prototype.onMaster = function (event)
 
             this.longPressPreviousMode = null;
             break;
+
         case ButtonEvent.DOWN:
-            if (this.surface.isActiveMode (MODE_MASTER))
-                this.surface.toggleVU ();
-            else
-            {
-                this.surface.setPendingMode (MODE_MASTER);
-                this.model.getMasterTrack ().select ();
-            }
+            this.surface.setPendingMode (MODE_MASTER);
+            this.model.getMasterTrack ().select ();
             break;
+
         case ButtonEvent.LONG:
             this.longPressPreviousMode = this.surface.getPreviousMode ();
-            // Toggle back since it was toggled on DOWN
-            this.surface.toggleVU ();
             this.surface.setPendingMode (MODE_FRAME);
             break;
     }
@@ -295,7 +290,7 @@ BaseView.prototype.onStop = function (event)
 {
     if (this.surface.isShiftPressed ())
     {
-        this.model.getTrackBank ().getClipLauncherScenes ().stop ();
+        this.model.getCurrentTrackBank ().getClipLauncherScenes ().stop ();
         return;
     }
     this.stopPressed = event.isDown ();
@@ -310,11 +305,7 @@ BaseView.prototype.onScene = function (index) {};
 
 BaseView.prototype.onVolume = function (event)
 {
-    if (!event.isDown ())
-        return;
-    if (this.surface.isActiveMode (MODE_VOLUME))
-        this.surface.toggleVU ();
-    else
+    if (event.isDown ())
         this.surface.setPendingMode (MODE_VOLUME);
 };
 
@@ -332,8 +323,15 @@ BaseView.prototype.onTrack = function (event)
 {
     if (!event.isDown ())
         return;
-    if (this.surface.isActiveMode (MODE_TRACK))
+        
+    if (this.surface.isShiftPressed ())
+    {
         this.surface.toggleVU ();
+        return;
+    }
+        
+    if (this.surface.isActiveMode (MODE_TRACK))
+        this.model.toggleCurrentTrackBank ();
     else
         this.surface.setPendingMode (MODE_TRACK);
 };
@@ -372,7 +370,7 @@ BaseView.prototype.onDeviceLeft = function (event)
     if (!event.isDown ())
         return;
 
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     if (tb.canScrollTracksUp ())
     {
         tb.scrollTracksPageUp ();
@@ -385,7 +383,7 @@ BaseView.prototype.onDeviceRight = function (event)
     if (!event.isDown ())
         return;
 
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     if (tb.canScrollTracksDown ())
     {
         tb.scrollTracksPageDown ();
@@ -395,12 +393,12 @@ BaseView.prototype.onDeviceRight = function (event)
 
 BaseView.prototype.onMute = function (event)
 {
-    this.model.getTrackBank ().setTrackState (TrackBankProxy.TrackState.MUTE);
+    this.model.getCurrentTrackBank ().setTrackState (TrackState.MUTE);
 };
 
 BaseView.prototype.onSolo = function (event)
 {
-    this.model.getTrackBank ().setTrackState (TrackBankProxy.TrackState.SOLO);
+    this.model.getCurrentTrackBank ().setTrackState (TrackState.SOLO);
 };
 
 BaseView.prototype.onScales = function (event)
@@ -423,7 +421,7 @@ BaseView.prototype.onScales = function (event)
 
 BaseView.prototype.onUser = function (event) 
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     tb.trackBank.scrollToTrack (15);
 };
 
@@ -519,7 +517,7 @@ BaseView.prototype.onFootswitch2 = function (value)
 
 BaseView.prototype.updateButtons = function ()
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     var isMuteState = tb.isMuteState ();
     this.surface.setButton (PUSH_BUTTON_MUTE, isMuteState ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     this.surface.setButton (PUSH_BUTTON_SOLO, !isMuteState ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);

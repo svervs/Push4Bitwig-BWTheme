@@ -28,7 +28,7 @@ AbstractSequencerView.prototype.onActivate = function ()
     this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
     this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
     this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.model.getTrackBank ().setIndication (false);
+    this.model.getCurrentTrackBank ().setIndication (false);
     this.drawSceneButtons ();
 };
 
@@ -64,7 +64,7 @@ AbstractSequencerView.prototype.onScene = function (index)
 
 AbstractSequencerView.prototype.drawSceneButtons = function ()
 {
-    var t = this.model.getTrackBank ().getSelectedTrack ();
+    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
     var isKeyboardEnabled = t != null && t.canHoldNotes;
     if (!isKeyboardEnabled)
     {

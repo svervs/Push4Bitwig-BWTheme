@@ -15,7 +15,7 @@ TrackMode.prototype = new AbstractTrackMode ();
 
 TrackMode.prototype.onValueKnob = function (index, value)
 {
-    var tb = this.model.getTrackBank ();
+    var tb = this.model.getCurrentTrackBank ();
     var selectedTrack = tb.getSelectedTrack ();
     if (selectedTrack == null)
         return;
@@ -29,7 +29,7 @@ TrackMode.prototype.onValueKnob = function (index, value)
 
 TrackMode.prototype.updateDisplay = function ()
 {
-    var t = this.model.getTrackBank ().getSelectedTrack ();
+    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
     var d = this.surface.getDisplay ();
     
     if (t == null)

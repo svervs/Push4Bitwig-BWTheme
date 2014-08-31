@@ -23,7 +23,7 @@ PlayView.prototype = new BaseView ();
 
 PlayView.prototype.updateNoteMapping = function ()
 {
-    var t = this.model.getTrackBank ().getSelectedTrack ();
+    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
     this.noteMap = t != null && t.canHoldNotes ? this.scales.getNoteMatrix () : this.scales.getEmptyMatrix ();
     // Workaround: https://github.com/git-moss/Push4Bitwig/issues/7
     scheduleTask (doObject (this, function () { this.surface.setKeyTranslationTable (this.noteMap); }), null, 100);
@@ -36,7 +36,7 @@ PlayView.prototype.onActivate = function ()
     this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
     this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
     this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.model.getTrackBank ().setIndication (false);
+    this.model.getCurrentTrackBank ().setIndication (false);
     this.updateSceneButtons ();
     this.initMaxVelocity ();
 };
@@ -65,9 +65,9 @@ PlayView.prototype.usesButton = function (buttonID)
 
 PlayView.prototype.drawGrid = function ()
 {
-    var t = this.model.getTrackBank ().getSelectedTrack ();
+    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
     var isKeyboardEnabled = t != null && t.canHoldNotes;
-    var isRecording = this.model.getTransport ().isRecording || this.model.getTrackBank ().isClipRecording ();
+    var isRecording = this.model.getTransport ().isRecording || this.model.getCurrentTrackBank ().isClipRecording ();
     for (var i = 36; i < 100; i++)
     {
         this.surface.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ?
@@ -79,7 +79,7 @@ PlayView.prototype.drawGrid = function ()
 
 PlayView.prototype.onGridNote = function (note, velocity)
 {
-    var t = this.model.getTrackBank ().getSelectedTrack ();
+    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
     if (t == null || !t.canHoldNotes)
         return;
     // Mark selected notes
@@ -128,7 +128,7 @@ PlayView.prototype.scrollLeft = function (event)
         this.model.getCursorDevice ().selectPrevious ();
     else
     {
-        var tb = this.model.getTrackBank ();
+        var tb = this.model.getCurrentTrackBank ();
         var sel = tb.getSelectedTrack ();
         var index = sel == null ? 0 : sel.index - 1;
         if (index == -1)
@@ -149,7 +149,7 @@ PlayView.prototype.scrollRight = function (event)
         this.model.getCursorDevice ().selectNext ();
     else
     {
-        var tb = this.model.getTrackBank ();
+        var tb = this.model.getCurrentTrackBank ();
         var sel = tb.getSelectedTrack ();
         var index = sel == null ? 0 : sel.index + 1;
         if (index == 8)

@@ -38,7 +38,7 @@ SequencerView.prototype.updateNoteMapping = function ()
 
 SequencerView.prototype.updateScale = function ()
 {
-    var t = this.model.getTrackBank ().getSelectedTrack ();
+    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
     this.noteMap = t != null && t.canHoldNotes ? this.scales.getSequencerMatrix (SequencerView.NUM_DISPLAY_ROWS, this.offsetY) : this.scales.getEmptyMatrix ();
 };
 
@@ -86,7 +86,7 @@ SequencerView.prototype.drawGrid = function ()
 {
     this.turnOffBlink ();
 
-    var t = this.model.getTrackBank ().getSelectedTrack ();
+    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
     var isKeyboardEnabled = t != null && t.canHoldNotes;
 
     var step = this.clip.getCurrentStep ();
