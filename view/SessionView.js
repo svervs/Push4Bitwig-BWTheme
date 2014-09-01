@@ -42,7 +42,6 @@ SessionView.prototype.updateDevice = function ()
     if (m != null)
     {
         m.updateDisplay ();
-        //m.updateFirstRow ();
         m.updateSecondRow ();
     }
 
@@ -52,9 +51,7 @@ SessionView.prototype.updateDevice = function ()
             this.surface.setButton (20 + i, PUSH_COLOR_GREEN_HI);
     }
     else
-    {
         m.updateFirstRow ();
-    }
 
     this.updateButtons ();
     this.updateArrows ();

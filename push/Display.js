@@ -52,7 +52,7 @@ Display.SYSEX_MESSAGE =
 // 17 characters or 2 cells (0-7).
 function Display (output)
 {
-    AbstractDisplay.call (this, output, 4 /* No of rows */, 4 /* No of blocks */, 8 /* No of cells */);
+    AbstractDisplay.call (this, output, 4 /* No of rows */, 4 /* No of blocks */, 8 /* No of cells */, 68 /* No of characters */);
 }
 Display.prototype = new AbstractDisplay ();
 Display.FORMAT_RAW = AbstractDisplay.FORMAT_RAW;
