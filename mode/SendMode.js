@@ -26,7 +26,7 @@ SendMode.prototype.updateDisplay = function ()
     for (var i = 0; i < 8; i++)
     {
         var t = tb.getTrack (i);
-        d.setCell (0, i, t.exists ? fxTrackBank.getTrack (sendIndex).name : "", Display.FORMAT_RAW)
+        d.setCell (0, i, t.exists ? (fxTrackBank == null ? t.sends[sendIndex].name : fxTrackBank.getTrack (sendIndex).name) : "", Display.FORMAT_RAW)
          .setCell (1, i, t.sends[sendIndex].volumeStr, Display.FORMAT_RAW)
          .setCell (2, i, t.exists ? t.sends[sendIndex].volume : "", t.exists ? Display.FORMAT_VALUE : Display.FORMAT_RAW);
     }

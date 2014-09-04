@@ -182,7 +182,7 @@ BaseView.prototype.onUndo = function (event)
 
 BaseView.prototype.onSmallKnob1 = function (increase)
 {
-    this.model.getTransport ().changeTempo (increase);
+    this.model.getTransport ().changeTempo (increase, this.surface.isShiftPressed ());
 };
 
 BaseView.prototype.onSmallKnob1Touch = function (isTouched)
@@ -325,7 +325,7 @@ BaseView.prototype.onPanAndSend = function (event)
         if (mode < MODE_PAN || mode > MODE_SEND6)
             mode = MODE_PAN;
         // Check if Send channel exists
-        if (mode >= MODE_SEND1 && mode <= MODE_SEND6 && !fxTrackBank.getTrack (mode - MODE_SEND1).exists)
+        if (mode >= MODE_SEND1 && mode <= MODE_SEND6 && (fxTrackBank != null && !fxTrackBank.getTrack (mode - MODE_SEND1).exists))
             mode = MODE_PAN;
     }
     this.surface.setPendingMode (mode);

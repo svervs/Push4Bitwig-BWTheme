@@ -28,9 +28,7 @@ TrackMode.prototype.updateDisplay = function ()
 {
     var currentTrackBank = this.model.getCurrentTrackBank ();
     var t = currentTrackBank.getSelectedTrack ();
-    var fxTrackBank = this.model.getEffectTrackBank ();
     var d = this.surface.getDisplay ();
-    var isFX = currentTrackBank === fxTrackBank;
     
     if (t == null)
         d.setRow (1, "                     Please selecta track...                        ")
@@ -43,15 +41,30 @@ TrackMode.prototype.updateDisplay = function ()
          .setCell (0, 1, "Pan", Display.FORMAT_RAW)
          .setCell (1, 1, t.panStr, Display.FORMAT_RAW)
          .setCell (2, 1, t.pan, Display.FORMAT_PAN);
-        
-        for (var i = 0; i < 6; i++)
+
+        var fxTrackBank = this.model.getEffectTrackBank ();
+        if (fxTrackBank != null)
         {
-            var fxTrack = fxTrackBank.getTrack (i);
-            var isEmpty = isFX || !fxTrack.exists;
-            d.setCell (0, 2 + i, isEmpty ? "" : fxTrack.name, Display.FORMAT_RAW)
-             .setCell (1, 2 + i, isEmpty ? "" : t.sends[i].volumeStr, Display.FORMAT_RAW)
-             .setCell (2, 2 + i, isEmpty ? "" : t.sends[i].volume, isEmpty ? Display.FORMAT_RAW : Display.FORMAT_VALUE);
+            var isFX = currentTrackBank === fxTrackBank;
+            for (var i = 0; i < 6; i++)
+            {
+                var fxTrack = fxTrackBank.getTrack (i);
+                var isEmpty = isFX || !fxTrack.exists;
+                d.setCell (0, 2 + i, isEmpty ? "" : fxTrack.name, Display.FORMAT_RAW)
+                 .setCell (1, 2 + i, isEmpty ? "" : t.sends[i].volumeStr, Display.FORMAT_RAW)
+                 .setCell (2, 2 + i, isEmpty ? "" : t.sends[i].volume, isEmpty ? Display.FORMAT_RAW : Display.FORMAT_VALUE);
+            }
         }
+        else
+        {
+            for (var i = 0; i < 6; i++)
+            {
+                d.setCell (0, 2 + i, t.sends[i].name, Display.FORMAT_RAW)
+                 .setCell (1, 2 + i, t.sends[i].volumeStr, Display.FORMAT_RAW)
+                 .setCell (2, 2 + i, t.sends[i].volume, Display.FORMAT_VALUE);
+            }
+        }
+        
         d.done (0).done (1).done (2);
     }
 
