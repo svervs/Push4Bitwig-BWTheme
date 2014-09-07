@@ -32,6 +32,7 @@ DrumView.prototype = new AbstractSequencerView ();
 DrumView.prototype.updateArrows = function ()
 {
     this.canScrollLeft = this.offsetX > 0;
+    // this.canScrollRight = true; We do not know the number of steps
     BaseView.prototype.updateArrows.call (this);
 };
 

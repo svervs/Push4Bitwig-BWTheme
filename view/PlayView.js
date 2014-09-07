@@ -61,6 +61,18 @@ PlayView.prototype.updateSceneButtons = function (buttonID)
         this.surface.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_BLACK);
 };
 
+PlayView.prototype.updateArrows = function ()
+{
+    var tb = this.model.getCurrentTrackBank ();
+    var isDevice = this.surface.getCurrentMode () == MODE_BANK_DEVICE || this.surface.getCurrentMode () == MODE_PRESET;
+    var cd = this.model.getCursorDevice ();
+    var sel = tb.getSelectedTrack ();
+    this.canScrollLeft = isDevice ? true /* TODO: Bitwig bug cd.canSelectPreviousFX () */ : sel != null && sel.index > 0 || tb.canScrollTracksUp ();
+    this.canScrollRight = isDevice ? true /* TODO: Bitwig bug cd.canSelectNextFX () */ : sel != null && sel.index < 7 || tb.canScrollTracksDown ();
+
+    BaseView.prototype.updateArrows.call (this);
+};
+
 PlayView.prototype.usesButton = function (buttonID)
 {
     switch (buttonID)

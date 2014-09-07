@@ -66,7 +66,7 @@ SessionView.prototype.updateArrows = function ()
     this.canScrollRight = this.flip ? tb.canScrollScenesUp () : tb.canScrollTracksDown ();
     BaseView.prototype.updateArrows.call (this);
     // Flipped scene buttons are not updated unless we redraw them here
-    this.drawSceneButtons();
+    this.drawSceneButtons ();
 };
 
 SessionView.prototype.usesButton = function (buttonID)
@@ -310,10 +310,10 @@ SessionView.prototype.drawGrid = function ()
 
 SessionView.prototype.drawPad = function (slot, x, y, isArmed)
 {
-    var color = slot.isRecording ? PUSH_COLOR_RED_HI :
+    var color = slot.isRecording ? PUSH_COLOR2_RED_HI :
         (slot.hasContent ?
-            (slot.color ? slot.color : PUSH_COLOR_ORANGE_HI) :
-            (isArmed ? PUSH_COLOR_RED_LO : PUSH_COLOR_BLACK));
+            (slot.color ? slot.color : PUSH_COLOR2_AMBER) :
+            (isArmed ? PUSH_COLOR2_RED_LO : PUSH_COLOR_BLACK));
     var n = 92 + x - 8 * y;
     this.surface.pads.light (n, color);
     this.surface.pads.blink (n, (slot.isQueued || slot.isPlaying) ? (slot.isRecording ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : PUSH_COLOR_BLACK, slot.isQueued);

@@ -16,9 +16,9 @@ AbstractTrackMode.prototype.onFirstRow = function (index)
     var tb = this.model.getCurrentTrackBank ();
     var selTrack = tb.getSelectedTrack ();
     if ((selTrack != null && selTrack.index == index) || this.surface.isShiftPressed ())
-        this.model.getCurrentTrackBank ().toggleArm (index);
+        tb.toggleArm (index);
     else
-        this.model.getCurrentTrackBank ().select (index);
+        tb.select (index);
 };
 
 AbstractTrackMode.prototype.onSecondRow = function (index)
@@ -47,8 +47,19 @@ AbstractTrackMode.prototype.updateSecondRow = function ()
     for (var i = 0; i < 8; i++)
     {
         var t = tb.getTrack (i);
-        this.surface.setButton (102 + i, t.name != '' && !(muteState ? t.mute : t.solo) ?
-            muteState ? PUSH_COLOR2_YELLOW_HI : PUSH_COLOR2_BLUE_HI : PUSH_COLOR_BLACK);
+        
+        var color = PUSH_COLOR_BLACK;
+        if (t.exists)
+        {
+            if (muteState)
+            {
+                if (!t.mute)
+                    color = PUSH_COLOR2_YELLOW_HI;
+            }
+            else
+                color = t.solo ? PUSH_COLOR2_BLUE_HI : PUSH_COLOR2_GREY_LO;
+        }
+        this.surface.setButton (102 + i, color);
     }
 };
 

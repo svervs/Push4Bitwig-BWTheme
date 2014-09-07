@@ -431,11 +431,7 @@ BaseView.prototype.onScales = function (event)
     }
 };
 
-BaseView.prototype.onUser = function (event) 
-{
-    var tb = this.model.getCurrentTrackBank ();
-    tb.trackBank.scrollToTrack (15);
-};
+BaseView.prototype.onUser = function (event) {};
 
 BaseView.prototype.onRepeat = function (event) {};
 
