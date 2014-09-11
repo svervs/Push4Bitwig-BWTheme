@@ -74,7 +74,7 @@ DrumView.prototype.onGridNote = function (note, velocity)
     {
         this.selectedPad = 4 * y + x;   // 0-16
         var playedPad = velocity == 0 ? -1 : this.selectedPad;
-        
+
         // Mark selected note
         this.pressedKeys[this.offsetY + this.selectedPad] = velocity;
 
@@ -120,7 +120,7 @@ DrumView.prototype.onOctaveUp = function (event)
 DrumView.prototype.drawGrid = function ()
 {
     this.turnOffBlink ();
-    var isRecording = this.model.getTransport ().isRecording || this.model.getCurrentTrackBank ().isClipRecording ();
+    var isRecording = this.model.hasRecordingState ();
 
     // 4x4 Grid
     for (var y = 0; y < 4; y++)

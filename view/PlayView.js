@@ -93,7 +93,7 @@ PlayView.prototype.drawGrid = function ()
 {
     var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
     var isKeyboardEnabled = t != null && t.canHoldNotes;
-    var isRecording = this.model.getTransport ().isRecording || this.model.getCurrentTrackBank ().isClipRecording ();
+    var isRecording = this.model.hasRecordingState ();
     for (var i = 36; i < 100; i++)
     {
         this.surface.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ?

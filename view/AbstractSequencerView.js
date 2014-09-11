@@ -50,11 +50,6 @@ AbstractSequencerView.prototype.scrollRight = function (event)
     this.clip.scrollStepsPageForward ();
 };
 
-AbstractSequencerView.prototype.isInXRange = function (x)
-{
-    return x >= this.offsetX && x < this.offsetX + this.clip.getStepSize ();
-};
-
 AbstractSequencerView.prototype.onScene = function (index)
 {
     this.selectedIndex = 7 - index;
