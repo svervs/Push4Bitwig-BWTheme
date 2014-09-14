@@ -124,3 +124,12 @@ Scales.SCALE_COLOR_OFF          = PUSH_COLOR_BLACK;
 Scales.SCALE_COLOR_OCTAVE       = PUSH_COLOR2_OCEAN_HI;
 Scales.SCALE_COLOR_NOTE         = PUSH_COLOR2_WHITE;
 Scales.SCALE_COLOR_OUT_OF_SCALE = PUSH_COLOR_BLACK;
+
+AbstractSessionView.CLIP_COLOR_IS_RECORDING        = { color: PUSH_COLOR2_RED_HI, blink: null,                fast: false };
+AbstractSessionView.CLIP_COLOR_IS_RECORDING_QUEUED = { color: PUSH_COLOR2_RED_HI, blink: PUSH_COLOR2_RED_HI,  fast: true  };
+AbstractSessionView.CLIP_COLOR_IS_PLAYING          = { color: PUSH_COLOR2_GREEN,  blink: PUSH_COLOR2_GREEN,   fast: false };
+AbstractSessionView.CLIP_COLOR_IS_PLAYING_QUEUED   = { color: PUSH_COLOR2_GREEN,  blink: PUSH_COLOR2_GREEN,   fast: true  };
+AbstractSessionView.CLIP_COLOR_HAS_CONTENT         = { color: PUSH_COLOR2_AMBER,  blink: null,                fast: false };
+AbstractSessionView.CLIP_COLOR_NO_CONTENT          = { color: PUSH_COLOR2_BLACK,  blink: null,                fast: false };
+AbstractSessionView.CLIP_COLOR_RECORDING_ARMED     = { color: PUSH_COLOR2_RED_LO, blink: null,                fast: false };
+AbstractSessionView.USE_CLIP_COLOR                 = true;

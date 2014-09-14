@@ -5,23 +5,15 @@
 
 function SessionView (model)
 {
-    BaseView.call (this, model);
-
-    this.flip = false;
-
-    this.scrollerInterval = Config.sceneScrollInterval;
-    this.isTemporary = false;
+    AbstractSessionView.call (this, model, 8, 8);
 }
-SessionView.prototype = new BaseView ();
+SessionView.prototype = new AbstractSessionView ();
 
 SessionView.prototype.onActivate = function ()
 {
-    BaseView.prototype.onActivate.call (this);
-
+    AbstractSessionView.prototype.onActivate.call (this);
     this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
     this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
-    this.model.getCurrentTrackBank ().setIndication (true);
-    this.drawSceneButtons ();
 };
 
 SessionView.prototype.drawSceneButtons = function ()
@@ -57,18 +49,6 @@ SessionView.prototype.updateDevice = function ()
     this.updateArrows ();
 };
 
-SessionView.prototype.updateArrows = function ()
-{
-    var tb = this.model.getCurrentTrackBank ();
-    this.canScrollUp = this.flip ? tb.canScrollTracksUp () : tb.canScrollScenesDown ();
-    this.canScrollDown = this.flip ? tb.canScrollTracksDown () : tb.canScrollScenesUp ();
-    this.canScrollLeft = this.flip ? tb.canScrollScenesDown () : tb.canScrollTracksUp ();
-    this.canScrollRight = this.flip ? tb.canScrollScenesUp () : tb.canScrollTracksDown ();
-    BaseView.prototype.updateArrows.call (this);
-    // Flipped scene buttons are not updated unless we redraw them here
-    this.drawSceneButtons ();
-};
-
 SessionView.prototype.usesButton = function (buttonID)
 {
     switch (buttonID)
@@ -84,49 +64,6 @@ SessionView.prototype.usesButton = function (buttonID)
             return false;
     }
     return true;
-};
-
-SessionView.prototype.onGridNote = function (note, velocity)
-{
-    if (velocity == 0)
-        return;
-
-    var index = note - 36;
-    var t = index % 8;
-    var s = 7 - Math.floor (index / 8);
-    
-    if (this.flip)
-    {
-        var dummy = t;
-        t = s;
-        s = dummy;
-    }
-
-    var tb = this.model.getCurrentTrackBank ();
-    var slot = tb.getTrack (t).slots[s];
-    var slots = tb.getClipLauncherSlots (t);
-    
-    if (!this.surface.isSelectPressed ())
-    {
-        if (tb.getTrack (t).recarm)
-        {
-            if (slot.isRecording)
-                slots.launch (s);
-            else
-                slots.record (s);
-        }
-        else
-            slots.launch (s);
-    }
-    slots.select (s);
-    
-    /* TODO Focus must be on clip launcher!
-    
-    if (this.surface.isDeletePressed ())
-    {
-        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
-        this.model.getApplication ().deleteSelection ();
-    }*/
 };
 
 SessionView.prototype.onClip = function (event)
@@ -155,7 +92,7 @@ SessionView.prototype.onSession = function (event)
         if (this.isTemporary)
         {
             this.isTemporary = false;
-            this.surface.setActiveView (BaseView.lastNoteView);
+            this.surface.setActiveView (AbstractView.lastNoteView);
         }
     }
     else if (event.isDown ())
@@ -171,82 +108,6 @@ SessionView.prototype.onSession = function (event)
     }
 };
 
-SessionView.prototype.scrollLeft = function (event)
-{
-    var tb = this.model.getCurrentTrackBank ();
-    if (this.flip)
-    {
-        if (this.surface.isShiftPressed ())
-            tb.scrollScenesPageUp ();
-        else
-            tb.scrollScenesUp ();
-    }
-    else
-    {
-        if (this.surface.isShiftPressed ())
-            tb.scrollTracksPageUp ();
-        else
-            tb.scrollTracksUp ();
-    }
-};
-
-SessionView.prototype.scrollRight = function (event)
-{
-    var tb = this.model.getCurrentTrackBank ();
-    if (this.flip)
-    {
-        if (this.surface.isShiftPressed ())
-            tb.scrollScenesPageDown ();
-        else
-            tb.scrollScenesDown ();
-    }
-    else
-    {
-        if (this.surface.isShiftPressed ())
-            tb.scrollTracksPageDown ();
-        else
-            tb.scrollTracksDown ();
-    }
-};
-
-SessionView.prototype.scrollUp = function (event)
-{
-    var tb = this.model.getCurrentTrackBank ();
-    if (this.flip)
-    {
-        if (this.surface.isShiftPressed ())
-            tb.scrollTracksPageUp ();
-        else
-            tb.scrollTracksUp ();
-    }
-    else
-    {
-        if (this.surface.isShiftPressed ())
-            tb.scrollScenesPageUp ();
-        else
-            tb.scrollScenesUp ();
-    }
-};
-
-SessionView.prototype.scrollDown = function (event)
-{
-    var tb = this.model.getCurrentTrackBank ();
-    if (this.flip)
-    {
-        if (this.surface.isShiftPressed ())
-            tb.scrollTracksPageDown ();
-        else
-            tb.scrollTracksDown ();
-    }
-    else
-    {
-        if (this.surface.isShiftPressed ())
-            tb.scrollScenesPageDown ();
-        else
-            tb.scrollScenesDown ();
-    }
-};
-
 SessionView.prototype.onScene = function (scene)
 {
     this.sceneOrFirstRowButtonPressed (scene, !this.flip);
@@ -255,7 +116,7 @@ SessionView.prototype.onScene = function (scene)
 SessionView.prototype.onFirstRow = function (index)
 {
     if (this.surface.getMode (this.surface.getCurrentMode ()).hasSecondRowPriority)
-        BaseView.prototype.onFirstRow.call (this, index);
+        AbstractView.prototype.onFirstRow.call (this, index);
     else
         this.sceneOrFirstRowButtonPressed (index, this.flip);
 };
@@ -265,7 +126,7 @@ SessionView.prototype.onSecondRow = function (index)
     if (this.surface.isShiftPressed ())
         this.model.getCurrentTrackBank ().returnToArrangement (index);
     else
-        BaseView.prototype.onSecondRow.call (this, index);
+        AbstractView.prototype.onSecondRow.call (this, index);
 };
 
 // Rec-Enable and Scene Start are flipped
@@ -285,7 +146,7 @@ SessionView.prototype.sceneOrFirstRowButtonPressed = function (index, isScene)
     }
 };
 
-// the logic for arming a track moved to AbstractTrackMode.onFirstRow()
+// The logic for arming a track moved to AbstractTrackMode.onFirstRow()
 // still, just reimplementing the logic here doesn't seem 'bad'
 SessionView.prototype._onFirstRow = function (index)
 {
@@ -295,26 +156,4 @@ SessionView.prototype._onFirstRow = function (index)
         this.model.getCurrentTrackBank ().toggleArm (index);
     else
         this.model.getCurrentTrackBank ().select (index);
-};
-
-SessionView.prototype.drawGrid = function ()
-{
-    var tb = this.model.getCurrentTrackBank ();
-    for (var x = 0; x < 8; x++)
-    {
-        var t = tb.getTrack (x);
-        for (var y = 0; y < 8; y++)
-            this.drawPad (t.slots[y], this.flip ? y : x, this.flip ? x : y, t.recarm);
-    }
-};
-
-SessionView.prototype.drawPad = function (slot, x, y, isArmed)
-{
-    var color = slot.isRecording ? PUSH_COLOR2_RED_HI :
-        (slot.hasContent ?
-            (slot.color ? slot.color : PUSH_COLOR2_AMBER) :
-            (isArmed ? PUSH_COLOR2_RED_LO : PUSH_COLOR_BLACK));
-    var n = 92 + x - 8 * y;
-    this.surface.pads.light (n, color);
-    this.surface.pads.blink (n, (slot.isQueued || slot.isPlaying) ? (slot.isRecording ? PUSH_COLOR_RED_HI : PUSH_COLOR_GREEN_HI) : PUSH_COLOR_BLACK, slot.isQueued);
 };

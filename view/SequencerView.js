@@ -5,7 +5,7 @@
 SequencerView.NUM_DISPLAY_ROWS = 8;
 SequencerView.NUM_DISPLAY_COLS = 8;
 SequencerView.NUM_OCTAVE       = 12;
-SequencerView.START_KEY = 36;
+SequencerView.START_KEY        = 36;
 
 function SequencerView (model)
 {
@@ -27,7 +27,7 @@ SequencerView.prototype.updateArrows = function ()
     this.canScrollDown = this.offsetY - SequencerView.NUM_OCTAVE >= 0;
     this.canScrollLeft = this.offsetX > 0;
     // this.canScrollRight = true; We do not know the number of steps
-    BaseView.prototype.updateArrows.call (this);
+    AbstractView.prototype.updateArrows.call (this);
     this.drawSceneButtons ();
 };
 
@@ -85,8 +85,6 @@ SequencerView.prototype.scrollDown = function (event)
 
 SequencerView.prototype.drawGrid = function ()
 {
-    this.turnOffBlink ();
-
     var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
     var isKeyboardEnabled = t != null && t.canHoldNotes;
 
@@ -100,9 +98,9 @@ SequencerView.prototype.drawGrid = function ()
             var isSet = this.clip.getStep (x, row);
             var hilite = x == hiStep;
             if (isKeyboardEnabled)
-                this.surface.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLUE) : hilite ? PUSH_COLOR2_GREEN_HI : this.scales.getColor (this.noteMap, y));
+                this.surface.pads.lightEx (x, 7 - y, isSet ? (hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLUE) : hilite ? PUSH_COLOR2_GREEN_HI : this.scales.getColor (this.noteMap, y), null, false);
             else
-                this.surface.pads.lightEx (x, y, PUSH_COLOR2_BLACK);
+                this.surface.pads.lightEx (x, 7 - y, PUSH_COLOR2_BLACK, null, false);
         }
     }
 };

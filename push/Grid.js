@@ -17,28 +17,30 @@ function Grid (output)
     this.blinkFast = initArray (false, 128);
 }
 
-Grid.prototype.light = function (note, color)
+Grid.prototype.light = function (note, color, blinkColor, fast)
 {
-    this.buttonColors[note] = color;
+    this.setLight (note, color, blinkColor, fast);
 };
 
-Grid.prototype.lightEx = function (x, y, color)
+Grid.prototype.lightEx = function (x, y, color, blinkColor, fast)
 {
-    this.buttonColors[36 + x + 8 * y] = color;
+    this.setLight (92 + x - 8 * y, color, blinkColor, fast);
 };
 
-Grid.prototype.blink = function (note, color, fast)
+Grid.prototype.setLight = function (index, color, blinkColor, fast)
 {
-    this.blinkColors[note] = color;
-    this.blinkFast[note] = fast;
-};
-
-Grid.prototype.blinkEx = function (x, y, color)
-{
-    var note = 36 + x + 8 * y;
-    this.blinkColors[note] = color;
-    this.blinkFast[note] = fast;
-};
+    if (blinkColor)
+    {
+        this.buttonColors[index] = color;
+        this.blinkColors[index] = blinkColor;
+    }
+    else
+    {
+        this.buttonColors[index] = color;
+        this.blinkColors[index]  = PUSH_COLOR_BLACK;
+    }
+    this.blinkFast[index] = fast;
+}
 
 Grid.prototype.flush = function ()
 {
@@ -67,6 +69,6 @@ Grid.prototype.flush = function ()
 Grid.prototype.turnOff = function ()
 {
     for (var i = 36; i < 100; i++)
-        this.light (i, PUSH_COLOR_BLACK);
+        this.light (i, PUSH_COLOR_BLACK, null, false);
     this.flush ();
 };

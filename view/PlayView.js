@@ -5,7 +5,7 @@
 
 function PlayView (model)
 {
-    BaseView.call (this, model);
+    AbstractView.call (this, model);
     this.scales = model.getScales ();
     this.noteMap = this.scales.getEmptyMatrix ();
     this.pressedKeys = initArray (0, 128);
@@ -33,7 +33,7 @@ function PlayView (model)
 
     this.scrollerInterval = Config.trackScrollInterval;
 }
-PlayView.prototype = new BaseView ();
+PlayView.prototype = new AbstractView ();
 
 PlayView.prototype.updateNoteMapping = function ()
 {
@@ -45,7 +45,7 @@ PlayView.prototype.updateNoteMapping = function ()
 
 PlayView.prototype.onActivate = function ()
 {
-    BaseView.prototype.onActivate.call (this);
+    AbstractView.prototype.onActivate.call (this);
 
     this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
     this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
@@ -70,7 +70,7 @@ PlayView.prototype.updateArrows = function ()
     this.canScrollLeft = isDevice ? true /* TODO: Bitwig bug cd.canSelectPreviousFX () */ : sel != null && sel.index > 0 || tb.canScrollTracksUp ();
     this.canScrollRight = isDevice ? true /* TODO: Bitwig bug cd.canSelectNextFX () */ : sel != null && sel.index < 7 || tb.canScrollTracksDown ();
 
-    BaseView.prototype.updateArrows.call (this);
+    AbstractView.prototype.updateArrows.call (this);
 };
 
 PlayView.prototype.usesButton = function (buttonID)
@@ -98,8 +98,7 @@ PlayView.prototype.drawGrid = function ()
     {
         this.surface.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ?
             (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI) :
-            this.scales.getColor (this.noteMap, i)) : PUSH_COLOR2_BLACK);
-        this.surface.pads.blink (i, PUSH_COLOR2_BLACK);
+            this.scales.getColor (this.noteMap, i)) : PUSH_COLOR2_BLACK, null, false);
     }
 };
 
@@ -195,7 +194,7 @@ PlayView.prototype.scrollRight = function (event)
 
 PlayView.prototype.onAccent = function (event)
 {
-    BaseView.prototype.onAccent.call (this, event);
+    AbstractView.prototype.onAccent.call (this, event);
     if (event.isUp ())
         this.initMaxVelocity ();
 };
@@ -211,4 +210,4 @@ PlayView.prototype.clearPressedKeys = function ()
 {
     for (var i = 0; i < 128; i++)
         this.pressedKeys[i] = 0;
-}
+};

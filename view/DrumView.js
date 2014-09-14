@@ -11,7 +11,8 @@ function DrumView (model)
     this.offsetY = DrumView.DRUM_START_KEY;
     this.canScrollUp = false;
     this.canScrollDown = false;
-    this.pads = initArray ({ exists: false, solo: false, mute: false }, 16);
+    // TODO: Read the information in Bitwig 1.1
+    this.pads = initArray ({ exists: true, solo: false, mute: false }, 16);
     this.selectedPad = 0;
     this.pressedKeys = initArray (0, 128);
     this.noteMap = this.scales.getEmptyMatrix ();
@@ -33,7 +34,7 @@ DrumView.prototype.updateArrows = function ()
 {
     this.canScrollLeft = this.offsetX > 0;
     // this.canScrollRight = true; We do not know the number of steps
-    BaseView.prototype.updateArrows.call (this);
+    AbstractView.prototype.updateArrows.call (this);
 };
 
 DrumView.prototype.updateNoteMapping = function ()
@@ -119,7 +120,6 @@ DrumView.prototype.onOctaveUp = function (event)
 
 DrumView.prototype.drawGrid = function ()
 {
-    this.turnOffBlink ();
     var isRecording = this.model.hasRecordingState ();
 
     // 4x4 Grid
@@ -130,15 +130,15 @@ DrumView.prototype.drawGrid = function ()
             var index = 4 * y + x;
             var p = this.pads[index];
             var c = this.pressedKeys[this.offsetY + index] > 0 ? (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI) : (this.selectedPad == index ? PUSH_COLOR2_BLUE_HI : (p.exists ? (p.mute ? PUSH_COLOR2_AMBER_LO : (p.solo ? PUSH_COLOR2_BLUE_LO : PUSH_COLOR2_YELLOW_HI)) : PUSH_COLOR_YELLOW_LO));
-            this.surface.pads.lightEx (x, y, c);
+            this.surface.pads.lightEx (x, 7 - y, c, null, false);
         }
     }
-    
+ 
     // Clip length/loop
     for (var x = 4; x < 8; x++)
         for (var y = 0; y < 4; y++)
-            this.surface.pads.lightEx (x, y, PUSH_COLOR_BLACK);
-            
+            this.surface.pads.lightEx (x, 7 - y, PUSH_COLOR_BLACK, null, false);
+ 
     // Paint the sequencer steps
     var step = this.clip.getCurrentStep ();
     var hiStep = this.isInXRange (step) ? step % DrumView.NUM_DISPLAY_COLS : -1;
@@ -148,7 +148,7 @@ DrumView.prototype.drawGrid = function ()
         var hilite = col == hiStep;
         var x = col % 8;
         var y = 7 - Math.floor (col / 8);
-        this.surface.pads.lightEx (x, y, isSet ? (hilite ? PUSH_COLOR2_GREEN_LO : PUSH_COLOR2_BLUE_HI) : hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLACK);
+        this.surface.pads.lightEx (x, 7 - y, isSet ? (hilite ? PUSH_COLOR2_GREEN_LO : PUSH_COLOR2_BLUE_HI) : hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLACK, null, false);
     }
 };
 

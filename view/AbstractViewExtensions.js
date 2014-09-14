@@ -3,21 +3,14 @@
 // (c) 2014
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-function BaseView (model)
-{
-    AbstractView.call (this, model);
+AbstractView.lastNoteView = VIEW_PLAY;
 
-    this.stopPressed = false;
-    // TODO can this be integrated into the event system so all long presses
-    // record the mode at the start of the touch down event
-    this.longPressPreviousMode = null;
-}
-BaseView.prototype = new AbstractView ();
-BaseView.prototype.constructor = BaseView;
+AbstractView.prototype.stopPressed = false;
+// TODO can this be integrated into the event system so all long presses
+// record the mode at the start of the touch down event
+AbstractView.prototype.longPressPreviousMode = null;
 
-BaseView.lastNoteView = VIEW_PLAY;
-
-BaseView.prototype.onPitchbend = function (data1, data2)
+AbstractView.prototype.onPitchbend = function (data1, data2)
 {
     if (this.surface.isShiftPressed ())
     {
@@ -56,7 +49,7 @@ BaseView.prototype.onPitchbend = function (data1, data2)
 // Group 1
 //--------------------------------------
 
-BaseView.prototype.onPlay = function (event)
+AbstractView.prototype.onPlay = function (event)
 {
     if (!event.isDown ())
         return;
@@ -77,7 +70,7 @@ BaseView.prototype.onPlay = function (event)
     }
 };
 
-BaseView.prototype.onRecord = function (event)
+AbstractView.prototype.onRecord = function (event)
 {
     if (!event.isDown ())
         return;
@@ -87,7 +80,7 @@ BaseView.prototype.onRecord = function (event)
         this.model.getTransport ().record ();
 };
 
-BaseView.prototype.onNew = function (event)
+AbstractView.prototype.onNew = function (event)
 {
     if (!event.isDown ())
         return;
@@ -118,13 +111,13 @@ BaseView.prototype.onNew = function (event)
     displayNotification ("In the current selected grid view there is no empty slot. Please scroll down.");
 };
 
-BaseView.prototype.onDuplicate = function (event)
+AbstractView.prototype.onDuplicate = function (event)
 {
     if (event.isDown ())
         this.model.getApplication ().doubleClip ();
 };
 
-BaseView.prototype.onAutomation = function (event)
+AbstractView.prototype.onAutomation = function (event)
 {
     if (!event.isDown ())
         return;
@@ -133,7 +126,7 @@ BaseView.prototype.onAutomation = function (event)
         this.model.getTransport ().toggleWriteArrangerAutomation ();
 };
 
-BaseView.prototype.onFixedLength = function (event)
+AbstractView.prototype.onFixedLength = function (event)
 {
     if (!event.isLong ())
         this.surface.setPendingMode (event.isDown () ? MODE_FIXED : this.surface.getPreviousMode ());
@@ -143,7 +136,7 @@ BaseView.prototype.onFixedLength = function (event)
 // Group 2
 //--------------------------------------
 
-BaseView.prototype.onQuantize = function (event)
+AbstractView.prototype.onQuantize = function (event)
 {
     if (!event.isDown ())
         return;
@@ -154,19 +147,19 @@ BaseView.prototype.onQuantize = function (event)
         this.model.getApplication ().quantize ();
 };
 
-BaseView.prototype.onDouble = function (event)
+AbstractView.prototype.onDouble = function (event)
 {
     if (event.isDown ())
         this.model.getApplication ().duplicate ();
 };
 
-BaseView.prototype.onDelete = function (event)
+AbstractView.prototype.onDelete = function (event)
 {
     if (event.isUp ())
         this.model.getApplication ().deleteSelection ();
 };
 
-BaseView.prototype.onUndo = function (event)
+AbstractView.prototype.onUndo = function (event)
 {
     if (!event.isDown ())
         return;
@@ -180,35 +173,35 @@ BaseView.prototype.onUndo = function (event)
 // Group 3
 //--------------------------------------
 
-BaseView.prototype.onSmallKnob1 = function (increase)
+AbstractView.prototype.onSmallKnob1 = function (increase)
 {
     this.model.getTransport ().changeTempo (increase, this.surface.isShiftPressed ());
 };
 
-BaseView.prototype.onSmallKnob1Touch = function (isTouched)
+AbstractView.prototype.onSmallKnob1Touch = function (isTouched)
 {
     this.model.getTransport ().setTempoIndication (isTouched);
 };
 
 // Change time (play position)
-BaseView.prototype.onSmallKnob2 = function (increase)
+AbstractView.prototype.onSmallKnob2 = function (increase)
 {
     this.model.getTransport ().changePosition (increase, this.surface.isShiftPressed ());
 };
 
-BaseView.prototype.onSmallKnob2Touch = function (isTouched) {};
+AbstractView.prototype.onSmallKnob2Touch = function (isTouched) {};
 
 //--------------------------------------
 // Group 4
 //--------------------------------------
 
-BaseView.prototype.onMetronome = function (event)
+AbstractView.prototype.onMetronome = function (event)
 {
     if (event.isDown ())
         this.model.getTransport ().toggleClick ();
 };
 
-BaseView.prototype.onTapTempo = function (event)
+AbstractView.prototype.onTapTempo = function (event)
 {
     if (event.isDown ())
         this.model.getTransport ().tapTempo ();
@@ -218,19 +211,19 @@ BaseView.prototype.onTapTempo = function (event)
 // Group 5
 //--------------------------------------
 
-BaseView.prototype.onValueKnobTouch = function (knob, isTouched)
+AbstractView.prototype.onValueKnobTouch = function (knob, isTouched)
 {
     var m = this.surface.getActiveMode ();
     if (m != null)
         m.onValueKnobTouch (knob, isTouched);
 };
 
-BaseView.prototype.onValueKnob9 = function (value)
+AbstractView.prototype.onValueKnob9 = function (value)
 {
     this.model.getMasterTrack ().changeVolume (value, this.surface.getFractionValue ());
 };
 
-BaseView.prototype.onValueKnob9Touch = function (isTouched)
+AbstractView.prototype.onValueKnob9Touch = function (isTouched)
 {
     var isMasterMode = this.surface.getCurrentMode () == MODE_MASTER;
     if (isTouched && isMasterMode)
@@ -242,14 +235,14 @@ BaseView.prototype.onValueKnob9Touch = function (isTouched)
         this.surface.setPendingMode (this.surface.getPreviousMode ());
 };
 
-BaseView.prototype.onFirstRow = function (index)
+AbstractView.prototype.onFirstRow = function (index)
 {
     var m = this.surface.getActiveMode ();
     if (m != null)
         m.onFirstRow (index);
 };
 
-BaseView.prototype.onSecondRow = function (index)
+AbstractView.prototype.onSecondRow = function (index)
 {
     var m = this.surface.getActiveMode ();
     if (m != null)
@@ -260,7 +253,7 @@ BaseView.prototype.onSecondRow = function (index)
 // Group 6
 //--------------------------------------
 
-BaseView.prototype.onMaster = function (event)
+AbstractView.prototype.onMaster = function (event)
 {
     switch (event.getState ())
     {
@@ -286,7 +279,7 @@ BaseView.prototype.onMaster = function (event)
     }
 };
 
-BaseView.prototype.onStop = function (event)
+AbstractView.prototype.onStop = function (event)
 {
     if (this.surface.isShiftPressed ())
     {
@@ -297,19 +290,19 @@ BaseView.prototype.onStop = function (event)
     this.surface.setButton (PUSH_BUTTON_STOP, this.stopPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
-BaseView.prototype.onScene = function (index) {};
+AbstractView.prototype.onScene = function (index) {};
 
 //--------------------------------------
 // Group 7
 //--------------------------------------
 
-BaseView.prototype.onVolume = function (event)
+AbstractView.prototype.onVolume = function (event)
 {
     if (event.isDown ())
         this.surface.setPendingMode (MODE_VOLUME);
 };
 
-BaseView.prototype.onPanAndSend = function (event)
+AbstractView.prototype.onPanAndSend = function (event)
 {
     if (!event.isDown ())
         return;
@@ -331,7 +324,7 @@ BaseView.prototype.onPanAndSend = function (event)
     this.surface.setPendingMode (mode);
 };
 
-BaseView.prototype.onTrack = function (event)
+AbstractView.prototype.onTrack = function (event)
 {
     if (!event.isDown ())
         return;
@@ -348,9 +341,9 @@ BaseView.prototype.onTrack = function (event)
         this.surface.setPendingMode (MODE_TRACK);
 };
 
-BaseView.prototype.onClip = function (event) {};
+AbstractView.prototype.onClip = function (event) {};
 
-BaseView.prototype.onDevice = function (event)
+AbstractView.prototype.onDevice = function (event)
 {
     if (!event.isDown ())
         return;
@@ -362,7 +355,7 @@ BaseView.prototype.onDevice = function (event)
         this.surface.setPendingMode (MODE_PARAM_PAGE_SELECT);
 };
 
-BaseView.prototype.onBrowse = function (event)
+AbstractView.prototype.onBrowse = function (event)
 {
     if (!event.isDown ())
         return;
@@ -377,7 +370,7 @@ BaseView.prototype.onBrowse = function (event)
 // Group 8
 //--------------------------------------
 
-BaseView.prototype.onDeviceLeft = function (event)
+AbstractView.prototype.onDeviceLeft = function (event)
 {
     if (!event.isDown ())
         return;
@@ -390,7 +383,7 @@ BaseView.prototype.onDeviceLeft = function (event)
     }
 };
 
-BaseView.prototype.onDeviceRight = function (event)
+AbstractView.prototype.onDeviceRight = function (event)
 {
     if (!event.isDown ())
         return;
@@ -403,17 +396,17 @@ BaseView.prototype.onDeviceRight = function (event)
     }
 };
 
-BaseView.prototype.onMute = function (event)
+AbstractView.prototype.onMute = function (event)
 {
     this.model.getCurrentTrackBank ().setTrackState (TrackState.MUTE);
 };
 
-BaseView.prototype.onSolo = function (event)
+AbstractView.prototype.onSolo = function (event)
 {
     this.model.getCurrentTrackBank ().setTrackState (TrackState.SOLO);
 };
 
-BaseView.prototype.onScales = function (event)
+AbstractView.prototype.onScales = function (event)
 {
     switch (event.getState ())
     {
@@ -431,11 +424,11 @@ BaseView.prototype.onScales = function (event)
     }
 };
 
-BaseView.prototype.onUser = function (event) {};
+AbstractView.prototype.onUser = function (event) {};
 
-BaseView.prototype.onRepeat = function (event) {};
+AbstractView.prototype.onRepeat = function (event) {};
 
-BaseView.prototype.onAccent = function (event)
+AbstractView.prototype.onAccent = function (event)
 {
     switch (event.getState ())
     {
@@ -458,45 +451,45 @@ BaseView.prototype.onAccent = function (event)
     }
 };
 
-BaseView.prototype.onOctaveDown = function (event) {};
-BaseView.prototype.onOctaveUp = function (event) {};
+AbstractView.prototype.onOctaveDown = function (event) {};
+AbstractView.prototype.onOctaveUp = function (event) {};
 
 //--------------------------------------
 // Group 9
 //--------------------------------------
 
-BaseView.prototype.onAddEffect = function (event)
+AbstractView.prototype.onAddEffect = function (event)
 {
     if (event.isDown ())
         this.model.getApplication ().addEffect ();
 };
 
-BaseView.prototype.onAddTrack = function (event)
+AbstractView.prototype.onAddTrack = function (event)
 {
     if (event.isDown ())
         this.model.getApplication ().addTrack ();
 };
 
-BaseView.prototype.onNote = function (event)
+AbstractView.prototype.onNote = function (event)
 {
     if (!event.isDown ())
         return;
-    BaseView.lastNoteView = this.surface.isActiveView (VIEW_SESSION) ? BaseView.lastNoteView :
+    AbstractView.lastNoteView = this.surface.isActiveView (VIEW_SESSION) ? AbstractView.lastNoteView :
                                 (this.surface.isShiftPressed () ? VIEW_DRUM : (this.surface.isActiveView (VIEW_PLAY) ? VIEW_SEQUENCER : VIEW_PLAY));
-    this.surface.setActiveView (BaseView.lastNoteView);
+    this.surface.setActiveView (AbstractView.lastNoteView);
 };
 
-BaseView.prototype.onSession = function (event)
+AbstractView.prototype.onSession = function (event)
 {
     if (!event.isDown ())
         return;
-    BaseView.lastNoteView = this.surface.isActiveView (VIEW_PLAY) ? VIEW_PLAY : (this.surface.isActiveView (VIEW_DRUM) ? VIEW_DRUM : VIEW_SEQUENCER);
+    AbstractView.lastNoteView = this.surface.isActiveView (VIEW_PLAY) ? VIEW_PLAY : (this.surface.isActiveView (VIEW_DRUM) ? VIEW_DRUM : VIEW_SEQUENCER);
     this.surface.setActiveView (VIEW_SESSION);
 };
 
-BaseView.prototype.onSelect = function (event) {};
+AbstractView.prototype.onSelect = function (event) {};
 
-BaseView.prototype.onShift = function (event)
+AbstractView.prototype.onShift = function (event)
 {
     this.surface.setButton (PUSH_BUTTON_SHIFT, event.isUp () ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_HI);
     
@@ -511,9 +504,9 @@ BaseView.prototype.onShift = function (event)
 // Group 11
 //--------------------------------------
 
-BaseView.prototype.onFootswitch1 = function (value) {};
+AbstractView.prototype.onFootswitch1 = function (value) {};
 
-BaseView.prototype.onFootswitch2 = function (value)
+AbstractView.prototype.onFootswitch2 = function (value)
 {
     this.onNew (new ButtonEvent (value == 127 ? ButtonEvent.DOWN : ButtonEvent.UP));
 };
@@ -523,7 +516,7 @@ BaseView.prototype.onFootswitch2 = function (value)
 // Protected API
 //--------------------------------------
 
-BaseView.prototype.updateButtons = function ()
+AbstractView.prototype.updateButtons = function ()
 {
     var tb = this.model.getCurrentTrackBank ();
     var isMuteState = tb.isMuteState ();
@@ -531,7 +524,7 @@ BaseView.prototype.updateButtons = function ()
     this.surface.setButton (PUSH_BUTTON_SOLO, !isMuteState ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
-BaseView.prototype.updateArrows = function ()
+AbstractView.prototype.updateArrows = function ()
 {
     this.surface.setButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
     this.surface.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
@@ -539,13 +532,7 @@ BaseView.prototype.updateArrows = function ()
     this.surface.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
 };
 
-BaseView.prototype.turnOffBlink = function ()
-{
-    for (var i = 36; i < 100; i++)
-        this.surface.pads.blink (i, PUSH_COLOR_BLACK);
-};
-
-BaseView.prototype.getSelectedSlot = function (track)
+AbstractView.prototype.getSelectedSlot = function (track)
 {
     for (var i = 0; i < track.slots.length; i++)
         if (track.slots[i].isSelected)
