@@ -47,8 +47,6 @@ SequencerView.prototype.usesButton = function (buttonID)
 {
     switch (buttonID)
     {
-        case PUSH_BUTTON_OCTAVE_DOWN:
-        case PUSH_BUTTON_OCTAVE_UP:
         case PUSH_BUTTON_CLIP:
         case PUSH_BUTTON_SELECT:
         case PUSH_BUTTON_ADD_EFFECT:
@@ -71,16 +69,30 @@ SequencerView.prototype.onGridNote = function (note, velocity)
     this.clip.toggleStep (x, this.noteMap[y], Config.accentActive ? Config.fixedAccentValue : velocity);
 };
 
+SequencerView.prototype.onOctaveDown = function (event)
+{
+    if (event.isDown ())
+        this.scrollDown (event);
+};
+
+SequencerView.prototype.onOctaveUp = function (event)
+{
+    if (event.isDown ())
+        this.scrollUp (event);
+};
+
 SequencerView.prototype.scrollUp = function (event)
 {
     this.offsetY = Math.min (this.clip.getRowSize () - SequencerView.NUM_OCTAVE, this.offsetY + SequencerView.NUM_OCTAVE);
     this.updateScale ();
+    this.surface.getDisplay ().showNotification ('          ' + this.scales.getSequencerRangeText (this.noteMap[0], this.noteMap[7]));
 };
 
 SequencerView.prototype.scrollDown = function (event)
 {
     this.offsetY = Math.max (0, this.offsetY - SequencerView.NUM_OCTAVE);
     this.updateScale ();
+    this.surface.getDisplay ().showNotification ('          ' + this.scales.getSequencerRangeText (this.noteMap[0], this.noteMap[7]));
 };
 
 SequencerView.prototype.drawGrid = function ()

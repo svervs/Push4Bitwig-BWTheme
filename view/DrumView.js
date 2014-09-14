@@ -106,6 +106,7 @@ DrumView.prototype.onOctaveDown = function (event)
     this.scales.decDrumOctave ();
     this.offsetY = DrumView.DRUM_START_KEY + this.scales.getDrumOctave () * 16;
     this.updateNoteMapping ();
+    this.surface.getDisplay ().showNotification ('          ' + this.scales.getDrumRangeText ());
 };
 
 DrumView.prototype.onOctaveUp = function (event)
@@ -116,6 +117,7 @@ DrumView.prototype.onOctaveUp = function (event)
     this.scales.incDrumOctave ();
     this.offsetY = DrumView.DRUM_START_KEY + this.scales.getDrumOctave () * 16;
     this.updateNoteMapping ();
+    this.surface.getDisplay ().showNotification ('          ' + this.scales.getDrumRangeText ());
 };
 
 DrumView.prototype.drawGrid = function ()
