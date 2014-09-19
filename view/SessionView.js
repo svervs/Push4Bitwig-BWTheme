@@ -153,7 +153,7 @@ SessionView.prototype._onFirstRow = function (index)
     var tb = this.model.getCurrentTrackBank ();
     var selTrack = tb.getSelectedTrack ();
     if ((selTrack != null && selTrack.index == index) || this.surface.isShiftPressed ())
-        this.model.getCurrentTrackBank ().toggleArm (index);
+        tb.toggleArm (index);
     else
-        this.model.getCurrentTrackBank ().select (index);
+        tb.select (index);
 };
