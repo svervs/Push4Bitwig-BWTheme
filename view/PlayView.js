@@ -115,6 +115,12 @@ PlayView.prototype.onGridNote = function (note, velocity)
     }
 };
 
+PlayView.prototype.onPolyAftertouch = function (note, value)
+{
+    // Translate to current note mapping
+    this.surface.sendMidiEvent (0xA0, this.noteMap[note], value);
+};
+
 PlayView.prototype.onOctaveDown = function (event)
 {
     if (!event.isDown ())
