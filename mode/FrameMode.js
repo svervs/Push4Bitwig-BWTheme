@@ -3,7 +3,14 @@
 // (c) 2014
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-FrameMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO;
+FrameMode.ROW0 = '-------- Layouts -------- ------------------ Panels-----------------';
+FrameMode.ROW1 = 'Arrange    Mix     Edit   NoteEditAutomate  Device  Mixer     Full  ';
+FrameMode.ROW2 = '-------- Arranger-------- ------------------ Mixer------------------';
+FrameMode.ROW3 = 'Markers   Follow TrckHght ClpLnchrCrossFde    FX     I/O     Meters ';
+FrameMode.BUTTON_COLOR_OFF  = PUSH_COLOR_GREEN_LO;
+FrameMode.BUTTON_COLOR_ON   = PUSH_COLOR_YELLOW_MD;
+FrameMode.BUTTON_COLOR2_OFF = PUSH_COLOR2_GREEN_LO;
+FrameMode.BUTTON_COLOR2_ON  = PUSH_COLOR2_YELLOW_HI;
 
 
 function FrameMode (model)
@@ -14,68 +21,73 @@ function FrameMode (model)
 }
 FrameMode.prototype = new BaseMode ();
 
-FrameMode.prototype.attachTo = function (surface)
-{
-    BaseMode.prototype.attachTo.call (this, surface);
-
-    this.addFirstRowCommand ('Arrange ', doObject (this, function () { this.model.getApplication ().setPerspective ('ARRANGE'); }));
-    this.addFirstRowCommand ('  Mix   ', doObject (this, function () { this.model.getApplication ().setPerspective ('MIX'); }));
-    this.addFirstRowCommand ('  Edit  ', doObject (this, function () { this.model.getApplication ().setPerspective ('EDIT'); }));
-    this.addFirstRowCommand ('NoteEdit', doObject (this, function () { this.model.getApplication ().toggleNoteEditor (); }));
-    this.addFirstRowCommand ('Automate', doObject (this, function () { this.model.getApplication ().toggleAutomationEditor (); }));
-    this.addFirstRowCommand (' Device ', doObject (this, function () { this.model.getApplication ().toggleDevices (); }));
-    this.addFirstRowCommand (' Mixer  ', doObject (this, function () { this.model.getApplication ().toggleMixer (); }));
-    this.addFirstRowCommand ('  Full  ', doObject (this, function () { this.model.getApplication ().toggleFullScreen (); }));
-};
-
 FrameMode.prototype.onFirstRow = function (index) 
 {
-    this.bottomItems[index].execute ();
+    var app = this.model.getApplication ();
+    switch (index)
+    {
+        case 0: app.setPanelLayout ('ARRANGE'); break;
+        case 1: app.setPanelLayout ('MIX'); break;
+        case 2: app.setPanelLayout ('EDIT'); break;
+        case 3: app.toggleNoteEditor (); break;
+        case 4: app.toggleAutomationEditor (); break;
+        case 5: app.toggleDevices (); break;
+        case 6: app.toggleMixer (); break;
+        case 7: app.toggleFullScreen (); break;
+    }
 };
 
-FrameMode.prototype.onSecondRow = function (index) {};
+FrameMode.prototype.onSecondRow = function (index)
+{
+    var arrange = this.model.getArranger ();
+    var mix = this.model.getMixer ();
+    switch (index)
+    {
+        case 0: arrange.toggleCueMarkerVisibility (); break;
+        case 1: arrange.togglePlaybackFollow (); break;
+        case 2: arrange.toggleTrackRowHeight (); break;
+        case 3: mix.toggleClipLauncherSectionVisibility (); break;
+        case 4: mix.toggleCrossFadeSectionVisibility (); break;
+        case 5:
+            var toggleBoth = mix.isDeviceSectionVisible () == mix.isSendSectionVisible ();
+            mix.toggleDeviceSectionVisibility ();
+            if (toggleBoth)
+                mix.toggleSendsSectionVisibility () 
+            break;
+        case 6: mix.toggleIoSectionVisibility (); break;
+        case 7: mix.toggleMeterSectionVisibility (); break;
+    }
+};
 
 FrameMode.prototype.updateDisplay = function () 
 {
-    var d = this.surface.getDisplay ();
-
-    d.clear ().setBlock (0, 0, "Perspectives:").setCell (0, 3, "Panels:");
-    
-    for (var i = 0; i < this.bottomItems.length; i++)
-        d.setCell (3, i, this.bottomItems[i].getLabel ());
-
-    d.allDone ();
+    this.surface.getDisplay ().setRow (0, FrameMode.ROW0).setRow (1, FrameMode.ROW1).setRow (2, FrameMode.ROW2).setRow (3, FrameMode.ROW3);
 };
 
 FrameMode.prototype.updateFirstRow = function ()
 {
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, FrameMode.firstRowButtonColor);
+    var app = this.model.getApplication ();
+    var layout = app.getPanelLayout ();
+    this.surface.setButton (20, layout == 'ARRANGE' ? FrameMode.BUTTON_COLOR_ON : FrameMode.BUTTON_COLOR_OFF);
+    this.surface.setButton (21, layout == 'MIX' ? FrameMode.BUTTON_COLOR_ON : FrameMode.BUTTON_COLOR_OFF);
+    this.surface.setButton (22, layout == 'EDIT' ? FrameMode.BUTTON_COLOR_ON : FrameMode.BUTTON_COLOR_OFF);
+    this.surface.setButton (23, FrameMode.BUTTON_COLOR_OFF);
+    this.surface.setButton (24, FrameMode.BUTTON_COLOR_OFF);
+    this.surface.setButton (25, FrameMode.BUTTON_COLOR_OFF);
+    this.surface.setButton (26, FrameMode.BUTTON_COLOR_OFF);
+    this.surface.setButton (27, FrameMode.BUTTON_COLOR_OFF);
 };
 
 FrameMode.prototype.updateSecondRow = function ()
 {
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (102 + i, PUSH_COLOR_BLACK);
-};
-
-FrameMode.prototype.addFirstRowCommand = function (label, command)
-{
-    this.bottomItems.push (new FrameToggleCommand (label, command));
-};
-
-function FrameToggleCommand (label, command)
-{
-    this.label = label;
-    this.command = command;
-}
-
-FrameToggleCommand.prototype.getLabel = function ()
-{
-    return this.label;
-};
-
-FrameToggleCommand.prototype.execute = function ()
-{
-    this.command.call (this);
+    var arrange = this.model.getArranger ();
+    var mix = this.model.getMixer ();
+    this.surface.setButton (102, arrange.areCueMarkersVisible () ? FrameMode.BUTTON_COLOR2_ON : FrameMode.BUTTON_COLOR2_OFF);
+    this.surface.setButton (103, arrange.isPlaybackFollowEnabled () ? FrameMode.BUTTON_COLOR2_ON : FrameMode.BUTTON_COLOR2_OFF);
+    this.surface.setButton (104, arrange.hasDoubleRowTrackHeight () ? FrameMode.BUTTON_COLOR2_ON : FrameMode.BUTTON_COLOR2_OFF);
+    this.surface.setButton (105, mix.isClipLauncherSectionVisible () ? FrameMode.BUTTON_COLOR2_ON : FrameMode.BUTTON_COLOR2_OFF);
+    this.surface.setButton (106, mix.isCrossFadeSectionVisible () ? FrameMode.BUTTON_COLOR2_ON : FrameMode.BUTTON_COLOR2_OFF);
+    this.surface.setButton (107, mix.isDeviceSectionVisible () ? FrameMode.BUTTON_COLOR2_ON : FrameMode.BUTTON_COLOR2_OFF);
+    this.surface.setButton (108, mix.isIoSectionVisible () ? FrameMode.BUTTON_COLOR2_ON : FrameMode.BUTTON_COLOR2_OFF);
+    this.surface.setButton (109, mix.isMeterSectionVisible () ? FrameMode.BUTTON_COLOR2_ON : FrameMode.BUTTON_COLOR2_OFF);
 };

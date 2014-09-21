@@ -7,15 +7,25 @@ function ApplicationProxy ()
 {
     this.application = host.createApplication ();
     
-    this.perspective = 'ARRANGE';
-    
-    this.application.addSelectedModeObserver (doObject (this, ApplicationProxy.prototype.handlePerspective), 10, "");
+    this.panelLayout = 'ARRANGE';
+
+    this.application.addPanelLayoutObserver (doObject (this, ApplicationProxy.prototype.handlePanelLayout), 10, "");
 }
 
-ApplicationProxy.prototype.setPerspective = function (perspective)
+/**
+ * Switches the Bitwig Studio user interface to the panel layout with the given name.
+ *
+ * @param panelLayout {string} the name of the new panel layout
+ */
+ApplicationProxy.prototype.setPanelLayout = function (panelLayout)
 {
-    this.application.setPerspective (perspective);
+    this.application.setPanelLayout (panelLayout);
 };
+
+ApplicationProxy.prototype.getPanelLayout = function ()
+{
+    return this.panelLayout;
+}
 
 ApplicationProxy.prototype.toggleNoteEditor = function ()
 {
@@ -30,6 +40,14 @@ ApplicationProxy.prototype.toggleAutomationEditor = function ()
 ApplicationProxy.prototype.toggleDevices = function ()
 {
     this.application.toggleDevices ();
+};
+
+/**
+ * Toggles the visibility of the inspector panel.
+ */
+ApplicationProxy.prototype.toggleInspector = function ()
+{
+    this.application.toggleInspector ();
 };
 
 ApplicationProxy.prototype.toggleMixer = function ()
@@ -112,10 +130,91 @@ ApplicationProxy.prototype.arrowKeyDown = function ()
 };
 
 //--------------------------------------
+// Actions
+//--------------------------------------
+
+/**
+ * Returns the action for the given action identifier.
+ * @see Application.getAction()
+ * @param id the action identifier string, must not be `null`
+ * @returns {Action}
+ */
+ApplicationProxy.prototype.getAction  = function (id)
+{
+    return this.application.getAction (id);
+};
+
+/**
+ * Returns a list of action categories that is used by Bitwig Studio to group actions
+ * into categories.
+ * @see Application.getActionCategories()
+ * @returns {ActionCategory[]}
+ */
+ApplicationProxy.prototype.getActionCategories  = function ()
+{
+    return this.application.getActionCategories ();
+};
+
+/**
+ * Returns the action category associated with the given identifier.
+ * @see Application.getActionCategory()
+ * @param id the category identifier string, must not be `null`
+ * @returns {ActionCategory}
+ */
+ApplicationProxy.prototype.getActionCategory   = function (id)
+{
+    return this.application.getActionCategory  (id);
+};
+
+/**
+ * Returns a list of actions that the application supports.
+ * @see Application.getActions()
+ * @returns {Action[]}
+ */
+ApplicationProxy.prototype.getActions  = function ()
+{
+    return this.application.getActions ();
+};
+
+//--------------------------------------
+// Creation
+//--------------------------------------
+
+/**
+ * Creates a new audio track at the given position.
+ * @param position {int}
+ * @param selection {TrackSelection}
+ */
+ApplicationProxy.prototype.createAudioTrack = function (position, selection)
+{
+    this.application.createAudioTrack (position, selection);
+};
+
+/**
+ * Creates a new effect track at the given position.
+ * @param position {int}
+ * @param selection {TrackSelection}
+ */
+ApplicationProxy.prototype.createEffectTrack = function (position, selection)
+{
+    this.application.createEffectTrack (position, selection);
+};
+
+/**
+ * Creates a new instrument track at the given position.
+ * @param position {int}
+ * @param selection {TrackSelection}
+ */
+ApplicationProxy.prototype.createInstrumentTrack = function (position, selection)
+{
+    this.application.createInstrumentTrack  (position, selection);
+};
+
+//--------------------------------------
 // Callback Handlers
 //--------------------------------------
 
-ApplicationProxy.prototype.handlePerspective = function (perspective)
+ApplicationProxy.prototype.handlePanelLayout = function (panelLayout)
 {
-    this.perspective = perspective;
+    this.panelLayout = panelLayout;
 };
