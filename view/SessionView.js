@@ -66,18 +66,6 @@ SessionView.prototype.usesButton = function (buttonID)
     return true;
 };
 
-SessionView.prototype.onClip = function (event)
-{
-    if (!event.isDown ())
-        return;
-    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
-    if (t == null)
-        return;
-    var slot = this.getSelectedSlot (t);
-    if (slot != -1)
-        this.model.getCurrentTrackBank ().getClipLauncherSlots (t.index).showInEditor (slot);
-};
-
 SessionView.prototype.onAccent = function (event)
 {
     // No accent button usage in the Session view

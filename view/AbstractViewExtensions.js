@@ -88,10 +88,8 @@ AbstractView.prototype.onNew = function (event)
     var t = tb.getSelectedTrack ();
     if (t != null)
     {
-        var slotIndex = this.getSelectedSlot (t);
-        if (slotIndex == -1)
-            slotIndex = 0;
-            
+        var slotIndexes = tb.getSelectedSlots (t.index);
+        var slotIndex = slotIndexes.length == 0 ? 0 : slotIndexes[0].index;
         for (var i = 0; i < 8; i++)
         {
             var sIndex = (slotIndex + i) % 8;
@@ -341,7 +339,18 @@ AbstractView.prototype.onTrack = function (event)
         this.surface.setPendingMode (MODE_TRACK);
 };
 
-AbstractView.prototype.onClip = function (event) {};
+AbstractView.prototype.onClip = function (event)
+{
+    if (!event.isDown ())
+        return;
+    var tb = this.model.getCurrentTrackBank ();
+    var t = tb.getSelectedTrack ();
+    if (t == null)
+        return;
+    var slots = tb.getSelectedSlots (t.index);
+    if (slots.length > 0)
+        tb.showClipInEditor (t.index, slots[0].index);
+};
 
 AbstractView.prototype.onDevice = function (event)
 {
@@ -536,12 +545,4 @@ AbstractView.prototype.updateArrows = function ()
     this.surface.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
     this.surface.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
     this.surface.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-};
-
-AbstractView.prototype.getSelectedSlot = function (track)
-{
-    for (var i = 0; i < track.slots.length; i++)
-        if (track.slots[i].isSelected)
-            return i;
-    return -1;
 };

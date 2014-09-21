@@ -79,9 +79,7 @@ ApplicationProxy.prototype.doubleClip = function ()
 
 ApplicationProxy.prototype.deleteSelection = function ()
 {
-    // Weird workaround as 'delete' is a reserved word in JS
-    var deleteFunction = this.application['delete'];
-    deleteFunction.call (this.application);
+    this.application.remove ();
 };
 
 ApplicationProxy.prototype.redo = function ()
@@ -96,7 +94,10 @@ ApplicationProxy.prototype.undo = function ()
 
 ApplicationProxy.prototype.quantize = function ()
 {
-    displayNotification ("Quantize: Function not supported (yet).");
+    // TODO Clip must already be visible in editor and the editor must be focused
+    // this.application.getAction ("focus_or_toggle_detail_editor").invoke ();
+    this.application.getAction ("Select All").invoke ();
+    this.application.getAction ("Quantize").invoke ();
 };
 
 ApplicationProxy.prototype.addEffect = function ()
