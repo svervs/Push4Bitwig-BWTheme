@@ -15,9 +15,9 @@ RibbonMode.prototype = new BaseMode ();
 RibbonMode.prototype.onFirstRow = function (index)
 {
     if (index < 3)
-        Config.ribbonMode = index;
+        Config.setRibbonMode (index);
     else if (index > 3)
-        Config.ribbonModeCCVal = RibbonMode.MIDI_CCS[index - 4];
+        Config.setRibbonModeCC (RibbonMode.MIDI_CCS[index - 4]);
     else
         this.surface.setPendingMode (this.surface.getPreviousMode ());
 };
@@ -25,7 +25,7 @@ RibbonMode.prototype.onFirstRow = function (index)
 RibbonMode.prototype.onValueKnob = function (index, value)
 {
     if (index == 4)
-        Config.ribbonModeCCVal = changeValue (value, Config.ribbonModeCCVal, 1, 128);
+        Config.setRibbonModeCC (changeValue (value, Config.ribbonModeCCVal, 1, 127));
 };
 
 RibbonMode.prototype.updateDisplay = function ()
@@ -33,7 +33,7 @@ RibbonMode.prototype.updateDisplay = function ()
     var d = this.surface.getDisplay ();
     d.clearRow (0).clearRow (1).clearRow (2)
      .setCell (0, 4, 'Midi CC')
-     .setCell (1, 4, Config.ribbonModeCCVal)
+     .setCell (1, 4, Config.ribbonModeCCVal.toString ())
      .setCell (3, 0, (Config.ribbonMode == Config.RIBBON_MODE_PITCH ? Display.RIGHT_ARROW : ' ') + 'Pitchbd')
      .setCell (3, 1, (Config.ribbonMode == Config.RIBBON_MODE_CC ? Display.RIGHT_ARROW : ' ') + 'CC')
      .setCell (3, 2, (Config.ribbonMode == Config.RIBBON_MODE_MIXED ? Display.RIGHT_ARROW : ' ') + 'Mixed')

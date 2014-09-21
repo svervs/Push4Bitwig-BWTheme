@@ -458,10 +458,7 @@ AbstractView.prototype.onAccent = function (event)
             if (this.quitAccentMode)
                 this.surface.setPendingMode (this.surface.getPreviousMode ());
             else
-            {
-                Config.accentActive = !Config.accentActive;
-                this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-            }
+                Config.setAccentEnabled (!Config.accentActive);
             break;
     }
 };
@@ -544,6 +541,7 @@ AbstractView.prototype.updateButtons = function ()
     var isMuteState = tb.isMuteState ();
     this.surface.setButton (PUSH_BUTTON_MUTE, isMuteState ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     this.surface.setButton (PUSH_BUTTON_SOLO, !isMuteState ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 AbstractView.prototype.updateArrows = function ()

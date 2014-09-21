@@ -15,7 +15,7 @@ function Model (userCCStart, scales, numTracks, numScenes, numSends)
     this.cursorDevice = new CursorDeviceProxy ();
     this.arranger = new ArrangerProxy ();
     this.mixer = new MixerProxy ();
-    
+
     this.currentTrackBank = this.trackBank;
 
     this.scales = scales;

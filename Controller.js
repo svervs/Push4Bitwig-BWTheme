@@ -5,6 +5,8 @@
 
 function Controller ()
 {
+    Config.init ();
+
     var output = new MidiOutput ();
     var input = new PushMidiInput ();
     input.init ();
