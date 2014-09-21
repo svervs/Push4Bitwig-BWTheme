@@ -481,8 +481,15 @@ AbstractView.prototype.onAddEffect = function (event)
 
 AbstractView.prototype.onAddTrack = function (event)
 {
-    if (event.isDown ())
-        this.model.getApplication ().addTrack ();
+    if (!event.isDown ())
+        return;
+    
+    if (this.surface.isShiftPressed ())
+        this.model.getApplication ().addEffectTrack ();
+    else if (this.surface.isSelectPressed ())
+        this.model.getApplication ().addAudioTrack ();
+    else
+        this.model.getApplication ().addInstrumentTrack ();
 };
 
 AbstractView.prototype.onNote = function (event)
