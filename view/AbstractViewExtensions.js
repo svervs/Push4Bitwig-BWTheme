@@ -360,10 +360,16 @@ AbstractView.prototype.onBrowse = function (event)
     if (!event.isDown ())
         return;
 
-    if (this.surface.getCurrentMode () == MODE_BANK_DEVICE)
+    var mode = this.surface.getCurrentMode ();
+    if (mode == MODE_BANK_DEVICE || mode == MODE_PRESET)
         this.surface.setPendingMode (MODE_PRESET);
     else
-        this.model.getApplication ().toggleBrowserVisibility (); // Track
+    {
+        if (this.surface.isShiftPressed ())
+            this.model.getApplication ().toggleInspector ();
+        else
+            this.model.getApplication ().toggleBrowserVisibility ();
+    }
 };
 
 //--------------------------------------
