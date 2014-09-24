@@ -126,6 +126,11 @@ var PUSH_BUTTONS_ALL =
     PUSH_BUTTON_UNDO
 ];
 
+PUSH_RIBBON_PITCHBEND = 0;
+PUSH_RIBBON_VOLUME    = 1;
+PUSH_RIBBON_PAN       = 2;
+PUSH_RIBBON_DISCRETE  = 3;
+
 
 function Push (output, input)
 {
@@ -202,6 +207,11 @@ Push.prototype.setButton = function (button, state)
 Push.prototype.toggleVU = function ()
 {
     this.showVU = !this.showVU;
+};
+
+Push.prototype.setRibbonMode = function (mode)
+{
+    this.output.sendSysex ("F0 47 7F 15 63 00 01 0" + mode + " F7");
 };
 
 //--------------------------------------

@@ -14,6 +14,20 @@ SessionView.prototype.onActivate = function ()
     AbstractSessionView.prototype.onActivate.call (this);
     this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
     this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
+
+    this.updateRibbonMode ();
+};
+
+SessionView.prototype.onPitchbend = function (data1, data2)
+{
+    this.model.getTransport ().setCrossfade (data2);
+    this.surface.output.sendPitchbend (0, data2);
+};
+
+SessionView.prototype.updateRibbonMode = function ()
+{
+    this.surface.setRibbonMode (PUSH_RIBBON_PAN);
+    this.surface.output.sendPitchbend (0, this.model.getTransport ().getCrossfade ());
 };
 
 SessionView.prototype.drawSceneButtons = function ()

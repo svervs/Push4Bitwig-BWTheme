@@ -16,12 +16,21 @@ TrackMode.prototype.onValueKnob = function (index, value)
     var selectedTrack = tb.getSelectedTrack ();
     if (selectedTrack == null)
         return;
-    if (index == 0)
-        tb.changeVolume (selectedTrack.index, value, this.surface.getFractionValue ());
-    else if (index == 1)
-        tb.changePan (selectedTrack.index, value, this.surface.getFractionValue ());
-    else
-        tb.changeSend (selectedTrack.index, index - 2, value, this.surface.getFractionValue ());
+    switch (index)
+    {
+        case 0:
+            tb.changeVolume (selectedTrack.index, value, this.surface.getFractionValue ());
+            break;
+        case 1:
+            tb.changePan (selectedTrack.index, value, this.surface.getFractionValue ());
+            break;
+        case 2:
+            tb.setCrossfadeModeAsNumber (selectedTrack.index, changeValue (value, tb.getCrossfadeModeAsNumber (selectedTrack.index), 1, 2));
+            break;
+        default:
+            tb.changeSend (selectedTrack.index, index - 3, value, this.surface.getFractionValue ());
+            break;
+    }
 };
 
 TrackMode.prototype.updateDisplay = function ()
@@ -38,30 +47,35 @@ TrackMode.prototype.updateDisplay = function ()
         d.setCell (0, 0, "Volume", Display.FORMAT_RAW)
          .setCell (1, 0, t.volumeStr, Display.FORMAT_RAW)
          .setCell (2, 0, this.surface.showVU ? t.vu : t.volume, Display.FORMAT_VALUE)
+         
          .setCell (0, 1, "Pan", Display.FORMAT_RAW)
          .setCell (1, 1, t.panStr, Display.FORMAT_RAW)
-         .setCell (2, 1, t.pan, Display.FORMAT_PAN);
+         .setCell (2, 1, t.pan, Display.FORMAT_PAN)
+         
+         .setCell (0, 2, "Crossfdr", Display.FORMAT_RAW)
+         .setCell (1, 2, t.crossfadeMode == 'A' ? 'A' : (t.crossfadeMode == 'B' ? '       B' : '   <> '), Display.FORMAT_RAW)
+         .setCell (2, 2, t.crossfadeMode == 'A' ? 0 : (t.crossfadeMode == 'B' ? 127 : 64), Display.FORMAT_PAN);
 
         var fxTrackBank = this.model.getEffectTrackBank ();
         if (fxTrackBank != null)
         {
             var isFX = currentTrackBank === fxTrackBank;
-            for (var i = 0; i < 6; i++)
+            for (var i = 0; i < 5; i++)
             {
                 var fxTrack = fxTrackBank.getTrack (i);
                 var isEmpty = isFX || !fxTrack.exists;
-                d.setCell (0, 2 + i, isEmpty ? "" : fxTrack.name, Display.FORMAT_RAW)
-                 .setCell (1, 2 + i, isEmpty ? "" : t.sends[i].volumeStr, Display.FORMAT_RAW)
-                 .setCell (2, 2 + i, isEmpty ? "" : t.sends[i].volume, isEmpty ? Display.FORMAT_RAW : Display.FORMAT_VALUE);
+                d.setCell (0, 3 + i, isEmpty ? "" : fxTrack.name, Display.FORMAT_RAW)
+                 .setCell (1, 3 + i, isEmpty ? "" : t.sends[i].volumeStr, Display.FORMAT_RAW)
+                 .setCell (2, 3 + i, isEmpty ? "" : t.sends[i].volume, isEmpty ? Display.FORMAT_RAW : Display.FORMAT_VALUE);
             }
         }
         else
         {
-            for (var i = 0; i < 6; i++)
+            for (var i = 0; i < 5; i++)
             {
-                d.setCell (0, 2 + i, t.sends[i].name, Display.FORMAT_RAW)
-                 .setCell (1, 2 + i, t.sends[i].volumeStr, Display.FORMAT_RAW)
-                 .setCell (2, 2 + i, t.sends[i].volume, Display.FORMAT_VALUE);
+                d.setCell (0, 3 + i, t.sends[i].name, Display.FORMAT_RAW)
+                 .setCell (1, 3 + i, t.sends[i].volumeStr, Display.FORMAT_RAW)
+                 .setCell (2, 3 + i, t.sends[i].volume, Display.FORMAT_VALUE);
             }
         }
         

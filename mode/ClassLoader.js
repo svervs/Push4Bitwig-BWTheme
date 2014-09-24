@@ -10,6 +10,7 @@ var MODE_MASTER              = 2;
 var MODE_FRAME               = 3;
 var MODE_GROOVE              = 4;
 var MODE_ACCENT              = 5;
+var MODE_CROSSFADER          = 6;
 
 var MODE_PAN                 = 10;
 var MODE_SEND1               = 11;
@@ -44,6 +45,7 @@ load ("MasterMode.js");
 load ("FrameMode.js");
 load ("GrooveMode.js");
 load ("AccentMode.js");
+load ("CrossfaderMode.js");
 
 load ("PanMode.js");
 load ("SendMode.js");

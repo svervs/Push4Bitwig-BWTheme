@@ -6,6 +6,7 @@
 function PlayView (model)
 {
     AbstractView.call (this, model);
+
     this.scales = model.getScales ();
     this.noteMap = this.scales.getEmptyMatrix ();
     this.pressedKeys = initArray (0, 128);
@@ -16,6 +17,7 @@ function PlayView (model)
     {
         this.initMaxVelocity ();
     }));
+    
     var tb = model.getTrackBank ();
     tb.addNoteListener (doObject (this, function (pressed, note, velocity)
     {
@@ -32,6 +34,8 @@ function PlayView (model)
     }));
 
     this.scrollerInterval = Config.trackScrollInterval;
+    
+    this.pitchValue = 0;
 }
 PlayView.prototype = new AbstractView ();
 
@@ -53,6 +57,8 @@ PlayView.prototype.onActivate = function ()
     this.model.getCurrentTrackBank ().setIndication (false);
     this.updateSceneButtons ();
     this.initMaxVelocity ();
+
+    this.updateRibbonMode ();
 };
 
 PlayView.prototype.updateSceneButtons = function (buttonID)
@@ -71,6 +77,60 @@ PlayView.prototype.updateArrows = function ()
     this.canScrollRight = isDevice ? true /* TODO: Bitwig bug cd.canSelectNextFX () */ : sel != null && sel.index < 7 || tb.canScrollTracksDown ();
 
     AbstractView.prototype.updateArrows.call (this);
+};
+
+PlayView.prototype.onPitchbend = function (data1, data2)
+{
+    if (this.surface.isShiftPressed ())
+    {
+        if (this.surface.getCurrentMode () != MODE_RIBBON)
+            this.surface.setPendingMode (MODE_RIBBON);
+        return;
+    }
+
+    switch (Config.ribbonMode)
+    {
+        case Config.RIBBON_MODE_PITCH:
+            this.surface.sendMidiEvent (0xE0, data1, data2);
+            break;
+
+        case Config.RIBBON_MODE_CC:
+            if (data2 == 64)    // Overwrite automatic recentering on release
+                data2 = 0;
+            this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, data2);
+            break;
+
+        case Config.RIBBON_MODE_MIXED:
+            if (data2 > 64)
+                this.surface.sendMidiEvent (0xE0, data1, data2);
+            else if (data2 < 64)
+                this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, 127 - data2 * 2);
+            else
+            {
+                this.surface.sendMidiEvent (0xE0, data1, data2);
+                this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, 0);
+            }
+            break;
+    }
+
+    this.pitchValue = data2;
+    this.surface.output.sendPitchbend (data1, data2);
+}
+
+PlayView.prototype.updateRibbonMode = function ()
+{
+    switch (Config.ribbonMode)
+    {
+        case Config.RIBBON_MODE_PITCH:
+        case Config.RIBBON_MODE_MIXED:
+            this.surface.setRibbonMode (PUSH_RIBBON_PITCHBEND);
+            this.surface.output.sendPitchbend (0, 64);
+            break;
+        case Config.RIBBON_MODE_CC:
+            this.surface.setRibbonMode (PUSH_RIBBON_VOLUME);
+            this.surface.output.sendPitchbend (0, this.pitchValue);
+            break;
+    }
 };
 
 PlayView.prototype.usesButton = function (buttonID)
@@ -140,6 +200,13 @@ PlayView.prototype.onOctaveUp = function (event)
     this.surface.getDisplay ().showNotification ('       ' + this.scales.getRangeText ());
 };
 
+PlayView.prototype.onAccent = function (event)
+{
+    AbstractView.prototype.onAccent.call (this, event);
+    if (event.isUp ())
+        this.initMaxVelocity ();
+};
+
 PlayView.prototype.scrollUp = function (event)
 {
     if (this.surface.isShiftPressed ())
@@ -195,13 +262,6 @@ PlayView.prototype.scrollRight = function (event)
         }
         this.selectTrack (index);
     }
-};
-
-PlayView.prototype.onAccent = function (event)
-{
-    AbstractView.prototype.onAccent.call (this, event);
-    if (event.isUp ())
-        this.initMaxVelocity ();
 };
 
 PlayView.prototype.initMaxVelocity = function ()

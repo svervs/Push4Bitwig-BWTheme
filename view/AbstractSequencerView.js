@@ -30,6 +30,8 @@ AbstractSequencerView.prototype.onActivate = function ()
     this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     this.model.getCurrentTrackBank ().setIndication (false);
     this.drawSceneButtons ();
+
+    this.updateRibbonMode ();
 };
 
 AbstractSequencerView.prototype.scrollLeft = function (event)

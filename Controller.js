@@ -30,6 +30,7 @@ function Controller ()
 
     this.surface.addMode (MODE_VOLUME, new VolumeMode (this.model));
     this.surface.addMode (MODE_PAN, new PanMode (this.model));
+    this.surface.addMode (MODE_CROSSFADER, new CrossfaderMode (this.model));
     var modeSend = new SendMode (this.model);
     this.surface.addMode (MODE_SEND1, modeSend);
     this.surface.addMode (MODE_SEND2, modeSend);
@@ -38,7 +39,7 @@ function Controller ()
     this.surface.addMode (MODE_SEND5, modeSend);
     this.surface.addMode (MODE_SEND6, modeSend);
     this.surface.addMode (MODE_MASTER, new MasterMode (this.model, false));
-    this.surface.addMode (MODE_MASTER_TEMP, new MasterMode (this.model, true));
+    this.surface.addMode (MODE_MASTER_TEMP, new MasterMode (this.model, true));    
 
     this.surface.addMode (MODE_TRACK, new TrackMode (this.model));
     this.surface.addMode (MODE_FRAME, new FrameMode (this.model));
@@ -63,6 +64,12 @@ function Controller ()
         this.updateMode (-1);
         this.updateMode (newMode);
     }));
+    
+    Config.addPropertyListener (Config.RIBBON_MODE, doObject (this, function ()
+    {
+        this.surface.getActiveView ().updateRibbonMode ();
+    }));
+
     
     this.surface.addView (VIEW_PLAY, new PlayView (this.model));
     this.surface.addView (VIEW_SESSION, new SessionView (this.model));

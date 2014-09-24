@@ -10,40 +10,7 @@ AbstractView.prototype.stopPressed = false;
 // record the mode at the start of the touch down event
 AbstractView.prototype.longPressPreviousMode = null;
 
-AbstractView.prototype.onPitchbend = function (data1, data2)
-{
-    if (this.surface.isShiftPressed ())
-    {
-        if (this.surface.getCurrentMode () != MODE_RIBBON)
-            this.surface.setPendingMode (MODE_RIBBON);
-        return;
-    }
-
-    switch (Config.ribbonMode)
-    {
-        case Config.RIBBON_MODE_PITCH:
-            this.surface.sendMidiEvent (0xE0, data1, data2);
-            break;
-
-        case Config.RIBBON_MODE_CC:
-            if (data2 == 64)    // Overwrite automatic recentering on release
-                data2 = 0;
-            this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, data2);
-            break;
-
-        case Config.RIBBON_MODE_MIXED:
-            if (data2 > 64)
-                this.surface.sendMidiEvent (0xE0, data1, data2);
-            else if (data2 < 64)
-                this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, 127 - data2 * 2);
-            else
-            {
-                this.surface.sendMidiEvent (0xE0, data1, data2);
-                this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, 0);
-            }
-            break;
-    }
-};
+AbstractView.prototype.onPitchbend = function (data1, data2) {};
 
 //--------------------------------------
 // Group 1
@@ -296,7 +263,12 @@ AbstractView.prototype.onScene = function (index) {};
 
 AbstractView.prototype.onVolume = function (event)
 {
-    if (event.isDown ())
+    if (!event.isDown ())
+        return;
+    
+    if (this.surface.getCurrentMode () == MODE_VOLUME)
+        this.surface.setPendingMode (MODE_CROSSFADER);
+    else
         this.surface.setPendingMode (MODE_VOLUME);
 };
 
@@ -550,4 +522,10 @@ AbstractView.prototype.updateArrows = function ()
     this.surface.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
     this.surface.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
     this.surface.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+};
+
+AbstractView.prototype.updateRibbonMode = function ()
+{
+    this.surface.setRibbonMode (PUSH_RIBBON_VOLUME);
+    this.surface.output.sendPitchbend (0, 0);
 };
