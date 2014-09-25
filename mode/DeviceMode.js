@@ -5,10 +5,10 @@
 
 function DeviceMode (model)
 {
-    AbstractTrackMode.call (this, model);
+    BaseMode.call (this, model);
     this.id = MODE_BANK_DEVICE;
 }
-DeviceMode.prototype = new AbstractTrackMode ();
+DeviceMode.prototype = new BaseMode ();
 
 DeviceMode.prototype.onValueKnob = function (index, value)
 {

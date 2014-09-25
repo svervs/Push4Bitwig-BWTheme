@@ -7,7 +7,6 @@ function VolumeMode (model)
 {
     AbstractTrackMode.call (this, model);
     this.id = MODE_VOLUME;
-    this.hasSecondRowPriority = true;
 }
 VolumeMode.prototype = new AbstractTrackMode ();
 

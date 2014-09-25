@@ -51,7 +51,7 @@ SessionView.prototype.updateDevice = function ()
         m.updateSecondRow ();
     }
 
-    if (this.flip && !this.surface.getMode (this.surface.getCurrentMode ()).hasSecondRowPriority)
+    if (this.flip && !m.hasSecondRowPriority)
     {
         for (var i = 0; i < 8; i++)
             this.surface.setButton (20 + i, PUSH_COLOR_GREEN_HI);
@@ -116,7 +116,7 @@ SessionView.prototype.onScene = function (scene)
 
 SessionView.prototype.onFirstRow = function (index)
 {
-    if (this.surface.getMode (this.surface.getCurrentMode ()).hasSecondRowPriority)
+    if (this.surface.getActiveMode ().hasSecondRowPriority)
         AbstractView.prototype.onFirstRow.call (this, index);
     else
         this.sceneOrFirstRowButtonPressed (index, this.flip);

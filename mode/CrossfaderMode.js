@@ -7,7 +7,6 @@ function CrossfaderMode (model)
 {
     AbstractTrackMode.call (this, model);
     this.id = MODE_CROSSFADER;
-    this.hasSecondRowPriority = true;
 }
 CrossfaderMode.prototype = new AbstractTrackMode ();
 
