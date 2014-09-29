@@ -40,7 +40,7 @@ Grid.prototype.setLight = function (index, color, blinkColor, fast)
         this.blinkColors[index]  = PUSH_COLOR_BLACK;
     }
     this.blinkFast[index] = fast;
-}
+};
 
 Grid.prototype.flush = function ()
 {

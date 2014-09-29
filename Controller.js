@@ -103,17 +103,12 @@ Controller.prototype.updateMode = function (mode)
     var isMaster       = mode == MODE_MASTER;
     var isTrack        = mode == MODE_TRACK;
     var isVolume       = mode == MODE_VOLUME;
-    var isPan          = mode == MODE_PAN;
     var isScales       = mode == MODE_SCALES;
     var isFixed        = mode == MODE_FIXED;
     var isPreset       = mode == MODE_PRESET;
     var isFrame        = mode == MODE_FRAME;
-    var isGroove       = mode == MODE_GROOVE;
 
     var isBankDevice   = mode == MODE_BANK_DEVICE;
-    var isBankCommon   = mode == MODE_BANK_COMMON;
-    var isBankEnvelope = mode == MODE_BANK_ENVELOPE;
-    var isBankUser     = mode == MODE_BANK_USER;
     var isBankMacro    = mode == MODE_BANK_MACRO;
 
     this.updateIndication (mode);

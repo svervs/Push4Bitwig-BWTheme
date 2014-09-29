@@ -71,7 +71,6 @@ PlayView.prototype.updateArrows = function ()
 {
     var tb = this.model.getCurrentTrackBank ();
     var isDevice = this.surface.getCurrentMode () == MODE_BANK_DEVICE || this.surface.getCurrentMode () == MODE_PRESET;
-    var cd = this.model.getCursorDevice ();
     var sel = tb.getSelectedTrack ();
     this.canScrollLeft = isDevice ? true /* TODO: Bitwig bug cd.canSelectPreviousFX () */ : sel != null && sel.index > 0 || tb.canScrollTracksUp ();
     this.canScrollRight = isDevice ? true /* TODO: Bitwig bug cd.canSelectNextFX () */ : sel != null && sel.index < 7 || tb.canScrollTracksDown ();
@@ -115,7 +114,7 @@ PlayView.prototype.onPitchbend = function (data1, data2)
 
     this.pitchValue = data2;
     this.surface.output.sendPitchbend (data1, data2);
-}
+};
 
 PlayView.prototype.updateRibbonMode = function ()
 {

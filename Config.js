@@ -67,17 +67,17 @@ Config.init = function ()
         Config.ribbonModeCCVal = Math.floor (value);
         Config.notifyListeners (Config.RIBBON_MODE_CC_VAL);
     });
-}
+};
 
 Config.setAccentEnabled = function (enabled)
 {
     Config.accentActiveSetting.set (enabled ? "On" : "Off");
-}
+};
 
 Config.setAccentValue = function (value)
 {
     Config.accentValueSetting.setRaw (value);
-}
+};
 
 Config.setRibbonMode = function (mode)
 {
@@ -87,12 +87,12 @@ Config.setRibbonMode = function (mode)
         case Config.RIBBON_MODE_CC: Config.ribbonModeSetting.set ("CC"); break;
         case Config.RIBBON_MODE_MIXED: Config.ribbonModeSetting.set ("Mixed"); break;
     }
-}
+};
 
 Config.setRibbonModeCC = function (value)
 {
     Config.ribbonModeCCSetting.setRaw (value);
-}
+};
 
 
 // ------------------------------
@@ -113,6 +113,6 @@ Config.notifyListeners = function (property)
     var ls = Config.listeners[property];
     for (var i = 0; i < ls.length; i++)
         ls[i].call (null);
-}
+};
 
 function Config () {}

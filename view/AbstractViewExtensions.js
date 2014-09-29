@@ -277,13 +277,16 @@ AbstractView.prototype.onPanAndSend = function (event)
     if (!event.isDown ())
         return;
      
-    // No Sends on FX tracks
+    var mode = -1;
     var fxTrackBank = this.model.getEffectTrackBank ();
     if (this.model.getCurrentTrackBank () === fxTrackBank)
+    {
+        // No Sends on FX tracks
         mode = MODE_PAN;
+    }
     else
     {
-        var mode = this.surface.getCurrentMode () + 1;
+        mode = this.surface.getCurrentMode () + 1;
         // Wrap
         if (mode < MODE_PAN || mode > MODE_SEND6)
             mode = MODE_PAN;

@@ -99,7 +99,7 @@ ParamPageSelectMode.prototype.onFirstRow = function (index)
 ParamPageSelectMode.prototype.addFirstRowCommand = function (label, modeId)
 {
     this.bottomItems.push (new ModeToggleCommand (label, modeId,
-        doObject (this, function () { this.setCurrentMode (modeId) })));
+        doObject (this, function () { this.setCurrentMode (modeId); })));
 };
 
 function ModeToggleCommand (label, modeId, command)

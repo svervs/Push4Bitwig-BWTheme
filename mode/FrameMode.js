@@ -52,7 +52,7 @@ FrameMode.prototype.onSecondRow = function (index)
             var toggleBoth = mix.isDeviceSectionVisible () == mix.isSendSectionVisible ();
             mix.toggleDeviceSectionVisibility ();
             if (toggleBoth)
-                mix.toggleSendsSectionVisibility () 
+                mix.toggleSendsSectionVisibility (); 
             break;
         case 6: mix.toggleIoSectionVisibility (); break;
         case 7: mix.toggleMeterSectionVisibility (); break;

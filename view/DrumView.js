@@ -157,4 +157,4 @@ DrumView.prototype.clearPressedKeys = function ()
 {
     for (var i = 0; i < 128; i++)
         this.pressedKeys[i] = 0;
-}
+};
