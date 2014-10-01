@@ -14,6 +14,13 @@ AbstractTrackMode.prototype = new BaseMode ();
 AbstractTrackMode.prototype.onFirstRow = function (index)
 {
     var tb = this.model.getCurrentTrackBank ();
+    
+    if (this.surface.isSelectPressed ())
+    {
+        tb.toggleMonitor (index);
+        return;
+    }
+    
     var selTrack = tb.getSelectedTrack ();
     if ((selTrack != null && selTrack.index == index) || this.surface.isShiftPressed ())
         tb.toggleArm (index);
@@ -24,6 +31,13 @@ AbstractTrackMode.prototype.onFirstRow = function (index)
 AbstractTrackMode.prototype.onSecondRow = function (index)
 {
     var tb = this.model.getCurrentTrackBank ();
+
+    if (this.surface.isSelectPressed ())
+    {
+        tb.toggleAutoMonitor (index);
+        return;
+    }
+    
     if (tb.isMuteState ())
         tb.toggleMute (index);
     else
@@ -47,11 +61,13 @@ AbstractTrackMode.prototype.updateSecondRow = function ()
     for (var i = 0; i < 8; i++)
     {
         var t = tb.getTrack (i);
-        
+
         var color = PUSH_COLOR_BLACK;
         if (t.exists)
         {
-            if (muteState)
+            if (this.surface.isSelectPressed ())
+                color = t.autoMonitor ? PUSH_COLOR2_GREEN_LO : PUSH_COLOR2_BLACK;
+            else if (muteState)
             {
                 if (!t.mute)
                     color = PUSH_COLOR2_YELLOW_HI;
@@ -59,6 +75,7 @@ AbstractTrackMode.prototype.updateSecondRow = function ()
             else
                 color = t.solo ? PUSH_COLOR2_BLUE_HI : PUSH_COLOR2_GREY_LO;
         }
+
         this.surface.setButton (102 + i, color);
     }
 };
@@ -87,6 +104,10 @@ AbstractTrackMode.prototype.getTrackButtonColor = function (track)
         return PUSH_COLOR_BLACK;
 
     var tb = this.model.getCurrentTrackBank ();
+    
+    if (this.surface.isSelectPressed ())
+        return track.monitor ? PUSH_COLOR_GREEN_HI : PUSH_COLOR_BLACK;
+        
     var selTrack = tb.getSelectedTrack ();
     var selIndex = selTrack == null ? -1 : selTrack.index;
     var isSel = track.index == selIndex;
