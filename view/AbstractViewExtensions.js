@@ -319,15 +319,8 @@ AbstractView.prototype.onTrack = function (event)
 
 AbstractView.prototype.onClip = function (event)
 {
-    if (!event.isDown ())
-        return;
-    var tb = this.model.getCurrentTrackBank ();
-    var t = tb.getSelectedTrack ();
-    if (t == null)
-        return;
-    var slots = tb.getSelectedSlots (t.index);
-    if (slots.length > 0)
-        tb.showClipInEditor (t.index, slots[0].index);
+    if (event.isDown ())
+        this.surface.setPendingMode (MODE_CLIP);
 };
 
 AbstractView.prototype.onDevice = function (event)

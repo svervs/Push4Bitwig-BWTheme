@@ -50,7 +50,6 @@ DrumView.prototype.usesButton = function (buttonID)
 {
     switch (buttonID)
     {
-        case PUSH_BUTTON_CLIP:
         case PUSH_BUTTON_ADD_EFFECT:
         case PUSH_BUTTON_REPEAT:
         case PUSH_BUTTON_USER_MODE:
@@ -112,8 +111,7 @@ DrumView.prototype.onGridNote = function (note, velocity)
     {
         var start = this.loopPadPressed < pad ? this.loopPadPressed : pad;
         var end   = (this.loopPadPressed < pad ? pad : this.loopPadPressed) + 1;
-        var transport = this.model.getTransport ();
-        var quartersPerPad = 4 * transport.getNumerator () / transport.getDenominator ();
+        var quartersPerPad = this.model.getQuartersPerMeasure ();
         // Set a new loop between the 2 selected pads
         this.clip.setLoopStart (start * quartersPerPad);
         this.clip.setLoopLength ((end - start) * quartersPerPad);
@@ -162,8 +160,7 @@ DrumView.prototype.drawGrid = function ()
     }
  
     // Clip length/loop area
-    var transport = this.model.getTransport ();
-    var quartersPerPad = 4 * transport.getNumerator () / transport.getDenominator ();
+    var quartersPerPad = this.model.getQuartersPerMeasure ();
     var maxQuarters = quartersPerPad * 16;
     var start = this.clip.getLoopStart ();
     var loopStartPad = Math.floor (Math.max (0, start) / quartersPerPad);
