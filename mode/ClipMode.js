@@ -31,6 +31,12 @@ ClipMode.prototype.onValueKnob = function (index, value)
         case 4:
             clip.setLoopEnabled (value <= 61);
             break;
+        case 6:
+            clip.setShuffleEnabled (value <= 61);
+            break;
+        case 7:
+            // TODO FIX: Currently broken
+            break;
     }
 };
 
@@ -53,6 +59,12 @@ ClipMode.prototype.updateDisplay = function ()
 
      .setCell (0, 4, "Loop", Display.FORMAT_RAW)
      .setCell (1, 4, clip.isLoopEnabled () ? "On" : "Off", Display.FORMAT_RAW)
+
+     .setCell (0, 6, "Shuffle", Display.FORMAT_RAW)
+     .setCell (1, 6, clip.isShuffleEnabled () ? "On" : "Off", Display.FORMAT_RAW)
+     
+     .setCell (0, 7, "Accent", Display.FORMAT_RAW)
+     .setCell (1, 7, clip.getAccent (), Display.FORMAT_RAW)
      
      .done (0).done (1).clearRow (2).done (2);
 
