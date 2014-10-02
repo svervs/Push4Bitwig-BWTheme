@@ -185,7 +185,10 @@ AbstractView.prototype.onValueKnobTouch = function (knob, isTouched)
 
 AbstractView.prototype.onValueKnob9 = function (value)
 {
-    this.model.getMasterTrack ().changeVolume (value, this.surface.getFractionValue ());
+    if (this.surface.isShiftPressed ())
+        this.model.getTransport ().changeMetronomeVolume (value, Config.fractionValue);
+    else
+        this.model.getMasterTrack ().changeVolume (value, this.surface.getFractionValue ());
 };
 
 AbstractView.prototype.onValueKnob9Touch = function (isTouched)
