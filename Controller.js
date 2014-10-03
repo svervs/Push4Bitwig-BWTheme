@@ -11,8 +11,8 @@ function Controller ()
     var input = new PushMidiInput ();
     input.init ();
 
-    var scales = new Scales (36, 100, 8, 8);
-    this.model = new Model (PUSH_KNOB1, scales);
+    this.scales = new Scales (36, 100, 8, 8);
+    this.model = new Model (PUSH_KNOB1, this.scales);
     this.model.getTrackBank ().addTrackSelectionListener (doObject (this, function (index, isSelected)
     {
         if (isSelected && this.surface.isActiveMode (MODE_MASTER))
@@ -70,7 +70,23 @@ function Controller ()
     {
         this.surface.getActiveView ().updateRibbonMode ();
     }));
-
+    Config.addPropertyListener (Config.SCALES_SCALE, doObject (this, function ()
+    {
+        this.scales.setScaleByName (Config.scale);
+    }));
+    Config.addPropertyListener (Config.SCALES_BASE, doObject (this, function ()
+    {
+        this.scales.setScaleOffsetByName (Config.scaleBase);
+    }));
+    Config.addPropertyListener (Config.SCALES_IN_KEY, doObject (this, function ()
+    {
+        this.scales.setChromatic (!Config.scaleInKey);
+    }));
+    Config.addPropertyListener (Config.SCALES_LAYOUT, doObject (this, function ()
+    {
+        this.scales.setScaleLayoutByName (Config.scaleLayout);
+        this.surface.getActiveView ().updateNoteMapping ();
+    }));
     
     this.surface.addView (VIEW_PLAY, new PlayView (this.model));
     this.surface.addView (VIEW_SESSION, new SessionView (this.model));

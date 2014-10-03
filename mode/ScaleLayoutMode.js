@@ -17,6 +17,7 @@ ScaleLayoutMode.prototype.onFirstRow = function (index)
         return;
     this.scales.setScaleLayout (index);
     this.surface.getActiveView ().updateNoteMapping ();
+    Config.setScaleLayout (Scales.LAYOUT_NAMES[this.scales.getScaleLayout ()]);
 };
 
 ScaleLayoutMode.prototype.onSecondRow = function (index) {};

@@ -19,7 +19,7 @@ ScalesMode.prototype.onValueKnob = function (index, value)
     var scale = this.scales.getSelectedScale ();
     scale = changeValue (value, scale, 1, this.scales.getScaleSize ());
     this.scales.setScale (scale);
-    this.surface.getActiveView ().updateNoteMapping ();
+    this.update ();
 };
 
 ScalesMode.prototype.onFirstRow = function (index)
@@ -28,7 +28,7 @@ ScalesMode.prototype.onFirstRow = function (index)
         this.scales.prevScale ();
     else if (index > 0 && index < 7)
         this.scales.setScaleOffset (index - 1);
-    this.surface.getActiveView ().updateNoteMapping ();
+    this.update ();
 };
 
 ScalesMode.prototype.onSecondRow = function (index)
@@ -39,8 +39,15 @@ ScalesMode.prototype.onSecondRow = function (index)
         this.scales.toggleChromatic ();
     else
         this.scales.setScaleOffset (index + 5);
+    this.update ();
+};
 
+ScalesMode.prototype.update = function ()
+{
     this.surface.getActiveView ().updateNoteMapping ();
+    Config.setScale (this.scales.getName (this.scales.getSelectedScale ()));
+    Config.setScaleBase (Scales.BASES[this.scales.getScaleOffset ()]);
+    Config.setScaleInScale (!this.scales.isChromatic ());
 };
 
 ScalesMode.prototype.updateDisplay = function ()
