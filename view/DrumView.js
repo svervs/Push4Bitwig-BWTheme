@@ -116,6 +116,7 @@ DrumView.prototype.onGridNote = function (note, velocity)
         this.clip.setLoopLength ((end - start) * quartersPerPad);
         this.clip.setPlayStart (start * quartersPerPad);
         this.clip.setPlayEnd (end * quartersPerPad);
+        // TODO FIX Rounding error println("setLoopStart:"+(start * quartersPerPad) + " - setLoopLength:"+((end - start) * quartersPerPad)+ " - setPlayStart:"+(start * quartersPerPad)+ " - setPlayEnd:"+(end * quartersPerPad));
         this.loopPadPressed = -1;
     }
 };
