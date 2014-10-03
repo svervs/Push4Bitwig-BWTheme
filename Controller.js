@@ -73,14 +73,17 @@ function Controller ()
     Config.addPropertyListener (Config.SCALES_SCALE, doObject (this, function ()
     {
         this.scales.setScaleByName (Config.scale);
+        this.surface.getActiveView ().updateNoteMapping ();
     }));
     Config.addPropertyListener (Config.SCALES_BASE, doObject (this, function ()
     {
         this.scales.setScaleOffsetByName (Config.scaleBase);
+        this.surface.getActiveView ().updateNoteMapping ();
     }));
     Config.addPropertyListener (Config.SCALES_IN_KEY, doObject (this, function ()
     {
         this.scales.setChromatic (!Config.scaleInKey);
+        this.surface.getActiveView ().updateNoteMapping ();
     }));
     Config.addPropertyListener (Config.SCALES_LAYOUT, doObject (this, function ()
     {
