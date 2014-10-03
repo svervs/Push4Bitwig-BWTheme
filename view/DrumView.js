@@ -32,11 +32,10 @@ function DrumView (model)
 }
 DrumView.prototype = new AbstractSequencerView ();
 
-DrumView.prototype.updateArrows = function ()
+DrumView.prototype.updateArrowStates = function ()
 {
     this.canScrollLeft = this.offsetX > 0;
-    // TODO this.canScrollRight = true; We do not know the number of steps
-    AbstractView.prototype.updateArrows.call (this);
+    this.canScrollRight = true; // TODO We do not know the number of steps
 };
 
 DrumView.prototype.updateNoteMapping = function ()

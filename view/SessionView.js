@@ -36,7 +36,10 @@ SessionView.prototype.drawSceneButtons = function ()
     for (var i = 0; i < 8; i++)
     {
         if (this.flip)
-            this.surface.setButton (PUSH_BUTTON_SCENE1 + (7 - i), tb.getTrack (i).recarm ? PUSH_COLOR_SCENE_RED : PUSH_COLOR_BLACK);
+        {
+            var track = tb.getTrack (i);
+            this.surface.setButton (PUSH_BUTTON_SCENE1 + (7 - i), track.recarm ? PUSH_COLOR_SCENE_RED : (track.exists ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_BLACK));
+        }
         else
             this.surface.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_SCENE_GREEN);
     }

@@ -361,25 +361,22 @@ AbstractView.prototype.onDeviceLeft = function (event)
     if (!event.isDown ())
         return;
 
-    var tb = this.model.getCurrentTrackBank ();
-    if (tb.canScrollTracksUp ())
+    /* TODO FIX The returned channel selection does not contain the layers instead it is the top level tracks selection
+    var cd = this.model.getCursorDevice ();
+    if (cd.hasSelectedDevice ())
     {
-        tb.scrollTracksPageUp ();
-        scheduleTask (doObject (this, this.selectTrack), [7], 100);
+        cd.cursorDevice.getChannelSelection ().selectFirst ();
     }
+    else
+    {
+        //this.model.getCursorDevice ().cursorDevice.selectFirstInLayer (0);
+    }*/
 };
 
 AbstractView.prototype.onDeviceRight = function (event)
 {
-    if (!event.isDown ())
-        return;
-
-    var tb = this.model.getCurrentTrackBank ();
-    if (tb.canScrollTracksDown ())
-    {
-        tb.scrollTracksPageDown ();
-        scheduleTask (doObject (this, this.selectTrack), [0], 100);
-    }
+    if (event.isDown ())   // TODO Create function in CursorDeviceProxy when API is fully workking and tested
+        this.model.getCursorDevice ().cursorDevice.selectParent ();
 };
 
 AbstractView.prototype.onMute = function (event)
@@ -490,6 +487,60 @@ AbstractView.prototype.onShift = function (event)
         this.surface.setPendingMode (MODE_SCALES);
 };
 
+AbstractView.prototype.scrollLeft = function (event)
+{
+    switch (this.surface.getCurrentMode ())
+    {
+        case MODE_BANK_DEVICE:
+        case MODE_PRESET:
+            this.model.getCursorDevice ().selectPrevious ();
+            break;
+    
+        default:
+            var tb = this.model.getCurrentTrackBank ();
+            var sel = tb.getSelectedTrack ();
+            var index = sel == null ? 0 : sel.index - 1;
+            if (index == -1 || this.surface.isShiftPressed ())
+            {
+                if (!tb.canScrollTracksUp ())
+                    return;
+                tb.scrollTracksPageUp ();
+                var newSel = index == -1 || sel == null ? 7 : sel.index;
+                scheduleTask (doObject (this, this.selectTrack), [ newSel ], 75);
+                return;
+            }
+            this.selectTrack (index);
+            break;
+    }
+};
+
+AbstractView.prototype.scrollRight = function (event)
+{
+    switch (this.surface.getCurrentMode ())
+    {
+        case MODE_BANK_DEVICE:
+        case MODE_PRESET:
+            this.model.getCursorDevice ().selectNext ();
+            break;
+            
+        default:
+            var tb = this.model.getCurrentTrackBank ();
+            var sel = tb.getSelectedTrack ();
+            var index = sel == null ? 0 : sel.index + 1;
+            if (index == 8 || this.surface.isShiftPressed ())
+            {
+                if (!tb.canScrollTracksDown ())
+                    return;
+                tb.scrollTracksPageDown ();
+                var newSel = index == 8 || sel == null ? 0 : sel.index;
+                scheduleTask (doObject (this, this.selectTrack), [ newSel ], 75);
+                return;
+            }
+            this.selectTrack (index);
+            break;
+    }
+};
+
 //--------------------------------------
 // Group 11
 //--------------------------------------
@@ -515,8 +566,19 @@ AbstractView.prototype.updateButtons = function ()
     this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
+AbstractView.prototype.updateArrowStates = function ()
+{
+    var tb = this.model.getCurrentTrackBank ();
+    var isDevice = this.surface.getCurrentMode () == MODE_BANK_DEVICE || this.surface.getCurrentMode () == MODE_PRESET;
+    var sel = tb.getSelectedTrack ();
+    // var cd = this.model.getCursorDevice ();
+    this.canScrollLeft = isDevice ? true /* TODO: Bitwig bug cd.canSelectPreviousFX () */ : sel != null && sel.index > 0 || tb.canScrollTracksUp ();
+    this.canScrollRight = isDevice ? true /* TODO: Bitwig bug cd.canSelectNextFX () */ : sel != null && sel.index < 7 || tb.canScrollTracksDown ();
+};
+
 AbstractView.prototype.updateArrows = function ()
 {
+    this.updateArrowStates ();
     this.surface.setButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
     this.surface.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
     this.surface.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);

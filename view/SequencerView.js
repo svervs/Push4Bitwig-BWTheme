@@ -21,13 +21,13 @@ SequencerView.prototype.onActivate = function ()
     AbstractSequencerView.prototype.onActivate.call (this);
 };
 
-SequencerView.prototype.updateArrows = function ()
+SequencerView.prototype.updateArrowStates = function ()
 {
     this.canScrollUp = this.offsetY + SequencerView.NUM_OCTAVE <= this.clip.getRowSize () - SequencerView.NUM_OCTAVE;
     this.canScrollDown = this.offsetY - SequencerView.NUM_OCTAVE >= 0;
     this.canScrollLeft = this.offsetX > 0;
-    // this.canScrollRight = true; We do not know the number of steps
-    AbstractView.prototype.updateArrows.call (this);
+    this.canScrollRight = true; // TODO FIX We do not know the number of steps
+
     this.drawSceneButtons ();
 };
 

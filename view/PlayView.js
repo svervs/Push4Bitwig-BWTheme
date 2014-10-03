@@ -67,18 +67,6 @@ PlayView.prototype.updateSceneButtons = function (buttonID)
         this.surface.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_BLACK);
 };
 
-PlayView.prototype.updateArrows = function ()
-{
-    var tb = this.model.getCurrentTrackBank ();
-    var isDevice = this.surface.getCurrentMode () == MODE_BANK_DEVICE || this.surface.getCurrentMode () == MODE_PRESET;
-    var sel = tb.getSelectedTrack ();
-    // var cd = this.model.getCursorDevice ();
-    this.canScrollLeft = isDevice ? true /* TODO: Bitwig bug cd.canSelectPreviousFX () */ : sel != null && sel.index > 0 || tb.canScrollTracksUp ();
-    this.canScrollRight = isDevice ? true /* TODO: Bitwig bug cd.canSelectNextFX () */ : sel != null && sel.index < 7 || tb.canScrollTracksDown ();
-
-    AbstractView.prototype.updateArrows.call (this);
-};
-
 PlayView.prototype.onPitchbend = function (data1, data2)
 {
     if (this.surface.isShiftPressed ())
@@ -219,47 +207,6 @@ PlayView.prototype.scrollDown = function (event)
         this.model.getApplication ().arrowKeyRight ();
     else
         this.model.getApplication ().arrowKeyDown ();
-};
-
-PlayView.prototype.scrollLeft = function (event)
-{
-    if (this.surface.getCurrentMode () == MODE_BANK_DEVICE || this.surface.getCurrentMode () == MODE_PRESET)
-        this.model.getCursorDevice ().selectPrevious ();
-    else
-    {
-        var tb = this.model.getCurrentTrackBank ();
-        var sel = tb.getSelectedTrack ();
-        var index = sel == null ? 0 : sel.index - 1;
-        if (index == -1)
-        {
-            if (!tb.canScrollTracksUp ())
-                return;
-            tb.scrollTracksPageUp ();
-            scheduleTask (doObject (this, this.selectTrack), [7], 75);
-            return;
-        }
-        this.selectTrack (index);
-    }
-};
-
-PlayView.prototype.scrollRight = function (event)
-{
-    if (this.surface.getCurrentMode () == MODE_BANK_DEVICE || this.surface.getCurrentMode () == MODE_PRESET)
-        this.model.getCursorDevice ().selectNext ();
-    else
-    {
-        var tb = this.model.getCurrentTrackBank ();
-        var sel = tb.getSelectedTrack ();
-        var index = sel == null ? 0 : sel.index + 1;
-        if (index == 8)
-        {
-            if (!tb.canScrollTracksDown ())
-                return;
-            tb.scrollTracksPageDown ();
-            scheduleTask (doObject (this, this.selectTrack), [0], 75);
-        }
-        this.selectTrack (index);
-    }
 };
 
 PlayView.prototype.initMaxVelocity = function ()
