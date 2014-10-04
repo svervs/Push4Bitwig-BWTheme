@@ -22,7 +22,11 @@ Display.SPACES =
     '      ',
     '       ',
     '        ',
-    '         '
+    '         ',
+    '          ',
+    '           ',
+    '            ',
+    '             '
 ];
 
 Display.DASHES =
@@ -133,6 +137,18 @@ Display.prototype.pad = function (str, length, character)
         return str.substr (0, length);
     if (diff > 0)
         return str + (character == ' ' ? Display.SPACES[diff] : Display.DASHES[diff]);
+    return str;
+};
+
+Display.prototype.padLeft = function (str, length, character)
+{
+    if (typeof (str) == 'undefined' || str == null)
+        str = '';
+    var diff = length - str.length;
+    if (diff < 0)
+        return str.substr (0, length);
+    if (diff > 0)
+        return (character == ' ' ? Display.SPACES[diff] : Display.DASHES[diff]) + str;
     return str;
 };
 

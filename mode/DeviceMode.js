@@ -79,14 +79,9 @@ DeviceMode.prototype.updateDisplay = function ()
         d.setCell (3, 0, 'Selected', Display.FORMAT_RAW).setCell (3, 1, 'Device: ', Display.FORMAT_RAW)
          .setBlock (3, 1, selectedDevice.name)
          .setCell (3, 4, cursorDevice.getSelectedParameterPageName (), Display.FORMAT_RAW)
-         .clearCell (3, 5).clearCell (3, 6);
-
-        if (cursorDevice.hasPreviousParameterPage ())
-            d.setCell (3, 5, ' < Prev ', Display.FORMAT_RAW);
-        if (cursorDevice.hasNextParameterPage ())
-            d.setCell (3, 6, ' Next > ', Display.FORMAT_RAW);
-
-        d.setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
+         .setCell (3, 5, cursorDevice.hasPreviousParameterPage () ? ' < Prev ' : '', Display.FORMAT_RAW)
+         .setCell (3, 6, cursorDevice.hasNextParameterPage () ? ' Next > ' : '', Display.FORMAT_RAW)
+         .setCell (3, 7, selectedDevice.enabled ? 'Enabled' : 'Disabled').done (3);
     }
     else
         d.clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ').clearRow (3);

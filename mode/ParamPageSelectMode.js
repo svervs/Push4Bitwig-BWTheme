@@ -58,9 +58,10 @@ ParamPageSelectMode.prototype.attachTo = function (surface)
     this.addFirstRowCommand (' Device ', MODE_BANK_DEVICE);
     this.addFirstRowCommand (' Common ', MODE_BANK_COMMON);
     this.addFirstRowCommand ('Envelope', MODE_BANK_ENVELOPE);
-    this.addFirstRowCommand (' User   ', MODE_BANK_USER);
     this.addFirstRowCommand (' Macro  ', MODE_BANK_MACRO);
     this.addFirstRowCommand ('Modulate', MODE_BANK_MODULATE);
+
+    this.addFirstRowCommand (' User   ', MODE_BANK_USER);
     
     this.setCurrentMode (MODE_BANK_DEVICE);
 };

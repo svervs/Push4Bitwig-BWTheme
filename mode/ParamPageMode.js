@@ -113,8 +113,6 @@ ParamPageMode.prototype.onSecondRow = function (index) {};
 
 ParamPageMode.prototype.updateDisplay = function ()
 {
-    this.drawTrackNames ();
-
     var d = this.surface.getDisplay ();
     if (this.hasParams ())
     {
@@ -135,9 +133,18 @@ ParamPageMode.prototype.updateDisplay = function ()
     else
     {
         d.clearRow (0).clearRow (1).clearRow (2)
-         .setCell (1, 3, 'No ' + this.name).setCell (1, 4, 'Assigned');
+         .setBlock (1, 1, d.padLeft ('No ' + this.name, 17, ' ')).setCell (1, 4, 'Assigned');
     }
-    d.done (0).done (1).done (2);
+    if (this.model.hasSelectedDevice ())
+    {
+        d.setCell (3, 0, 'Selected', Display.FORMAT_RAW).setCell (3, 1, 'Device: ', Display.FORMAT_RAW)
+         .setBlock (3, 1, this.model.getSelectedDevice ().name)
+         .setBlock (3, 2, this.name, Display.FORMAT_RAW)
+         .clearBlock (3);
+    }
+    else
+        d.clearRow (3);
+    d.allDone ();
 };
 
 ParamPageMode.prototype.updateFirstRow = function ()
