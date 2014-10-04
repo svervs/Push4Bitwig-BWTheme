@@ -58,9 +58,10 @@ ParamPageSelectMode.prototype.attachTo = function (surface)
     this.addFirstRowCommand (' Device ', MODE_BANK_DEVICE);
     this.addFirstRowCommand (' Common ', MODE_BANK_COMMON);
     this.addFirstRowCommand ('Envelope', MODE_BANK_ENVELOPE);
+    // TODO FIX - API currently broken
+    // this.addFirstRowCommand (' Direct ', MODE_BANK_DIRECT);
     this.addFirstRowCommand (' Macro  ', MODE_BANK_MACRO);
     this.addFirstRowCommand ('Modulate', MODE_BANK_MODULATE);
-
     this.addFirstRowCommand (' User   ', MODE_BANK_USER);
     
     this.setCurrentMode (MODE_BANK_DEVICE);
@@ -78,12 +79,7 @@ ParamPageSelectMode.prototype.updateDisplay = function ()
 ParamPageSelectMode.prototype.updateFirstRow = function ()
 {
     for (var i = 20; i < 28; i++)
-    {
-        if (i == 20 + this.selectedIndex)
-            this.surface.setButton (i, ParamPageSelectMode.firstRowButtonColorSelected);
-        else
-            this.surface.setButton(i, ParamPageSelectMode.firstRowButtonColorUp);
-    }
+        this.surface.setButton (i, i == 20 + this.selectedIndex ? ParamPageSelectMode.firstRowButtonColorSelected : ParamPageSelectMode.firstRowButtonColorUp);
 };
 
 ParamPageSelectMode.prototype.updateSecondRow = function ()

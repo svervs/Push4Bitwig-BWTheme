@@ -107,6 +107,15 @@ ParamPageMode.prototype.onValueKnob = function (index, value)
     this.getParameter (index).set (this.params[index].value, Config.maxParameterValue);
 };
 
+ParamPageMode.prototype.onValueKnobTouch = function (index, isTouched) 
+{
+    if (this.surface.isDeletePressed () && this.id != MODE_BANK_MODULATE)
+    {
+        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+        this.getParameter (index).reset ();
+    }
+};
+
 ParamPageMode.prototype.onFirstRow = function (index) {};
 
 ParamPageMode.prototype.onSecondRow = function (index) {};
@@ -132,15 +141,18 @@ ParamPageMode.prototype.updateDisplay = function ()
     }
     else
     {
-        d.clearRow (0).clearRow (1).clearRow (2)
-         .setBlock (1, 1, d.padLeft ('No ' + this.name, 17, ' ')).setCell (1, 4, 'Assigned');
+        d.clearRow (0).clearRow (1).clearRow (2);
+        if (this.model.hasSelectedDevice ())
+            d.setBlock (1, 1, d.padLeft ('No ' + this.name, 17, ' ')).setCell (1, 4, 'Assigned');
+        else
+            d.setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ');
     }
     if (this.model.hasSelectedDevice ())
     {
         d.setCell (3, 0, 'Selected', Display.FORMAT_RAW).setCell (3, 1, 'Device: ', Display.FORMAT_RAW)
          .setBlock (3, 1, this.model.getSelectedDevice ().name)
          .setBlock (3, 2, this.name, Display.FORMAT_RAW)
-         .clearBlock (3);
+         .clearBlock (3, 3);
     }
     else
         d.clearRow (3);
