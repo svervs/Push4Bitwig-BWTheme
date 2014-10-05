@@ -13,13 +13,10 @@ function Controller ()
 
     this.scales = new Scales (36, 100, 8, 8);
     this.model = new Model (PUSH_KNOB1, this.scales);
-    this.model.getTrackBank ().addTrackSelectionListener (doObject (this, function (index, isSelected)
-    {
-        if (isSelected && this.surface.isActiveMode (MODE_MASTER))
-            this.surface.setPendingMode (MODE_TRACK);
-        if (this.surface.isActiveView (VIEW_PLAY))
-            this.surface.getActiveView ().updateNoteMapping ();
-    }));
+    
+    this.lastSlotSelection = null;
+    this.prefferedView = [];
+    this.model.getTrackBank ().addTrackSelectionListener (doObject (this, Controller.prototype.handleTrackChange));
     this.model.getMasterTrack ().addTrackSelectionListener (doObject (this, function (isSelected)
     {
         this.surface.setPendingMode (isSelected ? MODE_MASTER : this.surface.getPreviousMode ());
@@ -65,6 +62,16 @@ function Controller ()
     {
         this.updateMode (-1);
         this.updateMode (newMode);
+    }));
+    this.surface.addViewChangeListener (doObject (this, function (oldView, newView)
+    {
+        var tb = this.model.getCurrentTrackBank ();
+        var track = this.model.getCurrentTrackBank ().getSelectedTrack ();
+        if (track == null)
+            return;
+        var pos = tb.getTrack (track.index).position;
+        if (pos != -1 && newView != VIEW_SESSION)
+            this.prefferedView[pos] = newView;
     }));
     
     Config.addPropertyListener (Config.RIBBON_MODE, doObject (this, function ()
@@ -183,5 +190,35 @@ Controller.prototype.updateIndication = function (mode)
         mt.setPanIndication (mode == MODE_MASTER);
 
         this.model.getGroove ().setIndication (mode == MODE_GROOVE);
+    }
+};
+
+Controller.prototype.handleTrackChange = function (index, isSelected)
+{
+    if (this.surface.isActiveView (VIEW_PLAY))
+        this.surface.getActiveView ().updateNoteMapping ();
+        
+    var tb = this.model.getCurrentTrackBank ();
+    if (!isSelected)
+    {
+        this.lastSlotSelection = tb.getSelectedSlot (index);
+        return;
+    }
+
+    if (this.surface.isActiveMode (MODE_MASTER))
+        this.surface.setPendingMode (MODE_TRACK);
+        
+    // Recall last used view (if we are not in session mode)
+    var pos = tb.getTrack (index).position;
+    if (!this.surface.isActiveView (VIEW_SESSION))
+        this.surface.setActiveView (typeof (this.prefferedView[pos]) == 'undefined' ? VIEW_PLAY : this.prefferedView[pos]);
+        
+    // Select the slot on the new track with the same index as on the previous track
+    if (this.lastSlotSelection != null)
+        tb.showClipInEditor (index, this.lastSlotSelection.index);
+    else
+    {
+        var slot = tb.getSelectedSlot (index);
+        tb.showClipInEditor (index, slot != null ? slot.index : 0);
     }
 };
