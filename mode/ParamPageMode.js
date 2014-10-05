@@ -109,7 +109,7 @@ ParamPageMode.prototype.onValueKnob = function (index, value)
 
 ParamPageMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
-    if (this.surface.isDeletePressed () && this.id != MODE_BANK_MODULATE)
+    if (isTouched && this.surface.isDeletePressed () && this.id != MODE_BANK_MODULATE)
     {
         this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
         this.getParameter (index).reset ();

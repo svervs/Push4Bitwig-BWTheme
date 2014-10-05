@@ -15,6 +15,12 @@ PanMode.prototype.onValueKnob = function (index, value)
     this.model.getCurrentTrackBank ().changePan (index, value, this.surface.getFractionValue ());
 };
 
+PanMode.prototype.onValueKnobTouch = function (index, isTouched)
+{
+    if (isTouched && this.surface.isDeletePressed ())
+        this.model.getCurrentTrackBank ().resetPan (index);
+};
+
 PanMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();

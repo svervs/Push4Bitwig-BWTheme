@@ -33,6 +33,33 @@ TrackMode.prototype.onValueKnob = function (index, value)
     }
 };
 
+TrackMode.prototype.onValueKnobTouch = function (index, isTouched)
+{
+    if (isTouched && this.surface.isDeletePressed ())
+    {
+        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+        var tb = this.model.getCurrentTrackBank ();
+        var selectedTrack = tb.getSelectedTrack ();
+        if (selectedTrack == null)
+            return;
+        switch (index)
+        {
+            case 0:
+                tb.resetVolume (selectedTrack.index);
+                break;
+            case 1:
+                tb.resetPan (selectedTrack.index);
+                break;
+            case 2:
+                // Crossfader mode can't be reset
+                break;
+            default:
+                tb.resetSend (selectedTrack.index, index - 3);
+                break;
+        }
+    }
+};
+
 TrackMode.prototype.updateDisplay = function ()
 {
     var currentTrackBank = this.model.getCurrentTrackBank ();

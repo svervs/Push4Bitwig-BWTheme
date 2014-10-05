@@ -15,6 +15,12 @@ VolumeMode.prototype.onValueKnob = function (index, value)
     this.model.getCurrentTrackBank ().changeVolume (index, value, this.surface.getFractionValue ());
 };
 
+VolumeMode.prototype.onValueKnobTouch = function (index, isTouched)
+{
+    if (isTouched && this.surface.isDeletePressed ())
+        this.model.getCurrentTrackBank ().resetVolume (index);
+};
+
 VolumeMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();

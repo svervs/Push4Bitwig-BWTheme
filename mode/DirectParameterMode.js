@@ -12,23 +12,24 @@ DirectParameterMode.prototype = new BaseMode ();
 
 DirectParameterMode.prototype.onValueKnob = function (index, value)
 {
-    var param = this.model.getCursorDevice ().getFXParam (index);
+/* TODO    var param = this.model.getCursorDevice ().getFXParam (index);
     param.value = this.surface.changeValue (value, param.value);
     this.model.getCursorDevice ().setParameter (index, param.value);
+*/
 };
 
 DirectParameterMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
-    if (this.surface.isDeletePressed ())
+    if (isTouched && this.surface.isDeletePressed ())
     {
-        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
-        this.model.getCursorDevice ().resetParameter (index);
+/* TODO            this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+        this.model.getCursorDevice ().resetParameter (index);*/
     }
 };
 
 DirectParameterMode.prototype.onFirstRow = function (index)
 {
-    var device = this.model.getCursorDevice ();
+/* TODO        var device = this.model.getCursorDevice ();
     switch (index)
     {
         case 5:
@@ -44,19 +45,19 @@ DirectParameterMode.prototype.onFirstRow = function (index)
         case 7:
             device.toggleEnabledState ();
             break;
-    }
+    }*/
 };
 
 DirectParameterMode.prototype.onSecondRow = function (index)
 {
-    var macro = this.model.getCursorDevice ().getMacro (index);
+/* TODO        var macro = this.model.getCursorDevice ().getMacro (index);
     if (macro)
-        macro.getModulationSource ().toggleIsMapping ();
+        macro.getModulationSource ().toggleIsMapping ();*/
 };
 
 DirectParameterMode.prototype.updateDisplay = function () 
 {
-    var d = this.surface.getDisplay ();
+/* TODO        var d = this.surface.getDisplay ();
     var selectedDevice = this.model.getSelectedDevice ();
     var hasDevice = this.model.hasSelectedDevice ();
 
@@ -86,12 +87,12 @@ DirectParameterMode.prototype.updateDisplay = function ()
     else
         d.clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ').clearRow (3);
 
-    d.allDone ();
+    d.allDone ();*/
 };
 
 DirectParameterMode.prototype.updateFirstRow = function ()
 {
-    var selectedDevice = this.model.getSelectedDevice ();
+/* TODO        var selectedDevice = this.model.getSelectedDevice ();
     if (this.model.hasSelectedDevice ())
     {
         this.surface.setButton (20, PUSH_COLOR_BLACK);
@@ -107,7 +108,7 @@ DirectParameterMode.prototype.updateFirstRow = function ()
     {
         for (var i = 0; i < 8; i++)
             this.surface.setButton (20 + i, PUSH_COLOR_BLACK);
-    }
+    }*/
 };
 
 DirectParameterMode.prototype.updateSecondRow = function ()

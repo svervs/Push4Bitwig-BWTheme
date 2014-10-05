@@ -16,6 +16,15 @@ SendMode.prototype.onValueKnob = function (index, value)
     this.model.getCurrentTrackBank ().changeSend (index, sendIndex, value, this.surface.getFractionValue ());
 };
 
+SendMode.prototype.onValueKnobTouch = function (index, isTouched)
+{
+    if (isTouched && this.surface.isDeletePressed ())
+    {
+        var sendIndex = this.getCurrentSendIndex ();
+        this.model.getCurrentTrackBank ().resetSend (index, sendIndex);
+    }
+};
+
 SendMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
