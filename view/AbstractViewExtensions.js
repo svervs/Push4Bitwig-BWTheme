@@ -3,8 +3,6 @@
 // (c) 2014
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-AbstractView.lastNoteView = VIEW_PLAY;
-
 AbstractView.prototype.stopPressed = false;
 // TODO can this be integrated into the event system so all long presses
 // record the mode at the start of the touch down event
@@ -461,17 +459,29 @@ AbstractView.prototype.onNote = function (event)
 {
     if (!event.isDown ())
         return;
-    AbstractView.lastNoteView = this.surface.isActiveView (VIEW_SESSION) ? AbstractView.lastNoteView :
-                                (this.surface.isShiftPressed () ? VIEW_DRUM : (this.surface.isActiveView (VIEW_PLAY) ? VIEW_SEQUENCER : VIEW_PLAY));
-    this.surface.setActiveView (AbstractView.lastNoteView);
+        
+    if (this.surface.isActiveView (VIEW_SESSION))
+    {
+        var tb = this.model.getCurrentTrackBank ();
+        var sel = tb.getSelectedTrack ();
+        var viewID = VIEW_PLAY;
+        if (sel != null)
+        {
+            viewID = tb.getPreferredView (sel.index);
+            if (viewID == null)
+                viewID = VIEW_PLAY;
+        }
+        this.surface.setActiveView (viewID);
+        return;
+    }
+    
+    this.surface.setPendingMode (MODE_VIEW_SELECT);
 };
 
 AbstractView.prototype.onSession = function (event)
 {
-    if (!event.isDown ())
-        return;
-    AbstractView.lastNoteView = this.surface.isActiveView (VIEW_PLAY) ? VIEW_PLAY : (this.surface.isActiveView (VIEW_DRUM) ? VIEW_DRUM : VIEW_SEQUENCER);
-    this.surface.setActiveView (VIEW_SESSION);
+    if (event.isDown ())
+        this.surface.setActiveView (VIEW_SESSION);
 };
 
 AbstractView.prototype.onSelect = function (event) {};

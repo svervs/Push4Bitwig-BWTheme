@@ -31,12 +31,6 @@ SequencerView.prototype.updateArrowStates = function ()
     this.drawSceneButtons ();
 };
 
-SequencerView.prototype.updateNoteMapping = function ()
-{
-    AbstractSequencerView.prototype.updateNoteMapping.call (this);
-    this.updateScale ();
-};
-
 SequencerView.prototype.updateScale = function ()
 {
     var t = this.model.getCurrentTrackBank ().getSelectedTrack ();

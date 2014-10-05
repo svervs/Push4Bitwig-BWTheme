@@ -15,7 +15,6 @@ function Controller ()
     this.model = new Model (PUSH_KNOB1, this.scales);
     
     this.lastSlotSelection = null;
-    this.prefferedView = [];
     this.model.getTrackBank ().addTrackSelectionListener (doObject (this, Controller.prototype.handleTrackChange));
     this.model.getMasterTrack ().addTrackSelectionListener (doObject (this, function (isSelected)
     {
@@ -47,6 +46,7 @@ function Controller ()
     this.surface.addMode (MODE_FIXED, new FixedMode (this.model));
     this.surface.addMode (MODE_RIBBON, new RibbonMode (this.model));
     this.surface.addMode (MODE_GROOVE, new GrooveMode (this.model));
+    this.surface.addMode (MODE_VIEW_SELECT, new ViewSelectMode (this.model));
 
     this.surface.addMode (MODE_PARAM_PAGE_SELECT, new ParamPageSelectMode (this.model));
     this.surface.addMode (MODE_BANK_DEVICE, new DeviceMode (this.model));
@@ -62,16 +62,6 @@ function Controller ()
     {
         this.updateMode (-1);
         this.updateMode (newMode);
-    }));
-    this.surface.addViewChangeListener (doObject (this, function (oldView, newView)
-    {
-        var tb = this.model.getCurrentTrackBank ();
-        var track = this.model.getCurrentTrackBank ().getSelectedTrack ();
-        if (track == null)
-            return;
-        var pos = tb.getTrack (track.index).position;
-        if (pos != -1 && newView != VIEW_SESSION)
-            this.prefferedView[pos] = newView;
     }));
     
     Config.addPropertyListener (Config.RIBBON_MODE, doObject (this, function ()
@@ -103,6 +93,7 @@ function Controller ()
     this.surface.addView (VIEW_SESSION, new SessionView (this.model));
     this.surface.addView (VIEW_SEQUENCER, new SequencerView (this.model));
     this.surface.addView (VIEW_DRUM, new DrumView (this.model));
+    this.surface.addView (VIEW_RAINDROPS, new RaindropsView (this.model));
     
     this.surface.setActiveView (VIEW_PLAY);
     this.surface.setActiveMode (MODE_TRACK);
@@ -209,10 +200,12 @@ Controller.prototype.handleTrackChange = function (index, isSelected)
         this.surface.setPendingMode (MODE_TRACK);
         
     // Recall last used view (if we are not in session mode)
-    var pos = tb.getTrack (index).position;
     if (!this.surface.isActiveView (VIEW_SESSION))
-        this.surface.setActiveView (typeof (this.prefferedView[pos]) == 'undefined' ? VIEW_PLAY : this.prefferedView[pos]);
-        
+    {
+        var viewID = tb.getPreferredView (index);
+        this.surface.setActiveView (viewID == null ? VIEW_PLAY : viewID);
+    }
+     
     // Select the slot on the new track with the same index as on the previous track
     if (this.lastSlotSelection != null)
         tb.showClipInEditor (index, this.lastSlotSelection.index);

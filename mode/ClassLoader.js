@@ -36,6 +36,7 @@ var MODE_SCALES              = 30;
 var MODE_FIXED               = 31;
 var MODE_SCALE_LAYOUT        = 32;
 var MODE_RIBBON              = 33;
+var MODE_VIEW_SELECT         = 34;
 
 var MODE_MASTER_TEMP         = 100;
 
@@ -63,3 +64,4 @@ load ("ScalesMode.js");
 load ("ScaleLayoutMode.js");
 load ("FixedMode.js");
 load ("RibbonMode.js");
+load ("ViewSelectMode.js");
