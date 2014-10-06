@@ -141,7 +141,7 @@ RaindropsView.prototype.handlePlayingStep = function (step)
                 raindrop.dirDown = true;
         }
     }
-}
+};
 
 RaindropsView.prototype.drawGrid = function ()
 {
@@ -156,7 +156,7 @@ RaindropsView.prototype.drawGrid = function ()
     for (var x = 0; x < RaindropsView.NUM_DISPLAY_COLS; x++)
     {
         var raindrop = this.drops[this.noteMap[x]];
-        var scaleColor = this.scales.getColor (this.noteMap, x)
+        var scaleColor = this.scales.getColor (this.noteMap, x);
         for (var y = 0; y < SequencerView.NUM_DISPLAY_ROWS; y++)
         {
             var color = y == 0 ? scaleColor : PUSH_COLOR2_BLACK;
