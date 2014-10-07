@@ -3,8 +3,8 @@
 // (c) 2014
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-ParamPageSelectMode.firstRowButtonColorUp = PUSH_COLOR_BLACK;
-ParamPageSelectMode.firstRowButtonColorSelected = PUSH_COLOR_GREEN_LO;
+ParamPageSelectMode.firstRowButtonColorUp = PUSH_COLOR_GREEN_LO;
+ParamPageSelectMode.firstRowButtonColorSelected = PUSH_COLOR_YELLOW_LO;
 
 
 function ParamPageSelectMode (model)
@@ -58,8 +58,7 @@ ParamPageSelectMode.prototype.attachTo = function (surface)
     this.addFirstRowCommand (' Device ', MODE_BANK_DEVICE);
     this.addFirstRowCommand (' Common ', MODE_BANK_COMMON);
     this.addFirstRowCommand ('Envelope', MODE_BANK_ENVELOPE);
-    // TODO FIX - API currently broken
-    // this.addFirstRowCommand (' Direct ', MODE_BANK_DIRECT);
+    this.addFirstRowCommand (' Direct ', MODE_BANK_DIRECT);
     this.addFirstRowCommand (' Macro  ', MODE_BANK_MACRO);
     this.addFirstRowCommand ('Modulate', MODE_BANK_MODULATE);
     this.addFirstRowCommand (' User   ', MODE_BANK_USER);

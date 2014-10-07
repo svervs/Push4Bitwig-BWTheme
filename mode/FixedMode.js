@@ -33,8 +33,9 @@ FixedMode.prototype.updateDisplay = function ()
 
 FixedMode.prototype.updateFirstRow = function ()
 {
+    var tb = this.model.getCurrentTrackBank ();
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, PUSH_COLOR_GREEN_LO);
+        this.surface.setButton (20 + i, tb.getNewClipLength () == i ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO);
 };
 
 FixedMode.prototype.updateSecondRow = function ()

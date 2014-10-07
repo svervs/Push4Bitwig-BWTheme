@@ -45,7 +45,7 @@ RibbonMode.prototype.updateDisplay = function ()
 RibbonMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 3; i++)
-        this.surface.setButton (20 + i, PUSH_COLOR_ORANGE_LO);
+        this.surface.setButton (20 + i, Config.ribbonMode == Config.RIBBON_MODE_PITCH + i ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO);
     this.surface.setButton (23, PUSH_COLOR_RED_LO);
     for (var i = 4; i < 8; i++)
         this.surface.setButton (20 + i, PUSH_COLOR_GREEN_LO);

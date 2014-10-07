@@ -57,12 +57,11 @@ DeviceMode.prototype.onSecondRow = function (index)
 DeviceMode.prototype.updateDisplay = function () 
 {
     var d = this.surface.getDisplay ();
-    var selectedDevice = this.model.getSelectedDevice ();
-    var hasDevice = this.model.hasSelectedDevice ();
-
-    if (hasDevice)
+    if (this.model.hasSelectedDevice ())
     {
+        var selectedDevice = this.model.getSelectedDevice ();
         var cursorDevice = this.model.getCursorDevice ();
+
         for (var i = 0; i < 8; i++)
         {
             var param = cursorDevice.getFXParam (i);
@@ -85,7 +84,6 @@ DeviceMode.prototype.updateDisplay = function ()
     }
     else
         d.clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ').clearRow (3);
-
     d.allDone ();
 };
 
