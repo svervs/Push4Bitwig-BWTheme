@@ -111,12 +111,27 @@ DrumView.prototype.onGridNote = function (note, velocity)
         var start = this.loopPadPressed < pad ? this.loopPadPressed : pad;
         var end   = (this.loopPadPressed < pad ? pad : this.loopPadPressed) + 1;
         var quartersPerPad = this.model.getQuartersPerMeasure ();
+        
+        var currentStart = this.clip.getPlayStart ();
+        var newStart = start * quartersPerPad;
+        
         // Set a new loop between the 2 selected pads
-        this.clip.setLoopStart (start * quartersPerPad);
+        this.clip.setLoopStart (newStart);
         this.clip.setLoopLength ((end - start) * quartersPerPad);
-        this.clip.setPlayStart (start * quartersPerPad);
-        this.clip.setPlayEnd (end * quartersPerPad);
-        // TODO FIX Rounding error println("setLoopStart:"+(start * quartersPerPad) + " - setLoopLength:"+((end - start) * quartersPerPad)+ " - setPlayStart:"+(start * quartersPerPad)+ " - setPlayEnd:"+(end * quartersPerPad));
+        
+        // Need to distinguish if we move left or right since the start and 
+        // end can not be the same value
+        if (currentStart < newStart)
+        {
+            this.clip.setPlayEnd (end * quartersPerPad);
+            this.clip.setPlayStart (newStart);
+        }
+        else
+        {
+            this.clip.setPlayStart (newStart);
+            this.clip.setPlayEnd (end * quartersPerPad);
+        }
+
         this.loopPadPressed = -1;
     }
 };
