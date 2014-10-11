@@ -56,7 +56,7 @@ Config.init = function ()
     Config.accentValueSetting = prefs.getNumberSetting ("Fixed Accent Value", "Fixed Accent", 1, 127, 1, "", 127);
     Config.accentValueSetting.addRawValueObserver (function (value)
     {
-        Config.fixedAccentValue = Math.floor (value) + 1;
+        Config.fixedAccentValue = value;
         Config.notifyListeners (Config.FIXED_ACCENT_VALUE);
     });
     

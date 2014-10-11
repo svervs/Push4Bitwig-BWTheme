@@ -35,7 +35,7 @@ ClipMode.prototype.onValueKnob = function (index, value)
             clip.setShuffleEnabled (value <= 61);
             break;
         case 7:
-            // TODO FIX: Currently broken
+            clip.changeAccent (value, fractionValue);
             break;
     }
 };
@@ -59,6 +59,9 @@ ClipMode.prototype.updateDisplay = function ()
 
      .setCell (0, 4, "Loop", Display.FORMAT_RAW)
      .setCell (1, 4, clip.isLoopEnabled () ? "On" : "Off", Display.FORMAT_RAW)
+     
+     .clearCell (0, 5)
+     .clearCell (1, 5)
 
      .setCell (0, 6, "Shuffle", Display.FORMAT_RAW)
      .setCell (1, 6, clip.isShuffleEnabled () ? "On" : "Off", Display.FORMAT_RAW)
