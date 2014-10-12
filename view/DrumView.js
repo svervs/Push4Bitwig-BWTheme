@@ -40,8 +40,7 @@ DrumView.prototype.updateArrowStates = function ()
 
 DrumView.prototype.updateNoteMapping = function ()
 {
-    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
-    this.noteMap = t != null && t.canHoldNotes && !this.surface.isSelectPressed () ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
+    this.noteMap = this.canSelectedTrackHoldNotes () && !this.surface.isSelectPressed () ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
     this.surface.setKeyTranslationTable (this.noteMap);
 };
 
@@ -65,6 +64,9 @@ DrumView.prototype.onSelect = function (event)
 
 DrumView.prototype.onGridNote = function (note, velocity)
 {
+    if (!this.canSelectedTrackHoldNotes ())
+        return;
+
     var index = note - 36;
     var x = index % 8;
     var y = Math.floor (index / 8);
@@ -160,6 +162,12 @@ DrumView.prototype.onOctaveUp = function (event)
 
 DrumView.prototype.drawGrid = function ()
 {
+    if (!this.canSelectedTrackHoldNotes ())
+    {
+        this.surface.pads.turnOff ();
+        return;
+    }
+
     var isRecording = this.model.hasRecordingState ();
 
     // 4x4 Drum Pad Grid

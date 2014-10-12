@@ -45,8 +45,7 @@ RaindropsView.prototype.updateNoteMapping = function ()
 
 RaindropsView.prototype.updateScale = function ()
 {
-    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
-    this.noteMap = t != null && t.canHoldNotes ? this.scales.getSequencerMatrix (RaindropsView.NUM_DISPLAY_ROWS, this.offsetY) : this.scales.getEmptyMatrix ();
+    this.noteMap = this.canSelectedTrackHoldNotes () ? this.scales.getSequencerMatrix (RaindropsView.NUM_DISPLAY_ROWS, this.offsetY) : this.scales.getEmptyMatrix ();
 };
 
 RaindropsView.prototype.usesButton = function (buttonID)
@@ -65,6 +64,8 @@ RaindropsView.prototype.usesButton = function (buttonID)
 
 RaindropsView.prototype.onGridNote = function (note, velocity)
 {
+    if (!this.canSelectedTrackHoldNotes ())
+        return;
     if (velocity == 0)
         return;
     var index = note - 36;
@@ -145,9 +146,7 @@ RaindropsView.prototype.handlePlayingStep = function (step)
 
 RaindropsView.prototype.drawGrid = function ()
 {
-    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
-    var isKeyboardEnabled = t != null && t.canHoldNotes;
-    if (!isKeyboardEnabled)
+    if (!this.canSelectedTrackHoldNotes ())
     {
         this.surface.pads.turnOff ();
         return;

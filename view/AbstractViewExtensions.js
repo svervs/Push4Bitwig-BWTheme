@@ -601,3 +601,9 @@ AbstractView.prototype.updateRibbonMode = function ()
     this.surface.setRibbonMode (PUSH_RIBBON_VOLUME);
     this.surface.output.sendPitchbend (0, 0);
 };
+
+AbstractView.prototype.canSelectedTrackHoldNotes = function ()
+{
+    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
+    return t != null && t.canHoldNotes;
+};
