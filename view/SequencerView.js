@@ -2,7 +2,7 @@
 // (c) 2014
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-SequencerView.NUM_DISPLAY_ROWS = 8;
+SequencerView.NUM_DISPLAY_ROWS = 7;
 SequencerView.NUM_DISPLAY_COLS = 8;
 SequencerView.NUM_OCTAVE       = 12;
 SequencerView.START_KEY        = 36;
@@ -126,7 +126,7 @@ SequencerView.prototype.drawGrid = function ()
     var hiStep = this.isInXRange (step) ? step % SequencerView.NUM_DISPLAY_COLS : -1;
     for (var x = 0; x < SequencerView.NUM_DISPLAY_COLS; x++)
     {
-        for (var y = 0; y < SequencerView.NUM_DISPLAY_ROWS - 1; y++)
+        for (var y = 0; y < SequencerView.NUM_DISPLAY_ROWS; y++)
         {
             var row = this.noteMap[y];
             var isSet = this.clip.getStep (x, row);
