@@ -49,22 +49,32 @@ PresetMode.prototype.onValueKnob = function (index, value)
 
 PresetMode.prototype.onFirstRow = function (index)
 {
-    if (index == 2)
-        this.model.getCursorDevice ().switchToPreviousPresetCategory ();
-    else if (index == 4)
-        this.model.getCursorDevice ().switchToPreviousPresetCreator ();
-    else if (index == 6)
-        this.model.getCursorDevice ().switchToPreviousPreset ();
+    var device = this.model.getCursorDevice ();
+    var count = this.surface.isShiftPressed () ? 4 : 1;
+    for (var i = 0; i < count; i++)
+    {
+        if (index == 2)
+            device.switchToPreviousPresetCategory ();
+        else if (index == 4)
+            device.switchToPreviousPresetCreator ();
+        else if (index == 6)
+            device.switchToPreviousPreset ();
+    }
 };
 
 PresetMode.prototype.onSecondRow = function (index)
 {
-    if (index == 2)
-        this.model.getCursorDevice ().switchToNextPresetCategory ();
-    else if (index == 4)
-        this.model.getCursorDevice ().switchToNextPresetCreator ();
-    else if (index == 6)
-        this.model.getCursorDevice ().switchToNextPreset ();
+    var device = this.model.getCursorDevice ();
+    var count = this.surface.isShiftPressed () ? 4 : 1;
+    for (var i = 0; i < count; i++)
+    {
+        if (index == 2)
+            device.switchToNextPresetCategory ();
+        else if (index == 4)
+            device.switchToNextPresetCreator ();
+        else if (index == 6)
+            device.switchToNextPreset ();
+    }
 };
 
 PresetMode.prototype.updateDisplay = function ()
@@ -83,27 +93,22 @@ PresetMode.prototype.updateDisplay = function ()
     d.clearColumn (0).setBlock ( 0, 0, "Select Preset:")
      .setBlock (3, 0, "Device: " + this.model.getSelectedDevice ().name);
     
+    // Categories column
     var view = cd.categoryProvider.getView (4);
     for (var i = 0; i < 4; i++)
-    {
-        var value = (view[i] != null) ? view[i] : "";
-        if (i == 0)
-            d.setBlock (i, 1, Display.RIGHT_ARROW + value);
-        else
-            d.setBlock (i, 1, ' ' + value);
-    }
+        d.setBlock (i, 1, (i == 0 ? Display.RIGHT_ARROW : ' ') + (view[i] != null ? view[i] : ""));
     
-    var view = cd.creatorProvider.getView (4);
+    // Creator column
+    view = cd.creatorProvider.getView (4);
     for (var i = 0; i < 4; i++)
-    {
-        var value = (view[i] != null) ? view[i] : "";
-        if (i == 0)
-            d.setBlock (i, 2, Display.RIGHT_ARROW + value);
-        else
-            d.setBlock (i, 2, ' ' + value);
-    }
+        d.setBlock (i, 2, (i == 0 ? Display.RIGHT_ARROW : ' ') + (view[i] != null ? view[i] : ""));
 
-    d.clearColumn(3).setBlock (0, 3, Display.RIGHT_ARROW + cd.getCurrentPreset ()).allDone ();
+    // Creator column
+    view = cd.presetProvider.getView (4);
+    for (var i = 0; i < 4; i++)
+        d.setBlock (i, 3, (i == 0 ? Display.RIGHT_ARROW : ' ') + (view[i] != null ? view[i] : ""));
+        
+    d.allDone ();
 };
 
 PresetMode.prototype.updateFirstRow = function ()

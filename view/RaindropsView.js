@@ -9,13 +9,11 @@ RaindropsView.START_KEY        = 36;
 
 function RaindropsView (model)
 {
-    AbstractSequencerView.call (this, model, 128, RaindropsView.NUM_DISPLAY_COLS);
+    AbstractSequencerView.call (this, model, 128, 32 * 16 /* Biggest number in Fixed Length */);
     this.offsetY = RaindropsView.START_KEY;
     this.clip.scrollTo (0, RaindropsView.START_KEY);
     
-    this.drops = [];
-    for (var i = 0; i < 128; i++)
-        this.drops.push ({ start: -1, pos: -1, dirDown: false, velocity: 0 });
+    this.ongoingResolutionChange = false;
 }
 RaindropsView.prototype = new AbstractSequencerView ();
 
@@ -23,8 +21,6 @@ RaindropsView.prototype.onActivate = function ()
 {
     this.updateScale ();
     AbstractSequencerView.prototype.onActivate.call (this);
-    
-    this.clip.clip.addPlayingStepObserver (doObject (this, RaindropsView.prototype.handlePlayingStep));
 };
 
 RaindropsView.prototype.updateArrowStates = function ()
@@ -50,7 +46,6 @@ RaindropsView.prototype.updateScale = function ()
 
 RaindropsView.prototype.usesButton = function (buttonID)
 {
-// TODO
     switch (buttonID)
     {
         case PUSH_BUTTON_ADD_EFFECT:
@@ -71,18 +66,24 @@ RaindropsView.prototype.onGridNote = function (note, velocity)
     var index = note - 36;
     var x = index % 8;
     var y = Math.floor (index / 8);
-    
-    var raindrop = this.drops[this.noteMap[x]];
-    if (raindrop.start == y)
+    var stepsize = y == 0 ? 1 : 2 * y;
+
+    var length = this.clip.getLoopLength () / this.resolutions[this.selectedIndex];
+    var distance = this.getNoteDistance (this.noteMap[x], length);
+    this.clip.clearRow (this.noteMap[x]);
+    if (distance == -1 || distance != (y == 0 ? 1 : y * 2))
     {
-        raindrop.start = -1;
-        this.surface.sendMidiEvent (0x80, this.noteMap[x], 0);
-        return;
+        var offset = this.clip.getCurrentStep () % stepsize;
+        for (var i = offset; i < length; i += stepsize)
+            this.clip.setStep (i, this.noteMap[x], velocity, this.resolutions[this.selectedIndex]);
     }
-    raindrop.start    = y;
-    raindrop.pos      = y;
-    raindrop.dirDown  = true;
-    raindrop.velocity = Config.accentActive ? Config.fixedAccentValue : velocity;
+};
+
+RaindropsView.prototype.onScene = function (index)
+{
+    this.ongoingResolutionChange = true;
+    AbstractSequencerView.prototype.onScene.call (this, index);
+    this.ongoingResolutionChange = false;    
 };
 
 RaindropsView.prototype.onOctaveDown = function (event)
@@ -111,39 +112,6 @@ RaindropsView.prototype.scrollLeft = function (event)
     this.surface.getDisplay ().showNotification ('          ' + this.scales.getSequencerRangeText (this.noteMap[0], this.noteMap[7]));
 };
 
-RaindropsView.prototype.handlePlayingStep = function (step)
-{
-    for (var i = 0; i < 128; i++)
-    {
-        var raindrop = this.drops[i];
-        if (raindrop.start == -1)
-            continue;
-            
-        if (raindrop.start == 0)
-        {
-            this.surface.sendMidiEvent (0x90, i, raindrop.velocity);
-            continue;
-        }
-        
-        this.surface.sendMidiEvent (0x80, i, 0);
-        if (raindrop.dirDown)
-        {
-            raindrop.pos--;
-            if (raindrop.pos == 0)
-            {
-                this.surface.sendMidiEvent (0x90, i, raindrop.velocity);
-                raindrop.dirDown = false;
-            }
-        }
-        else
-        {
-            raindrop.pos++;
-            if (raindrop.pos == raindrop.start)
-                raindrop.dirDown = true;
-        }
-    }
-};
-
 RaindropsView.prototype.drawGrid = function ()
 {
     if (!this.canSelectedTrackHoldNotes ())
@@ -151,22 +119,87 @@ RaindropsView.prototype.drawGrid = function ()
         this.surface.pads.turnOff ();
         return;
     }
+    
+    if (this.ongoingResolutionChange)
+        return;
 
+    var length = this.clip.getLoopLength () / this.resolutions[this.selectedIndex];
+    var step = this.clip.getCurrentStep ();
+    
     for (var x = 0; x < RaindropsView.NUM_DISPLAY_COLS; x++)
     {
-        var raindrop = this.drops[this.noteMap[x]];
-        var scaleColor = this.scales.getColor (this.noteMap, x);
-        for (var y = 0; y < SequencerView.NUM_DISPLAY_ROWS; y++)
+        var left = this.getNoteDistanceToTheLeft (this.noteMap[x], step, length);
+        var right = this.getNoteDistanceToTheRight (this.noteMap[x], step, length);
+        var isOn = left >= 0 && right >= 0;
+        var sum = left + right;
+        var distance = sum == 0 ? 0 : (sum + 1) / 2;
+        
+        for (var y = 0; y < RaindropsView.NUM_DISPLAY_ROWS; y++)
         {
-            var color = y == 0 ? scaleColor : PUSH_COLOR2_BLACK;
-            if (raindrop.start != -1)
+            var color = y == 0 ? this.scales.getColor (this.noteMap, x) : PUSH_COLOR2_BLACK;
+            if (isOn)
             {
-                if (raindrop.pos == y)
-                    color = PUSH_COLOR2_GREEN_HI;
-                else if (raindrop.start == y)
+                if (y == distance)
                     color = PUSH_COLOR2_BLUE;
+                if ((left <= distance && y == left) || (left > distance && y == sum - left))
+                    color = PUSH_COLOR2_GREEN_HI;
             }
             this.surface.pads.lightEx (x, 7 - y, color, null, false);
         }
     }
 };
+
+RaindropsView.prototype.getNoteDistance = function (row, length)
+{
+    var step = 0;
+    for (step = 0; step < length; step++)
+    {
+        if (this.clip.getStep (step, row))
+            break;
+    }
+    if (step >= length)
+        return -1;
+    for (var step2 = step + 1; step2 < length; step2++)
+    {
+        if (this.clip.getStep (step2, row))
+            return step2 - step;
+    }
+    return -1;
+}
+
+RaindropsView.prototype.getNoteDistanceToTheRight = function (row, start, length)
+{
+    if (start < 0)
+        return -1;
+    var step = start;
+    var counter = 0;
+    do
+    {
+        if (this.clip.getStep (step, row))
+            return counter;
+        step++;
+        counter++;
+        if (step == length)
+            step = 0;
+    } while (step != start);
+    return -1;
+}
+
+RaindropsView.prototype.getNoteDistanceToTheLeft = function (row, start, length)
+{
+    if (start < 0)
+        return -1;
+    start = start == 0 ? length - 1 : start - 1;
+    var step = start;
+    var counter = 0;
+    do
+    {
+        if (this.clip.getStep (step, row))
+            return counter;
+        step--;
+        counter++;
+        if (step == -1)
+            step = length - 1;
+    } while (step != start);
+    return -1;
+}
