@@ -359,21 +359,22 @@ AbstractView.prototype.onDeviceLeft = function (event)
     if (!event.isDown ())
         return;
 
-    /* TODO FIX The returned channel selection does not contain the layers instead it is the top level tracks selection
+    // TODO FIX The returned channel selection does not contain the layers instead it is the top level tracks selection
     var cd = this.model.getCursorDevice ();
     if (cd.hasSelectedDevice ())
     {
-        cd.cursorDevice.getChannelSelection ().selectFirst ();
+        if (cd.hasLayers ())
+            this.surface.setPendingMode (this.surface.getCurrentMode () == MODE_BANK_DEVICE ? MODE_DEVICE_LAYER : MODE_BANK_DEVICE);
     }
     else
     {
         //this.model.getCursorDevice ().cursorDevice.selectFirstInLayer (0);
-    }*/
+    }
 };
 
 AbstractView.prototype.onDeviceRight = function (event)
 {
-    if (event.isDown ())   // TODO Create function in CursorDeviceProxy when API is fully workking and tested
+    if (event.isDown ())   // TODO Create function in CursorDeviceProxy when API is fully working and tested
         this.model.getCursorDevice ().cursorDevice.selectParent ();
 };
 

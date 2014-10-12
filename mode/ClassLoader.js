@@ -31,6 +31,7 @@ var MODE_BANK_USER           = 25;
 var MODE_BANK_MACRO          = 26;
 var MODE_PRESET              = 27;
 var MODE_BANK_DIRECT         = 28;
+var MODE_DEVICE_LAYER        = 29;
 
 var MODE_SCALES              = 30;
 var MODE_FIXED               = 31;
@@ -56,6 +57,7 @@ load ("SendMode.js");
 
 load ("ParamPageSelectMode.js");
 load ("DeviceMode.js");
+load ("DeviceLayerMode.js");
 load ("ParamPageMode.js");
 load ("DirectParameterMode.js");
 load ("PresetMode.js");
