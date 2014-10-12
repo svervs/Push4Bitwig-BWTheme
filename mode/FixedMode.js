@@ -15,6 +15,7 @@ FixedMode.prototype = new BaseMode ();
 FixedMode.prototype.onFirstRow = function (index)
 {
     this.model.getCurrentTrackBank ().setNewClipLength (index);
+    this.surface.setPendingMode (this.surface.getPreviousMode ());
 };
 
 FixedMode.prototype.onSecondRow = function (index) {};
@@ -22,13 +23,11 @@ FixedMode.prototype.onSecondRow = function (index) {};
 FixedMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
-    d.clearRow (0).done (0).clearRow (1).done (1)
-     .setBlock (2, 0, 'New Clip Length:').clearBlock (2, 1).clearBlock (2, 2).clearBlock (2, 3)
-     .done (2);
+    d.clear ().setBlock (1, 0, 'New Clip Length:').clearBlock (2, 1).clearBlock (2, 2).clearBlock (2, 3);
     var tb = this.model.getCurrentTrackBank ();
     for (var i = 0; i < 8; i++)
         d.setCell (3, i, (tb.getNewClipLength () == i ? Display.RIGHT_ARROW : ' ') + FixedMode.CLIP_LENGTHS[i]);
-    d.done (3);
+    d.allDone ();
 };
 
 FixedMode.prototype.updateFirstRow = function ()

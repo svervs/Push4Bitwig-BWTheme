@@ -91,8 +91,8 @@ AbstractView.prototype.onAutomation = function (event)
 
 AbstractView.prototype.onFixedLength = function (event)
 {
-    if (!event.isLong ())
-        this.surface.setPendingMode (event.isDown () ? MODE_FIXED : this.surface.getPreviousMode ());
+    if (event.isDown ())
+        this.surface.setPendingMode (this.surface.getCurrentMode () == MODE_FIXED ? this.surface.getPreviousMode () : MODE_FIXED);
 };
 
 //--------------------------------------

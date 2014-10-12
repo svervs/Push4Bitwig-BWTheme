@@ -25,16 +25,13 @@ ScaleLayoutMode.prototype.onSecondRow = function (index) {};
 ScaleLayoutMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
-    d.clearRow (0).clearRow (1).clearRow (2).setBlock (2, 0, 'Scale layout:');
+    d.clear ().setBlock (1, 0, 'Scale layout:');
 
     var sl = this.scales.getScaleLayout ();
-    for (var i = 0; i < 8; i++)
+    for (var i = 0; i < Scales.LAYOUT_NAMES.length; i++)
     {
         var isSel = sl == i;
-        if (i > 5)
-            d.clearCell (3, i);
-        else
-            d.setCell (3, i, (isSel ? Display.RIGHT_ARROW : ' ') + Scales.LAYOUT_NAMES[i]);
+        d.setCell (3, i, (isSel ? Display.RIGHT_ARROW : ' ') + Scales.LAYOUT_NAMES[i]);
     }
     d.allDone ();
 };

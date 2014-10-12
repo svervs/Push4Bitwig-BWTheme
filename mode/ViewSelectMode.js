@@ -33,7 +33,7 @@ ViewSelectMode.prototype.onSecondRow = function (index) {};
 ViewSelectMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
-    d.clear ().setBlock (0, 0, 'Track input:');
+    d.clear ().setBlock (1, 0, 'Track input:');
     for (var i = 0; i < ViewSelectMode.VIEWS.length; i++)
         d.setCell (3, i, (this.surface.isActiveView (ViewSelectMode.VIEWS[i].id) ? Display.RIGHT_ARROW : ' ') + ViewSelectMode.VIEWS[i].name);
     d.allDone ();
