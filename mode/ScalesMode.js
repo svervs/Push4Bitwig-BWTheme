@@ -7,6 +7,7 @@ function ScalesMode (model)
 {
     BaseMode.call (this, model);
     this.id = MODE_SCALES;
+    this.isTemporary = false;
     this.scales = model.getScales ();
 }
 ScalesMode.prototype = new BaseMode ();

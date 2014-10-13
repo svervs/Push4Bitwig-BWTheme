@@ -9,6 +9,7 @@ function FixedMode (model)
 {
     BaseMode.call (this, model);
     this.id = MODE_FIXED;
+    this.isTemporary = false;
 }
 FixedMode.prototype = new BaseMode ();
 
@@ -23,7 +24,7 @@ FixedMode.prototype.onSecondRow = function (index) {};
 FixedMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
-    d.clear ().setBlock (1, 0, 'New Clip Length:').clearBlock (2, 1).clearBlock (2, 2).clearBlock (2, 3);
+    d.clear ().setBlock (1, 0, 'New Clip Length:');
     var tb = this.model.getCurrentTrackBank ();
     for (var i = 0; i < 8; i++)
         d.setCell (3, i, (tb.getNewClipLength () == i ? Display.RIGHT_ARROW : ' ') + FixedMode.CLIP_LENGTHS[i]);

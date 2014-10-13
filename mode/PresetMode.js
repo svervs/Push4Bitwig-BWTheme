@@ -7,6 +7,7 @@ function PresetMode (model)
 {
     BaseMode.call (this, model);
     this.id = MODE_PRESET;
+    this.isTemporary = false;
 
     this.knobInvalidated = false;
     

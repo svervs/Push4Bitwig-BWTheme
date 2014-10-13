@@ -7,6 +7,7 @@ function DeviceMode (model)
 {
     BaseMode.call (this, model);
     this.id = MODE_BANK_DEVICE;
+    this.isTemporary = false;
 }
 DeviceMode.prototype = new BaseMode ();
 
