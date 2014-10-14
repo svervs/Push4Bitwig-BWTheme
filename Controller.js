@@ -187,9 +187,6 @@ Controller.prototype.updateIndication = function (mode)
 
 Controller.prototype.handleTrackChange = function (index, isSelected)
 {
-    if (this.surface.isActiveView (VIEW_PLAY))
-        this.surface.getActiveView ().updateNoteMapping ();
-        
     var tb = this.model.getCurrentTrackBank ();
     if (!isSelected)
     {
@@ -206,6 +203,8 @@ Controller.prototype.handleTrackChange = function (index, isSelected)
         var viewID = tb.getPreferredView (index);
         this.surface.setActiveView (viewID == null ? VIEW_PLAY : viewID);
     }
+    if (this.surface.isActiveView (VIEW_PLAY))
+        this.surface.getActiveView ().updateNoteMapping ();
      
     // Select the slot on the new track with the same index as on the previous track
     if (this.lastSlotSelection != null)

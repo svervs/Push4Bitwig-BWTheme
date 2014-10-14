@@ -165,7 +165,7 @@ RaindropsView.prototype.getNoteDistance = function (row, length)
             return step2 - step;
     }
     return -1;
-}
+};
 
 RaindropsView.prototype.getNoteDistanceToTheRight = function (row, start, length)
 {
@@ -183,7 +183,7 @@ RaindropsView.prototype.getNoteDistanceToTheRight = function (row, start, length
             step = 0;
     } while (step != start);
     return -1;
-}
+};
 
 RaindropsView.prototype.getNoteDistanceToTheLeft = function (row, start, length)
 {
@@ -202,4 +202,4 @@ RaindropsView.prototype.getNoteDistanceToTheLeft = function (row, start, length)
             step = length - 1;
     } while (step != start);
     return -1;
-}
+};
