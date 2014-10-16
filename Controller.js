@@ -67,27 +67,37 @@ function Controller ()
     
     Config.addPropertyListener (Config.RIBBON_MODE, doObject (this, function ()
     {
-        this.surface.getActiveView ().updateRibbonMode ();
+        var view = this.surface.getActiveView ();
+        if (view != null)
+            view.updateRibbonMode ();
     }));
     Config.addPropertyListener (Config.SCALES_SCALE, doObject (this, function ()
     {
         this.scales.setScaleByName (Config.scale);
-        this.surface.getActiveView ().updateNoteMapping ();
+        var view = this.surface.getActiveView ();
+        if (view != null)
+            view.updateNoteMapping ();
     }));
     Config.addPropertyListener (Config.SCALES_BASE, doObject (this, function ()
     {
         this.scales.setScaleOffsetByName (Config.scaleBase);
-        this.surface.getActiveView ().updateNoteMapping ();
+        var view = this.surface.getActiveView ();
+        if (view != null)
+            view.updateNoteMapping ();
     }));
     Config.addPropertyListener (Config.SCALES_IN_KEY, doObject (this, function ()
     {
         this.scales.setChromatic (!Config.scaleInKey);
-        this.surface.getActiveView ().updateNoteMapping ();
+        var view = this.surface.getActiveView ();
+        if (view != null)
+            view.updateNoteMapping ();
     }));
     Config.addPropertyListener (Config.SCALES_LAYOUT, doObject (this, function ()
     {
         this.scales.setScaleLayoutByName (Config.scaleLayout);
-        this.surface.getActiveView ().updateNoteMapping ();
+        var view = this.surface.getActiveView ();
+        if (view != null)
+            view.updateNoteMapping ();
     }));
     
     this.surface.addView (VIEW_PLAY, new PlayView (this.model));
@@ -96,8 +106,11 @@ function Controller ()
     this.surface.addView (VIEW_DRUM, new DrumView (this.model));
     this.surface.addView (VIEW_RAINDROPS, new RaindropsView (this.model));
     
-    this.surface.setActiveView (VIEW_PLAY);
-    this.surface.setActiveMode (MODE_TRACK);
+    scheduleTask (doObject (this, function ()
+    {
+        this.surface.setActiveView (VIEW_PLAY);
+        this.surface.setActiveMode (MODE_TRACK);
+    }), null, 100);
 }
 Controller.prototype = new AbstractController ();
 
