@@ -125,7 +125,6 @@ RaindropsView.prototype.drawGrid = function ()
 
     var length = this.clip.getLoopLength () / this.resolutions[this.selectedIndex];
     var step = this.clip.getCurrentStep ();
-    
     for (var x = 0; x < RaindropsView.NUM_DISPLAY_COLS; x++)
     {
         var left = this.getNoteDistanceToTheLeft (this.noteMap[x], step, length);
@@ -133,7 +132,7 @@ RaindropsView.prototype.drawGrid = function ()
         var isOn = left >= 0 && right >= 0;
         var sum = left + right;
         var distance = sum == 0 ? 0 : (sum + 1) / 2;
-        
+
         for (var y = 0; y < RaindropsView.NUM_DISPLAY_ROWS; y++)
         {
             var color = y == 0 ? this.scales.getColor (this.noteMap, x) : PUSH_COLOR2_BLACK;
@@ -169,7 +168,7 @@ RaindropsView.prototype.getNoteDistance = function (row, length)
 
 RaindropsView.prototype.getNoteDistanceToTheRight = function (row, start, length)
 {
-    if (start < 0)
+    if (start < 0 || start >= length)
         return -1;
     var step = start;
     var counter = 0;
@@ -179,7 +178,7 @@ RaindropsView.prototype.getNoteDistanceToTheRight = function (row, start, length
             return counter;
         step++;
         counter++;
-        if (step == length)
+        if (step >= length)
             step = 0;
     } while (step != start);
     return -1;
@@ -187,7 +186,7 @@ RaindropsView.prototype.getNoteDistanceToTheRight = function (row, start, length
 
 RaindropsView.prototype.getNoteDistanceToTheLeft = function (row, start, length)
 {
-    if (start < 0)
+    if (start < 0 || start >= length)
         return -1;
     start = start == 0 ? length - 1 : start - 1;
     var step = start;
@@ -198,7 +197,7 @@ RaindropsView.prototype.getNoteDistanceToTheLeft = function (row, start, length)
             return counter;
         step--;
         counter++;
-        if (step == -1)
+        if (step < 0)
             step = length - 1;
     } while (step != start);
     return -1;
