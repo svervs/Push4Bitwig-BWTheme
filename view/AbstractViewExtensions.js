@@ -87,10 +87,10 @@ AbstractView.prototype.onAutomation = function (event)
     if (!event.isDown ())
         return;
 
-    if (this.surface.isSelectPressed())
+    if (this.surface.isSelectPressed ())
         this.model.getTransport ().resetAutomationOverrides ();
     else if (this.surface.isShiftPressed ())
-        this.model.getTransport().toggleWriteClipLauncherAutomation ();
+        this.model.getTransport ().toggleWriteClipLauncherAutomation ();
     else
     {
         var selectedTrack = this.model.getCurrentTrackBank ().getSelectedTrack ();
@@ -206,6 +206,13 @@ AbstractView.prototype.onValueKnob9 = function (value)
 
 AbstractView.prototype.onValueKnob9Touch = function (isTouched)
 {
+    if (this.surface.isDeletePressed ())
+    {
+        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+        this.model.getMasterTrack ().resetVolume ();
+        return;
+    }
+
     var isMasterMode = this.surface.getCurrentMode () == MODE_MASTER;
     if (isTouched && isMasterMode)
         return;
