@@ -161,7 +161,12 @@ AbstractView.prototype.onSmallKnob2Touch = function (isTouched) {};
 AbstractView.prototype.onMetronome = function (event)
 {
     if (event.isDown ())
-        this.model.getTransport ().toggleClick ();
+    {
+        if (this.surface.isShiftPressed ())
+            this.model.getTransport ().toggleMetronomeTicks ();
+        else
+            this.model.getTransport ().toggleClick ();
+    }
 };
 
 AbstractView.prototype.onTapTempo = function (event)
