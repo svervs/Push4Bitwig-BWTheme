@@ -21,6 +21,18 @@ MasterMode.prototype.onValueKnob = function (index, value)
         this.model.getMasterTrack ().changePan (value, this.surface.getFractionValue ());
 };
 
+MasterMode.prototype.onValueKnobTouch = function (index, isTouched)
+{
+    if (isTouched && this.surface.isDeletePressed ())
+    {
+        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+        if (index == 0)
+            this.model.getMasterTrack ().resetVolume ();
+        else if (index == 1)
+            this.model.getMasterTrack ().resetPan ();
+    }
+};
+
 MasterMode.prototype.onFirstRow = function (index) {};
 
 MasterMode.prototype.onSecondRow = function (index) {};
