@@ -87,10 +87,10 @@ AbstractView.prototype.onAutomation = function (event)
     if (!event.isDown ())
         return;
 
-    if (this.surface.isSelectPressed())
+    if (this.surface.isSelectPressed ())
         this.model.getTransport ().resetAutomationOverrides ();
     else if (this.surface.isShiftPressed ())
-        this.model.getTransport().toggleWriteClipLauncherAutomation ();
+        this.model.getTransport ().toggleWriteClipLauncherAutomation ();
     else
     {
         var selectedTrack = this.model.getCurrentTrackBank ().getSelectedTrack ();
