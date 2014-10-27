@@ -4,6 +4,8 @@
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 AbstractView.prototype.stopPressed = false;
+AbstractView.prototype.automationPressed = false;
+
 // TODO can this be integrated into the event system so all long presses
 // record the mode at the start of the touch down event
 AbstractView.prototype.longPressPreviousMode = null;
@@ -84,9 +86,17 @@ AbstractView.prototype.onAutomation = function (event)
 {
     if (!event.isDown ())
         return;
-    var selectedTrack = this.model.getCurrentTrackBank ().getSelectedTrack ();
-    if (selectedTrack != null)
-        this.model.getTransport ().toggleWriteArrangerAutomation ();
+
+    if (this.surface.isSelectPressed())
+        this.model.getTransport ().resetAutomationOverrides ();
+    else if (this.surface.isShiftPressed ())
+        this.model.getTransport().toggleWriteClipLauncherAutomation ();
+    else
+    {
+        var selectedTrack = this.model.getCurrentTrackBank ().getSelectedTrack ();
+        if (selectedTrack != null)
+            this.model.getTransport ().toggleWriteArrangerAutomation ();
+    }
 };
 
 AbstractView.prototype.onFixedLength = function (event)
