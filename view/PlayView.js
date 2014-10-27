@@ -13,6 +13,11 @@ function PlayView (model)
     this.defaultVelocity = [];
     for (var i = 0; i < 128; i++)
         this.defaultVelocity.push (i);
+
+    Config.addPropertyListener (Config.ACTIVATE_FIXED_ACCENT, doObject (this, function ()
+    {
+        this.initMaxVelocity ();
+    }));
     Config.addPropertyListener (Config.FIXED_ACCENT_VALUE, doObject (this, function ()
     {
         this.initMaxVelocity ();
@@ -181,13 +186,6 @@ PlayView.prototype.onOctaveUp = function (event)
     this.scales.incOctave ();
     this.updateNoteMapping ();
     this.surface.getDisplay ().showNotification ('       ' + this.scales.getRangeText ());
-};
-
-PlayView.prototype.onAccent = function (event)
-{
-    AbstractView.prototype.onAccent.call (this, event);
-    if (event.isUp ())
-        this.initMaxVelocity ();
 };
 
 PlayView.prototype.scrollUp = function (event)
