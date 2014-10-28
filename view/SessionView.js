@@ -96,7 +96,10 @@ SessionView.prototype.onSession = function (event)
         if (this.isTemporary)
         {
             this.isTemporary = false;
-            this.surface.setActiveView (AbstractView.lastNoteView);
+            var tb = this.model.getTrackBank ();
+            var viewId = tb.getPreferredView (tb.getSelectedTrack ().index);
+            if (viewId != null)
+                this.surface.setActiveView (viewId);
         }
     }
     else if (event.isDown ())
