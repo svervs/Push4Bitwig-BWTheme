@@ -79,7 +79,7 @@ AbstractView.prototype.onNew = function (event)
 AbstractView.prototype.onDuplicate = function (event)
 {
     if (event.isDown ())
-        this.model.getApplication ().doubleClip ();
+        this.model.getApplication ().duplicate ();
 };
 
 AbstractView.prototype.onAutomation = function (event)
@@ -123,7 +123,7 @@ AbstractView.prototype.onQuantize = function (event)
 AbstractView.prototype.onDouble = function (event)
 {
     if (event.isDown ())
-        this.model.getApplication ().duplicate ();
+        displayNotification ("Double: Function not supported (yet).");
 };
 
 AbstractView.prototype.onDelete = function (event)
