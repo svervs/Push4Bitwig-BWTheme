@@ -20,6 +20,8 @@ SessionView.prototype.onActivate = function ()
 
 SessionView.prototype.onPitchbend = function (data1, data2)
 {
+    if (this.surface.isShiftPressed ())
+        data2 = 63;
     this.model.getTransport ().setCrossfade (data2);
     this.surface.output.sendPitchbend (0, data2);
 };

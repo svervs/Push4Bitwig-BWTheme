@@ -21,19 +21,19 @@ AbstractView.prototype.onPlay = function (event)
     if (!event.isDown ())
         return;
     if (this.surface.isShiftPressed ())
+    {
         this.model.getTransport ().toggleLoop ();
+        return;
+    }
+    if (this.restartFlag)
+    {
+        this.model.getTransport ().stopAndRewind ();
+        this.restartFlag = false;
+    }
     else
     {
-        if (!this.restartFlag)
-        {
-            this.model.getTransport ().play ();
-            this.doubleClickTest ();
-        }
-        else
-        {
-            this.model.getTransport ().stopAndRewind ();
-            this.restartFlag = false;
-        }
+        this.model.getTransport ().play ();
+        this.doubleClickTest ();
     }
 };
 
