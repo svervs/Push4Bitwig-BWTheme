@@ -87,8 +87,6 @@ PlayView.prototype.onPitchbend = function (data1, data2)
             break;
 
         case Config.RIBBON_MODE_CC:
-            if (data2 == 64)    // Overwrite automatic recentering on release
-                data2 = 0;
             this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, data2);
             break;
 
