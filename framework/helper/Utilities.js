@@ -27,10 +27,6 @@ function doObject (object, f)
 
 function doObjectIndex (object, index, f)
 {
-if (typeof(f)=='undefined')
-{
-println(object+":"+index+":"+f);
-}
     return function ()
     {
         var args = [ index ];

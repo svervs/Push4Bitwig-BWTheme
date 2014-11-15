@@ -544,6 +544,22 @@ AbstractView.prototype.scrollLeft = function (event)
             this.model.getCursorDevice ().selectPrevious ();
             break;
     
+        case MODE_DEVICE_LAYER:
+            var cd = this.model.getCursorDevice ();
+            var sel = cd.getSelectedLayer ();
+            var index = sel == null ? 0 : sel.index - 1;
+            if (index == -1 || this.surface.isShiftPressed ())
+            {
+                if (!cd.canScrollLayersUp ())
+                    return;
+                cd.scrollLayersPageUp ();
+                var newSel = index == -1 || sel == null ? 7 : sel.index;
+                scheduleTask (doObject (this, this.selectLayer), [ newSel ], 75);
+                return;
+            }
+            this.selectLayer (index);
+            break;
+            
         default:
             var tb = this.model.getCurrentTrackBank ();
             var sel = tb.getSelectedTrack ();
@@ -571,6 +587,22 @@ AbstractView.prototype.scrollRight = function (event)
             this.model.getCursorDevice ().selectNext ();
             break;
             
+        case MODE_DEVICE_LAYER:
+            var cd = this.model.getCursorDevice ();
+            var sel = cd.getSelectedLayer ();
+            var index = sel == null ? 0 : sel.index + 1;
+            if (index == 8 || this.surface.isShiftPressed ())
+            {
+                if (!cd.canScrollLayersDown ())
+                    return;
+                cd.scrollLayersPageDown ();
+                var newSel = index == 8 || sel == null ? 0 : sel.index;
+                scheduleTask (doObject (this, this.selectLayer), [ newSel ], 75);
+                return;
+            }
+            this.selectLayer (index);
+            break;
+            
         default:
             var tb = this.model.getCurrentTrackBank ();
             var sel = tb.getSelectedTrack ();
@@ -587,6 +619,11 @@ AbstractView.prototype.scrollRight = function (event)
             this.selectTrack (index);
             break;
     }
+};
+
+AbstractView.prototype.selectLayer = function (index)
+{
+    this.model.getCursorDevice ().selectLayer (index);
 };
 
 //--------------------------------------
@@ -616,12 +653,28 @@ AbstractView.prototype.updateButtons = function ()
 
 AbstractView.prototype.updateArrowStates = function ()
 {
-    var tb = this.model.getCurrentTrackBank ();
-    var isDevice = this.surface.getCurrentMode () == MODE_BANK_DEVICE || this.surface.getCurrentMode () == MODE_PRESET;
-    var sel = tb.getSelectedTrack ();
-    // var cd = this.model.getCursorDevice ();
-    this.canScrollLeft = isDevice ? true /* TODO: Bitwig bug cd.canSelectPreviousFX () */ : sel != null && sel.index > 0 || tb.canScrollTracksUp ();
-    this.canScrollRight = isDevice ? true /* TODO: Bitwig bug cd.canSelectNextFX () */ : sel != null && sel.index < 7 || tb.canScrollTracksDown ();
+    switch (this.surface.getCurrentMode ())
+    {
+        case MODE_BANK_DEVICE:
+        case MODE_PRESET:
+            var cd = this.model.getCursorDevice ();
+            this.canScrollLeft = cd.canSelectPreviousFX ();
+            this.canScrollRight = cd.canSelectNextFX ();
+            break;
+    
+        case MODE_DEVICE_LAYER:
+            var cd = this.model.getCursorDevice ();
+            this.canScrollLeft = cd.canScrollLayersDown ();
+            this.canScrollRight = cd.canScrollLayersUp ();
+            break;
+            
+        default:
+            var tb = this.model.getCurrentTrackBank ();
+            var sel = tb.getSelectedTrack ();
+            this.canScrollLeft = sel != null && sel.index > 0 || tb.canScrollTracksUp ();
+            this.canScrollRight = sel != null && sel.index < 7 || tb.canScrollTracksDown ();
+            break;
+    }
 };
 
 AbstractView.prototype.updateArrows = function ()

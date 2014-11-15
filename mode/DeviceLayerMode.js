@@ -6,7 +6,7 @@
 function DeviceLayerMode (model)
 {
     BaseMode.call (this, model);
-    this.id = MODE_BANK_DEVICE;
+    this.id = MODE_DEVICE_LAYER;
 }
 DeviceLayerMode.prototype = new BaseMode ();
 
