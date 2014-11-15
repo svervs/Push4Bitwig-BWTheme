@@ -90,17 +90,17 @@ DeviceMode.prototype.updateDisplay = function ()
 
 DeviceMode.prototype.updateFirstRow = function ()
 {
-    var selectedDevice = this.model.getSelectedDevice ();
     if (this.model.hasSelectedDevice ())
     {
+        var cd = this.model.getCursorDevice ();
         this.surface.setButton (20, PUSH_COLOR_BLACK);
         this.surface.setButton (21, PUSH_COLOR_BLACK);
         this.surface.setButton (22, PUSH_COLOR_BLACK);
         this.surface.setButton (23, PUSH_COLOR_BLACK);
         this.surface.setButton (24, PUSH_COLOR_BLACK);
-        this.surface.setButton (25, this.model.getCursorDevice ().hasPreviousParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
-        this.surface.setButton (26, this.model.getCursorDevice ().hasNextParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
-        this.surface.setButton (27, selectedDevice.enabled ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
+        this.surface.setButton (25, cd.hasPreviousParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
+        this.surface.setButton (26, cd.hasNextParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
+        this.surface.setButton (27, this.model.getSelectedDevice ().enabled ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
     }
     else
     {

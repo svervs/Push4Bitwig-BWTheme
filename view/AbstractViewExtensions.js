@@ -381,23 +381,38 @@ AbstractView.prototype.onDeviceLeft = function (event)
     if (!event.isDown ())
         return;
 
-    // TODO FIX The returned channel selection does not contain the layers instead it is the top level tracks selection
     var cd = this.model.getCursorDevice ();
     if (cd.hasSelectedDevice ())
     {
-        if (cd.hasLayers ())
-            this.surface.setPendingMode (this.surface.getCurrentMode () == MODE_BANK_DEVICE ? MODE_DEVICE_LAYER : MODE_BANK_DEVICE);
+        if (!cd.hasLayers ())
+            return;
+            
+        var displaysDevice = this.surface.getCurrentMode () == MODE_BANK_DEVICE;
+        if (!displaysDevice)
+        {
+            var dl = cd.getSelectedLayer ();
+            if (dl != null)
+                cd.selectFirstDeviceInLayer (dl.index);
+        }
+        this.surface.setPendingMode (displaysDevice ? MODE_DEVICE_LAYER : MODE_BANK_DEVICE);
     }
     else
     {
+        // TODO FIX Required
         //this.model.getCursorDevice ().cursorDevice.selectFirstInLayer (0);
     }
 };
 
 AbstractView.prototype.onDeviceRight = function (event)
 {
-    if (event.isDown ())   // TODO Create function in CursorDeviceProxy when API is fully working and tested
-        this.model.getCursorDevice ().cursorDevice.selectParent ();
+    if (!event.isDown ())   
+        return;
+    
+    var isDeviceMode = this.surface.getCurrentMode () == MODE_BANK_DEVICE;
+    this.surface.setPendingMode (isDeviceMode ? MODE_DEVICE_LAYER : MODE_BANK_DEVICE);
+    if (isDeviceMode)
+        // TODO FIX Required - No way to check if we are on the top of the device tree
+        this.model.getCursorDevice ().selectParent ();
 };
 
 AbstractView.prototype.onMute = function (event)

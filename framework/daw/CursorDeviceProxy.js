@@ -10,7 +10,7 @@ function CursorDeviceProxy ()
     this.hasNextParamPage = false;
     this.hasPreviousParamPage = false;
     
-    this.textLength = 8;
+    this.textLength = GlobalConfig.CURSOR_DEVICE_TEXT_LENGTH;
     
     this.hasDrumPadsValue = false;
     this.hasLayersValue = false;
@@ -27,8 +27,10 @@ function CursorDeviceProxy ()
     };
     
     this.numDeviceLayers = 8;
+    this.numDevicesInBank = 8;
     this.numDrumPadLayers = 16;
     this.directParameters = [];
+    this.deviceBanks = [];
 
     this.isMacroMappings = initArray (false, 8);
     this.cursorDevice = host.createEditorCursorDevice ();
@@ -85,6 +87,8 @@ function CursorDeviceProxy ()
         layer.addVuMeterObserver (Config.maxParameterValue, -1, true, doObjectIndex (this, i, CursorDeviceProxy.prototype.handleVUMeters));
         layer.getMute ().addValueObserver (doObjectIndex (this, i, CursorDeviceProxy.prototype.handleMute));
         layer.getSolo ().addValueObserver (doObjectIndex (this, i, CursorDeviceProxy.prototype.handleSolo));
+
+        this.deviceBanks[i] = layer.createDeviceBank (this.numDevicesInBank);
     }
     
     // Monitor the drum pad layers of a container device (if any)
@@ -105,6 +109,7 @@ function CursorDeviceProxy ()
         layer.addVuMeterObserver (Config.maxParameterValue, -1, true, doObjectIndex (this, i, CursorDeviceProxy.prototype.handleDrumPadVUMeters));
         layer.getMute ().addValueObserver (doObjectIndex (this, i, CursorDeviceProxy.prototype.handleDrumPadMute));
         layer.getSolo ().addValueObserver (doObjectIndex (this, i, CursorDeviceProxy.prototype.handleDrumPadSolo));
+        layer.addColorObserver (doObjectIndex (this, i, CursorDeviceProxy.prototype.handleDrumPadColor));
     }
 
     //----------------------------------
@@ -305,17 +310,22 @@ CursorDeviceProxy.prototype.hasDrumPads = function ()
     return this.hasDrumPadsValue;
 };
 
-CursorDeviceProxy.prototype.hasLayers = function ()
-{
-    return this.hasLayersValue;
-};
-
 CursorDeviceProxy.prototype.hasSlots = function ()
 {
     return this.hasSlotsValue;
 };
 
-CursorDeviceProxy.prototype.getSelectedDeviceLayer = function ()
+CursorDeviceProxy.prototype.hasLayers = function ()
+{
+    return this.hasLayersValue;
+};
+
+CursorDeviceProxy.prototype.getLayer = function (index)
+{
+    return this.deviceLayers[index];
+};
+
+CursorDeviceProxy.prototype.getSelectedLayer = function ()
 {
     for (var i = 0; i < this.deviceLayers.length; i++)
     {
@@ -325,16 +335,34 @@ CursorDeviceProxy.prototype.getSelectedDeviceLayer = function ()
     return null;
 };
 
-CursorDeviceProxy.prototype.getDeviceLayer = function (index)
+CursorDeviceProxy.prototype.selectLayer = function (index)
 {
-    return this.deviceLayers[index];
+    // TODO FIX Required - Enters the device chain instead of just selecting the layer
+    this.layerBank.getChannel (index).selectInEditor ();
 };
 
-CursorDeviceProxy.prototype.selectDeviceLayer = function (index)
+CursorDeviceProxy.prototype.selectParent = function ()
 {
-println("Selecting " + index);
-    this.layerBank.getChannel (index).selectInEditor ();
-    this.cursorDevice.selectFirstInLayer (index);
+    this.cursorDevice.selectParent ();
+};
+
+CursorDeviceProxy.prototype.selectFirstDeviceInLayer = function (index)
+{
+    this.cursorDevice.selectDevice (this.deviceBanks[index].getDevice (0));
+};
+
+CursorDeviceProxy.prototype.changeLayerVolume = function (index, value, fractionValue)
+{
+    var t = this.getLayer (index);
+    t.volume = changeValue (value, t.volume, fractionValue, Config.maxParameterValue);
+    this.layerBank.getChannel (index).getVolume ().set (t.volume, Config.maxParameterValue);
+};
+
+CursorDeviceProxy.prototype.changeLayerPan = function (index, value, fractionValue)
+{
+    var t = this.getLayer (index);
+    t.pan = changeValue (value, t.pan, fractionValue, Config.maxParameterValue);
+    this.layerBank.getChannel (index).getPan ().set (t.pan, Config.maxParameterValue);
 };
 
 CursorDeviceProxy.prototype.canSelectPreviousFX = function ()
@@ -375,6 +403,16 @@ CursorDeviceProxy.prototype.getDirectParameter = function (id)
             return this.directParameters[i];
     }
     return null;
+};
+
+CursorDeviceProxy.prototype.changeDirectParameter = function (index, value)
+{
+    var value = changeValue (value, this.directParameters[index].value, 1.0 / 127, 1.0);
+  //TODO  
+    this.cursorDevice.setDirectParameterValueNormalized (this.directParameters[index].id,
+		value,
+		1.0);
+    
 };
 
 CursorDeviceProxy.prototype.isMacroMapping = function (index)
@@ -506,61 +544,53 @@ CursorDeviceProxy.prototype.handleHasSlots = function (value)
 CursorDeviceProxy.prototype.handleExists = function (index, exists)
 {
     this.deviceLayers[index].exists = exists;
-//TODO println(index+" Exists:"+this.deviceLayers[index].exists);    
 };
 
 CursorDeviceProxy.prototype.handleDeviceLayerSelection = function (index, isSelected)
 {
     this.deviceLayers[index].selected = isSelected;
-//TODO println(index+" Selected:"+this.deviceLayers[index].selected);    
+// TODO FIX Required - Not called
+println(index+" Selected:"+this.deviceLayers[index].selected);    
 };
 
 CursorDeviceProxy.prototype.handleDeviceLayerName = function (index, name)
 {
     this.deviceLayers[index].name = name;
-//TODO println(index+" Name:"+this.deviceLayers[index].name);
 };
 
 CursorDeviceProxy.prototype.handleVolume = function (index, value)
 {
     this.deviceLayers[index].volume = value;
-//TODO println(index+" Volume:"+this.deviceLayers[index].volume);
 };
 
 CursorDeviceProxy.prototype.handleVolumeStr = function (index, text)
 {
     this.deviceLayers[index].volumeStr = text;
-//TODO println(index+" VolumeStr:"+this.deviceLayers[index].volumeStr);
 };
 
 CursorDeviceProxy.prototype.handlePan = function (index, value)
 {
     this.deviceLayers[index].pan = value;
-//TODO println(index+" Pan:"+this.deviceLayers[index].pan);
 };
 
 CursorDeviceProxy.prototype.handlePanStr = function (index, text)
 {
     this.deviceLayers[index].panStr = text;
-//TODO println(index+" PanStr:"+this.deviceLayers[index].panStr);
 };
 
 CursorDeviceProxy.prototype.handleVUMeters = function (index, value)
 {
     this.deviceLayers[index].vu = value;
-//TODO println(index+" VU:"+this.deviceLayers[index].vu);
 };
 
 CursorDeviceProxy.prototype.handleMute = function (index, isMuted)
 {
     this.deviceLayers[index].mute = isMuted;
-//TODO println(index+" mute:"+this.deviceLayers[index].mute);
 };
 
 CursorDeviceProxy.prototype.handleSolo = function (index, isSoloed)
 {
     this.deviceLayers[index].solo = isSoloed;
-//TODO println(index+" solo:"+this.deviceLayers[index].solo);
 };
 
 CursorDeviceProxy.prototype.handleDrumPadExists = function (index, exists)
@@ -623,6 +653,11 @@ CursorDeviceProxy.prototype.handleDrumPadSolo = function (index, isSoloed)
 //TODO println(index+" solo:"+this.drumPadLayers[index].solo);
 };
 
+CursorDeviceProxy.prototype.handleDrumPadColor = function (index, red, green, blue)
+{
+    this.drumPadLayers[index].color = AbstractTrackBankProxy.getColorIndex (red, green, blue);
+// TODO println(index+" color:"+this.drumPadLayers[index].color);
+};
 
 //--------------------------------------
 // Private

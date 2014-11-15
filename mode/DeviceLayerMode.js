@@ -12,9 +12,19 @@ DeviceLayerMode.prototype = new BaseMode ();
 
 DeviceLayerMode.prototype.onValueKnob = function (index, value)
 {
-    var param = this.model.getCursorDevice ().getFXParam (index);
-    param.value = this.surface.changeValue (value, param.value);
-    this.model.getCursorDevice ().setParameter (index, param.value);
+    var cd = this.model.getCursorDevice ();
+    var selectedDeviceLayer = cd.getSelectedLayer ();
+    if (selectedDeviceLayer == null)
+        return;
+    switch (index)
+    {
+        case 0:
+            cd.changeLayerVolume (selectedDeviceLayer.index, value, this.surface.getFractionValue ());
+            break;
+        case 1:
+            cd.changeLayerPan (selectedDeviceLayer.index, value, this.surface.getFractionValue ());
+            break;
+    }
 };
 
 DeviceLayerMode.prototype.onValueKnobTouch = function (index, isTouched) 
@@ -28,17 +38,14 @@ DeviceLayerMode.prototype.onValueKnobTouch = function (index, isTouched)
 
 DeviceLayerMode.prototype.onFirstRow = function (index)
 {
-    var device = this.model.getCursorDevice ();
-    var layer = device.getDeviceLayer (index);
+    var cd = this.model.getCursorDevice ();
+    var layer = cd.getLayer (index);
     if (layer.exists)
-        device.selectDeviceLayer (layer.index);
+        cd.selectLayer (layer.index);
 };
 
 DeviceLayerMode.prototype.onSecondRow = function (index)
 {
-    var macro = this.model.getCursorDevice ().getMacro (index);
-    if (macro)
-        macro.getModulationSource ().toggleIsMapping ();
 };
 
 DeviceLayerMode.prototype.updateDisplay = function () 
@@ -47,7 +54,7 @@ DeviceLayerMode.prototype.updateDisplay = function ()
     if (this.model.hasSelectedDevice ())
     {
         var cursorDevice = this.model.getCursorDevice ();
-        var t = cursorDevice.getSelectedDeviceLayer ();
+        var t = cursorDevice.getSelectedLayer ();
         d.clear ();
         if (t == null)
         {
@@ -67,7 +74,7 @@ DeviceLayerMode.prototype.updateDisplay = function ()
         var selIndex = t == null ? -1 : t.index;
         for (var i = 0; i < 8; i++)
         {
-            var layer = cursorDevice.getDeviceLayer (i);
+            var layer = cursorDevice.getLayer (i);
             var isSel = i == selIndex;
             var n = optimizeName (layer.name, isSel ? 7 : 8);
             d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
@@ -80,17 +87,14 @@ DeviceLayerMode.prototype.updateDisplay = function ()
 
 DeviceLayerMode.prototype.updateFirstRow = function ()
 {
-    var selectedDevice = this.model.getSelectedDevice ();
-    if (this.model.hasSelectedDevice ())
+    if (this.model.hasSelectedDevice () && this.model.getCursorDevice ().hasLayers ())
     {
-        this.surface.setButton (20, PUSH_COLOR_BLACK);
-        this.surface.setButton (21, PUSH_COLOR_BLACK);
-        this.surface.setButton (22, PUSH_COLOR_BLACK);
-        this.surface.setButton (23, PUSH_COLOR_BLACK);
-        this.surface.setButton (24, PUSH_COLOR_BLACK);
-        this.surface.setButton (25, this.model.getCursorDevice ().hasPreviousParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
-        this.surface.setButton (26, this.model.getCursorDevice ().hasNextParameterPage () ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK);
-        this.surface.setButton (27, selectedDevice.enabled ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
+        var cd = this.model.getCursorDevice ();
+        for (var i = 0; i < 8; i++)
+        {
+            var dl = cd.getLayer (i);
+            this.surface.setButton (20 + i, dl.exists ? (dl.selected ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
+        }
     }
     else
     {
@@ -102,5 +106,5 @@ DeviceLayerMode.prototype.updateFirstRow = function ()
 DeviceLayerMode.prototype.updateSecondRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (102 + i, this.model.getCursorDevice().isMacroMapping(i) ? PUSH_COLOR_GREEN_HI_FBLINK : PUSH_COLOR_BLACK);
+        this.surface.setButton (102 + i, PUSH_COLOR_BLACK);
 };
