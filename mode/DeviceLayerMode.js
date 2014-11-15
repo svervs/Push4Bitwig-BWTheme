@@ -46,6 +46,12 @@ DeviceLayerMode.prototype.onFirstRow = function (index)
 
 DeviceLayerMode.prototype.onSecondRow = function (index)
 {
+    var tb = this.model.getCurrentTrackBank ();
+    var cd = this.model.getCursorDevice ();
+    if (tb.isMuteState ())
+        cd.toggleLayerMute (index);
+    else
+        cd.toggleLayerSolo (index);
 };
 
 DeviceLayerMode.prototype.updateDisplay = function () 
@@ -105,6 +111,32 @@ DeviceLayerMode.prototype.updateFirstRow = function ()
 
 DeviceLayerMode.prototype.updateSecondRow = function ()
 {
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (102 + i, PUSH_COLOR_BLACK);
+    if (this.model.hasSelectedDevice () && this.model.getCursorDevice ().hasLayers ())
+    {
+        var cd = this.model.getCursorDevice ();
+        var muteState = this.model.getCurrentTrackBank ().isMuteState ();
+        for (var i = 0; i < 8; i++)
+        {
+            var dl = cd.getLayer (i);
+
+            var color = PUSH_COLOR_BLACK;
+            if (dl.exists)
+            {
+                if (muteState)
+                {
+                    if (!dl.mute)
+                        color = PUSH_COLOR2_YELLOW_HI;
+                }
+                else
+                    color = dl.solo ? PUSH_COLOR2_BLUE_HI : PUSH_COLOR2_GREY_LO;
+            }
+
+            this.surface.setButton (102 + i, color);
+        }
+    }
+    else
+    {
+        for (var i = 0; i < 8; i++)
+            this.surface.setButton (102 + i, PUSH_COLOR_BLACK);
+    }
 };
