@@ -99,6 +99,10 @@ function Controller ()
         if (view != null)
             view.updateNoteMapping ();
     }));
+    Config.addPropertyListener (Config.ENABLE_VU_METERS, doObject (this, function ()
+    {
+        this.surface.showVU = Config.enableVUMeters;
+    }));
     
     this.surface.addView (VIEW_PLAY, new PlayView (this.model));
     this.surface.addView (VIEW_SESSION, new SessionView (this.model));

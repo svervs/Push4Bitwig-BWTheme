@@ -24,6 +24,7 @@ Config.SCALES_SCALE          = 4;
 Config.SCALES_BASE           = 5;
 Config.SCALES_IN_KEY         = 6;
 Config.SCALES_LAYOUT         = 7;
+Config.ENABLE_VU_METERS      = 8;
 
 Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
@@ -37,6 +38,7 @@ Config.scale             = 'Major';
 Config.scaleBase         = 'C';
 Config.scaleInKey        = true;
 Config.scaleLayout       = '4th ^';
+Config.enableVUMeters    = false;
 
 
 Config.init = function ()
@@ -113,6 +115,16 @@ Config.init = function ()
         Config.scaleLayout = value;
         Config.notifyListeners (Config.SCALES_LAYOUT);
     });
+
+    ///////////////////////////
+    // Enable VU Meters
+
+    Config.enableVUMetersSetting = prefs.getEnumSetting ("Activity", "VU Meters", [ "Off", "On" ], "Off");
+    Config.enableVUMetersSetting.addValueObserver (function (value)
+    {
+        Config.enableVUMeters = value == "On";
+        Config.notifyListeners (Config.ENABLE_VU_METERS);
+    });
 };
 
 Config.setAccentEnabled = function (enabled)
@@ -160,12 +172,17 @@ Config.setScaleLayout = function (scaleLayout)
     Config.scaleLayoutSetting.set (scaleLayout);
 };
 
+Config.setVUMetersEnabled = function (enabled)
+{
+    Config.enableVUMetersSetting.set (enabled ? "On" : "Off");
+};
+
 // ------------------------------
 // Property listeners
 // ------------------------------
 
 Config.listeners = [];
-for (var i = 0; i <= Config.SCALES_LAYOUT; i++)
+for (var i = 0; i <= Config.ENABLE_VU_METERS; i++)
     Config.listeners[i] = [];
 
 Config.addPropertyListener = function (property, listener)

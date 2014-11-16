@@ -328,6 +328,7 @@ AbstractView.prototype.onTrack = function (event)
     if (this.surface.isShiftPressed ())
     {
         this.surface.toggleVU ();
+        Config.setVUMetersEnabled (this.surface.showVU);
         return;
     }
         
