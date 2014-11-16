@@ -382,25 +382,25 @@ AbstractView.prototype.onDeviceLeft = function (event)
         return;
 
     var cd = this.model.getCursorDevice ();
-    if (cd.hasSelectedDevice ())
+    if (!cd.hasSelectedDevice ())
+        return;
+
+    if (!cd.hasLayers ())
+        return;
+
+    var displaysDevice = this.surface.getCurrentMode () == MODE_BANK_DEVICE;
+    var dl = cd.getSelectedLayer ();
+    if (displaysDevice)
     {
-        if (!cd.hasLayers ())
-            return;
-            
-        var displaysDevice = this.surface.getCurrentMode () == MODE_BANK_DEVICE;
-        if (!displaysDevice)
-        {
-            var dl = cd.getSelectedLayer ();
-            if (dl != null)
-                cd.selectFirstDeviceInLayer (dl.index);
-        }
-        this.surface.setPendingMode (displaysDevice ? MODE_DEVICE_LAYER : MODE_BANK_DEVICE);
+        if (dl == null)
+            cd.selectLayer (0);
     }
     else
     {
-        // TODO FIX Required
-        //this.model.getCursorDevice ().cursorDevice.selectFirstInLayer (0);
+        if (dl != null)
+            cd.selectFirstDeviceInLayer (dl.index);
     }
+    this.surface.setPendingMode (displaysDevice ? MODE_DEVICE_LAYER : MODE_BANK_DEVICE);
 };
 
 AbstractView.prototype.onDeviceRight = function (event)
@@ -413,6 +413,9 @@ AbstractView.prototype.onDeviceRight = function (event)
     if (isDeviceMode)
         // TODO FIX Required - No way to check if we are on the top of the device tree
         this.model.getCursorDevice ().selectParent ();
+    else
+        // TODO Create a function
+        this.model.getCursorDevice ().cursorDevice.getChannel ().selectInEditor();
 };
 
 AbstractView.prototype.onMute = function (event)
