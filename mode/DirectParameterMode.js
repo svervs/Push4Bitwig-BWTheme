@@ -19,7 +19,7 @@ DirectParameterMode.prototype.onValueKnob = function (index, value)
     var params = cursorDevice.getDirectParameters ();
     var pos = this.currentPage * 8 + index;
     if (pos < params.length)
-        cursorDevice.changeDirectParameter (pos, value);
+        cursorDevice.changeDirectParameter (pos, value, this.surface.getFractionValue ());
 };
 
 DirectParameterMode.prototype.onValueKnobTouch = function (index, isTouched) 
@@ -73,17 +73,13 @@ DirectParameterMode.prototype.updateDisplay = function ()
             this.currentPage = 0;
         }
         
+        d.clearRow (2);
         for (var i = 0; i < 8; i++)
         {
             var param = pageOffset + i >= params.length ? this.emptyParameter : params[pageOffset + i];
             var isEmpty = param.name.length == 0;
             d.setCell (0, i, param.name, Display.FORMAT_RAW)
              .setCell (1, i, param.valueStr, Display.FORMAT_RAW);
-
-            if (isEmpty)
-                d.clearCell (2, i);
-            else
-                d.setCell (2, i, param.value, Display.FORMAT_RAW);
         }
         
         d.setCell (3, 0, 'Selected', Display.FORMAT_RAW).setCell (3, 1, 'Device: ', Display.FORMAT_RAW)
