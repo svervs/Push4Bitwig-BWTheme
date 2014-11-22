@@ -460,12 +460,6 @@ AbstractTrackBankProxy.prototype.getClipLauncherScenes = function ()
     return this.trackBank.getClipLauncherScenes ();
 };
 
-// TODO remove out when sure its not used elsewhere
-AbstractTrackBankProxy.prototype.getColorIndex = function (red, green, blue)
-{
-    return AbstractTrackBankProxy.getColorIndex (red, green, blue);
-};
-
 AbstractTrackBankProxy.getColorEntry = function (colorId)
 {
     for (var i = 0; i < AbstractTrackBankProxy.COLORS.length; i++)
@@ -588,7 +582,7 @@ AbstractTrackBankProxy.prototype.handleVUMeters = function (index, value)
 
 AbstractTrackBankProxy.prototype.handleColor = function (index, red, green, blue)
 {
-    this.tracks[index].color = this.getColorIndex (red, green, blue);
+    this.tracks[index].color = AbstractTrackBankProxy.getColorIndex (red, green, blue);
 };
 
 AbstractTrackBankProxy.prototype.handleExists = function (index, exists)
@@ -713,6 +707,6 @@ AbstractTrackBankProxy.prototype.handleCanScrollScenesDown = function (canScroll
 
 AbstractTrackBankProxy.prototype.handleDeviceName = function (index, device, name)
 {
-    // TODO
+    // TODO works
     // println(index+":"+ device+":"+ name);
 };

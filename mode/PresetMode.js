@@ -104,7 +104,7 @@ PresetMode.prototype.updateDisplay = function ()
     for (var i = 0; i < 4; i++)
         d.setBlock (i, 2, (i == 0 ? Display.RIGHT_ARROW : ' ') + (view[i] != null ? view[i] : ""));
 
-    // Creator column
+    // Preset column
     view = cd.presetProvider.getView (4);
     for (var i = 0; i < 4; i++)
         d.setBlock (i, 3, (i == 0 ? Display.RIGHT_ARROW : ' ') + (view[i] != null ? view[i] : ""));
