@@ -10,6 +10,12 @@ function CrossfaderMode (model)
 }
 CrossfaderMode.prototype = new AbstractTrackMode ();
 
+CrossfaderMode.prototype.onValueKnobTouch = function (index, isTouched)
+{
+    if (isTouched && this.surface.isDeletePressed ())
+        this.model.getCurrentTrackBank ().setCrossfadeMode (index, 'AB');
+};
+
 CrossfaderMode.prototype.onValueKnob = function (index, value)
 {
     var tb = this.model.getCurrentTrackBank ();

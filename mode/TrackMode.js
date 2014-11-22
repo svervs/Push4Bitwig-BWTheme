@@ -51,7 +51,7 @@ TrackMode.prototype.onValueKnobTouch = function (index, isTouched)
                 tb.resetPan (selectedTrack.index);
                 break;
             case 2:
-                // Crossfader mode can't be reset
+                tb.setCrossfadeMode (selectedTrack.index, 'AB');
                 break;
             default:
                 tb.resetSend (selectedTrack.index, index - 3);
