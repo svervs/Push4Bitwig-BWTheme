@@ -77,8 +77,9 @@ ParamPageSelectMode.prototype.updateDisplay = function ()
 
 ParamPageSelectMode.prototype.updateFirstRow = function ()
 {
-    for (var i = 20; i < 28; i++)
+    for (var i = 20; i < 27; i++)
         this.surface.setButton (i, i == 20 + this.selectedIndex ? ParamPageSelectMode.firstRowButtonColorSelected : ParamPageSelectMode.firstRowButtonColorUp);
+    this.surface.setButton (27, PUSH_COLOR_BLACK);
 };
 
 ParamPageSelectMode.prototype.updateSecondRow = function ()
@@ -89,7 +90,8 @@ ParamPageSelectMode.prototype.updateSecondRow = function ()
 
 ParamPageSelectMode.prototype.onFirstRow = function (index)
 {
-    this.bottomItems[index].execute ();
+    if (index < 7)
+        this.bottomItems[index].execute ();
 };
 
 ParamPageSelectMode.prototype.addFirstRowCommand = function (label, modeId)
