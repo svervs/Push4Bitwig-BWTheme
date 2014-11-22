@@ -88,13 +88,13 @@ RaindropsView.prototype.onScene = function (index)
 RaindropsView.prototype.onOctaveDown = function (event)
 {
     if (event.isDown ())
-        this.scrollDown (event);
+        this.scrollLeft (event);
 };
 
 RaindropsView.prototype.onOctaveUp = function (event)
 {
     if (event.isDown ())
-        this.scrollUp (event);
+        this.scrollRight (event);
 };
 
 RaindropsView.prototype.scrollRight = function (event)
