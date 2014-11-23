@@ -128,7 +128,7 @@ ParamPageMode.prototype.onSecondRow = function (index)
 ParamPageMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, i < ParamPageMode.FIXED_BANKS_NAMES.length ? (this.name == ParamPageMode.FIXED_BANKS[i] ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
+        this.surface.setButton (20 + i, i < ParamPageMode.FIXED_BANKS_NAMES.length ? (this.name == ParamPageMode.FIXED_BANKS_NAMES[i] ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
 };
 
 ParamPageMode.prototype.updateSecondRow = function ()
