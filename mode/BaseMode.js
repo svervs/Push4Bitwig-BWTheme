@@ -9,26 +9,27 @@ function BaseMode (model)
 }
 BaseMode.prototype = new AbstractMode ();
 
+BaseMode.prototype.onFirstRow = function (index) {};
+BaseMode.prototype.onSecondRow = function (index) {};
+
 BaseMode.prototype.updateFirstRow = function ()
 {
-    var tb = this.model.getCurrentTrackBank ();
-    var selTrack = tb.getSelectedTrack ();
-    var selIndex = selTrack == null ? -1 : selTrack.index;
-    for (var i = 0; i < 8; i++)
-    {
-        var isSel = i == selIndex;
-        // Light up selection and record buttons
-        this.surface.setButton (20 + i, isSel ? PUSH_COLOR_ORANGE_LO : PUSH_COLOR_BLACK);
-    }
+    this.disableFirstRow ();
 };
 
 BaseMode.prototype.updateSecondRow = function ()
 {
-    var tb = this.model.getCurrentTrackBank ();
+    this.disableSecondRow ();
+};
+
+BaseMode.prototype.disableFirstRow = function ()
+{
     for (var i = 0; i < 8; i++)
-    {
-        var t = tb.getTrack (i);
-        if (!this.hasSecondRowPriority)
-            this.surface.setButton (102 + i, t.recarm ? PUSH_COLOR2_RED_LO : PUSH_COLOR2_BLACK);
-    }
+        this.surface.setButton (20 + i, PUSH_COLOR_BLACK);
+};
+
+BaseMode.prototype.disableSecondRow = function ()
+{
+    for (var i = 0; i < 8; i++)
+        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

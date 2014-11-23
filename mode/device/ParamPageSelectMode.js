@@ -55,13 +55,9 @@ ParamPageSelectMode.prototype.attachTo = function (surface)
 {
     BaseMode.prototype.attachTo.call (this, surface);
 
-    this.addFirstRowCommand (' Device ', MODE_BANK_DEVICE);
-    this.addFirstRowCommand (' Common ', MODE_BANK_COMMON);
-    this.addFirstRowCommand ('Envelope', MODE_BANK_ENVELOPE);
-    this.addFirstRowCommand (' Direct ', MODE_BANK_DIRECT);
-    this.addFirstRowCommand (' Macro  ', MODE_BANK_MACRO);
-    this.addFirstRowCommand ('Modulate', MODE_BANK_MODULATE);
-    this.addFirstRowCommand (' User   ', MODE_BANK_USER);
+    this.addFirstRowCommand ('Device', MODE_BANK_DEVICE);
+    this.addFirstRowCommand ('Fixed', MODE_BANK_COMMON);
+    this.addFirstRowCommand ('Direct', MODE_BANK_DIRECT);
     
     this.setCurrentMode (MODE_BANK_DEVICE);
 };
@@ -77,20 +73,15 @@ ParamPageSelectMode.prototype.updateDisplay = function ()
 
 ParamPageSelectMode.prototype.updateFirstRow = function ()
 {
-    for (var i = 20; i < 27; i++)
-        this.surface.setButton (i, i == 20 + this.selectedIndex ? ParamPageSelectMode.firstRowButtonColorSelected : ParamPageSelectMode.firstRowButtonColorUp);
-    this.surface.setButton (27, PUSH_COLOR_BLACK);
-};
-
-ParamPageSelectMode.prototype.updateSecondRow = function ()
-{
-    for (var i = 102; i < 110; i++)
-        this.surface.setButton (i, PUSH_COLOR2_BLACK);
+    for (var i = 0; i < this.bottomItems.length; i++)
+        this.surface.setButton (20 + i, i == this.selectedIndex ? ParamPageSelectMode.firstRowButtonColorSelected : ParamPageSelectMode.firstRowButtonColorUp);
+    for (var i = this.bottomItems.length; i < 8; i++)
+        this.surface.setButton (20 + i, PUSH_COLOR_BLACK);
 };
 
 ParamPageSelectMode.prototype.onFirstRow = function (index)
 {
-    if (index < 7)
+    if (index < this.bottomItems.length)
         this.bottomItems[index].execute ();
 };
 

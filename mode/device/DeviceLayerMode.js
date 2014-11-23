@@ -49,7 +49,7 @@ DeviceLayerMode.prototype.onSecondRow = function (index)
     var tb = this.model.getCurrentTrackBank ();
     var cd = this.model.getCursorDevice ();
     if (tb.isMuteState ())
-        cd.toggleLayerMute (index);
+        cd.toggleLayerMute (index); // TODO Direct parameter MUTE not found???
     else
         cd.toggleLayerSolo (index);
 };
@@ -93,50 +93,46 @@ DeviceLayerMode.prototype.updateDisplay = function ()
 
 DeviceLayerMode.prototype.updateFirstRow = function ()
 {
-    if (this.model.hasSelectedDevice () && this.model.getCursorDevice ().hasLayers ())
+    if (!this.model.hasSelectedDevice () || !this.model.getCursorDevice ().hasLayers ())
     {
-        var cd = this.model.getCursorDevice ();
-        for (var i = 0; i < 8; i++)
-        {
-            var dl = cd.getLayer (i);
-            this.surface.setButton (20 + i, dl.exists ? (dl.selected ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
-        }
+        this.disableFirstRow ();
+        return;
     }
-    else
+    
+    var cd = this.model.getCursorDevice ();
+    for (var i = 0; i < 8; i++)
     {
-        for (var i = 0; i < 8; i++)
-            this.surface.setButton (20 + i, PUSH_COLOR_BLACK);
+        var dl = cd.getLayer (i);
+        this.surface.setButton (20 + i, dl.exists ? (dl.selected ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
     }
 };
 
 DeviceLayerMode.prototype.updateSecondRow = function ()
 {
-    if (this.model.hasSelectedDevice () && this.model.getCursorDevice ().hasLayers ())
+    if (!this.model.hasSelectedDevice () || !this.model.getCursorDevice ().hasLayers ())
     {
-        var cd = this.model.getCursorDevice ();
-        var muteState = this.model.getCurrentTrackBank ().isMuteState ();
-        for (var i = 0; i < 8; i++)
-        {
-            var dl = cd.getLayer (i);
-
-            var color = PUSH_COLOR_BLACK;
-            if (dl.exists)
-            {
-                if (muteState)
-                {
-                    if (!dl.mute)
-                        color = PUSH_COLOR2_YELLOW_HI;
-                }
-                else
-                    color = dl.solo ? PUSH_COLOR2_BLUE_HI : PUSH_COLOR2_GREY_LO;
-            }
-
-            this.surface.setButton (102 + i, color);
-        }
+        this.disableSecondRow ();
+        return;
     }
-    else
+    
+    var cd = this.model.getCursorDevice ();
+    var muteState = this.model.getCurrentTrackBank ().isMuteState ();
+    for (var i = 0; i < 8; i++)
     {
-        for (var i = 0; i < 8; i++)
-            this.surface.setButton (102 + i, PUSH_COLOR_BLACK);
+        var dl = cd.getLayer (i);
+
+        var color = PUSH_COLOR_BLACK;
+        if (dl.exists)
+        {
+            if (muteState)
+            {
+                if (!dl.mute)
+                    color = PUSH_COLOR2_YELLOW_HI;
+            }
+            else
+                color = dl.solo ? PUSH_COLOR2_BLUE_HI : PUSH_COLOR2_GREY_LO;
+        }
+
+        this.surface.setButton (102 + i, color);
     }
 };

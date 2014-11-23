@@ -27,8 +27,6 @@ GrooveMode.prototype.onFirstRow = function (index)
     }
 };
 
-GrooveMode.prototype.onSecondRow = function (index) {};
-
 GrooveMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
@@ -52,15 +50,8 @@ GrooveMode.prototype.updateDisplay = function ()
 
 GrooveMode.prototype.updateFirstRow = function ()
 {
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, PUSH_COLOR_BLACK);
+    this.disableFirstRow ();
 
     var g = this.model.getGroove ();
     this.surface.setButton (27, g.isEnabled () ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
-};
-
-GrooveMode.prototype.updateSecondRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

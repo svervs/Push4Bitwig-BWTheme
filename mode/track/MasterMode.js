@@ -33,10 +33,6 @@ MasterMode.prototype.onValueKnobTouch = function (index, isTouched)
     }
 };
 
-MasterMode.prototype.onFirstRow = function (index) {};
-
-MasterMode.prototype.onSecondRow = function (index) {};
-
 MasterMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
@@ -56,16 +52,4 @@ MasterMode.prototype.updateDisplay = function ()
      .setCell (3, 0, master.getName (), Display.FORMAT_RAW)
      .clearCell (3, 1).clearCell (3, 2).clearCell (3, 3).clearCell (3, 4).clearCell (3, 5)
      .clearCell (3, 6).clearCell (3, 7).done (3);
-};
-
-MasterMode.prototype.updateFirstRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, PUSH_COLOR_BLACK);
-};
-
-MasterMode.prototype.updateSecondRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

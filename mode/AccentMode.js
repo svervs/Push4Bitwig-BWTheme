@@ -17,10 +17,6 @@ AccentMode.prototype.onValueKnob = function (index, value)
     Config.setAccentValue (v == 0 ? 1 : v);
 };
 
-AccentMode.prototype.onFirstRow = function (index) {};
-
-AccentMode.prototype.onSecondRow = function (index) {};
-
 AccentMode.prototype.updateDisplay = function () 
 {
     this.surface.getDisplay ().clear ()
@@ -28,16 +24,4 @@ AccentMode.prototype.updateDisplay = function ()
         .setCell (1, 7, Config.fixedAccentValue, Display.FORMAT_RAW)
         .setCell (2, 7, Config.fixedAccentValue, Display.FORMAT_VALUE)
         .allDone ();
-};
-
-AccentMode.prototype.updateFirstRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, PUSH_COLOR_BLACK);
-};
-
-AccentMode.prototype.updateSecondRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

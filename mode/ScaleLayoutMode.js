@@ -20,8 +20,6 @@ ScaleLayoutMode.prototype.onFirstRow = function (index)
     Config.setScaleLayout (Scales.LAYOUT_NAMES[this.scales.getScaleLayout ()]);
 };
 
-ScaleLayoutMode.prototype.onSecondRow = function (index) {};
-
 ScaleLayoutMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
@@ -41,10 +39,4 @@ ScaleLayoutMode.prototype.updateFirstRow = function ()
     var sl = this.scales.getScaleLayout ();
     for (var i = 0; i < 8; i++)
         this.surface.setButton (20 + i, i > 5 ? PUSH_COLOR_BLACK : (sl == i ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO));
-};
-
-ScaleLayoutMode.prototype.updateSecondRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

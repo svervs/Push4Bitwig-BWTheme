@@ -541,15 +541,35 @@ AbstractView.prototype.onShift = function (event)
 
 AbstractView.prototype.scrollLeft = function (event)
 {
+    var cd = this.model.getCursorDevice ();
     switch (this.surface.getCurrentMode ())
     {
         case MODE_BANK_DEVICE:
+            if (this.surface.isShiftPressed ())
+                cd.setSelectedParameterPage (Math.max (cd.getSelectedParameterPage () - 8, 0));
+            else
+                cd.previousParameterPage ();
+            break;
+        
+        case MODE_BANK_DIRECT:
+            if (this.surface.isShiftPressed ())
+                this.surface.getMode (MODE_BANK_DIRECT).previousPageBank ();
+            else
+                this.surface.getMode (MODE_BANK_DIRECT).previousPage ();
+            break;
+            
+        case MODE_BANK_COMMON:
+        case MODE_BANK_ENVELOPE: 
+        case MODE_BANK_MODULATE:
+        case MODE_BANK_MACRO:
+        case MODE_BANK_USER:
+            this.surface.getActiveMode ().previousPage ();
+            break;
+        
         case MODE_PRESET:
-            this.model.getCursorDevice ().selectPrevious ();
             break;
     
         case MODE_DEVICE_LAYER:
-            var cd = this.model.getCursorDevice ();
             var sel = cd.getSelectedLayer ();
             var index = sel == null ? 0 : sel.index - 1;
             if (index == -1 || this.surface.isShiftPressed ())
@@ -584,15 +604,35 @@ AbstractView.prototype.scrollLeft = function (event)
 
 AbstractView.prototype.scrollRight = function (event)
 {
+    var cd = this.model.getCursorDevice ();
     switch (this.surface.getCurrentMode ())
     {
         case MODE_BANK_DEVICE:
+            if (this.surface.isShiftPressed ())
+                cd.setSelectedParameterPage (Math.min (cd.getSelectedParameterPage () + 8, cd.getParameterPageNames ().length - 1));
+            else
+                cd.nextParameterPage ();
+            break;
+        
+        case MODE_BANK_DIRECT:
+            if (this.surface.isShiftPressed ())
+                this.surface.getMode (MODE_BANK_DIRECT).nextPageBank ();
+            else
+                this.surface.getMode (MODE_BANK_DIRECT).nextPage ();
+            break;
+        
+        case MODE_BANK_COMMON:
+        case MODE_BANK_ENVELOPE: 
+        case MODE_BANK_MODULATE:
+        case MODE_BANK_MACRO:
+        case MODE_BANK_USER:
+            this.surface.getActiveMode ().nextPage ();
+            break;
+        
         case MODE_PRESET:
-            this.model.getCursorDevice ().selectNext ();
             break;
             
         case MODE_DEVICE_LAYER:
-            var cd = this.model.getCursorDevice ();
             var sel = cd.getSelectedLayer ();
             var index = sel == null ? 0 : sel.index + 1;
             if (index == 8 || this.surface.isShiftPressed ())
@@ -660,10 +700,30 @@ AbstractView.prototype.updateArrowStates = function ()
     switch (this.surface.getCurrentMode ())
     {
         case MODE_BANK_DEVICE:
-        case MODE_PRESET:
             var cd = this.model.getCursorDevice ();
-            this.canScrollLeft = cd.canSelectPreviousFX ();
-            this.canScrollRight = cd.canSelectNextFX ();
+            this.canScrollLeft = cd.hasPreviousParameterPage ();
+            this.canScrollRight = cd.hasNextParameterPage ();
+            break;
+
+        case MODE_BANK_DIRECT:
+            var mode = this.surface.getMode (MODE_BANK_DIRECT);
+            this.canScrollLeft = mode.hasPreviousPage ();
+            this.canScrollRight = mode.hasNextPage ();
+            break;
+            
+        case MODE_BANK_COMMON:
+        case MODE_BANK_ENVELOPE: 
+        case MODE_BANK_MODULATE:
+        case MODE_BANK_MACRO:
+        case MODE_BANK_USER:
+            var cur = this.surface.getCurrentMode ();
+            this.canScrollLeft = cur != MODE_BANK_COMMON;
+            this.canScrollRight = cur != MODE_BANK_USER;
+            break;
+        
+        case MODE_PRESET:
+            this.canScrollLeft = false;
+            this.canScrollRight = false;
             break;
     
         case MODE_DEVICE_LAYER:

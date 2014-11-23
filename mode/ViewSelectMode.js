@@ -28,8 +28,6 @@ ViewSelectMode.prototype.onFirstRow = function (index)
     this.surface.setPendingMode (this.surface.getPreviousMode ());
 };
 
-ViewSelectMode.prototype.onSecondRow = function (index) {};
-
 ViewSelectMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
@@ -43,10 +41,4 @@ ViewSelectMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
         this.surface.setButton (20 + i, i > 3 ? PUSH_COLOR_BLACK : (this.surface.isActiveView (ViewSelectMode.VIEWS[i].id) ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO));
-};
-
-ViewSelectMode.prototype.updateSecondRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
 };

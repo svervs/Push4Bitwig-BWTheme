@@ -22,6 +22,7 @@ var MODE_SEND5               = 15;
 var MODE_SEND6               = 16;
 var MODE_SEND                = 17;
 
+var MODE_DEVICE              = 19;
 var MODE_PARAM_PAGE_SELECT   = 20;
 var MODE_BANK_DEVICE         = 21;
 var MODE_BANK_COMMON         = 22;
@@ -42,28 +43,30 @@ var MODE_VIEW_SELECT         = 34;
 var MODE_MASTER_TEMP         = 100;
 
 load ("BaseMode.js");
-load ("AbstractTrackMode.js");
-load ("TrackMode.js");
-load ("VolumeMode.js");
-load ("MasterMode.js");
+
+load ("AccentMode.js");
+load ("FixedMode.js");
 load ("FrameMode.js");
 load ("GrooveMode.js");
-load ("AccentMode.js");
-load ("CrossfaderMode.js");
-load ("ClipMode.js");
-
-load ("PanMode.js");
-load ("SendMode.js");
-
-load ("ParamPageSelectMode.js");
-load ("DeviceMode.js");
-load ("DeviceLayerMode.js");
-load ("ParamPageMode.js");
-load ("DirectParameterMode.js");
-load ("PresetMode.js");
-
+load ("RibbonMode.js");
 load ("ScalesMode.js");
 load ("ScaleLayoutMode.js");
-load ("FixedMode.js");
-load ("RibbonMode.js");
 load ("ViewSelectMode.js");
+
+load ("track/AbstractTrackMode.js");
+load ("track/ClipMode.js");
+load ("track/CrossfaderMode.js");
+load ("track/MasterMode.js");
+load ("track/PanMode.js");
+load ("track/SendMode.js");
+load ("track/TrackMode.js");
+load ("track/VolumeMode.js");
+
+load ("device/DeviceLayerMode.js");
+load ("device/DeviceMode.js");
+load ("device/DeviceBankMode.js");
+load ("device/DirectParameterMode.js");
+load ("device/ParamPageSelectMode.js");
+load ("device/ParamPageMode.js");
+load ("device/PresetMode.js");
+

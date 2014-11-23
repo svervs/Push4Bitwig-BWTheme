@@ -49,7 +49,8 @@ function Controller ()
     this.surface.addMode (MODE_VIEW_SELECT, new ViewSelectMode (this.model));
 
     this.surface.addMode (MODE_PARAM_PAGE_SELECT, new ParamPageSelectMode (this.model));
-    this.surface.addMode (MODE_BANK_DEVICE, new DeviceMode (this.model));
+    this.surface.addMode (MODE_DEVICE, new DeviceMode (this.model));
+    this.surface.addMode (MODE_BANK_DEVICE, new DeviceBankMode (this.model));
     this.surface.addMode (MODE_DEVICE_LAYER, new DeviceLayerMode (this.model));
     this.surface.addMode (MODE_BANK_COMMON, new ParamPageMode (this.model, MODE_BANK_COMMON, 'Common'));
     this.surface.addMode (MODE_BANK_ENVELOPE, new ParamPageMode (this.model, MODE_BANK_ENVELOPE, 'Envelope'));

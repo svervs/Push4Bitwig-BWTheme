@@ -19,15 +19,13 @@ FixedMode.prototype.onFirstRow = function (index)
     this.surface.setPendingMode (this.surface.getPreviousMode ());
 };
 
-FixedMode.prototype.onSecondRow = function (index) {};
-
 FixedMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
     d.clear ().setBlock (1, 0, 'New Clip Length:');
     var tb = this.model.getCurrentTrackBank ();
     for (var i = 0; i < 8; i++)
-        d.setCell (3, i, (tb.getNewClipLength () == i ? Display.RIGHT_ARROW : ' ') + FixedMode.CLIP_LENGTHS[i]);
+        d.setCell (3, i, (tb.getNewClipLength () == i ? Display.RIGHT_ARROW : '') + FixedMode.CLIP_LENGTHS[i]);
     d.allDone ();
 };
 
@@ -36,10 +34,4 @@ FixedMode.prototype.updateFirstRow = function ()
     var tb = this.model.getCurrentTrackBank ();
     for (var i = 0; i < 8; i++)
         this.surface.setButton (20 + i, tb.getNewClipLength () == i ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO);
-};
-
-FixedMode.prototype.updateSecondRow = function ()
-{
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
 };
