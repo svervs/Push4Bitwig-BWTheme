@@ -10,6 +10,8 @@ AbstractView.prototype.automationPressed = false;
 // record the mode at the start of the touch down event
 AbstractView.prototype.longPressPreviousMode = null;
 
+AbstractView.prototype.lastDeviceMode = 0;
+
 AbstractView.prototype.onPitchbend = function (data1, data2) {};
 
 //--------------------------------------
@@ -389,19 +391,43 @@ AbstractView.prototype.onDeviceLeft = function (event)
     if (!cd.hasLayers ())
         return;
 
-    var displaysDevice = this.surface.getCurrentMode () == MODE_BANK_DEVICE;
+    var isLayerMode = false;
+    var cm = this.surface.getCurrentMode ();
+    switch (cm)
+    {
+        case MODE_DEVICE_LAYER:
+            isLayerMode = true;
+            break;
+        case MODE_DEVICE:
+        case MODE_BANK_DEVICE:
+        case MODE_BANK_COMMON:
+        case MODE_BANK_ENVELOPE:
+        case MODE_BANK_MODULATE:
+        case MODE_BANK_USER:
+        case MODE_BANK_MACRO:
+        case MODE_BANK_DIRECT:
+            this.lastDeviceMode = cm;
+            break;
+        default:
+            this.lastDeviceMode = MODE_BANK_DEVICE;
+            break;
+    }
+    
     var dl = cd.getSelectedLayer ();
-    if (displaysDevice)
+    if (isLayerMode)
+    {
+        if (dl != null)
+        {
+            cd.enterLayer (dl.index);
+            cd.selectFirstDeviceInLayer (dl.index);
+        }
+    }
+    else
     {
         if (dl == null)
             cd.selectLayer (0);
     }
-    else
-    {
-        if (dl != null)
-            cd.selectFirstDeviceInLayer (dl.index);
-    }
-    this.surface.setPendingMode (displaysDevice ? MODE_DEVICE_LAYER : MODE_BANK_DEVICE);
+    this.surface.setPendingMode (isLayerMode ? this.lastDeviceMode : MODE_DEVICE_LAYER);
 };
 
 AbstractView.prototype.onDeviceRight = function (event)
@@ -409,14 +435,14 @@ AbstractView.prototype.onDeviceRight = function (event)
     if (!event.isDown ())   
         return;
     
-    var isDeviceMode = this.surface.getCurrentMode () == MODE_BANK_DEVICE;
-    this.surface.setPendingMode (isDeviceMode ? MODE_DEVICE_LAYER : MODE_BANK_DEVICE);
-    if (isDeviceMode)
+    var isLayerMode = this.surface.getCurrentMode () == MODE_DEVICE_LAYER;
+    this.surface.setPendingMode (isLayerMode ? this.lastDeviceMode : MODE_DEVICE_LAYER);
+    if (isLayerMode)
+        // TODO Create a function
+        this.model.getCursorDevice ().cursorDevice.getChannel ().selectInEditor ();
+    else
         // TODO FIX Required - No way to check if we are on the top of the device tree
         this.model.getCursorDevice ().selectParent ();
-    else
-        // TODO Create a function
-        this.model.getCursorDevice ().cursorDevice.getChannel ().selectInEditor();
 };
 
 AbstractView.prototype.onMute = function (event)
