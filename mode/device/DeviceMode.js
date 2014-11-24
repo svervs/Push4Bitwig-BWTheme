@@ -35,6 +35,14 @@ DeviceMode.prototype.onFirstRow = function (index)
         this.model.getCursorDevice ().setSelectedParameterPage (bank.offset + index);
 };
 
+DeviceMode.prototype.onSecondRow = function (index)
+{
+    if (index == 0)
+        this.model.getCursorDevice ().toggleEnabledState ();
+    else if (index == 7)
+        this.model.getCursorDevice ().toggleWindowOpen ();
+};
+
 DeviceMode.prototype.updateDisplay = function () 
 {
     var d = this.surface.getDisplay ();
@@ -100,6 +108,14 @@ DeviceMode.prototype.updateFirstRow = function ()
         var index = bank.offset + p;
         this.surface.setButton (20 + p, index < bank.pages.length ? (index == bank.page ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
     }
+};
+
+DeviceMode.prototype.updateSecondRow = function ()
+{
+    this.disableSecondRow ();
+    
+    this.surface.setButton (102, this.model.getSelectedDevice ().enabled ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_GREY_LO);
+    this.surface.setButton (109, this.model.getCursorDevice ().isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO);
 };
 
 DeviceMode.prototype.calcBank = function ()

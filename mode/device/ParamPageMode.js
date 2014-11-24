@@ -118,11 +118,18 @@ ParamPageMode.prototype.onFirstRow = function (index)
 
 ParamPageMode.prototype.onSecondRow = function (index)
 {
-    if (this.id != MODE_BANK_MACRO)
+    if (this.id == MODE_BANK_MACRO)
+    {
+        var macro = this.model.getCursorDevice ().getMacro (index);
+        if (macro)
+            macro.getModulationSource ().toggleIsMapping ();
         return;
-    var macro = this.model.getCursorDevice ().getMacro (index);
-    if (macro)
-        macro.getModulationSource ().toggleIsMapping ();
+    }
+        
+    if (index == 0)
+        this.model.getCursorDevice ().toggleEnabledState ();
+    else if (index == 7)
+        this.model.getCursorDevice ().toggleWindowOpen ();
 };
 
 ParamPageMode.prototype.updateFirstRow = function ()
@@ -133,13 +140,17 @@ ParamPageMode.prototype.updateFirstRow = function ()
 
 ParamPageMode.prototype.updateSecondRow = function ()
 {
-    if (this.id != MODE_BANK_MACRO)
+    if (this.id == MODE_BANK_MACRO)
     {
-        this.disableSecondRow ();
+        for (var i = 0; i < 8; i++)
+            this.surface.setButton (102 + i, this.model.getCursorDevice ().isMacroMapping (i) ? PUSH_COLOR2_GREEN_SPRING : PUSH_COLOR2_BLACK);
         return;
     }
-    for (var i = 0; i < 8; i++)
-        this.surface.setButton (102 + i, this.model.getCursorDevice ().isMacroMapping (i) ? PUSH_COLOR2_GREEN_SPRING : PUSH_COLOR2_BLACK);
+        
+    this.disableSecondRow ();
+    
+    this.surface.setButton (102, this.model.getSelectedDevice ().enabled ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_GREY_LO);
+    this.surface.setButton (109, this.model.getCursorDevice ().isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO);
 };
 
 ParamPageMode.prototype.updateDisplay = function ()
