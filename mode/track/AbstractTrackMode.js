@@ -101,6 +101,8 @@ AbstractTrackMode.prototype.getTrackButtonColor = function (track)
 {
     if (!track.exists)
         return PUSH_COLOR_BLACK;
+    if (!track.activated)
+        return PUSH_COLOR_BLACK;
 
     var tb = this.model.getCurrentTrackBank ();
     

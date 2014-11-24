@@ -103,7 +103,7 @@ DeviceLayerMode.prototype.updateFirstRow = function ()
     for (var i = 0; i < 8; i++)
     {
         var dl = cd.getLayer (i);
-        this.surface.setButton (20 + i, dl.exists ? (dl.selected ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
+        this.surface.setButton (20 + i, dl.exists && dl.activated ? (dl.selected ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
     }
 };
 
