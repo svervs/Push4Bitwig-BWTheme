@@ -12,103 +12,69 @@ function ParamPageSelectMode (model)
     BaseMode.call (this, model);
     this.id = MODE_PARAM_PAGE_SELECT;
     this.bottomItems = [];
-    this.selectedIndex = 0;
+    this.selectedMode = MODE_BANK_DEVICE;
 }
 ParamPageSelectMode.prototype = new BaseMode ();
 
-ParamPageSelectMode.prototype.getCurrentMode = function ()
-{
-    return this.currentMode;
-};
-
-ParamPageSelectMode.prototype.setCurrentMode = function (mode)
-{
-    this.currentMode = mode;
-    this.currentModeChanged ();
-    this.surface.setPendingMode (this.currentMode);
-};
-
-ParamPageSelectMode.prototype.isPageMode = function (modeId)
-{
-    for (var i = 0; i < this.bottomItems.length; i++)
-    {
-        if (this.bottomItems[i].getModeId () == modeId)
-            return true;
-    }
-    return false;
-};
-
-ParamPageSelectMode.prototype.currentModeChanged = function ()
-{
-    this.selectedIndex = 0;
-    for (var i = 0; i < this.bottomItems.length; i++)
-    {
-        if (this.bottomItems[i].getModeId () == this.currentMode)
-        {
-            this.selectedIndex = i;
-            break;
-        }
-    }
-};
-
-ParamPageSelectMode.prototype.attachTo = function (surface)
-{
-    BaseMode.prototype.attachTo.call (this, surface);
-
-    this.addFirstRowCommand ('Device', MODE_BANK_DEVICE);
-    this.addFirstRowCommand ('Fixed', MODE_BANK_COMMON);
-    this.addFirstRowCommand ('Direct', MODE_BANK_DIRECT);
-    
-    this.setCurrentMode (MODE_BANK_DEVICE);
-};
-
 ParamPageSelectMode.prototype.updateDisplay = function ()
 {
-    var d = this.surface.getDisplay ();
-    d.clear ().setBlock (1, 0, "Parameter Banks:");
-    for (var i = 0; i < this.bottomItems.length; i++)
-        d.setCell (3, i, this.bottomItems[i].getLabel ());
-    d.allDone ();
+    this.surface.getDisplay ()
+        .clear ()
+        .setBlock (1, 0, "Parameter Banks:")
+        .setBlock (1, 2, "Device Sections:")
+        .setCell (3, 0, 'Device')
+        .setCell (3, 1, 'Fixed')
+        .setCell (3, 2, 'Direct')
+        .setCell (3, 4, 'Expanded')
+        .setCell (3, 5, 'Macros')
+        .setCell (3, 6, 'Paramtrs')
+        .allDone ();
 };
 
 ParamPageSelectMode.prototype.updateFirstRow = function ()
 {
-    for (var i = 0; i < this.bottomItems.length; i++)
-        this.surface.setButton (20 + i, i == this.selectedIndex ? ParamPageSelectMode.firstRowButtonColorSelected : ParamPageSelectMode.firstRowButtonColorUp);
-    for (var i = this.bottomItems.length; i < 8; i++)
-        this.surface.setButton (20 + i, PUSH_COLOR_BLACK);
+    this.surface.setButton (20, this.selectedMode == MODE_BANK_DEVICE ? ParamPageSelectMode.firstRowButtonColorSelected : ParamPageSelectMode.firstRowButtonColorUp);
+    this.surface.setButton (21, this.selectedMode == MODE_BANK_COMMON ? ParamPageSelectMode.firstRowButtonColorSelected : ParamPageSelectMode.firstRowButtonColorUp);
+    this.surface.setButton (22, this.selectedMode == MODE_BANK_DIRECT ? ParamPageSelectMode.firstRowButtonColorSelected : ParamPageSelectMode.firstRowButtonColorUp);
+    
+    this.surface.setButton (23, PUSH_COLOR_BLACK);
+
+    var cd = this.model.getCursorDevice ();
+    this.surface.setButton (24, cd.isExpanded () ? ParamPageSelectMode.firstRowButtonColorSelected : ParamPageSelectMode.firstRowButtonColorUp);
+    this.surface.setButton (25, cd.isMacroSectionVisible () ? ParamPageSelectMode.firstRowButtonColorSelected : ParamPageSelectMode.firstRowButtonColorUp);
+    this.surface.setButton (26, cd.isParameterPageSectionVisible () ? ParamPageSelectMode.firstRowButtonColorSelected : ParamPageSelectMode.firstRowButtonColorUp);
+
+    this.surface.setButton (27, PUSH_COLOR_BLACK);
+};
+
+ParamPageSelectMode.prototype.setMode = function (mode)
+{
+    this.selectedMode = mode;
+    this.surface.setPendingMode (mode);
 };
 
 ParamPageSelectMode.prototype.onFirstRow = function (index)
 {
-    if (index < this.bottomItems.length)
-        this.bottomItems[index].execute ();
-};
-
-ParamPageSelectMode.prototype.addFirstRowCommand = function (label, modeId)
-{
-    this.bottomItems.push (new ModeToggleCommand (label, modeId,
-        doObject (this, function () { this.setCurrentMode (modeId); })));
-};
-
-function ModeToggleCommand (label, modeId, command)
-{
-    this.label = label;
-    this.modeId = modeId;
-    this.command = command;
-}
-
-ModeToggleCommand.prototype.getLabel = function ()
-{
-    return this.label;
-};
-
-ModeToggleCommand.prototype.getModeId = function ()
-{
-    return this.modeId;
-};
-
-ModeToggleCommand.prototype.execute = function ()
-{
-    this.command.call (this);
+    switch (index)
+    {
+        case 0:
+            this.setMode (MODE_BANK_DEVICE);
+            break;
+        case 1:
+            this.setMode (MODE_BANK_COMMON);
+            break;
+        case 2:
+            this.setMode (MODE_BANK_DIRECT);
+            break;
+            
+        case 4:
+            this.model.getCursorDevice ().toggleExpanded ();
+            break;
+        case 5:
+            this.model.getCursorDevice ().toggleMacroSectionVisible ();
+            break;
+        case 6:
+            this.model.getCursorDevice ().toggleParameterPageSectionVisible ();
+            break;
+    }
 };

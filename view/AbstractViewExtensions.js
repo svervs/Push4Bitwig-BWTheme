@@ -350,12 +350,8 @@ AbstractView.prototype.onDevice = function (event)
 {
     if (!event.isDown ())
         return;
-    var selectMode = this.surface.getMode (MODE_PARAM_PAGE_SELECT);
-    var cm = this.surface.getCurrentMode ();
-    if (cm == MODE_PARAM_PAGE_SELECT || !selectMode.isPageMode (cm))
-        this.surface.setPendingMode (selectMode.getCurrentMode ());
-    else
-        this.surface.setPendingMode (MODE_PARAM_PAGE_SELECT);
+    var deviceMode = this.surface.getMode (MODE_PARAM_PAGE_SELECT).selectedMode
+    this.surface.setPendingMode (this.surface.getCurrentMode () == deviceMode ? MODE_PARAM_PAGE_SELECT : deviceMode);
 };
 
 AbstractView.prototype.onBrowse = function (event)
