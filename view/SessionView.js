@@ -35,12 +35,17 @@ SessionView.prototype.updateRibbonMode = function ()
 SessionView.prototype.drawSceneButtons = function ()
 {
     var tb = this.model.getCurrentTrackBank ();
+    var color = PUSH_COLOR_BLACK;
     for (var i = 0; i < 8; i++)
     {
         if (this.flip)
         {
             var track = tb.getTrack (i);
-            this.surface.setButton (PUSH_BUTTON_SCENE1 + (7 - i), track.recarm ? PUSH_COLOR_SCENE_RED : (track.exists ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_BLACK));
+            if (tb.isMuteState ())
+                color = track.mute ? PUSH_COLOR_BLACK : PUSH_COLOR_SCENE_YELLOW_HI;
+            else
+                color = track.solo ? PUSH_COLOR_SCENE_RED : PUSH_COLOR_BLACK;
+            this.surface.setButton (PUSH_BUTTON_SCENE1 + (7 - i), track.exists ? color : PUSH_COLOR_BLACK);
         }
         else
             this.surface.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_SCENE_GREEN);
@@ -53,7 +58,7 @@ SessionView.prototype.updateDevice = function ()
     if (m != null)
     {
         m.updateDisplay ();
-        m.updateSecondRow ();
+        m.updateFirstRow ();
     }
 
     if (this.flip && !m.hasSecondRowPriority)
@@ -141,7 +146,14 @@ SessionView.prototype.sceneOrSecondRowButtonPressed = function (index, isScene)
             this.model.getCurrentTrackBank ().returnToArrangement (index);
         else
         {
-            AbstractView.prototype.onSecondRow.call (this, index);
+            if (this.flip)
+            {
+                // Only execute Solo or Mute
+                this.surface.getMode (MODE_TRACK).onSecondRow (index);
+            }
+            else
+                AbstractView.prototype.onSecondRow.call (this, index);
+            
             this.drawSceneButtons ();
         }
     }
