@@ -54,7 +54,6 @@ DeviceMode.prototype.updateDisplay = function ()
         for (var i = 0; i < 8; i++)
         {
             var param = cursorDevice.getFXParam (i);
-            var isEmpty = param.name.length == 0;
             d.setCell (0, i, param.name, Display.FORMAT_RAW)
              .setCell (1, i, param.valueStr, Display.FORMAT_RAW);
         }

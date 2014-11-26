@@ -59,10 +59,10 @@ SessionView.prototype.updateDevice = function ()
     if (this.flip && !m.hasSecondRowPriority)
     {
         for (var i = 0; i < 8; i++)
-            this.surface.setButton (20 + i, PUSH_COLOR_GREEN_HI);
+            this.surface.setButton (102 + i, PUSH_COLOR_GREEN_HI);
     }
     else
-        m.updateFirstRow ();
+        m.updateSecondRow ();
 
     this.updateButtons ();
     this.updateArrows ();
@@ -118,27 +118,18 @@ SessionView.prototype.onSession = function (event)
 
 SessionView.prototype.onScene = function (scene)
 {
-    this.sceneOrFirstRowButtonPressed (scene, !this.flip);
-};
-
-SessionView.prototype.onFirstRow = function (index)
-{
-    if (this.surface.getActiveMode ().hasSecondRowPriority)
-        AbstractView.prototype.onFirstRow.call (this, index);
-    else
-        this.sceneOrFirstRowButtonPressed (index, this.flip);
+    this.sceneOrSecondRowButtonPressed (scene, !this.flip);
 };
 
 SessionView.prototype.onSecondRow = function (index)
 {
-    if (this.surface.isShiftPressed ())
-        this.model.getCurrentTrackBank ().returnToArrangement (index);
-    else
+    if (this.surface.getActiveMode ().hasSecondRowPriority)
         AbstractView.prototype.onSecondRow.call (this, index);
+    else
+        this.sceneOrSecondRowButtonPressed (index, this.flip);
 };
 
-// Rec-Enable and Scene Start are flipped
-SessionView.prototype.sceneOrFirstRowButtonPressed = function (index, isScene)
+SessionView.prototype.sceneOrSecondRowButtonPressed = function (index, isScene)
 {
     if (isScene)
         this.model.getCurrentTrackBank ().launchScene (index);
@@ -146,22 +137,12 @@ SessionView.prototype.sceneOrFirstRowButtonPressed = function (index, isScene)
     {
         if (this.surface.isPressed (PUSH_BUTTON_STOP))
             this.model.getCurrentTrackBank ().stop (index);
+        else if (this.surface.isShiftPressed ())
+            this.model.getCurrentTrackBank ().returnToArrangement (index);
         else
         {
-            this._onFirstRow (index);
+            AbstractView.prototype.onSecondRow.call (this, index);
             this.drawSceneButtons ();
         }
     }
-};
-
-// The logic for arming a track moved to AbstractTrackMode.onFirstRow()
-// still, just reimplementing the logic here doesn't seem 'bad'
-SessionView.prototype._onFirstRow = function (index)
-{
-    var tb = this.model.getCurrentTrackBank ();
-    var selTrack = tb.getSelectedTrack ();
-    if ((selTrack != null && selTrack.index == index) || this.surface.isShiftPressed ())
-        tb.toggleArm (index);
-    else
-        tb.select (index);
 };
