@@ -139,10 +139,12 @@ SequencerView.prototype.drawGrid = function ()
     
     // Clip length/loop area
     var quartersPerPad = this.model.getQuartersPerMeasure () / 2;
+    var stepsPerMeasure = Math.round (quartersPerPad / this.resolutions[this.selectedIndex]);
+    var currentMeasure = Math.floor (step / stepsPerMeasure);
     var maxQuarters = quartersPerPad * 8;
     var start = this.clip.getLoopStart ();
     var loopStartPad = Math.floor (Math.max (0, start) / quartersPerPad);
     var loopEndPad   = Math.ceil (Math.min (maxQuarters, start + this.clip.getLoopLength ()) / quartersPerPad);
     for (var pad = 0; pad < 8; pad++)
-        this.surface.pads.lightEx (pad, 0, pad >= loopStartPad && pad < loopEndPad ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK, null, false);
+        this.surface.pads.lightEx (pad, 0, pad >= loopStartPad && pad < loopEndPad ? (pad == currentMeasure ? PUSH_COLOR2_GREEN : PUSH_COLOR2_WHITE) : PUSH_COLOR_BLACK, null, false);
 };

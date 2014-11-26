@@ -166,18 +166,20 @@ DrumView.prototype.drawGrid = function ()
             this.surface.pads.lightEx (x, 7 - y, c, null, false);
         }
     }
- 
+    
     // Clip length/loop area
+    var step = this.clip.getCurrentStep ();
     var quartersPerPad = this.model.getQuartersPerMeasure ();
+    var stepsPerMeasure = Math.round (quartersPerPad / this.resolutions[this.selectedIndex]);
+    var currentMeasure = Math.floor (step / stepsPerMeasure);
     var maxQuarters = quartersPerPad * 16;
     var start = this.clip.getLoopStart ();
     var loopStartPad = Math.floor (Math.max (0, start) / quartersPerPad);
     var loopEndPad   = Math.ceil (Math.min (maxQuarters, start + this.clip.getLoopLength ()) / quartersPerPad);
     for (var pad = 0; pad < 16; pad++)
-        this.surface.pads.lightEx (4 + pad % 4, 4 + Math.floor (pad / 4), pad >= loopStartPad && pad < loopEndPad ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK, null, false);
+        this.surface.pads.lightEx (4 + pad % 4, 4 + Math.floor (pad / 4), pad >= loopStartPad && pad < loopEndPad ? (pad == currentMeasure ? PUSH_COLOR2_GREEN : PUSH_COLOR2_WHITE) : PUSH_COLOR_BLACK, null, false);
  
     // Paint the sequencer steps
-    var step = this.clip.getCurrentStep ();
     var hiStep = this.isInXRange (step) ? step % DrumView.NUM_DISPLAY_COLS : -1;
     for (var col = 0; col < DrumView.NUM_DISPLAY_COLS; col++)
     {
