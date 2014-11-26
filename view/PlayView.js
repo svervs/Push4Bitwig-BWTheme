@@ -90,11 +90,23 @@ PlayView.prototype.onPitchbend = function (data1, data2)
             this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, data2);
             break;
 
-        case Config.RIBBON_MODE_MIXED:
+        case Config.RIBBON_MODE_CC_PB:
             if (data2 > 64)
                 this.surface.sendMidiEvent (0xE0, data1, data2);
             else if (data2 < 64)
                 this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, 127 - data2 * 2);
+            else
+            {
+                this.surface.sendMidiEvent (0xE0, data1, data2);
+                this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, 0);
+            }
+            break;
+
+        case Config.RIBBON_MODE_PB_CC:
+            if (data2 > 64)
+                this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, data2 * 2);
+            else if (data2 < 64)
+                this.surface.sendMidiEvent (0xE0, data1, data2);
             else
             {
                 this.surface.sendMidiEvent (0xE0, data1, data2);
@@ -111,14 +123,14 @@ PlayView.prototype.updateRibbonMode = function ()
 {
     switch (Config.ribbonMode)
     {
-        case Config.RIBBON_MODE_PITCH:
-        case Config.RIBBON_MODE_MIXED:
-            this.surface.setRibbonMode (PUSH_RIBBON_PITCHBEND);
-            this.surface.output.sendPitchbend (0, 64);
-            break;
         case Config.RIBBON_MODE_CC:
             this.surface.setRibbonMode (PUSH_RIBBON_VOLUME);
             this.surface.output.sendPitchbend (0, this.pitchValue);
+            break;
+
+        default:
+            this.surface.setRibbonMode (PUSH_RIBBON_PITCHBEND);
+            this.surface.output.sendPitchbend (0, 64);
             break;
     }
 };

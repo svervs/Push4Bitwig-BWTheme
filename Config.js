@@ -28,7 +28,8 @@ Config.ENABLE_VU_METERS      = 8;
 
 Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
-Config.RIBBON_MODE_MIXED = 2;
+Config.RIBBON_MODE_CC_PB = 2;
+Config.RIBBON_MODE_PB_CC = 3;
 
 Config.accentActive      = false;                       // Accent button active
 Config.fixedAccentValue  = 127;                         // Fixed velocity value for accent
@@ -65,14 +66,15 @@ Config.init = function ()
     ///////////////////////////
     // Ribbon
 
-    Config.ribbonModeSetting = prefs.getEnumSetting ("Mode", "Ribbon", [ "Pitch", "CC", "Mixed" ], "Pitch");
+    Config.ribbonModeSetting = prefs.getEnumSetting ("Mode", "Ribbon", [ "Pitch", "CC", "CC/Pitch", "Pitch/CC" ], "Pitch");
     Config.ribbonModeSetting.addValueObserver (function (value)
     {
         switch (value)
         {
             case "Pitch": Config.ribbonMode = 0; break;
             case "CC": Config.ribbonMode = 1; break;
-            case "Mixed": Config.ribbonMode = 2; break;
+            case "CC/Pitch": Config.ribbonMode = 2; break;
+            case "Pitch/CC": Config.ribbonMode = 3; break;
         }
         Config.notifyListeners (Config.RIBBON_MODE);
     });
@@ -143,7 +145,8 @@ Config.setRibbonMode = function (mode)
     {
         case Config.RIBBON_MODE_PITCH: Config.ribbonModeSetting.set ("Pitch"); break;
         case Config.RIBBON_MODE_CC: Config.ribbonModeSetting.set ("CC"); break;
-        case Config.RIBBON_MODE_MIXED: Config.ribbonModeSetting.set ("Mixed"); break;
+        case Config.RIBBON_MODE_CC_PB: Config.ribbonModeSetting.set ("CC/Pitch"); break;
+        case Config.RIBBON_MODE_PB_CC: Config.ribbonModeSetting.set ("Pitch/CC"); break;
     }
 };
 

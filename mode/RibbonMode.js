@@ -14,7 +14,7 @@ RibbonMode.prototype = new BaseMode ();
 
 RibbonMode.prototype.onFirstRow = function (index)
 {
-    if (index < 3)
+    if (index <= 3)
         Config.setRibbonMode (index);
     else if (index > 3)
         Config.setRibbonModeCC (RibbonMode.MIDI_CCS[index - 4]);
@@ -34,19 +34,18 @@ RibbonMode.prototype.updateDisplay = function ()
     d.clearRow (0).clearRow (1).clearRow (2)
      .setCell (0, 4, 'Midi CC')
      .setCell (1, 4, Config.ribbonModeCCVal.toString ())
-     .setCell (3, 0, (Config.ribbonMode == Config.RIBBON_MODE_PITCH ? Display.RIGHT_ARROW : ' ') + 'Pitchbd')
-     .setCell (3, 1, (Config.ribbonMode == Config.RIBBON_MODE_CC ? Display.RIGHT_ARROW : ' ') + 'CC')
-     .setCell (3, 2, (Config.ribbonMode == Config.RIBBON_MODE_MIXED ? Display.RIGHT_ARROW : ' ') + 'Mixed')
-     .setCell (3, 3, ' Close')
+     .setCell (3, 0, (Config.ribbonMode == Config.RIBBON_MODE_PITCH ? Display.RIGHT_ARROW : '') + 'Pitchbd')
+     .setCell (3, 1, (Config.ribbonMode == Config.RIBBON_MODE_CC ? Display.RIGHT_ARROW : '') + 'CC')
+     .setCell (3, 2, (Config.ribbonMode == Config.RIBBON_MODE_CC_PB ? Display.RIGHT_ARROW : '') + 'CC/Pitch')
+     .setCell (3, 3, (Config.ribbonMode == Config.RIBBON_MODE_PB_CC ? Display.RIGHT_ARROW : '') + 'Pitch/CC')
      .setCell (3, 4, 'Modulatn').setCell (3, 5, 'Expressn').setCell (3, 6, 'Volume').setCell (3, 7, 'Sustain')
      .allDone ();
 };
 
 RibbonMode.prototype.updateFirstRow = function ()
 {
-    for (var i = 0; i < 3; i++)
+    for (var i = 0; i < 4; i++)
         this.surface.setButton (20 + i, Config.ribbonMode == Config.RIBBON_MODE_PITCH + i ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO);
-    this.surface.setButton (23, PUSH_COLOR_RED_LO);
     for (var i = 4; i < 8; i++)
         this.surface.setButton (20 + i, PUSH_COLOR_GREEN_LO);
 };
