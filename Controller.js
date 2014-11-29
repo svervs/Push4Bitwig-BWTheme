@@ -52,12 +52,14 @@ function Controller ()
     this.surface.addMode (MODE_DEVICE, new DeviceMode (this.model));
     this.surface.addMode (MODE_BANK_DEVICE, new DeviceBankMode (this.model));
     this.surface.addMode (MODE_DEVICE_LAYER, new DeviceLayerMode (this.model));
-    this.surface.addMode (MODE_BANK_COMMON, new ParamPageMode (this.model, MODE_BANK_COMMON, 'Common'));
-    this.surface.addMode (MODE_BANK_ENVELOPE, new ParamPageMode (this.model, MODE_BANK_ENVELOPE, 'Envelope'));
+    
+    this.surface.addMode (MODE_BANK_COMMON, new CommonParamsMode (this.model));
+    this.surface.addMode (MODE_BANK_ENVELOPE, new EnvelopeParamsMode (this.model));
+    this.surface.addMode (MODE_BANK_MACRO, new MacroParamsMode (this.model));
+    this.surface.addMode (MODE_BANK_MODULATE, new ModulationParamsMode (this.model));
+    this.surface.addMode (MODE_BANK_USER, new UserParamsMode (this.model));
+    
     this.surface.addMode (MODE_BANK_DIRECT, new DirectParameterMode (this.model, MODE_BANK_DIRECT, 'Direct'));
-    this.surface.addMode (MODE_BANK_MODULATE, new ParamPageMode (this.model, MODE_BANK_MODULATE, 'Modulate'));
-    this.surface.addMode (MODE_BANK_MACRO, new ParamPageMode (this.model, MODE_BANK_MACRO, 'Macro'));
-    this.surface.addMode (MODE_BANK_USER, new ParamPageMode (this.model, MODE_BANK_USER, 'User'));
     this.surface.addMode (MODE_PRESET, new PresetMode (this.model));
     
     this.surface.addModeListener (doObject (this, function (oldMode, newMode)

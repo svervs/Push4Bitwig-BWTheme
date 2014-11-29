@@ -67,6 +67,10 @@ load ("device/DeviceMode.js");
 load ("device/DeviceBankMode.js");
 load ("device/DirectParameterMode.js");
 load ("device/ParamPageSelectMode.js");
-load ("device/ParamPageMode.js");
+load ("device/BaseParamsMode.js");
+load ("device/CommonParamsMode.js");
+load ("device/EnvelopeParamsMode.js");
+load ("device/ModulationParamsMode.js");
+load ("device/MacroParamsMode.js");
+load ("device/UserParamsMode.js");
 load ("device/PresetMode.js");
-
