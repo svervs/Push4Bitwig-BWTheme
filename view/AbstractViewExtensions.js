@@ -5,6 +5,8 @@
 
 AbstractView.prototype.stopPressed = false;
 AbstractView.prototype.automationPressed = false;
+AbstractView.prototype.quitAccentMode = false;
+AbstractView.prototype.quitAutomationMode = false;
 
 // TODO can this be integrated into the event system so all long presses
 // record the mode at the start of the touch down event
@@ -86,18 +88,38 @@ AbstractView.prototype.onDuplicate = function (event)
 
 AbstractView.prototype.onAutomation = function (event)
 {
-    if (!event.isDown ())
-        return;
-
     if (this.surface.isSelectPressed ())
-        this.model.getTransport ().resetAutomationOverrides ();
+    {
+        if (event.isDown ())
+            this.model.getTransport ().resetAutomationOverrides ();
+    }
     else if (this.surface.isShiftPressed ())
-        this.model.getTransport ().toggleWriteClipLauncherAutomation ();
+    {
+        if (event.isDown ())
+            this.model.getTransport ().toggleWriteClipLauncherAutomation ();
+    }
     else
     {
-        var selectedTrack = this.model.getCurrentTrackBank ().getSelectedTrack ();
-        if (selectedTrack != null)
-            this.model.getTransport ().toggleWriteArrangerAutomation ();
+        switch (event.getState ())
+        {
+            case ButtonEvent.DOWN:
+                this.quitAutomationMode = false;
+                break;
+            case ButtonEvent.LONG:
+                this.quitAutomationMode = true;
+                this.surface.setPendingMode (MODE_AUTOMATION);
+                break;
+            case ButtonEvent.UP:
+                if (this.quitAutomationMode)
+                    this.surface.setPendingMode (this.surface.getPreviousMode ());
+                else
+                {
+                    var selectedTrack = this.model.getCurrentTrackBank ().getSelectedTrack ();
+                    if (selectedTrack != null)
+                        this.model.getTransport ().toggleWriteArrangerAutomation ();
+                }
+                break;
+        }
     }
 };
 

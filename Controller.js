@@ -47,6 +47,7 @@ function Controller ()
     this.surface.addMode (MODE_RIBBON, new RibbonMode (this.model));
     this.surface.addMode (MODE_GROOVE, new GrooveMode (this.model));
     this.surface.addMode (MODE_VIEW_SELECT, new ViewSelectMode (this.model));
+    this.surface.addMode (MODE_AUTOMATION, new AutomationMode (this.model));
 
     this.surface.addMode (MODE_PARAM_PAGE_SELECT, new ParamPageSelectMode (this.model));
     this.surface.addMode (MODE_DEVICE, new DeviceMode (this.model));
