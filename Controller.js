@@ -130,12 +130,11 @@ Controller.prototype.flush = function ()
     this.surface.setButton (PUSH_BUTTON_PLAY, t.isPlaying ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     this.surface.setButton (PUSH_BUTTON_RECORD, t.isRecording ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     
-    // Send, Mute, Automation
-    var track = this.model.getCurrentTrackBank ().getSelectedTrack ();
-    if (track == null)
-        this.surface.setButton (PUSH_BUTTON_AUTOMATION, PUSH_BUTTON_STATE_OFF);
+    // Automation
+    if (this.surface.isShiftPressed ())
+        this.surface.setButton (PUSH_BUTTON_AUTOMATION, t.isWritingClipLauncherAutomation ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     else
-        this.surface.setButton (PUSH_BUTTON_AUTOMATION, track.autowrite ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+        this.surface.setButton (PUSH_BUTTON_AUTOMATION, t.isWritingArrangerAutomation ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 Controller.prototype.updateMode = function (mode)
