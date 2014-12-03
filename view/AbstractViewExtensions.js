@@ -382,7 +382,7 @@ AbstractView.prototype.onBrowse = function (event)
         return;
 
     if (this.surface.isShiftPressed ())
-        this.model.getApplication ().toggleInspector ();
+        this.model.getApplication ().toggleBrowserVisibility ();
     else
         this.surface.setPendingMode (MODE_PRESET);
 };
@@ -448,13 +448,15 @@ AbstractView.prototype.onDeviceRight = function (event)
         return;
     
     var isLayerMode = this.surface.getCurrentMode () == MODE_DEVICE_LAYER;
-    this.surface.setPendingMode (isLayerMode ? this.lastDeviceMode : MODE_DEVICE_LAYER);
+    var cd = this.model.getCursorDevice ();
+    var isNested = cd.isNested ();
+    if (isLayerMode || isNested)
+        this.surface.setPendingMode (isLayerMode ? this.lastDeviceMode : MODE_DEVICE_LAYER);
     if (isLayerMode)
         // TODO Create a function
-        this.model.getCursorDevice ().cursorDevice.getChannel ().selectInEditor ();
-    else
-        // TODO FIX Required - No way to check if we are on the top of the device tree
-        this.model.getCursorDevice ().selectParent ();
+        cd.cursorDevice.getChannel ().selectInEditor ();
+    else if (isNested)
+        cd.selectParent ();
 };
 
 AbstractView.prototype.onMute = function (event)

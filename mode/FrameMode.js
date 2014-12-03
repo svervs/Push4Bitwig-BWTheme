@@ -4,7 +4,7 @@
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 FrameMode.ROW0          = 'Layouts:                  Panels:                                   ';
-FrameMode.ROW1          = 'Arrange  Mix     Edit     Notes   Automate Device  Mixer    Browser ';
+FrameMode.ROW1          = 'Arrange  Mix     Edit     Notes   Automate Device  Mixer    Inspectr';
 FrameMode.ARRANGER_ROW2 = 'Arranger:                                                           ';
 FrameMode.ARRANGER_ROW3 = 'ClpLnchr I/O     Markers  TimelineFXTracks Follow  TrckHght Full    ';
 FrameMode.MIXER_ROW2    = 'Mixer:                                                              ';
@@ -37,7 +37,7 @@ FrameMode.prototype.onFirstRow = function (index)
         case 4: app.toggleAutomationEditor (); break;
         case 5: app.toggleDevices (); break;
         case 6: app.toggleMixer (); break;
-        case 7: app.toggleBrowserVisibility (); break;
+        case 7: app.toggleInspector (); break;
     }
 };
 
