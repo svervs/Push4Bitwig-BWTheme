@@ -3,19 +3,19 @@
 // (c) 2014
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-PresetMode.SELECTION_OFF      = 0;
-PresetMode.SELECTION_PRESET   = 1;
-PresetMode.SELECTION_CATEGORY = 2;
-PresetMode.SELECTION_CREATOR  = 3;
+DevicePresetsMode.SELECTION_OFF      = 0;
+DevicePresetsMode.SELECTION_PRESET   = 1;
+DevicePresetsMode.SELECTION_CATEGORY = 2;
+DevicePresetsMode.SELECTION_CREATOR  = 3;
 
-function PresetMode (model)
+function DevicePresetsMode (model)
 {
     BaseMode.call (this, model);
-    this.id = MODE_PRESET;
+    this.id = MODE_DEVICE_PRESETS;
     this.isTemporary = false;
 
     this.knobInvalidated = false;
-    this.selectionMode = PresetMode.SELECTION_OFF;
+    this.selectionMode = DevicePresetsMode.SELECTION_OFF;
     
     this.activeButtons = [];
     this.activeButtons[20] = {};
@@ -25,34 +25,34 @@ function PresetMode (model)
     this.activeButtons[104] = {};
     this.activeButtons[106] = {};
 }
-PresetMode.prototype = new BaseMode ();
+DevicePresetsMode.prototype = new BaseMode ();
 
-PresetMode.knobDuration = 150;
-PresetMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO;
-PresetMode.secondRowButtonColor = PUSH_COLOR2_GREEN_LO;
+DevicePresetsMode.knobDuration = 150;
+DevicePresetsMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO;
+DevicePresetsMode.secondRowButtonColor = PUSH_COLOR2_GREEN_LO;
 
-PresetMode.prototype.onValueKnobTouch = function (index, isTouched)
+DevicePresetsMode.prototype.onValueKnobTouch = function (index, isTouched)
 {
     if (!isTouched)
     {
-        this.selectionMode = PresetMode.SELECTION_OFF;
+        this.selectionMode = DevicePresetsMode.SELECTION_OFF;
         return;
     }
     switch (index)
     {
         case 0:
-            this.selectionMode = PresetMode.SELECTION_PRESET;
+            this.selectionMode = DevicePresetsMode.SELECTION_PRESET;
             break;
         case 2:
-            this.selectionMode = PresetMode.SELECTION_CATEGORY;
+            this.selectionMode = DevicePresetsMode.SELECTION_CATEGORY;
             break;
         case 4:
-            this.selectionMode = PresetMode.SELECTION_CREATOR;
+            this.selectionMode = DevicePresetsMode.SELECTION_CREATOR;
             break;
     }
 };
 
-PresetMode.prototype.onValueKnob = function (index, value)
+DevicePresetsMode.prototype.onValueKnob = function (index, value)
 {
     if (this.knobInvalidated)
         return;
@@ -66,10 +66,10 @@ PresetMode.prototype.onValueKnob = function (index, value)
         else
             this.onSecondRow (index);
         this.knobInvalidated = false;
-    }), null, PresetMode.knobDuration - (this.surface.isShiftPressed ()) ? 100 : 0);
+    }), null, DevicePresetsMode.knobDuration - (this.surface.isShiftPressed ()) ? 100 : 0);
 };
 
-PresetMode.prototype.onFirstRow = function (index)
+DevicePresetsMode.prototype.onFirstRow = function (index)
 {
     var device = this.model.getCursorDevice ();
     var count = this.surface.isShiftPressed () ? 4 : 1;
@@ -84,7 +84,7 @@ PresetMode.prototype.onFirstRow = function (index)
     }
 };
 
-PresetMode.prototype.onSecondRow = function (index)
+DevicePresetsMode.prototype.onSecondRow = function (index)
 {
     var device = this.model.getCursorDevice ();
     var count = this.surface.isShiftPressed () ? 4 : 1;
@@ -99,7 +99,7 @@ PresetMode.prototype.onSecondRow = function (index)
     }
 };
 
-PresetMode.prototype.updateDisplay = function ()
+DevicePresetsMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
     if (!this.model.hasSelectedDevice ())
@@ -113,7 +113,7 @@ PresetMode.prototype.updateDisplay = function ()
 
     switch (this.selectionMode)
     {
-        case PresetMode.SELECTION_OFF:
+        case DevicePresetsMode.SELECTION_OFF:
             d.setBlock (0, 0, "Preset:")
              .setBlock (0, 1, "Category:")
              .setBlock (0, 2, "Creator:")
@@ -123,21 +123,21 @@ PresetMode.prototype.updateDisplay = function ()
              .setBlock (1, 2, cd.creatorProvider.getSelectedItem ())
              .setBlock (1, 3, this.model.getSelectedDevice ().name);
             break;
-        case PresetMode.SELECTION_PRESET:
+        case DevicePresetsMode.SELECTION_PRESET:
             // Preset column
             var view = cd.presetProvider.getPagedView (16);
             var selPos = cd.presetProvider.getSelectedIndex () % 16;
             for (var i = 0; i < 16; i++)
                 d.setBlock (i % 4, Math.floor (i / 4), (i == selPos ? Display.RIGHT_ARROW : ' ') + (view[i] != null ? view[i] : ""));
             break;
-        case PresetMode.SELECTION_CATEGORY:
+        case DevicePresetsMode.SELECTION_CATEGORY:
             // Categories column
             var view = cd.categoryProvider.getPagedView (12);
             var selPos = cd.categoryProvider.getSelectedIndex () % 12;
             for (var i = 0; i < 12; i++)
                 d.setBlock (i % 4, 1 + Math.floor (i / 4), (i == selPos ? Display.RIGHT_ARROW : ' ') + (view[i] != null ? view[i] : ""));
             break;
-        case PresetMode.SELECTION_CREATOR:
+        case DevicePresetsMode.SELECTION_CREATOR:
             // Creator column
             var view = cd.creatorProvider.getPagedView (8);
             var selPos = cd.creatorProvider.getSelectedIndex () % 8;
@@ -148,14 +148,14 @@ PresetMode.prototype.updateDisplay = function ()
     d.allDone ();
 };
 
-PresetMode.prototype.updateFirstRow = function ()
+DevicePresetsMode.prototype.updateFirstRow = function ()
 {
     for (var i = 20; i < 28; i++)
-        this.surface.setButton (i, this.activeButtons[i] != null ? PresetMode.firstRowButtonColor : PUSH_COLOR_BLACK);
+        this.surface.setButton (i, this.activeButtons[i] != null ? DevicePresetsMode.firstRowButtonColor : PUSH_COLOR_BLACK);
 };
 
-PresetMode.prototype.updateSecondRow = function ()
+DevicePresetsMode.prototype.updateSecondRow = function ()
 {
     for (var i = 102; i < 110; i++)
-        this.surface.setButton (i, this.activeButtons[i] != null ? PresetMode.secondRowButtonColor : PUSH_COLOR_BLACK);
+        this.surface.setButton (i, this.activeButtons[i] != null ? DevicePresetsMode.secondRowButtonColor : PUSH_COLOR_BLACK);
 };

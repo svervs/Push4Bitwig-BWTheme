@@ -151,6 +151,10 @@ function CursorDeviceProxy (numSends)
         }
 
         this.deviceBanks[i] = layer.createDeviceBank (this.numDevicesInBank);
+        for (var j = 0; j < this.numDevicesInBank; j++)
+        {
+            this.deviceBanks[i].getDevice (j).addNameObserver (this.textLength, '', doObjectDoubleIndex (this, i, j, CursorDeviceProxy.prototype.handleDeviceName));
+        }
     }
     
     // Monitor the drum pad layers of a container device (if any)
@@ -943,6 +947,11 @@ CursorDeviceProxy.prototype.handleDrumPadColor = function (index, red, green, bl
 {
     this.drumPadLayers[index].color = AbstractTrackBankProxy.getColorIndex (red, green, blue);
 // TODO println(index+" color:"+this.drumPadLayers[index].color);
+};
+
+CursorDeviceProxy.prototype.handleDeviceName = function (index1, index2, text)
+{
+// TODO     println(index1+":"+ index2+":"+ text);
 };
 
 //--------------------------------------

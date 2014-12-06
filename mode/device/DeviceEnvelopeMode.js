@@ -3,18 +3,18 @@
 // (c) 2014
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-function EnvelopeParamsMode (model)
+function DeviceEnvelopeMode (model)
 {
-    BaseParamsMode.call (this, model, MODE_BANK_ENVELOPE);
+    AbstractDeviceFixedMode.call (this, model, MODE_DEVICE_ENVELOPE);
 }
-EnvelopeParamsMode.prototype = new BaseParamsMode ();
+DeviceEnvelopeMode.prototype = new AbstractDeviceFixedMode ();
 
-EnvelopeParamsMode.prototype.getParameterValues = function (index)
+DeviceEnvelopeMode.prototype.getParameterValues = function (index)
 {
     return this.model.getCursorDevice ().getEnvelopeParam (index);
 };
 
-EnvelopeParamsMode.prototype.getParameter = function (index)
+DeviceEnvelopeMode.prototype.getParameter = function (index)
 {
     return this.model.getCursorDevice ().getEnvelopeParameter (index);
 };

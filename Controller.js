@@ -49,18 +49,18 @@ function Controller ()
     this.surface.addMode (MODE_VIEW_SELECT, new ViewSelectMode (this.model));
     this.surface.addMode (MODE_AUTOMATION, new AutomationMode (this.model));
 
-    this.surface.addMode (MODE_PARAM_PAGE_SELECT, new ParamPageSelectMode (this.model));
-    this.surface.addMode (MODE_BANK_DEVICE, new DeviceBankMode (this.model));
+    this.surface.addMode (MODE_DEVICE_MODE_SELECT, new DeviceModeSelectMode (this.model));
+    this.surface.addMode (MODE_DEVICE_PARAMS, new DeviceParamsMode (this.model));
     this.surface.addMode (MODE_DEVICE_LAYER, new DeviceLayerMode (this.model));
     
-    this.surface.addMode (MODE_BANK_COMMON, new CommonParamsMode (this.model));
-    this.surface.addMode (MODE_BANK_ENVELOPE, new EnvelopeParamsMode (this.model));
-    this.surface.addMode (MODE_BANK_MACRO, new MacroParamsMode (this.model));
-    this.surface.addMode (MODE_BANK_MODULATE, new ModulationParamsMode (this.model));
-    this.surface.addMode (MODE_BANK_USER, new UserParamsMode (this.model));
+    this.surface.addMode (MODE_DEVICE_COMMON, new DeviceCommonMode (this.model));
+    this.surface.addMode (MODE_DEVICE_ENVELOPE, new DeviceEnvelopeMode (this.model));
+    this.surface.addMode (MODE_DEVICE_MACRO, new DeviceMacroMode (this.model));
+    this.surface.addMode (MODE_DEVICE_MODULATE, new DeviceModulationMode (this.model));
+    this.surface.addMode (MODE_DEVICE_USER, new DeviceUserMode (this.model));
     
-    this.surface.addMode (MODE_BANK_DIRECT, new DirectParameterMode (this.model, MODE_BANK_DIRECT, 'Direct'));
-    this.surface.addMode (MODE_PRESET, new PresetMode (this.model));
+    this.surface.addMode (MODE_DEVICE_DIRECT, new DeviceDirectMode (this.model, MODE_DEVICE_DIRECT, 'Direct'));
+    this.surface.addMode (MODE_DEVICE_PRESETS, new DevicePresetsMode (this.model));
     
     this.surface.addModeListener (doObject (this, function (oldMode, newMode)
     {
@@ -144,11 +144,11 @@ Controller.prototype.updateMode = function (mode)
     var isVolume       = mode == MODE_VOLUME;
     var isScales       = mode == MODE_SCALES;
     var isFixed        = mode == MODE_FIXED;
-    var isPreset       = mode == MODE_PRESET;
+    var isPreset       = mode == MODE_DEVICE_PRESETS;
     var isFrame        = mode == MODE_FRAME;
 
-    var isBankDevice   = mode == MODE_BANK_DEVICE;
-    var isBankMacro    = mode == MODE_BANK_MACRO;
+    var isBankDevice   = mode == MODE_DEVICE_PARAMS;
+    var isBankMacro    = mode == MODE_DEVICE_MACRO;
 
     this.updateIndication (mode);
 
@@ -188,13 +188,13 @@ Controller.prototype.updateIndication = function (mode)
         }
 
         var cd = this.model.getCursorDevice ();
-        cd.getParameter (i).setIndication (mode == MODE_BANK_DEVICE);
-        cd.getCommonParameter (i).setIndication (mode == MODE_BANK_COMMON);
-        cd.getEnvelopeParameter (i).setIndication (mode == MODE_BANK_ENVELOPE);
-        cd.getMacro (i).getAmount ().setIndication (mode == MODE_BANK_MACRO);
+        cd.getParameter (i).setIndication (mode == MODE_DEVICE_PARAMS);
+        cd.getCommonParameter (i).setIndication (mode == MODE_DEVICE_COMMON);
+        cd.getEnvelopeParameter (i).setIndication (mode == MODE_DEVICE_ENVELOPE);
+        cd.getMacro (i).getAmount ().setIndication (mode == MODE_DEVICE_MACRO);
         
         var uc = this.model.getUserControlBank ();
-        uc.getControl (i).setIndication (mode == MODE_BANK_USER);
+        uc.getControl (i).setIndication (mode == MODE_DEVICE_USER);
     
         var mt = this.model.getMasterTrack ();
         mt.setVolumeIndication (mode == MODE_MASTER);

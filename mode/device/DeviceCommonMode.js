@@ -3,18 +3,18 @@
 // (c) 2014
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-function CommonParamsMode (model)
+function DeviceCommonMode (model)
 {
-    BaseParamsMode.call (this, model, MODE_BANK_COMMON);
+    AbstractDeviceFixedMode.call (this, model, MODE_DEVICE_COMMON);
 }
-CommonParamsMode.prototype = new BaseParamsMode ();
+DeviceCommonMode.prototype = new AbstractDeviceFixedMode ();
 
-CommonParamsMode.prototype.getParameterValues = function (index)
+DeviceCommonMode.prototype.getParameterValues = function (index)
 {
     return this.model.getCursorDevice ().getCommonParam (index);
 };
 
-CommonParamsMode.prototype.getParameter = function (index)
+DeviceCommonMode.prototype.getParameter = function (index)
 {
     return this.model.getCursorDevice ().getCommonParameter (index);
 };

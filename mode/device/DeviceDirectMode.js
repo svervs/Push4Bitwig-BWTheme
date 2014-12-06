@@ -3,17 +3,17 @@
 // (c) 2014
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-function DirectParameterMode (model)
+function DeviceDirectMode (model)
 {
     BaseMode.call (this, model);
-    this.id = MODE_BANK_DIRECT;
+    this.id = MODE_DEVICE_DIRECT;
     
     this.emptyParameter = { name: '', valueStr: '', value: '' };
     this.currentPage = 0;
 }
-DirectParameterMode.prototype = new BaseMode ();
+DeviceDirectMode.prototype = new AbstractDeviceMode ();
 
-DirectParameterMode.prototype.onValueKnob = function (index, value)
+DeviceDirectMode.prototype.onValueKnob = function (index, value)
 {
     var cursorDevice = this.model.getCursorDevice ();
     var params = cursorDevice.getDirectParameters ();
@@ -22,18 +22,18 @@ DirectParameterMode.prototype.onValueKnob = function (index, value)
         cursorDevice.changeDirectParameter (pos, value, this.surface.getFractionValue ());
 };
 
-DirectParameterMode.prototype.hasPreviousPage = function ()
+DeviceDirectMode.prototype.hasPreviousPage = function ()
 {
     return this.model.getCursorDevice ().getDirectParameters ().length > 0 && this.currentPage > 0;
 };
 
-DirectParameterMode.prototype.hasNextPage = function ()
+DeviceDirectMode.prototype.hasNextPage = function ()
 {
     var params = this.model.getCursorDevice ().getDirectParameters ();
     return params.length > 0 && this.currentPage < Math.floor (params.length / 8) + (params.length % 8 > 0 ? 1 : 0) - 1;
 };
 
-DirectParameterMode.prototype.previousPage = function ()
+DeviceDirectMode.prototype.previousPage = function ()
 {
     var cursorDevice = this.model.getCursorDevice ();
     var params = cursorDevice.getDirectParameters ();
@@ -41,7 +41,7 @@ DirectParameterMode.prototype.previousPage = function ()
         this.currentPage = Math.max (this.currentPage - 1, 0);
 };
 
-DirectParameterMode.prototype.nextPage = function ()
+DeviceDirectMode.prototype.nextPage = function ()
 {
     var cursorDevice = this.model.getCursorDevice ();
     var params = cursorDevice.getDirectParameters ();
@@ -49,7 +49,7 @@ DirectParameterMode.prototype.nextPage = function ()
         this.currentPage = Math.min (this.currentPage + 1, Math.floor (params.length / 8) + (params.length % 8 > 0 ? 1 : 0) - 1);
 };
 
-DirectParameterMode.prototype.previousPageBank = function ()
+DeviceDirectMode.prototype.previousPageBank = function ()
 {
     var cursorDevice = this.model.getCursorDevice ();
     var params = cursorDevice.getDirectParameters ();
@@ -57,7 +57,7 @@ DirectParameterMode.prototype.previousPageBank = function ()
         this.currentPage = Math.max (this.currentPage - 8, 0);
 };
 
-DirectParameterMode.prototype.nextPageBank = function ()
+DeviceDirectMode.prototype.nextPageBank = function ()
 {
     var cursorDevice = this.model.getCursorDevice ();
     var params = cursorDevice.getDirectParameters ();
@@ -65,7 +65,7 @@ DirectParameterMode.prototype.nextPageBank = function ()
         this.currentPage = Math.min (this.currentPage + 8, Math.floor (params.length / 8) + (params.length % 8 > 0 ? 1 : 0) - 1);
 };
 
-DirectParameterMode.prototype.onValueKnobTouch = function (index, isTouched) 
+DeviceDirectMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
     if (isTouched && this.surface.isDeletePressed ())
     {
@@ -75,69 +75,14 @@ DirectParameterMode.prototype.onValueKnobTouch = function (index, isTouched)
     }
 };
 
-DirectParameterMode.prototype.onFirstRow = function (index)
+DeviceDirectMode.prototype.onFirstRow = function (index)
 {
     var bank = this.calcBank ();
     if (bank != null)
         this.currentPage = bank.offset + index;
 };
 
-DirectParameterMode.prototype.onSecondRow = function (index)
-{
-    if (index == 0)
-        this.model.getCursorDevice ().toggleEnabledState ();
-    else if (index == 7)
-        this.model.getCursorDevice ().toggleWindowOpen ();
-};
-
-DirectParameterMode.prototype.updateDisplay = function () 
-{
-    var d = this.surface.getDisplay ();
-    var hasDevice = this.model.hasSelectedDevice ();
-
-    if (hasDevice)
-    {
-        var cursorDevice = this.model.getCursorDevice ();
-        var selectedDevice = this.model.getSelectedDevice ();
-        
-        var params = cursorDevice.getDirectParameters ();
-        var pageOffset = this.currentPage * 8;
-        if (pageOffset >= params.length)
-        {
-            pageOffset = 0;
-            this.currentPage = 0;
-        }
-        
-        d.clearRow (2);
-        for (var i = 0; i < 8; i++)
-        {
-            var param = pageOffset + i >= params.length ? this.emptyParameter : params[pageOffset + i];
-            d.setCell (0, i, param.name, Display.FORMAT_RAW)
-             .setCell (1, i, param.valueStr, Display.FORMAT_RAW);
-        }
-        
-        d.setBlock (2, 0, 'Selected Device: ', Display.FORMAT_RAW)
-         .setBlock (2, 1, selectedDevice.name);
-         
-        var bank = this.calcBank ();
-        if (bank == null)
-            d.clearRow (3);
-        else
-        {
-            for (var p = 0; p < 8; p++)
-            {
-                var index = bank.offset + p;
-                d.setCell (3, p, index < bank.pages.length ? ((index == bank.page ? Display.RIGHT_ARROW : "") + bank.pages[index]) : "", Display.FORMAT_RAW);
-            }
-        }
-    }
-    else
-        d.clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ').clearRow (3);
-
-    d.allDone ();
-};
-
-DirectParameterMode.prototype.updateFirstRow = function ()
+DeviceDirectMode.prototype.updateFirstRow = function ()
 {
     if (!this.model.hasSelectedDevice ())
     {
@@ -159,18 +104,30 @@ DirectParameterMode.prototype.updateFirstRow = function ()
     }
 };
 
-DirectParameterMode.prototype.updateSecondRow = function ()
+DeviceDirectMode.prototype.updateParameters = function (d)
 {
-    this.disableSecondRow ();
+    var cursorDevice = this.model.getCursorDevice ();
     
-    this.surface.setButton (102, this.model.getSelectedDevice ().enabled ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_GREY_LO);
-    this.surface.setButton (109, this.model.getCursorDevice ().isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO);
+    var params = cursorDevice.getDirectParameters ();
+    var pageOffset = this.currentPage * 8;
+    if (pageOffset >= params.length)
+    {
+        pageOffset = 0;
+        this.currentPage = 0;
+    }
+    
+    d.clearRow (2);
+    for (var i = 0; i < 8; i++)
+    {
+        var param = pageOffset + i >= params.length ? this.emptyParameter : params[pageOffset + i];
+        d.setCell (0, i, param.name, Display.FORMAT_RAW)
+         .setCell (1, i, param.valueStr, Display.FORMAT_RAW);
+    }
 };
 
-DirectParameterMode.prototype.calcBank = function ()
+DeviceDirectMode.prototype.calcBank = function ()
 {
-    var device = this.model.getCursorDevice ();
-    var params = device.getDirectParameters ();
+    var params = this.model.getCursorDevice ().getDirectParameters ();
     if (params.length == 0)
         return null;
         

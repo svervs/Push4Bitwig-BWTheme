@@ -12,7 +12,7 @@ AbstractView.prototype.quitAutomationMode = false;
 // record the mode at the start of the touch down event
 AbstractView.prototype.longPressPreviousMode = null;
 
-AbstractView.prototype.lastDeviceMode = 0;
+AbstractView.prototype.lastAbstractDeviceMode = 0;
 
 AbstractView.prototype.onPitchbend = function (data1, data2) {};
 
@@ -372,8 +372,8 @@ AbstractView.prototype.onDevice = function (event)
 {
     if (!event.isDown ())
         return;
-    var deviceMode = this.surface.getMode (MODE_PARAM_PAGE_SELECT).selectedMode;
-    this.surface.setPendingMode (this.surface.getCurrentMode () == deviceMode ? MODE_PARAM_PAGE_SELECT : deviceMode);
+    var deviceMode = this.surface.getMode (MODE_DEVICE_MODE_SELECT).selectedMode;
+    this.surface.setPendingMode (this.surface.getCurrentMode () == deviceMode ? MODE_DEVICE_MODE_SELECT : deviceMode);
 };
 
 AbstractView.prototype.onBrowse = function (event)
@@ -384,7 +384,7 @@ AbstractView.prototype.onBrowse = function (event)
     if (this.surface.isShiftPressed ())
         this.model.getApplication ().toggleBrowserVisibility ();
     else
-        this.surface.setPendingMode (MODE_PRESET);
+        this.surface.setPendingMode (MODE_DEVICE_PRESETS);
 };
 
 //--------------------------------------
@@ -410,17 +410,17 @@ AbstractView.prototype.onDeviceLeft = function (event)
         case MODE_DEVICE_LAYER:
             isLayerMode = true;
             break;
-        case MODE_BANK_DEVICE:
-        case MODE_BANK_COMMON:
-        case MODE_BANK_ENVELOPE:
-        case MODE_BANK_MODULATE:
-        case MODE_BANK_USER:
-        case MODE_BANK_MACRO:
-        case MODE_BANK_DIRECT:
-            this.lastDeviceMode = cm;
+        case MODE_DEVICE_PARAMS:
+        case MODE_DEVICE_COMMON:
+        case MODE_DEVICE_ENVELOPE:
+        case MODE_DEVICE_MODULATE:
+        case MODE_DEVICE_USER:
+        case MODE_DEVICE_MACRO:
+        case MODE_DEVICE_DIRECT:
+            this.lastAbstractDeviceMode = cm;
             break;
         default:
-            this.lastDeviceMode = MODE_BANK_DEVICE;
+            this.lastAbstractDeviceMode = MODE_DEVICE_PARAMS;
             break;
     }
     
@@ -438,7 +438,7 @@ AbstractView.prototype.onDeviceLeft = function (event)
         if (dl == null)
             cd.selectLayer (0);
     }
-    this.surface.setPendingMode (isLayerMode ? this.lastDeviceMode : MODE_DEVICE_LAYER);
+    this.surface.setPendingMode (isLayerMode ? this.lastAbstractDeviceMode : MODE_DEVICE_LAYER);
 };
 
 AbstractView.prototype.onDeviceRight = function (event)
@@ -450,7 +450,7 @@ AbstractView.prototype.onDeviceRight = function (event)
     var cd = this.model.getCursorDevice ();
     var isNested = cd.isNested ();
     if (isLayerMode || isNested)
-        this.surface.setPendingMode (isLayerMode ? this.lastDeviceMode : MODE_DEVICE_LAYER);
+        this.surface.setPendingMode (isLayerMode ? this.lastAbstractDeviceMode : MODE_DEVICE_LAYER);
     if (isLayerMode)
         // TODO Create a function
         cd.cursorDevice.getChannel ().selectInEditor ();
@@ -583,29 +583,20 @@ AbstractView.prototype.scrollLeft = function (event)
     var cd = this.model.getCursorDevice ();
     switch (this.surface.getCurrentMode ())
     {
-        case MODE_BANK_DEVICE:
+        case MODE_DEVICE_PARAMS:
+        case MODE_DEVICE_DIRECT:
+        case MODE_DEVICE_COMMON:
+        case MODE_DEVICE_ENVELOPE: 
+        case MODE_DEVICE_MODULATE:
+        case MODE_DEVICE_MACRO:
+        case MODE_DEVICE_USER:
             if (this.surface.isShiftPressed ())
-                cd.setSelectedParameterPage (Math.max (cd.getSelectedParameterPage () - 8, 0));
+                this.surface.getActiveMode ().previousPageBank ();
             else
-                cd.previousParameterPage ();
+                this.surface.getActiveMode ().previousPage ();
             break;
         
-        case MODE_BANK_DIRECT:
-            if (this.surface.isShiftPressed ())
-                this.surface.getMode (MODE_BANK_DIRECT).previousPageBank ();
-            else
-                this.surface.getMode (MODE_BANK_DIRECT).previousPage ();
-            break;
-            
-        case MODE_BANK_COMMON:
-        case MODE_BANK_ENVELOPE: 
-        case MODE_BANK_MODULATE:
-        case MODE_BANK_MACRO:
-        case MODE_BANK_USER:
-            this.surface.getActiveMode ().previousPage ();
-            break;
-        
-        case MODE_PRESET:
+        case MODE_DEVICE_PRESETS:
             break;
     
         case MODE_DEVICE_LAYER:
@@ -646,29 +637,20 @@ AbstractView.prototype.scrollRight = function (event)
     var cd = this.model.getCursorDevice ();
     switch (this.surface.getCurrentMode ())
     {
-        case MODE_BANK_DEVICE:
+        case MODE_DEVICE_PARAMS:
+        case MODE_DEVICE_DIRECT:
+        case MODE_DEVICE_COMMON:
+        case MODE_DEVICE_ENVELOPE: 
+        case MODE_DEVICE_MODULATE:
+        case MODE_DEVICE_MACRO:
+        case MODE_DEVICE_USER:
             if (this.surface.isShiftPressed ())
-                cd.setSelectedParameterPage (Math.min (cd.getSelectedParameterPage () + 8, cd.getParameterPageNames ().length - 1));
+                this.surface.getActiveMode ().nextPageBank ();
             else
-                cd.nextParameterPage ();
+                this.surface.getActiveMode ().nextPage ();
             break;
         
-        case MODE_BANK_DIRECT:
-            if (this.surface.isShiftPressed ())
-                this.surface.getMode (MODE_BANK_DIRECT).nextPageBank ();
-            else
-                this.surface.getMode (MODE_BANK_DIRECT).nextPage ();
-            break;
-        
-        case MODE_BANK_COMMON:
-        case MODE_BANK_ENVELOPE: 
-        case MODE_BANK_MODULATE:
-        case MODE_BANK_MACRO:
-        case MODE_BANK_USER:
-            this.surface.getActiveMode ().nextPage ();
-            break;
-        
-        case MODE_PRESET:
+        case MODE_DEVICE_PRESETS:
             break;
             
         case MODE_DEVICE_LAYER:
@@ -738,29 +720,19 @@ AbstractView.prototype.updateArrowStates = function ()
 {
     switch (this.surface.getCurrentMode ())
     {
-        case MODE_BANK_DEVICE:
-            var cd = this.model.getCursorDevice ();
-            this.canScrollLeft = cd.hasPreviousParameterPage ();
-            this.canScrollRight = cd.hasNextParameterPage ();
-            break;
-
-        case MODE_BANK_DIRECT:
-            var mode = this.surface.getMode (MODE_BANK_DIRECT);
+        case MODE_DEVICE_PARAMS:
+        case MODE_DEVICE_DIRECT:
+        case MODE_DEVICE_COMMON:
+        case MODE_DEVICE_ENVELOPE: 
+        case MODE_DEVICE_MODULATE:
+        case MODE_DEVICE_MACRO:
+        case MODE_DEVICE_USER:
+            var mode = this.surface.getActiveMode ();
             this.canScrollLeft = mode.hasPreviousPage ();
             this.canScrollRight = mode.hasNextPage ();
             break;
-            
-        case MODE_BANK_COMMON:
-        case MODE_BANK_ENVELOPE: 
-        case MODE_BANK_MODULATE:
-        case MODE_BANK_MACRO:
-        case MODE_BANK_USER:
-            var cur = this.surface.getCurrentMode ();
-            this.canScrollLeft = cur != MODE_BANK_COMMON;
-            this.canScrollRight = cur != MODE_BANK_USER;
-            break;
         
-        case MODE_PRESET:
+        case MODE_DEVICE_PRESETS:
             this.canScrollLeft = false;
             this.canScrollRight = false;
             break;

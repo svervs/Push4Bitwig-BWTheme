@@ -22,16 +22,17 @@ var MODE_SEND5               = 15;
 var MODE_SEND6               = 16;
 var MODE_SEND                = 17;
 
-var MODE_PARAM_PAGE_SELECT   = 20;
-var MODE_BANK_DEVICE         = 21;
-var MODE_BANK_COMMON         = 22;
-var MODE_BANK_ENVELOPE       = 23;
-var MODE_BANK_MODULATE       = 24;
-var MODE_BANK_USER           = 25;
-var MODE_BANK_MACRO          = 26;
-var MODE_PRESET              = 27;
-var MODE_BANK_DIRECT         = 28;
-var MODE_DEVICE_LAYER        = 29;
+var MODE_DEVICE_PARAMS       = 20;
+var MODE_DEVICE_COMMON       = 21;
+var MODE_DEVICE_ENVELOPE     = 22;
+var MODE_DEVICE_MODULATE     = 23;
+var MODE_DEVICE_USER         = 24;
+var MODE_DEVICE_MACRO        = 25;
+var MODE_DEVICE_DIRECT       = 26;
+
+var MODE_DEVICE_MODE_SELECT  = 27;
+var MODE_DEVICE_LAYER        = 28;
+var MODE_DEVICE_PRESETS      = 29;
 
 var MODE_SCALES              = 30;
 var MODE_FIXED               = 31;
@@ -63,15 +64,16 @@ load ("track/SendMode.js");
 load ("track/TrackMode.js");
 load ("track/VolumeMode.js");
 
+load ("device/AbstractDeviceMode.js");
+load ("device/AbstractDeviceFixedMode.js");
+load ("device/DeviceCommonMode.js");
+load ("device/DeviceDirectMode.js");
+load ("device/DeviceEnvelopeMode.js");
+load ("device/DeviceMacroMode.js");
+load ("device/DeviceModulationMode.js");
+load ("device/DeviceParamsMode.js");
+load ("device/DeviceUserMode.js");
+
+load ("device/DeviceModeSelectMode.js");
 load ("device/DeviceLayerMode.js");
-load ("device/DeviceMode.js");
-load ("device/DeviceBankMode.js");
-load ("device/DirectParameterMode.js");
-load ("device/ParamPageSelectMode.js");
-load ("device/BaseParamsMode.js");
-load ("device/CommonParamsMode.js");
-load ("device/EnvelopeParamsMode.js");
-load ("device/ModulationParamsMode.js");
-load ("device/MacroParamsMode.js");
-load ("device/UserParamsMode.js");
-load ("device/PresetMode.js");
+load ("device/DevicePresetsMode.js");
