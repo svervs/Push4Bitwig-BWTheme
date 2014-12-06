@@ -9,7 +9,7 @@ BaseParamsMode.FIXED_BANKS = [ MODE_BANK_COMMON, MODE_BANK_ENVELOPE, MODE_BANK_M
 
 function BaseParamsMode (model, mode)
 {
-    BaseMode.call (this, model);
+    DeviceMode.call (this, model);
     this.id = mode;
     this.page = -1;
     for (var i = 0; i < BaseParamsMode.FIXED_BANKS.length; i++)
@@ -21,7 +21,7 @@ function BaseParamsMode (model, mode)
         }
     }
 }
-BaseParamsMode.prototype = new BaseMode ();
+BaseParamsMode.prototype = new DeviceMode ();
 
 BaseParamsMode.prototype.getParameterValues = function (index) {};
 BaseParamsMode.prototype.getParameter= function (index) {};
@@ -46,25 +46,10 @@ BaseParamsMode.prototype.onFirstRow = function (index)
     this.surface.setPendingMode (BaseParamsMode.FIXED_BANKS[index]);
 };
 
-BaseParamsMode.prototype.onSecondRow = function (index)
-{
-    if (index == 0)
-        this.model.getCursorDevice ().toggleEnabledState ();
-    else if (index == 7)
-        this.model.getCursorDevice ().toggleWindowOpen ();
-};
-
 BaseParamsMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
         this.surface.setButton (20 + i, i < BaseParamsMode.FIXED_BANKS_NAMES.length ? (this.page == i ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
-};
-
-BaseParamsMode.prototype.updateSecondRow = function ()
-{
-    this.disableSecondRow ();
-    this.surface.setButton (102, this.model.getSelectedDevice ().enabled ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_GREY_LO);
-    this.surface.setButton (109, this.model.getCursorDevice ().isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO);
 };
 
 BaseParamsMode.prototype.updateDisplay = function ()

@@ -22,7 +22,6 @@ var MODE_SEND5               = 15;
 var MODE_SEND6               = 16;
 var MODE_SEND                = 17;
 
-var MODE_DEVICE              = 19;
 var MODE_PARAM_PAGE_SELECT   = 20;
 var MODE_BANK_DEVICE         = 21;
 var MODE_BANK_COMMON         = 22;

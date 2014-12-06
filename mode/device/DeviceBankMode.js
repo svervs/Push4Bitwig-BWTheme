@@ -11,6 +11,22 @@ function DeviceBankMode (model)
 }
 DeviceBankMode.prototype = new DeviceMode ();
 
+DeviceBankMode.prototype.onValueKnobTouch = function (index, isTouched) 
+{
+    if (isTouched && this.surface.isDeletePressed ())
+    {
+        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+        this.model.getCursorDevice ().resetParameter (index);
+    }
+};
+
+DeviceMode.prototype.onValueKnob = function (index, value)
+{
+    var param = this.model.getCursorDevice ().getFXParam (index);
+    param.value = this.surface.changeValue (value, param.value);
+    this.model.getCursorDevice ().setParameter (index, param.value);
+};
+
 DeviceBankMode.prototype.onFirstRow = function (index)
 {
     var bank = this.calcBank ();

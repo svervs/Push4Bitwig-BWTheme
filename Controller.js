@@ -50,7 +50,6 @@ function Controller ()
     this.surface.addMode (MODE_AUTOMATION, new AutomationMode (this.model));
 
     this.surface.addMode (MODE_PARAM_PAGE_SELECT, new ParamPageSelectMode (this.model));
-    this.surface.addMode (MODE_DEVICE, new DeviceMode (this.model));
     this.surface.addMode (MODE_BANK_DEVICE, new DeviceBankMode (this.model));
     this.surface.addMode (MODE_DEVICE_LAYER, new DeviceLayerMode (this.model));
     

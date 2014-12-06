@@ -410,7 +410,6 @@ AbstractView.prototype.onDeviceLeft = function (event)
         case MODE_DEVICE_LAYER:
             isLayerMode = true;
             break;
-        case MODE_DEVICE:
         case MODE_BANK_DEVICE:
         case MODE_BANK_COMMON:
         case MODE_BANK_ENVELOPE:
