@@ -338,9 +338,15 @@ CursorDeviceProxy.prototype.toggleEnabledState = function ()
     return this.cursorDevice.toggleEnabledState ();
 };
 
-//--------------------------------------
-// Bitwig CursorDevice API
-//--------------------------------------
+CursorDeviceProxy.prototype.canSelectPreviousFX = function ()
+{
+    return this.canSelectPrevious;
+};
+
+CursorDeviceProxy.prototype.canSelectNextFX = function ()
+{
+    return this.canSelectNext;
+};
 
 CursorDeviceProxy.prototype.selectNext = function ()
 {
@@ -352,9 +358,14 @@ CursorDeviceProxy.prototype.selectPrevious = function ()
     return this.cursorDevice.selectPrevious ();
 };
 
-//--------------------------------------
-// Public API
-//--------------------------------------
+CursorDeviceProxy.prototype.selectSibling = function (index)
+{
+    // TODO Requires API change - Very bad workaround
+    for (var i = 0; i < 8; i++)
+        this.cursorDevice.selectPrevious ();
+    for (var i = 0; i < index; i++)
+        this.cursorDevice.selectNext ();
+};
 
 CursorDeviceProxy.prototype.hasSelectedDevice = function ()
 {
@@ -528,16 +539,6 @@ CursorDeviceProxy.prototype.toggleLayerMute = function (index)
 CursorDeviceProxy.prototype.toggleLayerSolo = function (index)
 {
     this.layerBank.getChannel (index).getSolo ().set (!this.getLayer (index).solo);
-};
-
-CursorDeviceProxy.prototype.canSelectPreviousFX = function ()
-{
-    return this.canSelectPrevious;
-};
-
-CursorDeviceProxy.prototype.canSelectNextFX = function ()
-{
-    return this.canSelectNext;
 };
 
 CursorDeviceProxy.prototype.hasPreviousParameterPage = function ()

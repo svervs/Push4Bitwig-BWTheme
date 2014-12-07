@@ -75,14 +75,14 @@ DeviceDirectMode.prototype.onValueKnobTouch = function (index, isTouched)
     }
 };
 
-DeviceDirectMode.prototype.onFirstRow = function (index)
+DeviceDirectMode.prototype.onFirstRowBank = function (index)
 {
     var bank = this.calcBank ();
     if (bank != null)
         this.currentPage = bank.offset + index;
 };
 
-DeviceDirectMode.prototype.updateFirstRow = function ()
+DeviceDirectMode.prototype.updateFirstRowBank = function ()
 {
     if (!this.model.hasSelectedDevice ())
     {

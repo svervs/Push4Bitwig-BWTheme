@@ -59,14 +59,14 @@ AbstractDeviceMode.prototype.onValueKnob = function (index, value)
     this.model.getCursorDevice ().setParameter (index, param.value);
 };
 
-DeviceParamsMode.prototype.onFirstRow = function (index)
+DeviceParamsMode.prototype.onFirstRowBank = function (index)
 {
     var bank = this.calcBank ();
     if (bank != null)
         this.model.getCursorDevice ().setSelectedParameterPage (bank.offset + index);
 };
 
-DeviceParamsMode.prototype.updateFirstRow = function ()
+DeviceParamsMode.prototype.updateFirstRowBank = function ()
 {
     if (!this.model.hasSelectedDevice ())
     {

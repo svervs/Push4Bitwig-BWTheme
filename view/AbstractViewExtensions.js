@@ -7,6 +7,7 @@ AbstractView.prototype.stopPressed = false;
 AbstractView.prototype.automationPressed = false;
 AbstractView.prototype.quitAccentMode = false;
 AbstractView.prototype.quitAutomationMode = false;
+AbstractView.prototype.showDevices = true;
 
 // TODO can this be integrated into the event system so all long presses
 // record the mode at the start of the touch down event
@@ -399,6 +400,15 @@ AbstractView.prototype.onDeviceLeft = function (event)
     var cd = this.model.getCursorDevice ();
     if (!cd.hasSelectedDevice ())
         return;
+        
+    if (this.showDevices && !cd.hasLayers ())
+    {
+        this.showDevices = false;
+        var am = this.surface.getActiveMode ();
+        if (am.setShowDevices)
+            am.setShowDevices (false);
+        return;
+    }
 
     if (!cd.hasLayers ())
         return;
@@ -432,13 +442,16 @@ AbstractView.prototype.onDeviceLeft = function (event)
             cd.enterLayer (dl.index);
             cd.selectFirstDeviceInLayer (dl.index);
         }
+        this.showDevices = true;
+        this.surface.setPendingMode (this.lastAbstractDeviceMode);
+        this.surface.getActiveMode ().setShowDevices (true);
     }
     else
     {
         if (dl == null)
             cd.selectLayer (0);
+        this.surface.setPendingMode (MODE_DEVICE_LAYER);
     }
-    this.surface.setPendingMode (isLayerMode ? this.lastAbstractDeviceMode : MODE_DEVICE_LAYER);
 };
 
 AbstractView.prototype.onDeviceRight = function (event)
@@ -446,16 +459,33 @@ AbstractView.prototype.onDeviceRight = function (event)
     if (!event.isDown ())   
         return;
     
-    var isLayerMode = this.surface.getCurrentMode () == MODE_DEVICE_LAYER;
     var cd = this.model.getCursorDevice ();
-    var isNested = cd.isNested ();
-    if (isLayerMode || isNested)
-        this.surface.setPendingMode (isLayerMode ? this.lastAbstractDeviceMode : MODE_DEVICE_LAYER);
-    if (isLayerMode)
+    
+    if (this.surface.getCurrentMode () == MODE_DEVICE_LAYER)
+    {
+        this.surface.setPendingMode (this.lastAbstractDeviceMode);
         // TODO Create a function
         cd.cursorDevice.getChannel ().selectInEditor ();
-    else if (isNested)
-        cd.selectParent ();
+    }
+    else
+    {
+        if (this.showDevices)
+        {
+            if (cd.isNested ())
+            {
+                this.surface.setPendingMode (MODE_DEVICE_LAYER);
+                cd.selectParent ();
+                this.showDevices = false;
+            }
+        }
+        else
+        {
+            this.showDevices = true;
+            var am = this.surface.getActiveMode ();
+            if (am.setShowDevices)
+                am.setShowDevices (true);
+        }
+    }
 };
 
 AbstractView.prototype.onMute = function (event)
@@ -591,9 +621,9 @@ AbstractView.prototype.scrollLeft = function (event)
         case MODE_DEVICE_MACRO:
         case MODE_DEVICE_USER:
             if (this.surface.isShiftPressed ())
-                this.surface.getActiveMode ().previousPageBank ();
+                this.surface.getActiveMode ().selectPreviousPageBank ();
             else
-                this.surface.getActiveMode ().previousPage ();
+                this.surface.getActiveMode ().selectPreviousPage ();
             break;
         
         case MODE_DEVICE_PRESETS:
@@ -645,9 +675,9 @@ AbstractView.prototype.scrollRight = function (event)
         case MODE_DEVICE_MACRO:
         case MODE_DEVICE_USER:
             if (this.surface.isShiftPressed ())
-                this.surface.getActiveMode ().nextPageBank ();
+                this.surface.getActiveMode ().selectNextPageBank ();
             else
-                this.surface.getActiveMode ().nextPage ();
+                this.surface.getActiveMode ().selectNextPage ();
             break;
         
         case MODE_DEVICE_PRESETS:
@@ -728,8 +758,8 @@ AbstractView.prototype.updateArrowStates = function ()
         case MODE_DEVICE_MACRO:
         case MODE_DEVICE_USER:
             var mode = this.surface.getActiveMode ();
-            this.canScrollLeft = mode.hasPreviousPage ();
-            this.canScrollRight = mode.hasNextPage ();
+            this.canScrollLeft = mode.canSelectPreviousPage ();
+            this.canScrollRight = mode.canSelectNextPage ();
             break;
         
         case MODE_DEVICE_PRESETS:
