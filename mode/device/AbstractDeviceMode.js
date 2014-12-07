@@ -170,7 +170,7 @@ AbstractDeviceMode.prototype.calcDeviceBank = function ()
     var pages = [];
     if (cd.isNested ())
     {
-        // TODO Requires API extension
+        // TODO API extension required
         for (var i = 0; i < 8; i++)
         {
             // var index = bank.offset + i;

@@ -49,7 +49,7 @@ DeviceLayerMode.prototype.onSecondRow = function (index)
     var tb = this.model.getCurrentTrackBank ();
     var cd = this.model.getCursorDevice ();
     if (tb.isMuteState ())
-        cd.toggleLayerMute (index); // TODO Direct parameter MUTE not found???
+        cd.toggleLayerMute (index);
     else
         cd.toggleLayerSolo (index);
 };

@@ -11,8 +11,6 @@ function DrumView (model)
     this.offsetY = DrumView.DRUM_START_KEY;
     this.canScrollUp = false;
     this.canScrollDown = false;
-    // TODO: Read the information in Bitwig 1.1
-    this.pads = initArray ({ exists: true, solo: false, mute: false }, 16);
     this.selectedPad = 0;
     this.pressedKeys = initArray (0, 128);
     this.noteMap = this.scales.getEmptyMatrix ();
@@ -35,7 +33,7 @@ DrumView.prototype = new AbstractSequencerView ();
 DrumView.prototype.updateArrowStates = function ()
 {
     this.canScrollLeft = this.offsetX > 0;
-    this.canScrollRight = true; // TODO We do not know the number of steps
+    this.canScrollRight = true; // TODO API extension required - We do not know the number of steps
 };
 
 DrumView.prototype.updateNoteMapping = function ()
@@ -132,6 +130,7 @@ DrumView.prototype.onOctaveDown = function (event)
     this.offsetY = DrumView.DRUM_START_KEY + this.scales.getDrumOctave () * 16;
     this.updateNoteMapping ();
     this.surface.getDisplay ().showNotification ('          ' + this.scales.getDrumRangeText ());
+    this.model.getTrackBank ().primaryDevice.scrollDrumPadsPageUp ();
 };
 
 DrumView.prototype.onOctaveUp = function (event)
@@ -143,6 +142,7 @@ DrumView.prototype.onOctaveUp = function (event)
     this.offsetY = DrumView.DRUM_START_KEY + this.scales.getDrumOctave () * 16;
     this.updateNoteMapping ();
     this.surface.getDisplay ().showNotification ('          ' + this.scales.getDrumRangeText ());
+    this.model.getTrackBank ().primaryDevice.scrollDrumPadsPageDown ();
 };
 
 DrumView.prototype.drawGrid = function ()
@@ -153,17 +153,28 @@ DrumView.prototype.drawGrid = function ()
         return;
     }
 
-    var isRecording = this.model.hasRecordingState ();
-
     // 4x4 Drum Pad Grid
+    var primary = this.model.getTrackBank ().primaryDevice;
+    var hasDrumPads = primary.hasDrumPads ();
+    var isSoloed = false;
+    if (hasDrumPads)
+    {
+        for (var i = 0; i < 16; i++)
+        {
+            if (primary.getDrumPad (i).solo)
+            {
+                isSoloed = true;
+                break;
+            }
+        }
+    }
+    var isRecording = this.model.hasRecordingState ();
     for (var y = 0; y < 4; y++)
     {
         for (var x = 0; x < 4; x++)
         {
             var index = 4 * y + x;
-            var p = this.pads[index];
-            var c = this.pressedKeys[this.offsetY + index] > 0 ? (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI) : (this.selectedPad == index ? PUSH_COLOR2_BLUE_HI : (p.exists ? (p.mute ? PUSH_COLOR2_AMBER_LO : (p.solo ? PUSH_COLOR2_BLUE_LO : PUSH_COLOR2_YELLOW_HI)) : PUSH_COLOR_YELLOW_LO));
-            this.surface.pads.lightEx (x, 7 - y, c, null, false);
+            this.surface.pads.lightEx (x, 7 - y, this.getPadColor (index, primary, hasDrumPads, isSoloed, isRecording), null, false);
         }
     }
     
@@ -189,6 +200,24 @@ DrumView.prototype.drawGrid = function ()
         var y = 7 - Math.floor (col / 8);
         this.surface.pads.lightEx (x, 7 - y, isSet ? (hilite ? PUSH_COLOR2_GREEN_LO : PUSH_COLOR2_BLUE_HI) : hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLACK, null, false);
     }
+};
+
+DrumView.prototype.getPadColor = function (index, primary, hasDrumPads, isSoloed, isRecording)
+{
+    // Playing note?
+    if (this.pressedKeys[this.offsetY + index] > 0)
+        return isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI;
+    // Selected?
+    if (this.selectedPad == index)
+        return PUSH_COLOR2_BLUE_HI;
+    // Exists and active?
+    var drumPad = primary.getDrumPad (index);
+    if (!drumPad.exists || !drumPad.activated)
+        return PUSH_COLOR2_YELLOW_LO;
+    // Muted or soloed?
+    if (drumPad.mute || (isSoloed && !drumPad.solo))
+        return PUSH_COLOR2_AMBER_LO;
+    return PUSH_COLOR2_YELLOW_HI;
 };
 
 DrumView.prototype.clearPressedKeys = function ()

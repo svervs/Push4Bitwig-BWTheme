@@ -69,7 +69,7 @@ DeviceDirectMode.prototype.onValueKnobTouch = function (index, isTouched)
 {
     if (isTouched && this.surface.isDeletePressed ())
     {
-/* TODO Not possible?           
+        /* TODO API extension required
         this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
         this.model.getCursorDevice ().resetParameter (index);*/
     }

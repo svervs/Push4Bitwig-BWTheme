@@ -9,8 +9,6 @@ AbstractView.prototype.quitAccentMode = false;
 AbstractView.prototype.quitAutomationMode = false;
 AbstractView.prototype.showDevices = true;
 
-// TODO can this be integrated into the event system so all long presses
-// record the mode at the start of the touch down event
 AbstractView.prototype.longPressPreviousMode = null;
 
 AbstractView.prototype.lastAbstractDeviceMode = 0;

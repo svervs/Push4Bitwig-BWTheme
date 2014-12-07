@@ -233,4 +233,8 @@ Controller.prototype.handleTrackChange = function (index, isSelected)
         var slot = tb.getSelectedSlot (index);
         tb.showClipInEditor (index, slot != null ? slot.index : 0);
     }
+    
+    // Reset drum octave because the drum pad bank is also reset
+    this.scales.setDrumOctave (0);
+    this.surface.getView (VIEW_DRUM).updateNoteMapping ();
 };
