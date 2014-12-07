@@ -15,11 +15,11 @@ DeviceDirectMode.prototype = new AbstractDeviceMode ();
 
 DeviceDirectMode.prototype.onValueKnob = function (index, value)
 {
-    var cursorDevice = this.model.getCursorDevice ();
-    var params = cursorDevice.getDirectParameters ();
+    var cd = this.model.getCursorDevice ();
+    var params = cd.getDirectParameters ();
     var pos = this.currentPage * 8 + index;
     if (pos < params.length)
-        cursorDevice.changeDirectParameter (pos, value, this.surface.getFractionValue ());
+        cd.changeDirectParameter (pos, value, this.surface.getFractionValue ());
 };
 
 DeviceDirectMode.prototype.hasPreviousPage = function ()
@@ -35,32 +35,32 @@ DeviceDirectMode.prototype.hasNextPage = function ()
 
 DeviceDirectMode.prototype.previousPage = function ()
 {
-    var cursorDevice = this.model.getCursorDevice ();
-    var params = cursorDevice.getDirectParameters ();
+    var cd = this.model.getCursorDevice ();
+    var params = cd.getDirectParameters ();
     if (params.length != 0)
         this.currentPage = Math.max (this.currentPage - 1, 0);
 };
 
 DeviceDirectMode.prototype.nextPage = function ()
 {
-    var cursorDevice = this.model.getCursorDevice ();
-    var params = cursorDevice.getDirectParameters ();
+    var cd = this.model.getCursorDevice ();
+    var params = cd.getDirectParameters ();
     if (params.length != 0)
         this.currentPage = Math.min (this.currentPage + 1, Math.floor (params.length / 8) + (params.length % 8 > 0 ? 1 : 0) - 1);
 };
 
 DeviceDirectMode.prototype.previousPageBank = function ()
 {
-    var cursorDevice = this.model.getCursorDevice ();
-    var params = cursorDevice.getDirectParameters ();
+    var cd = this.model.getCursorDevice ();
+    var params = cd.getDirectParameters ();
     if (params.length != 0)
         this.currentPage = Math.max (this.currentPage - 8, 0);
 };
 
 DeviceDirectMode.prototype.nextPageBank = function ()
 {
-    var cursorDevice = this.model.getCursorDevice ();
-    var params = cursorDevice.getDirectParameters ();
+    var cd = this.model.getCursorDevice ();
+    var params = cd.getDirectParameters ();
     if (params.length != 0)
         this.currentPage = Math.min (this.currentPage + 8, Math.floor (params.length / 8) + (params.length % 8 > 0 ? 1 : 0) - 1);
 };
@@ -106,9 +106,8 @@ DeviceDirectMode.prototype.updateFirstRowBank = function ()
 
 DeviceDirectMode.prototype.updateParameters = function (d)
 {
-    var cursorDevice = this.model.getCursorDevice ();
-    
-    var params = cursorDevice.getDirectParameters ();
+    var cd = this.model.getCursorDevice ();
+    var params = cd.getDirectParameters ();
     var pageOffset = this.currentPage * 8;
     if (pageOffset >= params.length)
     {

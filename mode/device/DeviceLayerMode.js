@@ -59,8 +59,8 @@ DeviceLayerMode.prototype.updateDisplay = function ()
     var d = this.surface.getDisplay ();
     if (this.model.hasSelectedDevice ())
     {
-        var cursorDevice = this.model.getCursorDevice ();
-        var t = cursorDevice.getSelectedLayer ();
+        var cd = this.model.getCursorDevice ();
+        var t = cd.getSelectedLayer ();
         d.clear ();
         if (t == null)
         {
@@ -80,7 +80,7 @@ DeviceLayerMode.prototype.updateDisplay = function ()
         var selIndex = t == null ? -1 : t.index;
         for (var i = 0; i < 8; i++)
         {
-            var layer = cursorDevice.getLayer (i);
+            var layer = cd.getLayer (i);
             var isSel = i == selIndex;
             var n = optimizeName (layer.name, isSel ? 7 : 8);
             d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);

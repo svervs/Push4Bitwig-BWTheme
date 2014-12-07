@@ -59,7 +59,12 @@ AbstractDeviceMode.prototype.selectNextPage = function ()
 AbstractDeviceMode.prototype.selectPreviousPageBank = function ()
 {
     if (this.showDevices)
-        this.model.getCurrentTrackBank ().previousDeviceBank ();
+    {
+        var tb = this.model.getCurrentTrackBank ();
+        var sel = tb.getSelectedTrack ();
+        if (sel)
+            tb.nextDeviceBank (sel.index);
+    }
     else
         this.previousPageBank ();
 };
@@ -67,7 +72,12 @@ AbstractDeviceMode.prototype.selectPreviousPageBank = function ()
 AbstractDeviceMode.prototype.selectNextPageBank = function ()
 {
     if (this.showDevices)
-        this.model.getCurrentTrackBank ().nextDeviceBank ();
+    {
+        var tb = this.model.getCurrentTrackBank ();
+        var sel = tb.getSelectedTrack ();
+        if (sel)
+            tb.previousDeviceBank (sel.index);
+    }
     else
         this.nextPageBank ();
 };

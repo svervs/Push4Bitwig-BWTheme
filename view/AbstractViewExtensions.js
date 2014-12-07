@@ -464,8 +464,7 @@ AbstractView.prototype.onDeviceRight = function (event)
     if (this.surface.getCurrentMode () == MODE_DEVICE_LAYER)
     {
         this.surface.setPendingMode (this.lastAbstractDeviceMode);
-        // TODO Create a function
-        cd.cursorDevice.getChannel ().selectInEditor ();
+        cd.selectInEditor ();
     }
     else
     {

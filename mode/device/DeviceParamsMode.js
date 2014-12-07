@@ -90,10 +90,10 @@ DeviceParamsMode.prototype.updateFirstRowBank = function ()
 
 DeviceParamsMode.prototype.updateParameters = function (d)
 {
-    var cursorDevice = this.model.getCursorDevice ();
+    var cd = this.model.getCursorDevice ();
     for (var i = 0; i < 8; i++)
     {
-        var param = cursorDevice.getFXParam (i);
+        var param = cd.getFXParam (i);
         d.setCell (0, i, param.name, Display.FORMAT_RAW)
          .setCell (1, i, param.valueStr, Display.FORMAT_RAW);
     }
