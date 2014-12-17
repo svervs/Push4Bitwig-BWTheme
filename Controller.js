@@ -9,7 +9,6 @@ function Controller ()
 
     var output = new MidiOutput ();
     var input = new PushMidiInput ();
-    input.init ();
 
     this.scales = new Scales (36, 100, 8, 8);
     this.model = new Model (PUSH_KNOB1, this.scales);
@@ -164,6 +163,12 @@ Controller.prototype.updateMode = function (mode)
 
 Controller.prototype.updateIndication = function (mode)
 {
+    var mt = this.model.getMasterTrack ();
+    mt.setVolumeIndication (mode == MODE_MASTER);
+    mt.setPanIndication (mode == MODE_MASTER);
+
+    this.model.getGroove ().setIndication (mode == MODE_GROOVE);
+
     var isVolume = mode == MODE_VOLUME;
     var isPan    = mode == MODE_PAN;
     
@@ -195,12 +200,6 @@ Controller.prototype.updateIndication = function (mode)
         
         var uc = this.model.getUserControlBank ();
         uc.getControl (i).setIndication (mode == MODE_DEVICE_USER);
-    
-        var mt = this.model.getMasterTrack ();
-        mt.setVolumeIndication (mode == MODE_MASTER);
-        mt.setPanIndication (mode == MODE_MASTER);
-
-        this.model.getGroove ().setIndication (mode == MODE_GROOVE);
     }
 };
 

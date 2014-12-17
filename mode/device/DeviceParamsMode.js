@@ -54,9 +54,10 @@ DeviceParamsMode.prototype.onValueKnobTouch = function (index, isTouched)
 
 AbstractDeviceMode.prototype.onValueKnob = function (index, value)
 {
-    var param = this.model.getCursorDevice ().getFXParam (index);
+    var cd = this.model.getCursorDevice ();
+    var param = cd.getFXParam (index);
     param.value = this.surface.changeValue (value, param.value);
-    this.model.getCursorDevice ().setParameter (index, param.value);
+    cd.setParameter (index, param.value);
 };
 
 DeviceParamsMode.prototype.onFirstRowBank = function (index)
