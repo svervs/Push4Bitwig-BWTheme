@@ -40,6 +40,7 @@ var MODE_SCALE_LAYOUT        = 32;
 var MODE_RIBBON              = 33;
 var MODE_VIEW_SELECT         = 34;
 var MODE_AUTOMATION          = 35;
+var MODE_TRANSPORT           = 36;
 
 var MODE_MASTER_TEMP         = 100;
 
@@ -57,6 +58,7 @@ load ("RibbonMode.js");
 load ("ScalesMode.js");
 load ("ScaleLayoutMode.js");
 load ("ViewSelectMode.js");
+load ("TransportMode.js");
 
 load ("track/AbstractTrackMode.js");
 load ("track/ClipMode.js");

@@ -47,6 +47,7 @@ function Controller ()
     this.surface.addMode (MODE_GROOVE, new GrooveMode (this.model));
     this.surface.addMode (MODE_VIEW_SELECT, new ViewSelectMode (this.model));
     this.surface.addMode (MODE_AUTOMATION, new AutomationMode (this.model));
+    this.surface.addMode (MODE_TRANSPORT, new TransportMode (this.model));
 
     this.surface.addMode (MODE_DEVICE_MODE_SELECT, new DeviceModeSelectMode (this.model));
     this.surface.addMode (MODE_DEVICE_PARAMS, new DeviceParamsMode (this.model));

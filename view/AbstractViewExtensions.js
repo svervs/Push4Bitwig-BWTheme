@@ -177,6 +177,10 @@ AbstractView.prototype.onSmallKnob1 = function (increase)
 AbstractView.prototype.onSmallKnob1Touch = function (isTouched)
 {
     this.model.getTransport ().setTempoIndication (isTouched);
+    if (isTouched)
+        this.surface.setPendingMode (MODE_TRANSPORT);
+    else
+        this.surface.setPendingMode (this.surface.getPreviousMode ());
 };
 
 // Change time (play position)
@@ -185,7 +189,13 @@ AbstractView.prototype.onSmallKnob2 = function (increase)
     this.model.getTransport ().changePosition (increase, this.surface.isShiftPressed ());
 };
 
-AbstractView.prototype.onSmallKnob2Touch = function (isTouched) {};
+AbstractView.prototype.onSmallKnob2Touch = function (isTouched)
+{
+    if (isTouched)
+        this.surface.setPendingMode (MODE_TRANSPORT);
+    else
+        this.surface.setPendingMode (this.surface.getPreviousMode ());
+};
 
 //--------------------------------------
 // Group 4
