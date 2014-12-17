@@ -84,6 +84,8 @@ AbstractDeviceMode.prototype.selectNextPageBank = function ()
 
 AbstractDeviceMode.prototype.onFirstRow = function (index)
 {
+    if (!this.model.hasSelectedDevice ())
+        return;
     if (this.showDevices)
         this.model.getCursorDevice ().selectSibling (index);
     else
@@ -92,6 +94,12 @@ AbstractDeviceMode.prototype.onFirstRow = function (index)
 
 AbstractDeviceMode.prototype.updateFirstRow = function ()
 {
+    if (!this.model.hasSelectedDevice ())
+    {
+        this.disableFirstRow ();
+        return;
+    }
+    
     if (this.showDevices)
     {
         var bank = this.calcDeviceBank ();

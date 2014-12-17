@@ -401,10 +401,7 @@ AbstractView.prototype.onDeviceLeft = function (event)
         
     if (this.showDevices && !cd.hasLayers ())
     {
-        this.showDevices = false;
-        var am = this.surface.getActiveMode ();
-        if (am.setShowDevices)
-            am.setShowDevices (false);
+        this.setShowDevices (false);
         return;
     }
 
@@ -440,9 +437,8 @@ AbstractView.prototype.onDeviceLeft = function (event)
             cd.enterLayer (dl.index);
             cd.selectFirstDeviceInLayer (dl.index);
         }
-        this.showDevices = true;
         this.surface.setPendingMode (this.lastAbstractDeviceMode);
-        this.surface.getActiveMode ().setShowDevices (true);
+        this.setShowDevices (true);
     }
     else
     {
@@ -470,18 +466,13 @@ AbstractView.prototype.onDeviceRight = function (event)
         {
             if (cd.isNested ())
             {
-                this.surface.setPendingMode (MODE_DEVICE_LAYER);
                 cd.selectParent ();
-                this.showDevices = false;
+                this.surface.setPendingMode (MODE_DEVICE_LAYER);
+                this.setShowDevices (false);
             }
         }
         else
-        {
-            this.showDevices = true;
-            var am = this.surface.getActiveMode ();
-            if (am.setShowDevices)
-                am.setShowDevices (true);
-        }
+            this.setShowDevices (true);
     }
 };
 
@@ -799,3 +790,10 @@ AbstractView.prototype.canSelectedTrackHoldNotes = function ()
     var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
     return t != null && t.canHoldNotes;
 };
+
+AbstractView.prototype.setShowDevices = function (enable)
+{
+    this.showDevices = enable;
+    for (var i = 0; i < DEVICE_MODES.length; i++)
+        this.surface.getMode (DEVICE_MODES[i]).setShowDevices (enable);
+}
