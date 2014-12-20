@@ -48,6 +48,7 @@ function Controller ()
     this.surface.addMode (MODE_VIEW_SELECT, new ViewSelectMode (this.model));
     this.surface.addMode (MODE_AUTOMATION, new AutomationMode (this.model));
     this.surface.addMode (MODE_TRANSPORT, new TransportMode (this.model));
+    this.surface.addMode (MODE_CONFIGURATION, new ConfigurationMode (this.model));
 
     this.surface.addMode (MODE_DEVICE_MODE_SELECT, new DeviceModeSelectMode (this.model));
     this.surface.addMode (MODE_DEVICE_PARAMS, new DeviceParamsMode (this.model));
@@ -105,6 +106,14 @@ function Controller ()
     Config.addPropertyListener (Config.ENABLE_VU_METERS, doObject (this, function ()
     {
         this.surface.showVU = Config.enableVUMeters;
+    }));
+    Config.addPropertyListener (Config.VELOCITY_CURVE, doObject (this, function ()
+    {
+        this.surface.sendPadSensitivity ();
+    }));
+    Config.addPropertyListener (Config.PAD_THRESHOLD, doObject (this, function ()
+    {
+        this.surface.sendPadSensitivity ();
     }));
     
     this.surface.addView (VIEW_PLAY, new PlayView (this.model));

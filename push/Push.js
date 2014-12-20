@@ -126,10 +126,122 @@ var PUSH_BUTTONS_ALL =
     PUSH_BUTTON_UNDO
 ];
 
-PUSH_RIBBON_PITCHBEND = 0;
-PUSH_RIBBON_VOLUME    = 1;
-PUSH_RIBBON_PAN       = 2;
-PUSH_RIBBON_DISCRETE  = 3;
+var PUSH_RIBBON_PITCHBEND = 0;
+var PUSH_RIBBON_VOLUME    = 1;
+var PUSH_RIBBON_PAN       = 2;
+var PUSH_RIBBON_DISCRETE  = 3;
+
+var PUSH_PAD_CURVES_NAME =
+[
+    'Linear',
+    'Log 1 (Default)',
+    'Log 2',
+    'Log 3',
+    'Log 4',
+    'Log 5'
+];
+
+var PUSH_PAD_CURVES_DATA =
+[
+    '00 00 00 01 08 06 0A 00 00 00 00 00 0A 0F 0C 08 00 00 00 00 00 00 00 00',
+    '00 00 00 01 04 0C 00 08 00 00 00 01 0D 04 0C 00 00 00 00 00 0E 0A 06 00',
+    '00 00 00 01 04 0C 00 08 00 00 00 01 0D 04 0C 00 00 00 00 00 0C 03 05 00',
+    '00 00 00 01 08 06 0A 00 00 00 00 01 0D 04 0C 00 00 00 00 00 0C 03 05 00',
+    '00 00 00 01 0F 0B 0D 00 00 00 00 01 0D 04 0C 00 00 00 00 00 0C 03 05 00',
+    '00 00 00 02 02 02 0E 00 00 00 00 01 0D 04 0C 00 00 00 00 00 00 00 00 00'
+];
+
+var PUSH_PAD_THRESHOLDS_NAME =
+[
+    '-20',
+    '-19',
+    '-18',
+    '-17',
+    '-16',
+    '-15',
+    '-14',
+    '-13',
+    '-12',
+    '-11',
+    '-10',
+    '-9',
+    '-8',
+    '-7',
+    '-6',
+    '-5',
+    '-4',
+    '-3',
+    '-2',
+    '-1',
+    '0 (Default)',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16',
+    '17',
+    '18',
+    '19',
+    '20',
+];
+
+var PUSH_PAD_THRESHOLDS_DATA =
+[
+    '00 00 00 0A 00 00 00 0A', 
+    '00 00 01 03 00 00 01 04',
+    '00 00 01 0C 00 00 01 0E',
+    '00 00 02 05 00 00 02 08',
+    '00 00 02 0E 00 00 03 02',
+    '00 00 03 07 00 00 03 0C',
+    '00 00 04 00 00 00 04 06',
+    '00 00 04 09 00 00 05 00',
+    '00 00 05 02 00 00 05 0A',
+    '00 00 05 0B 00 00 06 04',
+    '00 00 06 04 00 00 06 0E',
+    '00 00 06 0D 00 00 07 08',
+    '00 00 07 06 00 00 08 02',
+    '00 00 07 0F 00 00 08 0C',
+    '00 00 08 08 00 00 09 06',
+    '00 00 09 01 00 00 0A 00',
+    '00 00 09 0A 00 00 0A 0A',
+    '00 00 0A 03 00 00 0B 04',
+    '00 00 0A 0C 00 00 0B 0E',
+    '00 00 0B 05 00 00 0C 08',
+    '00 00 0B 0E 00 00 0D 02',
+    '00 00 0C 07 00 00 0D 0C',
+    '00 00 0D 00 00 00 0E 06',
+    '00 00 0D 08 00 00 0E 0F',
+    '00 00 0E 02 00 00 0F 0A',
+    '00 00 0E 0B 00 01 00 04',
+    '00 00 0F 04 00 01 00 0E',
+    '00 00 0F 0D 00 01 01 08',
+    '00 01 00 06 00 01 02 02',
+    '00 01 00 0F 00 01 02 0C',
+    '00 01 01 08 00 01 03 06',
+    '00 01 02 01 00 01 04 00',
+    '00 01 02 0A 00 01 04 0A',
+    '00 01 03 03 00 01 05 04',
+    '00 01 03 0C 00 01 05 0E',
+    '00 01 04 05 00 01 06 08',
+    '00 01 04 0E 00 01 07 02',
+    '00 01 05 07 00 01 07 0C',
+    '00 01 06 00 00 01 08 06',
+    '00 01 06 09 00 01 09 00',
+    '00 01 07 02 00 01 09 0A'
+];
+
+var PUSH_LOW_THRESHOLD_WARNING = '         Warning:Low threshold maycause stuck pads                  ';
 
 
 function Push (output, input)
@@ -148,6 +260,34 @@ function Push (output, input)
     this.showVU = false;
 }
 Push.prototype = new AbstractControlSurface ();
+
+Push.prototype.changePadThreshold = function (increase)
+{
+    if (increase)
+        Config.setPadThreshold (Config.padThreshold + 1);
+    else
+        Config.setPadThreshold (Config.padThreshold - 1);
+    this.sendPadSensitivity ();
+};
+
+Push.prototype.changeVelocityCurve = function (increase)
+{
+    if (increase)
+        Config.setVelocityCurve (Config.velocityCurve + 1);
+    else
+        Config.setVelocityCurve (Config.velocityCurve - 1);
+    this.sendPadSensitivity ();
+};
+
+Push.prototype.getSelectedPadThreshold = function ()
+{
+    return PUSH_PAD_THRESHOLDS_NAME[Config.padThreshold];
+};
+
+Push.prototype.getSelectedVelocityCurve = function ()
+{
+    return PUSH_PAD_CURVES_NAME[Config.velocityCurve];
+};
 
 Push.prototype.shutdown = function ()
 {
@@ -212,6 +352,11 @@ Push.prototype.toggleVU = function ()
 Push.prototype.setRibbonMode = function (mode)
 {
     this.output.sendSysex ("F0 47 7F 15 63 00 01 0" + mode + " F7");
+};
+
+Push.prototype.sendPadSensitivity = function ()
+{
+    this.output.sendSysex ("F0 47 7F 15 5D 00 20 " + PUSH_PAD_THRESHOLDS_DATA[Config.padThreshold] + " " + PUSH_PAD_CURVES_DATA[Config.velocityCurve] + " F7");
 };
 
 //--------------------------------------

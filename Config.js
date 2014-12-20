@@ -25,6 +25,8 @@ Config.SCALES_BASE           = 5;
 Config.SCALES_IN_KEY         = 6;
 Config.SCALES_LAYOUT         = 7;
 Config.ENABLE_VU_METERS      = 8;
+Config.VELOCITY_CURVE        = 9;
+Config.PAD_THRESHOLD         = 10;
 
 Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
@@ -40,7 +42,8 @@ Config.scaleBase         = 'C';
 Config.scaleInKey        = true;
 Config.scaleLayout       = '4th ^';
 Config.enableVUMeters    = false;
-
+Config.velocityCurve     = 1;
+Config.padThreshold      = 20;
 
 Config.init = function ()
 {
@@ -127,6 +130,37 @@ Config.init = function ()
         Config.enableVUMeters = value == "On";
         Config.notifyListeners (Config.ENABLE_VU_METERS);
     });
+
+    ///////////////////////////
+    // Pad Sensitivity
+
+    Config.velocityCurveSetting = prefs.getEnumSetting ("Velocity Curve", "Pad Sensitivity", PUSH_PAD_CURVES_NAME, PUSH_PAD_CURVES_NAME[1]);
+    Config.velocityCurveSetting.addValueObserver (function (value)
+    {
+        for (var i = 0; i < PUSH_PAD_CURVES_NAME.length; i++)
+        {
+            if (PUSH_PAD_CURVES_NAME[i] === value)
+            {
+                Config.velocityCurve = i;
+                break;
+            }
+        }
+        Config.notifyListeners (Config.VELOCITY_CURVE);
+    });
+
+    Config.padThresholdSetting = prefs.getEnumSetting ("Pad Threshold", "Pad Sensitivity", PUSH_PAD_THRESHOLDS_NAME, PUSH_PAD_THRESHOLDS_NAME[20]);
+    Config.padThresholdSetting.addValueObserver (function (value)
+    {
+        for (var i = 0; i < PUSH_PAD_THRESHOLDS_NAME.length; i++)
+        {
+            if (PUSH_PAD_THRESHOLDS_NAME[i] === value)
+            {
+                Config.padThreshold = i;
+                break;
+            }
+        }
+        Config.notifyListeners (Config.PAD_THRESHOLD);
+    });
 };
 
 Config.setAccentEnabled = function (enabled)
@@ -180,12 +214,24 @@ Config.setVUMetersEnabled = function (enabled)
     Config.enableVUMetersSetting.set (enabled ? "On" : "Off");
 };
 
+Config.setVelocityCurve = function (value)
+{
+    Config.velocityCurve = Math.max (0, Math.min (value, PUSH_PAD_CURVES_NAME.length - 1));
+    Config.velocityCurveSetting.set (PUSH_PAD_CURVES_NAME[Config.velocityCurve]);
+};
+
+Config.setPadThreshold = function (value)
+{
+    Config.padThreshold = Math.max (0, Math.min (value, PUSH_PAD_THRESHOLDS_NAME.length - 1));
+    Config.padThresholdSetting.set (PUSH_PAD_THRESHOLDS_NAME[Config.padThreshold]);
+};
+
 // ------------------------------
 // Property listeners
 // ------------------------------
 
 Config.listeners = [];
-for (var i = 0; i <= Config.ENABLE_VU_METERS; i++)
+for (var i = 0; i <= Config.PAD_THRESHOLD; i++)
     Config.listeners[i] = [];
 
 Config.addPropertyListener = function (property, listener)

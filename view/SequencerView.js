@@ -45,7 +45,6 @@ SequencerView.prototype.usesButton = function (buttonID)
     {
         case PUSH_BUTTON_ADD_EFFECT:
         case PUSH_BUTTON_REPEAT:
-        case PUSH_BUTTON_USER_MODE:
             return false;
     }
     return true;

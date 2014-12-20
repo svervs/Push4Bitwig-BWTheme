@@ -514,7 +514,13 @@ AbstractView.prototype.onScales = function (event)
     }
 };
 
-AbstractView.prototype.onUser = function (event) {};
+AbstractView.prototype.onUser = function (event)
+{
+    if (event.isLong ())
+        this.surface.setPendingMode (MODE_CONFIGURATION);
+    else if (event.isUp ())
+        this.surface.setPendingMode (this.surface.getPreviousMode ());
+};
 
 AbstractView.prototype.onRepeat = function (event) {};
 
