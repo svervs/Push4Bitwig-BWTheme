@@ -88,6 +88,7 @@ PlayView.prototype.onPitchbend = function (data1, data2)
 
         case Config.RIBBON_MODE_CC:
             this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, data2);
+            this.pitchValue = data2;
             break;
 
         case Config.RIBBON_MODE_CC_PB:
@@ -115,7 +116,6 @@ PlayView.prototype.onPitchbend = function (data1, data2)
             break;
     }
 
-    this.pitchValue = data2;
     this.surface.output.sendPitchbend (data1, data2);
 };
 
