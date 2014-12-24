@@ -23,20 +23,31 @@ AbstractView.prototype.onPlay = function (event)
 {
     if (!event.isDown ())
         return;
+    var transport = this.model.getTransport ();
     if (this.surface.isShiftPressed ())
     {
-        this.model.getTransport ().toggleLoop ();
+        transport.toggleLoop ();
         return;
     }
     if (this.restartFlag)
     {
-        this.model.getTransport ().stopAndRewind ();
+        transport.stopAndRewind ();
         this.restartFlag = false;
     }
     else
     {
-        this.model.getTransport ().play ();
-        this.doubleClickTest ();
+        if (Config.gotoZeroOnStop)
+        {
+            if (transport.isPlaying)
+                transport.stopAndRewind ();
+            else
+                transport.play ();
+        }
+        else
+        {
+            transport.play ();
+            this.doubleClickTest ();
+        }
     }
 };
 

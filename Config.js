@@ -27,6 +27,8 @@ Config.SCALES_LAYOUT         = 7;
 Config.ENABLE_VU_METERS      = 8;
 Config.VELOCITY_CURVE        = 9;
 Config.PAD_THRESHOLD         = 10;
+Config.GOTO_ZERO_ON_STOP     = 11;
+Config.DISPLAY_CROSSFADER    = 12;
 
 Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
@@ -44,6 +46,8 @@ Config.scaleLayout       = '4th ^';
 Config.enableVUMeters    = false;
 Config.velocityCurve     = 1;
 Config.padThreshold      = 20;
+Config.gotoZeroOnStop    = false;
+Config.displayCrossfader = true;
 
 Config.init = function ()
 {
@@ -122,14 +126,29 @@ Config.init = function ()
     });
 
     ///////////////////////////
-    // Enable VU Meters
+    // Workflow
 
-    Config.enableVUMetersSetting = prefs.getEnumSetting ("Activity", "VU Meters", [ "Off", "On" ], "Off");
+    Config.enableVUMetersSetting = prefs.getEnumSetting ("VU Meters", "Workflow", [ "Off", "On" ], "Off");
     Config.enableVUMetersSetting.addValueObserver (function (value)
     {
         Config.enableVUMeters = value == "On";
         Config.notifyListeners (Config.ENABLE_VU_METERS);
     });
+    
+    Config.gotoZeroOnStopSetting = prefs.getEnumSetting ("Return to Zero on Stop", "Workflow", [ "Off", "On" ], "Off");
+    Config.gotoZeroOnStopSetting.addValueObserver (function (value)
+    {
+        Config.gotoZeroOnStop = value == "On";
+        Config.notifyListeners (Config.GOTO_ZERO_ON_STOP);
+    });
+    
+    Config.displayCrossfaderSetting = prefs.getEnumSetting ("Display Crossfader on Track", "Workflow", [ "Off", "On" ], "On");
+    Config.displayCrossfaderSetting.addValueObserver (function (value)
+    {
+        Config.displayCrossfader = value == "On";
+        Config.notifyListeners (Config.DISPLAY_CROSSFADER);
+    });
+
 
     ///////////////////////////
     // Pad Sensitivity
@@ -214,6 +233,16 @@ Config.setVUMetersEnabled = function (enabled)
     Config.enableVUMetersSetting.set (enabled ? "On" : "Off");
 };
 
+Config.setGotoZeroOnStop = function (enabled)
+{
+    Config.gotoZeroOnStopSetting.set (enabled ? "On" : "Off");
+};
+
+Config.setDisplayCrossfader = function (enabled)
+{
+    Config.displayCrossfaderSetting.set (enabled ? "On" : "Off");
+};
+
 Config.setVelocityCurve = function (value)
 {
     Config.velocityCurve = Math.max (0, Math.min (value, PUSH_PAD_CURVES_NAME.length - 1));
@@ -231,7 +260,7 @@ Config.setPadThreshold = function (value)
 // ------------------------------
 
 Config.listeners = [];
-for (var i = 0; i <= Config.PAD_THRESHOLD; i++)
+for (var i = 0; i <= Config.DISPLAY_CROSSFADER; i++)
     Config.listeners[i] = [];
 
 Config.addPropertyListener = function (property, listener)
