@@ -380,6 +380,11 @@ AbstractView.prototype.onTrack = function (event)
         this.model.toggleCurrentTrackBank ();
     else
         this.surface.setPendingMode (MODE_TRACK);
+    
+    var tb = this.model.getCurrentTrackBank ();
+    var track = tb.getSelectedTrack ();
+    if (track == null)
+        tb.select (0);
 };
 
 AbstractView.prototype.onClip = function (event)
