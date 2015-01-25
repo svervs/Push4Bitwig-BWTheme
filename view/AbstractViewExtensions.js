@@ -1,6 +1,6 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
 //            Michael Schmalle - teotigraphix.com
-// (c) 2014
+// (c) 2014-2015
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 AbstractView.prototype.stopPressed = false;
@@ -425,13 +425,15 @@ AbstractView.prototype.onDeviceLeft = function (event)
     if (!cd.hasSelectedDevice ())
         return;
         
-    if (this.showDevices && !cd.hasLayers ())
+    // TODO Requires Bitwig fix - Returns true for VSTs
+    var isNoContainer = !cd.hasLayers ();
+    if (this.showDevices && isNoContainer)
     {
         this.setShowDevices (false);
         return;
     }
 
-    if (!cd.hasLayers ())
+    if (isNoContainer)
         return;
 
     var isLayerMode = false;

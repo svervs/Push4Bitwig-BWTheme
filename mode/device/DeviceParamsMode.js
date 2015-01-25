@@ -1,11 +1,11 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
 //            Michael Schmalle - teotigraphix.com
-// (c) 2014
+// (c) 2014-2015
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 function DeviceParamsMode (model)
 {
-    BaseMode.call (this, model);
+    AbstractDeviceMode.call (this, model);
     this.id = MODE_DEVICE_PARAMS;
     this.isTemporary = false;
 }
@@ -13,34 +13,32 @@ DeviceParamsMode.prototype = new AbstractDeviceMode ();
 
 DeviceParamsMode.prototype.hasPreviousPage = function ()
 {
-    return this.model.getCursorDevice ().hasPreviousParameterPage ();
+    return this.cursorDevice.hasPreviousParameterPage ();
 };
 
 DeviceParamsMode.prototype.hasNextPage = function ()
 {
-    return this.model.getCursorDevice ().hasNextParameterPage ();
+    return this.cursorDevice.hasNextParameterPage ();
 };
 
 DeviceParamsMode.prototype.previousPage = function ()
 {
-    this.model.getCursorDevice ().previousParameterPage ();
+    this.cursorDevice.previousParameterPage ();
 };
 
 DeviceParamsMode.prototype.nextPage = function ()
 {
-    this.model.getCursorDevice ().nextParameterPage ();
+    this.cursorDevice.nextParameterPage ();
 };
 
 DeviceParamsMode.prototype.previousPageBank = function ()
 {
-    var cd = this.model.getCursorDevice ();
-    cd.setSelectedParameterPage (Math.max (cd.getSelectedParameterPage () - 8, 0));
+    this.cursorDevice.setSelectedParameterPage (Math.max (this.cursorDevice.getSelectedParameterPage () - 8, 0));
 };
 
 DeviceParamsMode.prototype.nextPageBank = function ()
 {
-    var cd = this.model.getCursorDevice ();
-    cd.setSelectedParameterPage (Math.min (cd.getSelectedParameterPage () + 8, cd.getParameterPageNames ().length - 1));
+    this.cursorDevice.setSelectedParameterPage (Math.min (this.cursorDevice.getSelectedParameterPage () + 8, this.cursorDevice.getParameterPageNames ().length - 1));
 };
 
 DeviceParamsMode.prototype.onValueKnobTouch = function (index, isTouched) 
@@ -48,23 +46,22 @@ DeviceParamsMode.prototype.onValueKnobTouch = function (index, isTouched)
     if (isTouched && this.surface.isDeletePressed ())
     {
         this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
-        this.model.getCursorDevice ().resetParameter (index);
+        this.cursorDevice.resetParameter (index);
     }
 };
 
 AbstractDeviceMode.prototype.onValueKnob = function (index, value)
 {
-    var cd = this.model.getCursorDevice ();
-    var param = cd.getFXParam (index);
+    var param = this.cursorDevice.getFXParam (index);
     param.value = this.surface.changeValue (value, param.value);
-    cd.setParameter (index, param.value);
+    this.cursorDevice.setParameter (index, param.value);
 };
 
 DeviceParamsMode.prototype.onFirstRowBank = function (index)
 {
     var bank = this.calcBank ();
     if (bank != null)
-        this.model.getCursorDevice ().setSelectedParameterPage (bank.offset + index);
+        this.cursorDevice.setSelectedParameterPage (bank.offset + index);
 };
 
 DeviceParamsMode.prototype.updateFirstRowBank = function ()
@@ -91,10 +88,9 @@ DeviceParamsMode.prototype.updateFirstRowBank = function ()
 
 DeviceParamsMode.prototype.updateParameters = function (d)
 {
-    var cd = this.model.getCursorDevice ();
     for (var i = 0; i < 8; i++)
     {
-        var param = cd.getFXParam (i);
+        var param = this.cursorDevice.getFXParam (i);
         d.setCell (0, i, param.name, Display.FORMAT_RAW)
          .setCell (1, i, param.valueStr, Display.FORMAT_RAW);
     }
@@ -102,7 +98,7 @@ DeviceParamsMode.prototype.updateParameters = function (d)
 
 DeviceParamsMode.prototype.calcBank = function ()
 {
-    var device = this.model.getCursorDevice ();
+    var device = this.cursorDevice;
     var pages = device.getParameterPageNames ();
     var page = device.getSelectedParameterPage ();
     if (pages.length == 0)
