@@ -799,7 +799,7 @@ AbstractView.prototype.updateArrowStates = function ()
             var tb = this.model.getCurrentTrackBank ();
             var sel = tb.getSelectedTrack ();
             this.canScrollLeft = sel != null && sel.index > 0 || tb.canScrollTracksUp ();
-            this.canScrollRight = sel != null && sel.index < 7 || tb.canScrollTracksDown ();
+            this.canScrollRight = sel != null && (sel.index < 7 && tb.getTrack (sel.index + 1).exists) || tb.canScrollTracksDown ();
             break;
     }
 };

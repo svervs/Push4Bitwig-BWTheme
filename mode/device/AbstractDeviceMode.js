@@ -176,27 +176,8 @@ AbstractDeviceMode.prototype.drawBanks = function (d, bank)
 
 AbstractDeviceMode.prototype.calcDeviceBank = function ()
 {
-    var selectedPage = 0;
     var pages = [];
-    if (this.cursorDevice.isNested ())
-    {
-        // TODO API extension required
-        for (var i = 0; i < 8; i++)
-        {
-            // var index = bank.offset + i;
-            pages.push ("Device " + (i + 1));
-        }
-    }
-    else
-    {
-        var name = this.cursorDevice.getSelectedDevice ().name;
-        var selectedTrack = this.model.getCurrentTrackBank ().getSelectedTrack ();
-        for (var i = 0; i < 8; i++)
-        {
-            pages.push (selectedTrack.devices[i]);
-            if (selectedTrack.devices[i] == name)
-                selectedPage = i;
-        }
-    }
-    return { pages: pages, page: selectedPage, offset: 0 };
+    for (var i = 0; i < 8; i++)
+        pages.push (this.cursorDevice.getSiblingDeviceName (i));
+    return { pages: pages, page: this.cursorDevice.getDevicePosition (), offset: 0 };
 };

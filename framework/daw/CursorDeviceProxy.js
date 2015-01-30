@@ -54,6 +54,8 @@ function CursorDeviceProxy (cursorDevice, numSends)
     this.currentDirectParameterPage = 0;
     this.directParameterObservationEnabled = false;
     this.deviceBanks = [];
+    this.position = 0;
+    this.siblingDevices = initArray ("", this.numDevicesInBank);
 
     this.isMacroMappings = initArray (false, this.numParams);
 
@@ -113,6 +115,14 @@ function CursorDeviceProxy (cursorDevice, numSends)
     this.cursorDevice.hasDrumPads ().addValueObserver (doObject (this, CursorDeviceProxy.prototype.handleHasDrumPads));
     this.cursorDevice.hasLayers ().addValueObserver (doObject (this, CursorDeviceProxy.prototype.handleHasLayers));
     this.cursorDevice.hasSlots ().addValueObserver (doObject (this, CursorDeviceProxy.prototype.handleHasSlots));
+
+    // Monitor the sibling devices of the cursor device
+    var siblings = this.cursorDevice.createSiblingsDeviceBank (this.numDevicesInBank);
+    for (i = 0; i < this.numDevicesInBank; i++)
+    {
+        var sibling = siblings.getDevice (i);
+        sibling.addNameObserver (this.textLength, '', doObjectIndex (this, i, CursorDeviceProxy.prototype.handleSiblingName));
+    }    
 
     var layer = null;
     var v = null;
@@ -245,6 +255,16 @@ function CursorDeviceProxy (cursorDevice, numSends)
 //--------------------------------------
 // Bitwig Device API
 //--------------------------------------
+
+CursorDeviceProxy.prototype.getSiblingDeviceName = function (index)
+{
+    return this.siblingDevices[index];
+};
+
+CursorDeviceProxy.prototype.getDevicePosition = function ()
+{
+    return this.position;
+};
 
 CursorDeviceProxy.prototype.getCommonParameter = function (index)
 {
@@ -706,9 +726,7 @@ CursorDeviceProxy.prototype.handleIsEnabled = function (isEnabled)
 
 CursorDeviceProxy.prototype.handlePosition = function (pos)
 {
-    // TODO FIX Required - Always sends 0 and -1
-    if (pos > 0)
-        println ("Device position is fixed! " + pos);
+    this.position = pos;
 };
 
 CursorDeviceProxy.prototype.handleName = function (name)
@@ -904,6 +922,11 @@ CursorDeviceProxy.prototype.handleHasSlots = function (value)
     this.hasSlotsValue = value;
 };
 
+CursorDeviceProxy.prototype.handleSiblingName = function (index, name)
+{
+    this.siblingDevices[index] = name;
+};
+
 CursorDeviceProxy.prototype.handleLayerExists = function (index, exists)
 {
     this.deviceLayers[index].exists = exists;
@@ -976,17 +999,11 @@ CursorDeviceProxy.prototype.handleSendVolumeStr = function (index1, index2, text
 
 CursorDeviceProxy.prototype.handleCanScrollLayerUp = function (canScroll)
 {
-    // TODO FIX Required - Always called with false
-    if (canScroll)
-        println ("CanScrollLayerUp is fixed!");
     this.canScrollLayersUpValue = canScroll;
 };
 
 CursorDeviceProxy.prototype.handleCanScrollLayerDown = function (canScroll)
 {
-    // TODO FIX Required - Always called with false
-    if (canScroll)
-        println ("CanScrollLayerDown is fixed!");
     this.canScrollLayersDownValue = canScroll;
 };
 

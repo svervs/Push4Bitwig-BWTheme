@@ -127,12 +127,8 @@ AbstractTrackBankProxy.prototype.init = function ()
         cs.addColorObserver (doObjectIndex (this, i, AbstractTrackBankProxy.prototype.handleSlotColor));
 
         // Devices on the track
+        // TODO Check if can be removed
         this.tracks[i].deviceBank = t.createDeviceBank (this.numDevices);
-        for (var j = 0; j < this.numDevices; j++)
-        {
-            var device = this.tracks[i].deviceBank.getDevice (j);
-            device.addNameObserver (this.textLength, '', doObjectDoubleIndex (this, i, j, AbstractTrackBankProxy.prototype.handleDeviceName));
-        }
     }
 
     this.trackBank.addCanScrollChannelsUpObserver (doObject (this, AbstractTrackBankProxy.prototype.handleCanScrollTracksUp));
@@ -538,7 +534,6 @@ AbstractTrackBankProxy.prototype.createTracks = function (count)
             autoMonitor: false,
             sends: [],
             slots: [],
-            devices: [],
             crossfadeMode: 'AB',
             // Non value attribute
             deviceBank: null
@@ -547,8 +542,6 @@ AbstractTrackBankProxy.prototype.createTracks = function (count)
             t.slots.push ({ index: j });
         for (var j = 0; j < this.numSends; j++)
             t.sends.push ({ index: j });
-        for (var j = 0; j < this.numDevices; j++)
-            t.devices.push ("");
         tracks.push (t);
     }
     return tracks;
@@ -567,11 +560,13 @@ AbstractTrackBankProxy.prototype.notifyListeners = function (pressed, note, velo
 
 AbstractTrackBankProxy.prototype.nextDeviceBank = function (trackIndex)
 {
+// TODO Check if this can be done via the device chain    
     this.tracks[trackIndex].deviceBank.scrollPageUp ();
 };
 
 AbstractTrackBankProxy.prototype.previousDeviceBank = function (trackIndex)
 {
+// TODO Check if this can be done via the device chain    
     this.tracks[trackIndex].deviceBank.scrollPageDown ();
 };
 
@@ -734,9 +729,4 @@ AbstractTrackBankProxy.prototype.handleCanScrollScenesUp = function (canScroll)
 AbstractTrackBankProxy.prototype.handleCanScrollScenesDown = function (canScroll)
 {
     this.canScrollScenesDownFlag = canScroll;
-};
-
-AbstractTrackBankProxy.prototype.handleDeviceName = function (index, device, name)
-{
-    this.tracks[index].devices[device] = name;
 };
