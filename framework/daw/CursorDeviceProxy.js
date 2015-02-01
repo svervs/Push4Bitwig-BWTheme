@@ -117,10 +117,10 @@ function CursorDeviceProxy (cursorDevice, numSends)
     this.cursorDevice.hasSlots ().addValueObserver (doObject (this, CursorDeviceProxy.prototype.handleHasSlots));
 
     // Monitor the sibling devices of the cursor device
-    var siblings = this.cursorDevice.createSiblingsDeviceBank (this.numDevicesInBank);
+    this.siblings = this.cursorDevice.createSiblingsDeviceBank (this.numDevicesInBank);
     for (i = 0; i < this.numDevicesInBank; i++)
     {
-        var sibling = siblings.getDevice (i);
+        var sibling = this.siblings.getDevice (i);
         sibling.addNameObserver (this.textLength, '', doObjectIndex (this, i, CursorDeviceProxy.prototype.handleSiblingName));
     }    
 
@@ -261,9 +261,14 @@ CursorDeviceProxy.prototype.getSiblingDeviceName = function (index)
     return this.siblingDevices[index];
 };
 
-CursorDeviceProxy.prototype.getDevicePosition = function ()
+CursorDeviceProxy.prototype.getPositionInChain = function ()
 {
     return this.position;
+};
+
+CursorDeviceProxy.prototype.getPositionInBank = function ()
+{
+    return this.position % this.numDevicesInBank;
 };
 
 CursorDeviceProxy.prototype.getCommonParameter = function (index)
@@ -398,21 +403,39 @@ CursorDeviceProxy.prototype.canSelectNextFX = function ()
 
 CursorDeviceProxy.prototype.selectNext = function ()
 {
+    // TODO see https://github.com/teotigraphix/Framework4Bitwig/issues/55
+//    var moveBank = this.getPositionInBank () == 7;
+//println(    moveBank);
     this.cursorDevice.selectNext ();
+    //if (moveBank)
+      //  this.selectNextBank ();
+    
+//println(this.position+":"+this.getPositionInBank ());    
 };
 
 CursorDeviceProxy.prototype.selectPrevious = function ()
 {
+    var moveBank = this.getPositionInBank () == 0;
     this.cursorDevice.selectPrevious ();
+    if (moveBank)
+        this.selectPreviousBank ();
+    
+println(this.position+":"+this.getPositionInBank ());    
 };
 
 CursorDeviceProxy.prototype.selectSibling = function (index)
 {
-    // TODO API extension required - Very bad workaround
-    for (var i = 0; i < 8; i++)
-        this.cursorDevice.selectPrevious ();
-    for (var i = 0; i < index; i++)
-        this.cursorDevice.selectNext ();
+    this.cursorDevice.selectDevice (this.siblings.getDevice (index));
+};
+
+CursorDeviceProxy.prototype.selectNextBank = function ()
+{
+    this.siblings.scrollPageDown ();
+};
+
+CursorDeviceProxy.prototype.selectPreviousBank = function ()
+{
+    this.siblings.scrollPageUp ();
 };
 
 CursorDeviceProxy.prototype.hasSelectedDevice = function ()
@@ -495,15 +518,141 @@ CursorDeviceProxy.prototype.isNested = function ()
     return this.isNestedValue;
 };
 
-CursorDeviceProxy.prototype.hasDrumPads = function ()
-{
-    return this.hasDrumPadsValue;
-};
-
 CursorDeviceProxy.prototype.hasSlots = function ()
 {
     return this.hasSlotsValue;
 };
+
+CursorDeviceProxy.prototype.isMacroMapping = function (index)
+{
+    return this.isMacroMappings[index];
+};
+
+//--------------------------------------
+// Layer & Drum Pad Abstraction
+//--------------------------------------
+
+CursorDeviceProxy.prototype.getLayerOrDrumPad = function (index)
+{
+    return this.hasDrumPads () ? this.getDrumPad (index) : this.getLayer (index);
+};
+
+CursorDeviceProxy.prototype.getSelectedLayerOrDrumPad = function ()
+{
+    return this.hasDrumPads () ? this.getSelectedDrumPad () : this.getSelectedLayer ();
+};
+
+CursorDeviceProxy.prototype.selectLayerOrDrumPad = function (index)
+{
+    if (this.hasDrumPads ())
+        this.selectDrumPad (index);
+    else
+        this.selectLayer (index);
+};
+
+CursorDeviceProxy.prototype.previousLayerOrDrumPad = function ()
+{
+    if (this.hasDrumPads ())
+        this.previousDrumPad ();
+    else
+        this.previousLayer ();
+};
+
+CursorDeviceProxy.prototype.previousLayerOrDrumPadBank = function ()
+{
+    if (this.hasDrumPads ())
+        this.previousDrumPadBank ();
+    else
+        this.previousLayerBank ();
+};
+
+CursorDeviceProxy.prototype.nextLayerOrDrumPad = function ()
+{
+    if (this.hasDrumPads ())
+        this.nextDrumPad ();
+    else
+        this.nextLayer ();
+};
+
+CursorDeviceProxy.prototype.nextLayerOrDrumPadBank = function ()
+{
+    if (this.hasDrumPads ())
+        this.nextDrumPadBank ();
+    else
+        this.nextLayerBank ();
+};
+
+CursorDeviceProxy.prototype.enterLayerOrDrumPad = function (index)
+{
+    if (this.hasDrumPads ())
+        this.enterDrumPad (index);
+    else
+        this.enterLayer (index);
+};
+
+CursorDeviceProxy.prototype.selectFirstDeviceInLayerOrDrumPad = function (index)
+{
+    if (this.hasDrumPads ())
+        this.selectFirstDeviceInDrumPad (index);
+    else
+        this.selectFirstDeviceInLayer (index);
+};
+
+CursorDeviceProxy.prototype.canScrollLayersOrDrumPadsUp = function ()
+{
+    return this.hasDrumPads () ? this.canScrollDrumPadsUp () : this.canScrollLayersUp ();
+};
+
+CursorDeviceProxy.prototype.canScrollLayersOrDrumPadsDown = function ()
+{
+    return this.hasDrumPads () ? this.canScrollDrumPadsDown () : this.canScrollLayersDown ();
+};
+
+CursorDeviceProxy.prototype.scrollLayersOrDrumPadsPageUp = function ()
+{
+    this.hasDrumPads () ? this.scrollDrumPadsPageUp () : this.scrollLayersPageUp ();
+};
+
+CursorDeviceProxy.prototype.scrollLayersOrDrumPadsPageDown = function ()
+{
+    this.hasDrumPads () ? this.scrollDrumPadsPageDown () : this.scrollLayersPageDown ();
+};
+
+CursorDeviceProxy.prototype.changeLayerOrDrumPadVolume = function (index, value, fractionValue)
+{
+    if (this.hasDrumPads ())
+        this.changeDrumPadVolume (index, value, fractionValue);
+    else
+        this.changeLayerVolume (index, value, fractionValue);
+};
+
+CursorDeviceProxy.prototype.changeLayerOrDrumPadPan = function (index, value, fractionValue)
+{
+    if (this.hasDrumPads ())
+        this.changeDrumPadPan (index, value, fractionValue);
+    else
+        this.changeLayerPan (index, value, fractionValue);
+};
+
+CursorDeviceProxy.prototype.toggleLayerOrDrumPadMute = function (index)
+{
+    if (this.hasDrumPads ())
+        this.toggleDrumPadMute (index);
+    else
+        this.toggleLayerMute (index);
+};
+
+CursorDeviceProxy.prototype.toggleLayerOrDrumPadSolo = function (index)
+{
+    if (this.hasDrumPads ())
+        this.toggleDrumPadSolo (index);
+    else
+        this.toggleLayerSolo (index);
+};
+
+//--------------------------------------
+// Layers
+//--------------------------------------
 
 CursorDeviceProxy.prototype.hasLayers = function ()
 {
@@ -528,6 +677,42 @@ CursorDeviceProxy.prototype.getSelectedLayer = function ()
 CursorDeviceProxy.prototype.selectLayer = function (index)
 {
     this.layerBank.getChannel (index).selectInEditor ();
+};
+
+CursorDeviceProxy.prototype.previousLayer = function ()
+{
+    var sel = this.getSelectedLayer ();
+    var index = sel == null ? 0 : sel.index - 1;
+    if (index == -1)
+        this.previousLayerBank ();
+    else
+        this.selectLayer (index);
+};
+
+CursorDeviceProxy.prototype.previousLayerBank = function ()
+{
+    if (!this.canScrollLayersUp ())
+        return;
+    this.scrollLayersPageUp ();
+    scheduleTask (doObject (this, this.selectLayer), [ this.numDeviceLayers - 1 ], 75);
+};
+
+CursorDeviceProxy.prototype.nextLayer = function ()
+{
+    var sel = this.getSelectedLayer ();
+    var index = sel == null ? 0 : sel.index + 1;
+    if (index == this.numDeviceLayers)
+        this.nextLayerBank ();
+    else
+        this.selectLayer (index);
+};
+
+CursorDeviceProxy.prototype.nextLayerBank = function ()
+{
+    if (!this.canScrollLayersDown ())
+        return;
+    this.scrollLayersPageDown ();
+    scheduleTask (doObject (this, this.selectLayer), [ 0 ], 75);
 };
 
 CursorDeviceProxy.prototype.enterLayer = function (index)
@@ -594,9 +779,121 @@ CursorDeviceProxy.prototype.toggleLayerSolo = function (index)
     this.layerBank.getChannel (index).getSolo ().set (!this.getLayer (index).solo);
 };
 
+//--------------------------------------
+// Drum Pads
+//--------------------------------------
+
+CursorDeviceProxy.prototype.hasDrumPads = function ()
+{
+    return this.hasDrumPadsValue;
+};
+
 CursorDeviceProxy.prototype.getDrumPad = function (index)
 {
     return this.drumPadLayers[index];
+};
+
+CursorDeviceProxy.prototype.getSelectedDrumPad = function ()
+{
+    for (var i = 0; i < this.drumPadLayers.length; i++)
+    {
+        if (this.drumPadLayers[i].selected)
+            return this.drumPadLayers[i];
+    }
+    return null;
+};
+
+CursorDeviceProxy.prototype.selectDrumPad = function (index)
+{
+    var channel = this.drumPadBank.getChannel (index);
+    if (channel != null)
+        channel.selectInEditor ();
+};
+
+CursorDeviceProxy.prototype.previousDrumPad = function ()
+{
+    var sel = this.getSelectedDrumPad ();
+    var index = sel == null ? 0 : sel.index - 1;
+    while (index > 0 && !this.getDrumPad (index).exists)
+        index--;
+    if (index == -1)
+        this.previousDrumPadBank ();
+    else
+        this.selectDrumPad (index);
+};
+
+CursorDeviceProxy.prototype.previousDrumPadBank = function ()
+{
+    if (!this.canScrollDrumPadsUp ())
+        return;
+    this.scrollDrumPadsPageUp ();
+    scheduleTask (doObject (this, this.selectDrumPad), [ this.numDrumPadLayers - 1 ], 75);
+};
+
+CursorDeviceProxy.prototype.nextDrumPad = function ()
+{
+    var sel = this.getSelectedDrumPad ();
+    var index = sel == null ? 0 : sel.index + 1;
+    while (index < this.numDrumPadLayers - 1 && !this.getDrumPad (index).exists)
+        index++;
+    if (index == this.numDrumPadLayers)
+        this.nextDrumPadBank ();
+    else
+        this.selectDrumPad (index);
+};
+
+CursorDeviceProxy.prototype.nextDrumPadBank = function ()
+{
+    if (!this.canScrollDrumPadsDown ())
+        return;
+    this.scrollDrumPadsPageDown ();
+    scheduleTask (doObject (this, this.selectDrumPad), [ 0 ], 75);
+};
+
+CursorDeviceProxy.prototype.enterDrumPad = function (index)
+{
+    this.drumPadBank.getChannel (index).selectInMixer ();
+};
+
+CursorDeviceProxy.prototype.changeDrumPadVolume = function (index, value, fractionValue)
+{
+    var t = this.getDrumPad (index);
+    t.volume = changeValue (value, t.volume, fractionValue, Config.maxParameterValue);
+    this.drumPadBank.getChannel (index).getVolume ().set (t.volume, Config.maxParameterValue);
+};
+
+CursorDeviceProxy.prototype.changeDrumPadPan = function (index, value, fractionValue)
+{
+    var t = this.getDrumPad (index);
+    t.pan = changeValue (value, t.pan, fractionValue, Config.maxParameterValue);
+    this.drumPadBank.getChannel (index).getPan ().set (t.pan, Config.maxParameterValue);
+};
+
+CursorDeviceProxy.prototype.toggleDrumPadMute = function (index)
+{
+    this.drumPadBank.getChannel (index).getMute ().set (!this.getDrumPad (index).mute);
+};
+
+CursorDeviceProxy.prototype.toggleDrumPadSolo = function (index)
+{
+    this.drumPadBank.getChannel (index).getSolo ().set (!this.getDrumPad (index).solo);
+};
+
+CursorDeviceProxy.prototype.selectFirstDeviceInDrumPad = function (index)
+{
+    this.cursorDevice.selectDevice (this.drumPadLayers[index].getDevice (0));
+};
+
+CursorDeviceProxy.prototype.canScrollDrumPadsUp = function ()
+{
+    // TODO API extension required
+    return true;
+};
+
+CursorDeviceProxy.prototype.canScrollDrumPadsDown = function ()
+{
+    // TODO API extension required
+    return true;
 };
 
 CursorDeviceProxy.prototype.scrollDrumPadsPageUp = function ()
@@ -608,6 +905,10 @@ CursorDeviceProxy.prototype.scrollDrumPadsPageDown = function ()
 {
     this.drumPadBank.scrollChannelsPageDown ();
 };
+
+//--------------------------------------
+// Direct Parameters
+//--------------------------------------
 
 CursorDeviceProxy.prototype.getDirectParameters = function ()
 {
@@ -708,11 +1009,6 @@ CursorDeviceProxy.prototype.changeDirectPageParameter = function (index, value, 
     var pos = this.currentDirectParameterPage * 8 + index;
     if (pos < this.directParameters.length)
         this.changeDirectParameter (pos, value, fractionValue);
-};
-
-CursorDeviceProxy.prototype.isMacroMapping = function (index)
-{
-    return this.isMacroMappings[index];
 };
 
 //--------------------------------------

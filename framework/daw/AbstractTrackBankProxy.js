@@ -125,10 +125,6 @@ AbstractTrackBankProxy.prototype.init = function ()
         cs.addHasContentObserver (doObjectIndex (this, i, AbstractTrackBankProxy.prototype.handleSlotHasContent));
         cs.addPlaybackStateObserver (doObjectIndex (this, i, AbstractTrackBankProxy.prototype.handlePlaybackState));
         cs.addColorObserver (doObjectIndex (this, i, AbstractTrackBankProxy.prototype.handleSlotColor));
-
-        // Devices on the track
-        // TODO Check if can be removed
-        this.tracks[i].deviceBank = t.createDeviceBank (this.numDevices);
     }
 
     this.trackBank.addCanScrollChannelsUpObserver (doObject (this, AbstractTrackBankProxy.prototype.handleCanScrollTracksUp));
@@ -535,8 +531,6 @@ AbstractTrackBankProxy.prototype.createTracks = function (count)
             sends: [],
             slots: [],
             crossfadeMode: 'AB',
-            // Non value attribute
-            deviceBank: null
         };
         for (var j = 0; j < this.numScenes; j++)
             t.slots.push ({ index: j });
@@ -556,18 +550,6 @@ AbstractTrackBankProxy.prototype.notifyListeners = function (pressed, note, velo
 {
     for (var i = 0; i < this.noteListeners.length; i++)
         this.noteListeners[i].call (null, pressed, note, velocity);
-};
-
-AbstractTrackBankProxy.prototype.nextDeviceBank = function (trackIndex)
-{
-// TODO Check if this can be done via the device chain    
-    this.tracks[trackIndex].deviceBank.scrollPageUp ();
-};
-
-AbstractTrackBankProxy.prototype.previousDeviceBank = function (trackIndex)
-{
-// TODO Check if this can be done via the device chain    
-    this.tracks[trackIndex].deviceBank.scrollPageDown ();
 };
 
 //--------------------------------------

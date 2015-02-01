@@ -62,12 +62,7 @@ AbstractDeviceMode.prototype.selectNextPage = function ()
 AbstractDeviceMode.prototype.selectPreviousPageBank = function ()
 {
     if (this.showDevices)
-    {
-        var tb = this.model.getCurrentTrackBank ();
-        var sel = tb.getSelectedTrack ();
-        if (sel)
-            tb.nextDeviceBank (sel.index);
-    }
+        this.cursorDevice.selectPreviousBank ();
     else
         this.previousPageBank ();
 };
@@ -75,12 +70,7 @@ AbstractDeviceMode.prototype.selectPreviousPageBank = function ()
 AbstractDeviceMode.prototype.selectNextPageBank = function ()
 {
     if (this.showDevices)
-    {
-        var tb = this.model.getCurrentTrackBank ();
-        var sel = tb.getSelectedTrack ();
-        if (sel)
-            tb.previousDeviceBank (sel.index);
-    }
+        this.cursorDevice.selectNextBank ();
     else
         this.nextPageBank ();
 };
@@ -179,5 +169,5 @@ AbstractDeviceMode.prototype.calcDeviceBank = function ()
     var pages = [];
     for (var i = 0; i < 8; i++)
         pages.push (this.cursorDevice.getSiblingDeviceName (i));
-    return { pages: pages, page: this.cursorDevice.getDevicePosition (), offset: 0 };
+    return { pages: pages, page: this.cursorDevice.getPositionInBank (), offset: 0 };
 };

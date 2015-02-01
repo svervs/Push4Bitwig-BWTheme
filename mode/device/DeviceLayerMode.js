@@ -19,10 +19,10 @@ DeviceLayerMode.prototype.onValueKnob = function (index, value)
     switch (index)
     {
         case 0:
-            cd.changeLayerVolume (selectedDeviceLayer.index, value, this.surface.getFractionValue ());
+            cd.changeLayerOrDrumPadVolume (selectedDeviceLayer.index, value, this.surface.getFractionValue ());
             break;
         case 1:
-            cd.changeLayerPan (selectedDeviceLayer.index, value, this.surface.getFractionValue ());
+            cd.changeLayerOrDrumPadPan (selectedDeviceLayer.index, value, this.surface.getFractionValue ());
             break;
     }
 };
@@ -39,19 +39,20 @@ DeviceLayerMode.prototype.onValueKnobTouch = function (index, isTouched)
 DeviceLayerMode.prototype.onFirstRow = function (index)
 {
     var cd = this.model.getCursorDevice ();
-    var layer = cd.getLayer (index);
+    var offset = cd.hasDrumPads () && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
+    var layer = cd.getLayerOrDrumPad (offset + index);
     if (layer.exists)
-        cd.selectLayer (layer.index);
+        cd.selectLayerOrDrumPad (layer.index);
 };
 
 DeviceLayerMode.prototype.onSecondRow = function (index)
 {
-    var tb = this.model.getCurrentTrackBank ();
     var cd = this.model.getCursorDevice ();
-    if (tb.isMuteState ())
-        cd.toggleLayerMute (index);
+    var offset = cd.hasDrumPads () && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
+    if (this.model.getCurrentTrackBank ().isMuteState ())
+        cd.toggleLayerOrDrumPadMute (offset + index);
     else
-        cd.toggleLayerSolo (index);
+        cd.toggleLayerOrDrumPadSolo (offset + index);
 };
 
 DeviceLayerMode.prototype.updateDisplay = function () 
@@ -60,11 +61,12 @@ DeviceLayerMode.prototype.updateDisplay = function ()
     if (this.model.hasSelectedDevice ())
     {
         var cd = this.model.getCursorDevice ();
-        var t = cd.getSelectedLayer ();
+        var t = cd.getSelectedLayerOrDrumPad ();
         d.clear ();
         if (t == null)
         {
-            d.setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device Layer...');
+            d.setBlock (1, 1, '    Please select')
+             .setBlock (1, 2, cd.hasDrumPads () ? 'a Drum Pad...' : 'a Device Layer...');
         }
         else
         {
@@ -78,10 +80,12 @@ DeviceLayerMode.prototype.updateDisplay = function ()
         }
         
         var selIndex = t == null ? -1 : t.index;
+        // Drum Pad Bank has size of 16, layers only 8
+        var offset = cd.hasDrumPads () && cd.getSelectedDrumPad () != null && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
         for (var i = 0; i < 8; i++)
         {
-            var layer = cd.getLayer (i);
-            var isSel = i == selIndex;
+            var layer = cd.getLayerOrDrumPad (offset + i);
+            var isSel = offset + i == selIndex;
             var n = optimizeName (layer.name, isSel ? 7 : 8);
             d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
         }
@@ -100,9 +104,10 @@ DeviceLayerMode.prototype.updateFirstRow = function ()
     }
     
     var cd = this.model.getCursorDevice ();
+    var offset = cd.hasDrumPads () && cd.getSelectedDrumPad () != null && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
     for (var i = 0; i < 8; i++)
     {
-        var dl = cd.getLayer (i);
+        var dl = cd.getLayerOrDrumPad (offset + i);
         this.surface.setButton (20 + i, dl.exists && dl.activated ? (dl.selected ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
     }
 };
@@ -117,10 +122,10 @@ DeviceLayerMode.prototype.updateSecondRow = function ()
     
     var cd = this.model.getCursorDevice ();
     var muteState = this.model.getCurrentTrackBank ().isMuteState ();
+    var offset = cd.hasDrumPads () && cd.getSelectedDrumPad () != null && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
     for (var i = 0; i < 8; i++)
     {
-        var dl = cd.getLayer (i);
-
+        var dl = cd.getLayerOrDrumPad (offset + i);
         var color = PUSH_COLOR_BLACK;
         if (dl.exists)
         {
@@ -132,7 +137,6 @@ DeviceLayerMode.prototype.updateSecondRow = function ()
             else
                 color = dl.solo ? PUSH_COLOR2_BLUE_HI : PUSH_COLOR2_GREY_LO;
         }
-
         this.surface.setButton (102 + i, color);
     }
 };

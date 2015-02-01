@@ -425,7 +425,7 @@ AbstractView.prototype.onDeviceLeft = function (event)
     if (!cd.hasSelectedDevice ())
         return;
         
-    // TODO Requires Bitwig fix - Returns true for VSTs
+    // TODO Requires Bitwig fix - Returns true for Bitwig Plugins
     var isNoContainer = !cd.hasLayers ();
     if (this.showDevices && isNoContainer)
     {
@@ -457,13 +457,13 @@ AbstractView.prototype.onDeviceLeft = function (event)
             break;
     }
     
-    var dl = cd.getSelectedLayer ();
+    var dl = cd.getSelectedLayerOrDrumPad ();
     if (isLayerMode)
     {
         if (dl != null)
         {
-            cd.enterLayer (dl.index);
-            cd.selectFirstDeviceInLayer (dl.index);
+            cd.enterLayerOrDrumPad (dl.index);
+            cd.selectFirstDeviceInLayerOrDrumPad (dl.index);
         }
         this.surface.setPendingMode (this.lastAbstractDeviceMode);
         this.setShowDevices (true);
@@ -471,7 +471,7 @@ AbstractView.prototype.onDeviceLeft = function (event)
     else
     {
         if (dl == null)
-            cd.selectLayer (0);
+            cd.selectLayerOrDrumPad (0);
         this.surface.setPendingMode (MODE_DEVICE_LAYER);
     }
 };
@@ -652,18 +652,10 @@ AbstractView.prototype.scrollLeft = function (event)
             break;
     
         case MODE_DEVICE_LAYER:
-            var sel = cd.getSelectedLayer ();
-            var index = sel == null ? 0 : sel.index - 1;
-            if (index == -1 || this.surface.isShiftPressed ())
-            {
-                if (!cd.canScrollLayersUp ())
-                    return;
-                cd.scrollLayersPageUp ();
-                var newSel = index == -1 || sel == null ? 7 : sel.index;
-                scheduleTask (doObject (this, this.selectLayer), [ newSel ], 75);
-                return;
-            }
-            this.selectLayer (index);
+            if (this.surface.isShiftPressed ())
+                cd.previousLayerOrDrumPadBank ();
+            else
+                cd.previousLayerOrDrumPad ();
             break;
             
         default:
@@ -706,18 +698,10 @@ AbstractView.prototype.scrollRight = function (event)
             break;
             
         case MODE_DEVICE_LAYER:
-            var sel = cd.getSelectedLayer ();
-            var index = sel == null ? 0 : sel.index + 1;
-            if (index == 8 || this.surface.isShiftPressed ())
-            {
-                if (!cd.canScrollLayersDown ())
-                    return;
-                cd.scrollLayersPageDown ();
-                var newSel = index == 8 || sel == null ? 0 : sel.index;
-                scheduleTask (doObject (this, this.selectLayer), [ newSel ], 75);
-                return;
-            }
-            this.selectLayer (index);
+            if (this.surface.isShiftPressed ())
+                cd.nextLayerOrDrumPadBank ();
+            else
+                cd.nextLayerOrDrumPad ();
             break;
             
         default:
@@ -736,11 +720,6 @@ AbstractView.prototype.scrollRight = function (event)
             this.selectTrack (index);
             break;
     }
-};
-
-AbstractView.prototype.selectLayer = function (index)
-{
-    this.model.getCursorDevice ().selectLayer (index);
 };
 
 //--------------------------------------
