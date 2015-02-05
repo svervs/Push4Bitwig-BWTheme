@@ -403,14 +403,10 @@ CursorDeviceProxy.prototype.canSelectNextFX = function ()
 
 CursorDeviceProxy.prototype.selectNext = function ()
 {
-    // TODO see https://github.com/teotigraphix/Framework4Bitwig/issues/55
-//    var moveBank = this.getPositionInBank () == 7;
-//println(    moveBank);
+    var moveBank = this.getPositionInBank () == 7;
     this.cursorDevice.selectNext ();
-    //if (moveBank)
-      //  this.selectNextBank ();
-    
-//println(this.position+":"+this.getPositionInBank ());    
+    if (moveBank)
+        this.selectNextBank ();
 };
 
 CursorDeviceProxy.prototype.selectPrevious = function ()
@@ -419,8 +415,6 @@ CursorDeviceProxy.prototype.selectPrevious = function ()
     this.cursorDevice.selectPrevious ();
     if (moveBank)
         this.selectPreviousBank ();
-    
-println(this.position+":"+this.getPositionInBank ());    
 };
 
 CursorDeviceProxy.prototype.selectSibling = function (index)
@@ -709,8 +703,10 @@ CursorDeviceProxy.prototype.nextLayer = function ()
 
 CursorDeviceProxy.prototype.nextLayerBank = function ()
 {
+println("next bank");    
     if (!this.canScrollLayersDown ())
         return;
+println("scrolling...");
     this.scrollLayersPageDown ();
     scheduleTask (doObject (this, this.selectLayer), [ 0 ], 75);
 };
@@ -737,12 +733,14 @@ CursorDeviceProxy.prototype.selectFirstDeviceInLayer = function (index)
 
 CursorDeviceProxy.prototype.canScrollLayersUp = function ()
 {
-    return this.canScrollLayersUpValue;
+    // TODO Bugfix required - up and down are flipped
+    return this.canScrollLayersDownValue;
 };
 
 CursorDeviceProxy.prototype.canScrollLayersDown = function ()
 {
-    return this.canScrollLayersDownValue;
+    // TODO Bugfix required - up and down are flipped
+    return this.canScrollLayersUpValue;
 };
 
 CursorDeviceProxy.prototype.scrollLayersPageUp = function ()

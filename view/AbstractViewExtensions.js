@@ -770,8 +770,8 @@ AbstractView.prototype.updateArrowStates = function ()
     
         case MODE_DEVICE_LAYER:
             var cd = this.model.getCursorDevice ();
-            this.canScrollLeft = cd.canScrollLayersDown ();
-            this.canScrollRight = cd.canScrollLayersUp ();
+            this.canScrollLeft = cd.canScrollLayersUp ();
+            this.canScrollRight = cd.canScrollLayersDown ();
             break;
             
         default:

@@ -13,7 +13,7 @@ DeviceLayerMode.prototype = new BaseMode ();
 DeviceLayerMode.prototype.onValueKnob = function (index, value)
 {
     var cd = this.model.getCursorDevice ();
-    var selectedDeviceLayer = cd.getSelectedLayer ();
+    var selectedDeviceLayer = cd.getSelectedLayerOrDrumPad ();
     if (selectedDeviceLayer == null)
         return;
     switch (index)
