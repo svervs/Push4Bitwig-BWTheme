@@ -78,7 +78,8 @@ AbstractTrackBankProxy.prototype.init = function ()
     // track bank to the selected track
     var cursorTrack = host.createArrangerCursorTrack (0, 0);
     cursorTrack.addPositionObserver (doObject (this, AbstractTrackBankProxy.prototype.handleTrackSelection));
-    this.primaryDevice = new CursorDeviceProxy (cursorTrack.createCursorDevice ("Primary"), this.numSends);
+
+    this.primaryDevice = new CursorDeviceProxy (cursorTrack.createCursorDevice ("Primary", 0), 0);
 
     for (var i = 0; i < this.numTracks; i++)
     {
@@ -528,6 +529,7 @@ AbstractTrackBankProxy.prototype.createTracks = function (count)
             recarm: false,
             monitor: false,
             autoMonitor: false,
+            canHoldNotes: false,
             sends: [],
             slots: [],
             crossfadeMode: 'AB',

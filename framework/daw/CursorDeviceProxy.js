@@ -155,15 +155,11 @@ function CursorDeviceProxy (cursorDevice, numSends)
         for (var j = 0; j < this.numSends; j++)
         {
             var s = layer.getSend (j);
-            // TODO FIX Required - Always returns null
-            if (s != null)
-            {
-                println ("Layer Sends are fixed!");
-            
-                s.addNameObserver (this.textLength, '', doObjectDoubleIndex (this, i, j, CursorDeviceProxy.prototype.handleLayerSendName));
-                s.addValueObserver (Config.maxParameterValue, doObjectDoubleIndex (this, i, j, CursorDeviceProxy.prototype.handleLayerSendVolume));
-                s.addValueDisplayObserver (this.textLength, '', doObjectDoubleIndex (this, i, j, CursorDeviceProxy.prototype.handleLayerSendVolumeStr));
-            }
+            if (s == null)
+                continue;
+            s.addNameObserver (this.textLength, '', doObjectDoubleIndex (this, i, j, CursorDeviceProxy.prototype.handleLayerSendName));
+            s.addValueObserver (Config.maxParameterValue, doObjectDoubleIndex (this, i, j, CursorDeviceProxy.prototype.handleLayerSendVolume));
+            s.addValueDisplayObserver (this.textLength, '', doObjectDoubleIndex (this, i, j, CursorDeviceProxy.prototype.handleLayerSendVolumeStr));
         }
 
         this.deviceBanks[i] = layer.createDeviceBank (this.numDevicesInBank);
@@ -189,6 +185,17 @@ function CursorDeviceProxy (cursorDevice, numSends)
         layer.getMute ().addValueObserver (doObjectIndex (this, i, CursorDeviceProxy.prototype.handleDrumPadMute));
         layer.getSolo ().addValueObserver (doObjectIndex (this, i, CursorDeviceProxy.prototype.handleDrumPadSolo));
         layer.addColorObserver (doObjectIndex (this, i, CursorDeviceProxy.prototype.handleDrumPadColor));
+        // Sends values & texts
+        for (var j = 0; j < this.numSends; j++)
+        {
+            var s = layer.getSend (j);
+// TODO println(s);
+            if (s == null)
+                continue;
+            s.addNameObserver (this.textLength, '', doObjectDoubleIndex (this, i, j, CursorDeviceProxy.prototype.handleDrumPadSendName));
+            s.addValueObserver (Config.maxParameterValue, doObjectDoubleIndex (this, i, j, CursorDeviceProxy.prototype.handleDrumPadSendVolume));
+            s.addValueDisplayObserver (this.textLength, '', doObjectDoubleIndex (this, i, j, CursorDeviceProxy.prototype.handleDrumPadSendVolumeStr));
+        }
     }
 
     //----------------------------------
@@ -703,10 +710,8 @@ CursorDeviceProxy.prototype.nextLayer = function ()
 
 CursorDeviceProxy.prototype.nextLayerBank = function ()
 {
-println("next bank");    
     if (!this.canScrollLayersDown ())
         return;
-println("scrolling...");
     this.scrollLayersPageDown ();
     scheduleTask (doObject (this, this.selectLayer), [ 0 ], 75);
 };
@@ -1276,19 +1281,22 @@ CursorDeviceProxy.prototype.handleLayerSolo = function (index, isSoloed)
     this.deviceLayers[index].solo = isSoloed;
 };
 
-CursorDeviceProxy.prototype.handleSendName = function (index1, index2, text)
+CursorDeviceProxy.prototype.handleLayerSendName = function (index, index2, text)
 {
     this.deviceLayers[index].sends[index2].name = text;
+// TODO println(index+":"+index2+":"+text+"*"+this.deviceLayers[index].sends[index2].name+"*");
 };
 
-CursorDeviceProxy.prototype.handleSendVolume = function (index1, index2, value)
+CursorDeviceProxy.prototype.handleLayerSendVolume = function (index, index2, value)
 {
     this.deviceLayers[index].sends[index2].volume = value;
+// TODO println(index+":"+index2+":"+value+"*"+this.deviceLayers[index].sends[index2].volume+"*");
 };
 
-CursorDeviceProxy.prototype.handleSendVolumeStr = function (index1, index2, text)
+CursorDeviceProxy.prototype.handleLayerSendVolumeStr = function (index, index2, text)
 {
     this.deviceLayers[index].sends[index2].volumeStr = text;
+// TODO println(index+":"+index2+":"+text+"*"+this.deviceLayers[index].sends[index2].volumeStr+"*");
 };
 
 CursorDeviceProxy.prototype.handleCanScrollLayerUp = function (canScroll)
@@ -1361,6 +1369,24 @@ CursorDeviceProxy.prototype.handleDrumPadColor = function (index, red, green, bl
     this.drumPadLayers[index].color = AbstractTrackBankProxy.getColorIndex (red, green, blue);
 };
 
+CursorDeviceProxy.prototype.handleDrumPadSendName = function (index, index2, text)
+{
+    this.drumPadLayers[index].sends[index2].name = text;
+// TODO println(index+":"+index2+":"+text+"*"+this.drumPadLayers[index].sends[index2].name+"*");
+};
+
+CursorDeviceProxy.prototype.handleDrumPadSendVolume = function (index, index2, value)
+{
+    this.drumPadLayers[index].sends[index2].volume = value;
+// TODO println(index+":"+index2+":"+value+"*"+this.drumPadLayers[index].sends[index2].volume+"*");
+};
+
+CursorDeviceProxy.prototype.handleDrumPadSendVolumeStr = function (index, index2, text)
+{
+    this.drumPadLayers[index].sends[index2].volumeStr = text;
+// TODO println(index+":"+index2+":"+text+"*"+this.drumPadLayers[index].sends[index2].volumeStr+"*");
+};
+
 //--------------------------------------
 // Private
 //--------------------------------------
@@ -1402,6 +1428,8 @@ CursorDeviceProxy.prototype.createDeviceLayers = function (count)
             solo: false,
             sends: []
         };
+        for (var j = 0; j < this.numSends; j++)
+            l.sends.push ({ index: j });
         layers.push (l);
     }
     return layers;

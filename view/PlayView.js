@@ -46,9 +46,8 @@ PlayView.prototype = new AbstractView ();
 
 PlayView.prototype.updateNoteMapping = function ()
 {
-    this.noteMap = this.canSelectedTrackHoldNotes () ? this.scales.getNoteMatrix () : this.scales.getEmptyMatrix ();
     // Workaround: https://github.com/git-moss/Push4Bitwig/issues/7
-    scheduleTask (doObject (this, function () { this.surface.setKeyTranslationTable (this.noteMap); }), null, 100);
+    scheduleTask (doObject (this, PlayView.prototype.delayedUpdateNoteMapping), null, 100);
 };
 
 PlayView.prototype.onActivate = function ()
@@ -160,8 +159,9 @@ PlayView.prototype.drawGrid = function ()
 
 PlayView.prototype.onGridNote = function (note, velocity)
 {
-    if (!this.canSelectedTrackHoldNotes ())
+    if (!this.canSelectedTrackHoldNotes () || this.noteMap[note] == -1)
         return;
+    
     // Mark selected notes
     for (var i = 0; i < 128; i++)
     {
@@ -223,4 +223,10 @@ PlayView.prototype.clearPressedKeys = function ()
 {
     for (var i = 0; i < 128; i++)
         this.pressedKeys[i] = 0;
+};
+
+PlayView.prototype.delayedUpdateNoteMapping = function ()
+{
+    this.noteMap = this.canSelectedTrackHoldNotes () ? this.scales.getNoteMatrix () : this.scales.getEmptyMatrix ();
+    this.surface.setKeyTranslationTable (this.noteMap);
 };

@@ -61,9 +61,9 @@ DeviceLayerMode.prototype.updateDisplay = function ()
     if (this.model.hasSelectedDevice ())
     {
         var cd = this.model.getCursorDevice ();
-        var t = cd.getSelectedLayerOrDrumPad ();
+        var l = cd.getSelectedLayerOrDrumPad ();
         d.clear ();
-        if (t == null)
+        if (l == null)
         {
             d.setBlock (1, 1, '    Please select')
              .setBlock (1, 2, cd.hasDrumPads () ? 'a Drum Pad...' : 'a Device Layer...');
@@ -71,15 +71,40 @@ DeviceLayerMode.prototype.updateDisplay = function ()
         else
         {
             d.setCell (0, 0, "Volume", Display.FORMAT_RAW)
-             .setCell (1, 0, t.volumeStr, Display.FORMAT_RAW)
-             .setCell (2, 0, this.surface.showVU ? t.vu : t.volume, Display.FORMAT_VALUE)
+             .setCell (1, 0, l.volumeStr, Display.FORMAT_RAW)
+             .setCell (2, 0, this.surface.showVU ? l.vu : l.volume, Display.FORMAT_VALUE)
              
              .setCell (0, 1, "Pan", Display.FORMAT_RAW)
-             .setCell (1, 1, t.panStr, Display.FORMAT_RAW)
-             .setCell (2, 1, t.pan, Display.FORMAT_PAN);
+             .setCell (1, 1, l.panStr, Display.FORMAT_RAW)
+             .setCell (2, 1, l.pan, Display.FORMAT_PAN);
+         
+            var fxTrackBank = this.model.getEffectTrackBank ();
+            if (fxTrackBank != null)
+            {
+                var isFX = this.model.isEffectTrackBankActive ();
+                for (var i = 0; i < 6; i++)
+                {
+                    var fxTrack = fxTrackBank.getTrack (i);
+                    var isEmpty = isFX || !fxTrack.exists;
+                    var pos = 2 + i;
+                    d.setCell (0, pos, isEmpty ? "" : fxTrack.name, Display.FORMAT_RAW)
+                     .setCell (1, pos, isEmpty ? "" : l.sends[i].volumeStr, Display.FORMAT_RAW)
+                     .setCell (2, pos, isEmpty ? "" : l.sends[i].volume, isEmpty ? Display.FORMAT_RAW : Display.FORMAT_VALUE);
+                }
+            }
+            else
+            {
+                for (var i = 0; i < 6; i++)
+                {
+                    var pos = 2 + i;
+                    d.setCell (0, pos, l.sends[i].name, Display.FORMAT_RAW)
+                     .setCell (1, pos, l.sends[i].volumeStr, Display.FORMAT_RAW)
+                     .setCell (2, pos, l.sends[i].volume, Display.FORMAT_VALUE);
+                }
+            }
         }
         
-        var selIndex = t == null ? -1 : t.index;
+        var selIndex = l == null ? -1 : l.index;
         // Drum Pad Bank has size of 16, layers only 8
         var offset = cd.hasDrumPads () && cd.getSelectedDrumPad () != null && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
         for (var i = 0; i < 8; i++)
