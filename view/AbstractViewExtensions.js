@@ -425,8 +425,17 @@ AbstractView.prototype.onDeviceLeft = function (event)
     if (!cd.hasSelectedDevice ())
         return;
         
-    // TODO Requires Bitwig fix - Returns true for Bitwig Plugins
     var isNoContainer = !cd.hasLayers ();
+    
+    // Workaround for multi output VSTs
+    if (this.surface.isShiftPressed ())
+    {
+        if (!isNoContainer)
+            this.setShowDevices (!this.showDevices);
+        return;
+    }
+    
+    
     if (this.showDevices && isNoContainer)
     {
         this.setShowDevices (false);
@@ -482,7 +491,6 @@ AbstractView.prototype.onDeviceRight = function (event)
         return;
     
     var cd = this.model.getCursorDevice ();
-    
     if (this.surface.getCurrentMode () == MODE_DEVICE_LAYER)
     {
         this.surface.setPendingMode (this.lastAbstractDeviceMode);
