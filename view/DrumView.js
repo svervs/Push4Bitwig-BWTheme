@@ -88,11 +88,24 @@ DrumView.prototype.onGridNote = function (note, velocity)
         // Mark selected note
         this.pressedKeys[this.offsetY + this.selectedPad] = velocity;
 
-        // Delete all of the notes on that 'pad'
-        if (playedPad >= 0 && this.surface.isDeletePressed ())
+        if (playedPad < 0)
+            return;
+        
+        if (this.surface.isDeletePressed ())
         {
+            // Delete all of the notes on that 'pad'
             this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
             this.clip.clearRow (this.offsetY + this.selectedPad);
+        }
+        else if (this.surface.isPressed (PUSH_BUTTON_MUTE))
+        {
+            // Mute that 'pad'
+            this.model.getTrackBank ().primaryDevice.toggleLayerOrDrumPadMute (playedPad);
+        }
+        else if (this.surface.isPressed (PUSH_BUTTON_SOLO))
+        {
+            // Solo that 'pad'
+            this.model.getTrackBank ().primaryDevice.toggleLayerOrDrumPadSolo (playedPad);
         }
         return;
     }
