@@ -107,6 +107,15 @@ DrumView.prototype.onGridNote = function (note, velocity)
             // Solo that 'pad'
             this.model.getTrackBank ().primaryDevice.toggleLayerOrDrumPadSolo (playedPad);
         }
+        else if (this.surface.isSelectPressed ())
+        {
+            // Also select the matching device layer channel of the pad
+            var primary = this.model.getTrackBank ().primaryDevice;
+            if (!primary.hasDrumPads ())
+                return;
+            this.surface.setPendingMode (MODE_DEVICE_LAYER);
+            primary.selectDrumPad (playedPad);
+        }
         return;
     }
 
@@ -229,7 +238,7 @@ DrumView.prototype.getPadColor = function (index, primary, hasDrumPads, isSoloed
     // Muted or soloed?
     if (drumPad.mute || (isSoloed && !drumPad.solo))
         return PUSH_COLOR2_AMBER_LO;
-    return PUSH_COLOR2_YELLOW_HI;
+    return drumPad.color ? drumPad.color : PUSH_COLOR2_YELLOW_HI;
 };
 
 DrumView.prototype.clearPressedKeys = function ()
