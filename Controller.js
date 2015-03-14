@@ -121,6 +121,7 @@ function Controller ()
     this.surface.addView (VIEW_SEQUENCER, new SequencerView (this.model));
     this.surface.addView (VIEW_DRUM, new DrumView (this.model));
     this.surface.addView (VIEW_RAINDROPS, new RaindropsView (this.model));
+    this.surface.addView (VIEW_PIANO, new PianoView (this.model));
     
     scheduleTask (doObject (this, function ()
     {

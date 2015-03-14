@@ -5,6 +5,9 @@
 
 function PlayView (model)
 {
+    if (model == null)
+        return;
+    
     AbstractView.call (this, model);
 
     this.scales = model.getScales ();
@@ -183,7 +186,7 @@ PlayView.prototype.onOctaveDown = function (event)
     this.clearPressedKeys ();
     this.scales.decOctave ();
     this.updateNoteMapping ();
-    this.surface.getDisplay ().showNotification ('       ' + this.scales.getRangeText ());
+    this.surface.getDisplay ().showNotification ('        ' + this.scales.getRangeText ());
 };
 
 PlayView.prototype.onOctaveUp = function (event)
@@ -193,7 +196,7 @@ PlayView.prototype.onOctaveUp = function (event)
     this.clearPressedKeys ();
     this.scales.incOctave ();
     this.updateNoteMapping ();
-    this.surface.getDisplay ().showNotification ('       ' + this.scales.getRangeText ());
+    this.surface.getDisplay ().showNotification ('        ' + this.scales.getRangeText ());
 };
 
 PlayView.prototype.scrollUp = function (event)

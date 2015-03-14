@@ -13,8 +13,6 @@ ScaleLayoutMode.prototype = new BaseMode ();
 
 ScaleLayoutMode.prototype.onFirstRow = function (index)
 {
-    if (index > 5)
-        return;
     this.scales.setScaleLayout (index);
     this.surface.getActiveView ().updateNoteMapping ();
     Config.setScaleLayout (Scales.LAYOUT_NAMES[this.scales.getScaleLayout ()]);
@@ -38,5 +36,5 @@ ScaleLayoutMode.prototype.updateFirstRow = function ()
 {
     var sl = this.scales.getScaleLayout ();
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, i > 5 ? PUSH_COLOR_BLACK : (sl == i ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO));
+        this.surface.setButton (20 + i, sl == i ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO);
 };
