@@ -7,9 +7,9 @@ AbstractView.prototype.stopPressed = false;
 AbstractView.prototype.automationPressed = false;
 AbstractView.prototype.quitAccentMode = false;
 AbstractView.prototype.quitAutomationMode = false;
+AbstractView.prototype.quitMasterMode = false;
+AbstractView.prototype.selectedTrackBeforeMasterMode = -1;
 AbstractView.prototype.showDevices = true;
-
-AbstractView.prototype.longPressPreviousMode = null;
 
 AbstractView.prototype.lastAbstractDeviceMode = 0;
 
@@ -289,23 +289,32 @@ AbstractView.prototype.onMaster = function (event)
 {
     switch (event.getState ())
     {
-        case ButtonEvent.UP:
-            var restoredMode = this.longPressPreviousMode != null ?
-                this.longPressPreviousMode : this.surface.getPreviousMode ();
-
-            if (this.surface.getCurrentMode () == MODE_FRAME)
-                this.surface.setPendingMode (restoredMode);
-
-            this.longPressPreviousMode = null;
+        case ButtonEvent.DOWN:
+            this.quitMasterMode = false;
             break;
 
-        case ButtonEvent.DOWN:
-            this.surface.setPendingMode (MODE_MASTER);
-            this.model.getMasterTrack ().select ();
+        case ButtonEvent.UP:
+            if (this.quitMasterMode)
+                this.surface.setPendingMode (this.surface.getPreviousMode ());
+            else            
+            {
+                if (this.surface.getCurrentMode () == MODE_MASTER)
+                {
+                    this.model.getCurrentTrackBank ().select (this.selectedTrackBeforeMasterMode);
+                    // this.surface.setPendingMode (this.surface.getPreviousMode ());
+                }
+                else
+                {
+                    this.surface.setPendingMode (MODE_MASTER);
+                    this.model.getMasterTrack ().select ();
+                    var track = this.model.getCurrentTrackBank ().getSelectedTrack ();
+                    this.selectedTrackBeforeMasterMode = track == null ? -1 : track.index;
+                }
+            }
             break;
 
         case ButtonEvent.LONG:
-            this.longPressPreviousMode = this.surface.getPreviousMode ();
+            this.quitMasterMode = true;
             this.surface.setPendingMode (MODE_FRAME);
             break;
     }
