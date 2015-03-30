@@ -130,7 +130,7 @@ SequencerView.prototype.drawGrid = function ()
             var isSet = this.clip.getStep (x, row);
             var hilite = x == hiStep;
             if (isKeyboardEnabled)
-                this.surface.pads.lightEx (x, 7 - y, isSet ? (hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLUE) : hilite ? PUSH_COLOR2_GREEN_HI : this.scales.getColor (this.noteMap, y) - 1, null, false);
+                this.surface.pads.lightEx (x, 7 - y, isSet ? (hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLUE) : hilite ? PUSH_COLOR2_GREEN_HI : this.scales.getColor (this.noteMap, y), null, false);
             else
                 this.surface.pads.lightEx (x, 7 - y, PUSH_COLOR2_BLACK, null, false);
         }
