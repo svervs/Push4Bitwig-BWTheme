@@ -589,7 +589,7 @@ AbstractView.prototype.onOctaveUp = function (event) {};
 AbstractView.prototype.onAddEffect = function (event)
 {
     if (event.isDown ())
-        this.model.getApplication ().addEffect ();
+        this.model.getBrowser ().browseDevices ();
 };
 
 AbstractView.prototype.onAddTrack = function (event)
