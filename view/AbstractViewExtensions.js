@@ -826,4 +826,4 @@ AbstractView.prototype.setShowDevices = function (enable)
     this.showDevices = enable;
     for (var i = 0; i < DEVICE_MODES.length; i++)
         this.surface.getMode (DEVICE_MODES[i]).setShowDevices (enable);
-}
+};
