@@ -29,6 +29,7 @@ Config.VELOCITY_CURVE        = 9;
 Config.PAD_THRESHOLD         = 10;
 Config.GOTO_ZERO_ON_STOP     = 11;
 Config.DISPLAY_CROSSFADER    = 12;
+Config.CONVERT_AFTERTOUCH    = 13;
 
 Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
@@ -48,6 +49,7 @@ Config.velocityCurve     = 1;
 Config.padThreshold      = 20;
 Config.gotoZeroOnStop    = false;
 Config.displayCrossfader = true;
+Config.convertAftertouch = false;
 
 Config.init = function ()
 {
@@ -180,6 +182,13 @@ Config.init = function ()
         }
         Config.notifyListeners (Config.PAD_THRESHOLD);
     });
+    
+    Config.convertAftertouchSetting = prefs.getEnumSetting ("Convert Poly Aftertouch to Channel Aftertouch", "Pad Sensitivity", [ "Off", "On" ], "Off");
+    Config.convertAftertouchSetting.addValueObserver (function (value)
+    {
+        Config.convertAftertouch = value == "On";
+        Config.notifyListeners (Config.CONVERT_AFTERTOUCH);
+    });
 };
 
 Config.setAccentEnabled = function (enabled)
@@ -260,7 +269,7 @@ Config.setPadThreshold = function (value)
 // ------------------------------
 
 Config.listeners = [];
-for (var i = 0; i <= Config.DISPLAY_CROSSFADER; i++)
+for (var i = 0; i <= Config.CONVERT_AFTERTOUCH; i++)
     Config.listeners[i] = [];
 
 Config.addPropertyListener = function (property, listener)
