@@ -175,15 +175,22 @@ PlayView.prototype.onGridNote = function (note, velocity)
 
 PlayView.prototype.onPolyAftertouch = function (note, value)
 {
-    if (Config.convertAftertouch)
+    switch (Config.convertAftertouch)
     {
-        // Convert to Channel Aftertouch
-        this.surface.sendMidiEvent (0xD0, value, 0);
-    }
-    else
-    {
-        // Translate to current note mapping
-        this.surface.sendMidiEvent (0xA0, this.noteMap[note], value);
+        case -2:
+            // Translate notes of Poly aftertouch to current note mapping
+            this.surface.sendMidiEvent (0xA0, this.noteMap[note], value);
+            break;
+        
+        case -1:
+            // Convert to Channel Aftertouch
+            this.surface.sendMidiEvent (0xD0, value, 0);
+            break;
+            
+        default:
+            // Midi CC
+            this.surface.sendMidiEvent (0xB0, Config.convertAftertouch, value);
+            break;
     }
 };
 

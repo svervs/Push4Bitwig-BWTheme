@@ -49,7 +49,12 @@ Config.velocityCurve     = 1;
 Config.padThreshold      = 20;
 Config.gotoZeroOnStop    = false;
 Config.displayCrossfader = true;
-Config.convertAftertouch = false;
+Config.convertAftertouch = 0;
+
+Config.AFTERTOUCH_CONVERSION_VALUES = [ "Poly Aftertouch", "Channel Aftertouch" ];
+for (var i = 0; i < 128; i++)
+    Config.AFTERTOUCH_CONVERSION_VALUES.push ("CC " + i);
+    
 
 Config.init = function ()
 {
@@ -155,7 +160,7 @@ Config.init = function ()
     ///////////////////////////
     // Pad Sensitivity
 
-    Config.velocityCurveSetting = prefs.getEnumSetting ("Velocity Curve", "Pad Sensitivity", PUSH_PAD_CURVES_NAME, PUSH_PAD_CURVES_NAME[1]);
+    Config.velocityCurveSetting = prefs.getEnumSetting ("Velocity Curve", "Pads", PUSH_PAD_CURVES_NAME, PUSH_PAD_CURVES_NAME[1]);
     Config.velocityCurveSetting.addValueObserver (function (value)
     {
         for (var i = 0; i < PUSH_PAD_CURVES_NAME.length; i++)
@@ -169,7 +174,7 @@ Config.init = function ()
         Config.notifyListeners (Config.VELOCITY_CURVE);
     });
 
-    Config.padThresholdSetting = prefs.getEnumSetting ("Pad Threshold", "Pad Sensitivity", PUSH_PAD_THRESHOLDS_NAME, PUSH_PAD_THRESHOLDS_NAME[20]);
+    Config.padThresholdSetting = prefs.getEnumSetting ("Pad Threshold", "Pads", PUSH_PAD_THRESHOLDS_NAME, PUSH_PAD_THRESHOLDS_NAME[20]);
     Config.padThresholdSetting.addValueObserver (function (value)
     {
         for (var i = 0; i < PUSH_PAD_THRESHOLDS_NAME.length; i++)
@@ -183,10 +188,18 @@ Config.init = function ()
         Config.notifyListeners (Config.PAD_THRESHOLD);
     });
     
-    Config.convertAftertouchSetting = prefs.getEnumSetting ("Convert Poly Aftertouch to Channel Aftertouch", "Pad Sensitivity", [ "Off", "On" ], "Off");
+    Config.convertAftertouchSetting = prefs.getEnumSetting ("Convert Poly Aftertouch to", "Pads", Config.AFTERTOUCH_CONVERSION_VALUES, Config.AFTERTOUCH_CONVERSION_VALUES[0]);
     Config.convertAftertouchSetting.addValueObserver (function (value)
     {
-        Config.convertAftertouch = value == "On";
+        
+        for (var i = 0; i < Config.AFTERTOUCH_CONVERSION_VALUES.length; i++)
+        {
+            if (Config.AFTERTOUCH_CONVERSION_VALUES[i] == value)
+            {
+                Config.convertAftertouch = i - 2;
+                break;
+            }
+        }
         Config.notifyListeners (Config.CONVERT_AFTERTOUCH);
     });
 };
