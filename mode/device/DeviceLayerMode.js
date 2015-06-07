@@ -24,6 +24,9 @@ DeviceLayerMode.prototype.onValueKnob = function (index, value)
         case 1:
             cd.changeLayerOrDrumPadPan (selectedDeviceLayer.index, value, this.surface.getFractionValue ());
             break;
+        default:
+            cd.changeLayerOrDrumPadSend (selectedDeviceLayer.index, index - 2, value, this.surface.getFractionValue ());
+            break;
     }
 };
 
