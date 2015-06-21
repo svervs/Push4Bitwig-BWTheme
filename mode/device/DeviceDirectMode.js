@@ -59,12 +59,24 @@ DeviceDirectMode.prototype.nextPageBank = function ()
 
 DeviceDirectMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
-    if (isTouched && this.surface.isDeletePressed ())
+    if (isTouched)
     {
-        /* TODO API extension required
-        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
-        this.model.getCursorDevice ().resetParameter (index);*/
-    }
+        if (this.surface.isDeletePressed ())
+        {
+            this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+            /* TODO API extension required
+            this.model.getCursorDevice ().resetParameter (index);*/
+        }
+        else
+        {
+            var cd = this.model.getCursorDevice ();
+            var params = cd.getDirectParameters ();
+            var pageOffset = cd.getSelectedDirectParameterPage () * 8;
+            var param = pageOffset + index >= params.length ? this.emptyParameter : params[pageOffset + index];
+            if (param.name.length > 0)
+                displayNotification (param.name + ": " + param.valueStr);
+        }
+    }    
 };
 
 DeviceDirectMode.prototype.onFirstRowBank = function (index)

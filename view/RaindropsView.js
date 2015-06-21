@@ -48,7 +48,6 @@ RaindropsView.prototype.usesButton = function (buttonID)
 {
     switch (buttonID)
     {
-        case PUSH_BUTTON_ADD_EFFECT:
         case PUSH_BUTTON_REPEAT:
             return false;
     }

@@ -38,13 +38,17 @@ TrackMode.prototype.onValueKnob = function (index, value)
 
 TrackMode.prototype.onValueKnobTouch = function (index, isTouched)
 {
-    if (isTouched && this.surface.isDeletePressed ())
+    if (!isTouched)
+        return;
+
+    var tb = this.model.getCurrentTrackBank ();
+    var selectedTrack = tb.getSelectedTrack ();
+    if (selectedTrack == null)
+        return;
+    
+    if (this.surface.isDeletePressed ())
     {
         this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
-        var tb = this.model.getCurrentTrackBank ();
-        var selectedTrack = tb.getSelectedTrack ();
-        if (selectedTrack == null)
-            return;
         switch (index)
         {
             case 0:
@@ -61,6 +65,37 @@ TrackMode.prototype.onValueKnobTouch = function (index, isTouched)
                 break;
             default:
                 tb.resetSend (selectedTrack.index, index - (Config.displayCrossfader ? 3 : 2));
+                break;
+        }
+    }
+    else
+    {
+        switch (index)
+        {
+            case 0:
+                displayNotification ("Volume: " + selectedTrack.volumeStr);
+                break;
+            case 1:
+                displayNotification ("Pan: " + selectedTrack.panStr);
+                break;
+            case 2:
+                if (Config.displayCrossfader)
+                    displayNotification ("Crossfader: " + selectedTrack.crossfadeMode);
+                else
+                {
+                    var sendIndex = 0;
+                    var fxTrackBank = this.model.getEffectTrackBank ();
+                    var name = (fxTrackBank == null ? selectedTrack.sends[sendIndex].name : fxTrackBank.getTrack (sendIndex).name);
+                    if (name.length > 0)
+                        displayNotification ("Send " + name + ": " + selectedTrack.sends[sendIndex].volumeStr);
+                }
+                break;
+            default:
+                var sendIndex = index - (Config.displayCrossfader ? 3 : 2);
+                var fxTrackBank = this.model.getEffectTrackBank ();
+                var name = (fxTrackBank == null ? selectedTrack.sends[sendIndex].name : fxTrackBank.getTrack (sendIndex).name);
+                if (name.length > 0)
+                    displayNotification ("Send " + name + ": " + selectedTrack.sends[sendIndex].volumeStr);
                 break;
         }
     }

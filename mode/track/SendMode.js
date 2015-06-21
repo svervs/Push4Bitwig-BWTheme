@@ -18,10 +18,18 @@ SendMode.prototype.onValueKnob = function (index, value)
 
 SendMode.prototype.onValueKnobTouch = function (index, isTouched)
 {
-    if (isTouched && this.surface.isDeletePressed ())
+    if (isTouched)
     {
         var sendIndex = this.getCurrentSendIndex ();
-        this.model.getCurrentTrackBank ().resetSend (index, sendIndex);
+        if (this.surface.isDeletePressed ())
+            this.model.getCurrentTrackBank ().resetSend (index, sendIndex);
+        else
+        {
+            var fxTrackBank = this.model.getEffectTrackBank ();
+            var t = this.model.getCurrentTrackBank ().getTrack (index);
+            if (t.exists)
+                displayNotification ("Send " + (fxTrackBank == null ? t.sends[sendIndex].name : fxTrackBank.getTrack (sendIndex).name) + ": " + t.sends[sendIndex].volumeStr);
+        }
     }
 };
 

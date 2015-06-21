@@ -34,7 +34,7 @@ DeviceModeSelectMode.prototype.updateDisplay = function ()
 DeviceModeSelectMode.prototype.updateFirstRow = function ()
 {
     this.surface.setButton (20, this.selectedMode == MODE_DEVICE_PARAMS ? DeviceModeSelectMode.firstRowButtonColorSelected : DeviceModeSelectMode.firstRowButtonColorUp);
-    this.surface.setButton (21, this.selectedMode == MODE_DEVICE_COMMON ? DeviceModeSelectMode.firstRowButtonColorSelected : DeviceModeSelectMode.firstRowButtonColorUp);
+    this.surface.setButton (21, this.selectedMode == MODE_DEVICE_COMMON || this.selectedMode == MODE_DEVICE_ENVELOPE || this.selectedMode == MODE_DEVICE_MACRO || this.selectedMode == MODE_DEVICE_MODULATE || this.selectedMode == MODE_DEVICE_USER ? DeviceModeSelectMode.firstRowButtonColorSelected : DeviceModeSelectMode.firstRowButtonColorUp);
     this.surface.setButton (22, this.selectedMode == MODE_DEVICE_DIRECT ? DeviceModeSelectMode.firstRowButtonColorSelected : DeviceModeSelectMode.firstRowButtonColorUp);
     
     this.surface.setButton (23, PUSH_COLOR_BLACK);
@@ -49,6 +49,7 @@ DeviceModeSelectMode.prototype.updateFirstRow = function ()
 
 DeviceModeSelectMode.prototype.setMode = function (mode)
 {
+    Config.setDefaultDeviceMode (mode);
     this.selectedMode = mode;
     this.surface.setPendingMode (mode);
 };

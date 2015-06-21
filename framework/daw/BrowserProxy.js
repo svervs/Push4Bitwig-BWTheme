@@ -5,48 +5,118 @@
 
 function BrowserProxy (device)
 {
-    this.numResults = 16; // TODO
-    this.textLength = GlobalConfig.CURSOR_DEVICE_TEXT_LENGTH;
+    this.numFilterColumns = 6;        // TODO
+    this.numFilterColumnEntries = 16; // TODO
+    this.numResults = 16;             // TODO
     
-    this.browser = device.createDeviceBrowser (this.numResults);
-    
-    this.browser.addIsBrowserWindowShownObserver (doObject (this, BrowserProxy.prototype.handleIsBrowserWindowShown));
-    this.browser.addIsBrowsingObserver (doObject (this, BrowserProxy.prototype.handleIsBrowsing));
+    this.textLength = GlobalConfig.PRESET_TEXT_LENGTH;
 
-    this.deviceSession = this.browser.getDeviceSession ();
-    this.deviceResults = this.deviceSession.getResults ();
-    
-    /*
-    for (var i = 0; i < this.numResults; i++)
-    {
-        var item = this.deviceResults.getItem (i);
-        item.addValueObserver (doObjectIndex (this, i, BrowserProxy.prototype.handleItemValue), this.textLength, '');
-    }
-    */
+    this.browser = device.cursorDevice.createDeviceBrowser (this.numFilterColumnEntries, this.numResults);
+
+    this.presetBrowsingSession = new BrowserSessionProxy (this.browser.getPresetSession (), this.textLength, this.numFilterColumns, this.numFilterColumnEntries, this.numResults);
+    this.deviceBrowsingSession = new BrowserSessionProxy (this.browser.getDeviceSession (), this.textLength, this.numFilterColumns, this.numFilterColumnEntries, this.numResults);
 }
 
-BrowserProxy.prototype.browseDevices = function ()
+//--------------------------------------
+// Public
+//--------------------------------------
+
+BrowserProxy.prototype.browseForPresets = function ()
 {
-    println("Browse");
+    this.stopBrowsing (false);
     
-    this.deviceSession.activate ();
+    this.presetBrowsingSession.activate ();
     this.browser.startBrowsing ();
-    this.browser.showBrowserWindow ();
 };
 
-
-
-BrowserProxy.prototype.handleIsBrowserWindowShown = function (isShown)
+BrowserProxy.prototype.browseForDevices = function ()
 {
-    println("isShown: "+isShown);
+    this.stopBrowsing (false);
+    
+    this.deviceBrowsingSession.activate ();
+    this.browser.startBrowsing ();
 };
 
-BrowserProxy.prototype.handleIsBrowsing = function (isBrowsing)
+BrowserProxy.prototype.stopBrowsing = function (commitSelection)
 {
-    println("isBrowsing: "+isBrowsing);
+    if (commitSelection)
+        this.browser.commitSelectedResult ();
+    else
+        this.browser.cancelBrowsing ();
 };
 
-BrowserProxy.prototype.handleItemValue = function (index, value)
+BrowserProxy.prototype.getPresetSession = function ()
 {
-    println("Item: "+index+":"+value);
+    return this.presetBrowsingSession;
+};
+
+BrowserProxy.prototype.getDeviceSession = function ()
+{
+    return this.deviceBrowsingSession;
+};
+
+//////////////////////
+// Preset Session
+
+BrowserProxy.prototype.getPresetFilterColumn = function (column)
+{
+    return this.presetBrowsingSession.getFilterColumn (column);
+};
+
+BrowserProxy.prototype.getPresetResultColumn = function ()
+{
+    return this.presetBrowsingSession.getResultColumn ();
+};
+
+BrowserProxy.prototype.selectPreviousPresetFilterItem = function (column)
+{
+	this.presetBrowsingSession.selectPreviousFilterItem (column);
+};
+
+BrowserProxy.prototype.selectNextPresetFilterItem = function (column)
+{
+	this.presetBrowsingSession.selectNextFilterItem (column);
+};
+
+BrowserProxy.prototype.selectPreviousPreset = function ()
+{
+	this.presetBrowsingSession.selectPreviousResult ();
+};
+
+BrowserProxy.prototype.selectNextPreset = function ()
+{
+	this.presetBrowsingSession.selectNextResult ();
+};
+
+//////////////////////
+// Device Session
+
+BrowserProxy.prototype.getDeviceFilterColumn = function (column)
+{
+    return this.deviceBrowsingSession.getFilterColumn (column);
+};
+
+BrowserProxy.prototype.getDeviceResultColumn = function ()
+{
+    return this.deviceBrowsingSession.getResultColumn ();
+};
+
+BrowserProxy.prototype.selectPreviousDeviceFilterItem = function (column)
+{
+	this.deviceBrowsingSession.selectPreviousFilterItem (column);
+};
+
+BrowserProxy.prototype.selectNextDeviceFilterItem = function (column)
+{
+	this.deviceBrowsingSession.selectNextFilterItem (column);
+};
+
+BrowserProxy.prototype.selectPreviousDevice = function ()
+{
+	this.deviceBrowsingSession.selectPreviousResult ();
+};
+
+BrowserProxy.prototype.selectNextDevice = function ()
+{
+	this.deviceBrowsingSession.selectNextResult ();
 };

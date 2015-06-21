@@ -115,6 +115,16 @@ function Controller ()
     {
         this.surface.sendPadSensitivity ();
     }));
+    Config.addPropertyListener (Config.DEFAULT_DEVICE_MODE, doObject (this, function ()
+    {
+        this.surface.getMode (MODE_DEVICE_MODE_SELECT).selectedMode = Config.defaultDeviceMode;
+        var currentMode = this.surface.getCurrentMode();
+        if (currentMode == null)
+            return;
+        // Only switch if the user is already in a device mode
+        if (currentMode < Config.DEFAULT_DEVICE_MODE_VALUES.length && Config.DEFAULT_DEVICE_MODE_VALUES[currentMode])
+            this.surface.setPendingMode (Config.defaultDeviceMode);
+    }));
     
     this.surface.addView (VIEW_PLAY, new PlayView (this.model));
     this.surface.addView (VIEW_SESSION, new SessionView (this.model));
@@ -122,6 +132,7 @@ function Controller ()
     this.surface.addView (VIEW_DRUM, new DrumView (this.model));
     this.surface.addView (VIEW_RAINDROPS, new RaindropsView (this.model));
     this.surface.addView (VIEW_PIANO, new PianoView (this.model));
+    this.surface.addView (VIEW_PRG_CHANGE, new PrgChangeView (this.model));
     
     scheduleTask (doObject (this, function ()
     {

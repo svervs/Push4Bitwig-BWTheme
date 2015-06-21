@@ -56,16 +56,28 @@ AbstractDeviceFixedMode.prototype.onValueKnob = function (index, value)
 
 AbstractDeviceFixedMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
-    if (isTouched && this.surface.isDeletePressed ())
+    if (isTouched)
     {
-        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
-        this.getParameter (index).reset ();
+        if (this.surface.isDeletePressed ())
+        {
+            this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+            this.getParameter (index).reset ();
+        }
+        else
+        {
+            var values = this.getParameterValues (index);
+            if (values.name.length > 0)
+                displayNotification (values.name + ": " + values.valueStr);
+        }
     }
 };
 
 AbstractDeviceFixedMode.prototype.onFirstRowBank = function (index)
 {
-    this.surface.setPendingMode (AbstractDeviceFixedMode.FIXED_BANKS[index]);
+    var mode = AbstractDeviceFixedMode.FIXED_BANKS[index];
+    if (mode != MODE_DEVICE_MODULATE)
+        Config.setDefaultDeviceMode (mode);
+    this.surface.setPendingMode (mode);
 };
 
 AbstractDeviceFixedMode.prototype.updateFirstRowBank = function ()

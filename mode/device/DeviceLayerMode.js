@@ -32,10 +32,45 @@ DeviceLayerMode.prototype.onValueKnob = function (index, value)
 
 DeviceLayerMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
-    if (isTouched && this.surface.isDeletePressed ())
+    if (isTouched)
     {
-        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
-        this.model.getCursorDevice ().resetParameter (index);
+        var cd = this.model.getCursorDevice ();
+        var l = cd.getSelectedLayerOrDrumPad ();
+        if (this.surface.isDeletePressed ())
+        {
+            this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+            switch (index)
+            {
+                case 0:
+                    cd.resetLayerOrDrumPadVolume (l.index);
+                    break;
+                case 1:
+                    cd.resetLayerOrDrumPadPan (l.index);
+                    break;
+                default:
+                    cd.resetLayerSend (l.index, index - 2);
+                    break;
+            }
+        }
+        else
+        {
+            switch (index)
+            {
+                case 0:
+                    displayNotification ("Volume: " + l.volumeStr);
+                    break;
+                case 1:
+                    displayNotification ("Pan: " + l.panStr);
+                    break;
+                default:
+                    var sendIndex = index - 2;
+                    var fxTrackBank = this.model.getEffectTrackBank ();
+                    var name = (fxTrackBank == null ? l.sends[sendIndex].name : fxTrackBank.getTrack (sendIndex).name);
+                    if (name.length > 0)
+                        displayNotification ("Send " + name + ": " + l.sends[sendIndex].volumeStr);
+                    break;
+            }
+        }
     }
 };
 

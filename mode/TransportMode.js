@@ -12,15 +12,13 @@ TransportMode.prototype = new BaseMode ();
 
 TransportMode.prototype.onValueKnob = function (index, value)
 {
+    /* Deactivated knobs to prevent accidental changes when using the small knobs
     var increase = value <= 61;
     if (index == 0)
-    {
         this.model.getTransport ().changeTempo (increase, this.surface.isShiftPressed ());
-    }
     else if (index > 5)
-    {
         this.model.getTransport ().changePosition (increase, this.surface.isShiftPressed ());
-    }
+    */
 };
 
 TransportMode.prototype.updateDisplay = function () 

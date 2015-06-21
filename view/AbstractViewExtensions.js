@@ -23,12 +23,23 @@ AbstractView.prototype.onPlay = function (event)
 {
     if (!event.isDown ())
         return;
+
     var transport = this.model.getTransport ();
     if (this.surface.isShiftPressed ())
     {
-        transport.toggleLoop ();
+        if (this.surface.isSelectPressed ())
+            transport.togglePunchOut ();
+        else
+            transport.toggleLoop ();
         return;
     }
+    
+    if (this.surface.isSelectPressed ())
+    {
+        transport.togglePunchIn ();
+        return;
+    }
+    
     if (this.restartFlag)
     {
         transport.stopAndRewind ();
@@ -418,7 +429,12 @@ AbstractView.prototype.onBrowse = function (event)
     if (this.surface.isShiftPressed ())
         this.model.getApplication ().toggleBrowserVisibility ();
     else
+    {
+        var browser = this.model.getBrowser ();
+        browser.browseForPresets ();
+        this.surface.getMode (MODE_DEVICE_PRESETS).setSession (browser.getPresetSession ());
         this.surface.setPendingMode (MODE_DEVICE_PRESETS);
+    }
 };
 
 //--------------------------------------
@@ -588,8 +604,13 @@ AbstractView.prototype.onOctaveUp = function (event) {};
 
 AbstractView.prototype.onAddEffect = function (event)
 {
-    if (event.isDown ())
-        this.model.getBrowser ().browseDevices ();
+    if (!event.isDown ())
+        return;
+    
+    var browser = this.model.getBrowser ();
+    browser.browseForDevices ();
+    this.surface.getMode (MODE_DEVICE_PRESETS).setSession (browser.getDeviceSession ());
+    this.surface.setPendingMode (MODE_DEVICE_PRESETS);
 };
 
 AbstractView.prototype.onAddTrack = function (event)

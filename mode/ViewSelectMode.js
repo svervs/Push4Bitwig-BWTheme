@@ -6,10 +6,13 @@
 ViewSelectMode.VIEWS =
 [
     { id: VIEW_PLAY, name: 'Play' },
+    { id: VIEW_PIANO, name: 'Piano' },
     { id: VIEW_SEQUENCER, name: 'Squencr' },
-    { id: VIEW_DRUM, name: 'Drum' },
     { id: VIEW_RAINDROPS, name: 'Raindrp' },
-    { id: VIEW_PIANO, name: 'Piano' }
+    { id: VIEW_DRUM, name: 'Drum' },
+    { id: null, name: '' },
+    { id: null, name: '' },
+    { id: VIEW_PRG_CHANGE, name: 'PrgChnge' }
 ];
 
 function ViewSelectMode (model)
@@ -21,9 +24,9 @@ ViewSelectMode.prototype = new BaseMode ();
 
 ViewSelectMode.prototype.onFirstRow = function (index)
 {
-    if (index >= ViewSelectMode.VIEWS.length)
-        return;
     var view = ViewSelectMode.VIEWS[index].id;
+    if (view == null)
+        return;
     this.model.getCurrentTrackBank ().setPreferredView (view);
     this.surface.setActiveView (view);
     this.surface.setPendingMode (this.surface.getPreviousMode ());
@@ -34,12 +37,12 @@ ViewSelectMode.prototype.updateDisplay = function ()
     var d = this.surface.getDisplay ();
     d.clear ().setBlock (1, 0, 'Track input:');
     for (var i = 0; i < ViewSelectMode.VIEWS.length; i++)
-        d.setCell (3, i, (this.surface.isActiveView (ViewSelectMode.VIEWS[i].id) ? Display.RIGHT_ARROW : '') + ViewSelectMode.VIEWS[i].name);
+        d.setCell (3, i, (ViewSelectMode.VIEWS[i].id != null && this.surface.isActiveView (ViewSelectMode.VIEWS[i].id) ? Display.RIGHT_ARROW : '') + ViewSelectMode.VIEWS[i].name);
     d.allDone ();
 };
 
 ViewSelectMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, i >= ViewSelectMode.VIEWS.length ? PUSH_COLOR_BLACK : (this.surface.isActiveView (ViewSelectMode.VIEWS[i].id) ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO));
+        this.surface.setButton (20 + i, ViewSelectMode.VIEWS[i].id == null ? PUSH_COLOR_BLACK : (this.surface.isActiveView (ViewSelectMode.VIEWS[i].id) ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO));
 };

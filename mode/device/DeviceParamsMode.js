@@ -43,10 +43,18 @@ DeviceParamsMode.prototype.nextPageBank = function ()
 
 DeviceParamsMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
-    if (isTouched && this.surface.isDeletePressed ())
+    if (isTouched)
     {
-        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
-        this.cursorDevice.resetParameter (index);
+        if (this.surface.isDeletePressed ())
+        {
+            this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+            this.cursorDevice.resetParameter (index);
+        }
+        else
+        {
+            var param = this.cursorDevice.getFXParam (index);
+            displayNotification (param.name + ": " + param.valueStr);
+        }
     }
 };
 

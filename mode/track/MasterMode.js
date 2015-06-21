@@ -23,14 +23,24 @@ MasterMode.prototype.onValueKnob = function (index, value)
 
 MasterMode.prototype.onValueKnobTouch = function (index, isTouched)
 {
-    if (isTouched && this.surface.isDeletePressed ())
+    if (isTouched)
     {
-        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
-        if (index == 0)
-            this.model.getMasterTrack ().resetVolume ();
-        else if (index == 1)
-            this.model.getMasterTrack ().resetPan ();
-    }
+        if (this.surface.isDeletePressed ())
+        {
+            this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+            if (index == 0)
+                this.model.getMasterTrack ().resetVolume ();
+            else if (index == 1)
+                this.model.getMasterTrack ().resetPan ();
+        }
+        else
+        {
+            if (index == 0)
+                displayNotification ("Volume: " + this.model.getMasterTrack ().getVolumeString ());
+            else if (index == 1)
+                displayNotification ("Pan: " + this.model.getMasterTrack ().getPanString ());
+        }
+    }    
 };
 
 MasterMode.prototype.updateDisplay = function ()

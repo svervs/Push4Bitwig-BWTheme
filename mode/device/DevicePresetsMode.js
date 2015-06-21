@@ -3,10 +3,13 @@
 // (c) 2014-2015
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-DevicePresetsMode.SELECTION_OFF      = 0;
-DevicePresetsMode.SELECTION_PRESET   = 1;
-DevicePresetsMode.SELECTION_CATEGORY = 2;
-DevicePresetsMode.SELECTION_CREATOR  = 3;
+DevicePresetsMode.SELECTION_OFF    = 0;
+DevicePresetsMode.SELECTION_PRESET = 1;
+DevicePresetsMode.SELECTION_FILTER = 2;
+
+DevicePresetsMode.knobDuration = 150;
+DevicePresetsMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO;
+DevicePresetsMode.secondRowButtonColor = PUSH_COLOR2_GREEN_LO;
 
 function DevicePresetsMode (model)
 {
@@ -16,20 +19,21 @@ function DevicePresetsMode (model)
 
     this.knobInvalidated = false;
     this.selectionMode = DevicePresetsMode.SELECTION_OFF;
+    this.filterColumn = -1;
     
-    this.activeButtons = [];
-    this.activeButtons[20] = {};
-    this.activeButtons[22] = {};
-    this.activeButtons[24] = {};
-    this.activeButtons[102] = {};
-    this.activeButtons[104] = {};
-    this.activeButtons[106] = {};
+    this.session = null;
 }
 DevicePresetsMode.prototype = new BaseMode ();
 
-DevicePresetsMode.knobDuration = 150;
-DevicePresetsMode.firstRowButtonColor = PUSH_COLOR_GREEN_LO;
-DevicePresetsMode.secondRowButtonColor = PUSH_COLOR2_GREEN_LO;
+DevicePresetsMode.prototype.setSession = function (session)
+{
+    this.session = session;
+};
+
+DevicePresetsMode.prototype.onDeactivate = function () 
+{
+    this.model.getBrowser ().stopBrowsing (true);
+};
 
 DevicePresetsMode.prototype.onValueKnobTouch = function (index, isTouched)
 {
@@ -41,13 +45,13 @@ DevicePresetsMode.prototype.onValueKnobTouch = function (index, isTouched)
     switch (index)
     {
         case 0:
+        case 1:
             this.selectionMode = DevicePresetsMode.SELECTION_PRESET;
+            this.filterColumn = -1;
             break;
-        case 2:
-            this.selectionMode = DevicePresetsMode.SELECTION_CATEGORY;
-            break;
-        case 4:
-            this.selectionMode = DevicePresetsMode.SELECTION_CREATOR;
+        default:
+            this.selectionMode = DevicePresetsMode.SELECTION_FILTER;
+            this.filterColumn = index - 2;
             break;
     }
 };
@@ -71,78 +75,84 @@ DevicePresetsMode.prototype.onValueKnob = function (index, value)
 
 DevicePresetsMode.prototype.onFirstRow = function (index)
 {
-    var device = this.model.getCursorDevice ();
     var count = this.surface.isShiftPressed () ? 4 : 1;
     for (var i = 0; i < count; i++)
     {
-        if (index == 0)
-            device.switchToPreviousPreset ();
-        else if (index == 2)
-            device.switchToPreviousPresetCategory ();
-        else if (index == 4)
-            device.switchToPreviousPresetCreator ();
+        if (index < 2)
+            this.session.selectPreviousResult ();
+        else
+        {
+            this.filterColumn = index - 2;
+            this.session.selectPreviousFilterItem (this.filterColumn);
+        }
     }
 };
 
 DevicePresetsMode.prototype.onSecondRow = function (index)
 {
-    var device = this.model.getCursorDevice ();
     var count = this.surface.isShiftPressed () ? 4 : 1;
     for (var i = 0; i < count; i++)
     {
-        if (index == 0)
-            device.switchToNextPreset ();
-        else if (index == 2)
-            device.switchToNextPresetCategory ();
-        else if (index == 4)
-            device.switchToNextPresetCreator ();
+        if (index < 2)
+            this.session.selectNextResult ();
+        else
+        {
+            this.filterColumn = index - 2;
+            this.session.selectNextFilterItem (this.filterColumn);
+        }
     }
+};
+
+DevicePresetsMode.prototype.isPresetSession = function ()
+{
+    return this.session === this.model.getBrowser ().getPresetSession ();
 };
 
 DevicePresetsMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
-    if (!this.model.hasSelectedDevice ())
+    if (this.isPresetSession () && !this.model.hasSelectedDevice ())
     {
         d.clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ').allDone ();
         return;
     }
 
-    var cd = this.model.getCursorDevice ();
     d.clear ();
 
     switch (this.selectionMode)
     {
         case DevicePresetsMode.SELECTION_OFF:
-            d.setBlock (0, 0, "Preset:")
-             .setBlock (0, 1, "Category:")
-             .setBlock (0, 2, "Creator:")
-             .setBlock (0, 3, "Device:")
-             .setBlock (1, 0, cd.presetProvider.getSelectedItem ())
-             .setBlock (1, 1, cd.categoryProvider.getSelectedItem ())
-             .setBlock (1, 2, cd.creatorProvider.getSelectedItem ())
-             .setBlock (1, 3, this.model.getSelectedDevice ().name);
+            d.setBlock (0, 0, this.isPresetSession () ? "Preset:" : "Device")
+             .setBlock (3, 0, "Selected Device:")
+             .setBlock (3, 1, this.model.getSelectedDevice ().name);
+            for (var i = 0; i < 6; i++)
+            {
+                var column = this.session.getFilterColumn (i);
+                d.setCell (0, 2 + i, optimizeName (column.name + ":", 8))
+                 .setCell (1, 2 + i, column.cursorExists ? column.cursorName : '');
+            }
             break;
+
         case DevicePresetsMode.SELECTION_PRESET:
             // Preset column
-            var view = cd.presetProvider.getPagedView (16);
-            var selPos = cd.presetProvider.getSelectedIndex () % 16;
+            var results = this.session.getResultColumn ();
+            var selPos = -1; // TODO ???
             for (var i = 0; i < 16; i++)
-                d.setBlock (i % 4, Math.floor (i / 4), (i == selPos ? Display.RIGHT_ARROW : ' ') + (view[i] != null ? view[i] : ""));
+                d.setBlock (i % 4, Math.floor (i / 4), (i == selPos ? Display.RIGHT_ARROW : ' ') + results[i].name);
             break;
-        case DevicePresetsMode.SELECTION_CATEGORY:
-            // Categories column
-            var view = cd.categoryProvider.getPagedView (12);
-            var selPos = cd.categoryProvider.getSelectedIndex () % 12;
-            for (var i = 0; i < 12; i++)
-                d.setBlock (i % 4, 1 + Math.floor (i / 4), (i == selPos ? Display.RIGHT_ARROW : ' ') + (view[i] != null ? view[i] : ""));
-            break;
-        case DevicePresetsMode.SELECTION_CREATOR:
-            // Creator column
-            var view = cd.creatorProvider.getPagedView (8);
-            var selPos = cd.creatorProvider.getSelectedIndex () % 8;
-            for (var i = 0; i < 8; i++)
-                d.setBlock (i % 4, 2 + Math.floor (i / 4), (i == selPos ? Display.RIGHT_ARROW : ' ') + (view[i] != null ? view[i] : ""));
+
+        case DevicePresetsMode.SELECTION_FILTER:
+            var items = this.session.getFilterColumn (this.filterColumn).items;
+            for (var i = 0; i < 16; i++)
+            {
+                var text = (items[i].isSelected ? Display.RIGHT_ARROW : ' ') + items[i].name + '                ';
+                if (items[i].name.length > 0)
+                {
+                    var hitStr = "(" + items[i].hits + ")";
+                    text = text.substr (0, 17 - hitStr.length) + hitStr;
+                }
+                d.setBlock (i % 4, Math.floor (i / 4), text);
+            }
             break;
     }
     d.allDone ();
@@ -151,11 +161,11 @@ DevicePresetsMode.prototype.updateDisplay = function ()
 DevicePresetsMode.prototype.updateFirstRow = function ()
 {
     for (var i = 20; i < 28; i++)
-        this.surface.setButton (i, this.activeButtons[i] != null ? DevicePresetsMode.firstRowButtonColor : PUSH_COLOR_BLACK);
+        this.surface.setButton (i, DevicePresetsMode.firstRowButtonColor);
 };
 
 DevicePresetsMode.prototype.updateSecondRow = function ()
 {
     for (var i = 102; i < 110; i++)
-        this.surface.setButton (i, this.activeButtons[i] != null ? DevicePresetsMode.secondRowButtonColor : PUSH_COLOR_BLACK);
+        this.surface.setButton (i, DevicePresetsMode.secondRowButtonColor);
 };

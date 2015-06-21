@@ -30,6 +30,7 @@ Config.PAD_THRESHOLD         = 10;
 Config.GOTO_ZERO_ON_STOP     = 11;
 Config.DISPLAY_CROSSFADER    = 12;
 Config.CONVERT_AFTERTOUCH    = 13;
+Config.DEFAULT_DEVICE_MODE   = 14;
 
 Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
@@ -50,10 +51,13 @@ Config.padThreshold      = 20;
 Config.gotoZeroOnStop    = false;
 Config.displayCrossfader = true;
 Config.convertAftertouch = 0;
+Config.defaultDeviceMode = 20; /*MODE_DEVICE_PARAMS;*/
 
 Config.AFTERTOUCH_CONVERSION_VALUES = [ "Poly Aftertouch", "Channel Aftertouch" ];
 for (var i = 0; i < 128; i++)
     Config.AFTERTOUCH_CONVERSION_VALUES.push ("CC " + i);
+
+Config.DEFAULT_DEVICE_MODE_VALUES = [];
     
 
 Config.init = function ()
@@ -154,6 +158,31 @@ Config.init = function ()
     {
         Config.displayCrossfader = value == "On";
         Config.notifyListeners (Config.DISPLAY_CROSSFADER);
+    });
+
+    Config.DEFAULT_DEVICE_MODE_VALUES[MODE_DEVICE_PARAMS]   = "Device - Parameters";
+    Config.DEFAULT_DEVICE_MODE_VALUES[MODE_DEVICE_COMMON]   = "Fixed - Common";
+    Config.DEFAULT_DEVICE_MODE_VALUES[MODE_DEVICE_ENVELOPE] = "Fixed - Envelope";
+    Config.DEFAULT_DEVICE_MODE_VALUES[MODE_DEVICE_MACRO]    = "Fixed - Macro";
+    Config.DEFAULT_DEVICE_MODE_VALUES[MODE_DEVICE_USER]     = "Fixed - User";
+    Config.DEFAULT_DEVICE_MODE_VALUES[MODE_DEVICE_DIRECT]   = "Direct - Parameters";
+    var options = [];
+    for (var i = 0; i < Config.DEFAULT_DEVICE_MODE_VALUES.length; i++)
+        if (Config.DEFAULT_DEVICE_MODE_VALUES[i])
+            options.push (Config.DEFAULT_DEVICE_MODE_VALUES[i]);
+    
+    Config.defaultDeviceModeSetting = prefs.getEnumSetting ("Default Device Mode", "Workflow", options, options[0]);
+    Config.defaultDeviceModeSetting.addValueObserver (function (value)
+    {
+        for (var i = 0; i < Config.DEFAULT_DEVICE_MODE_VALUES.length; i++)
+        {
+            if (Config.DEFAULT_DEVICE_MODE_VALUES[i] == value)
+            {
+                Config.defaultDeviceMode = i;
+                break;
+            }
+        }
+        Config.notifyListeners (Config.DEFAULT_DEVICE_MODE);
     });
 
 
@@ -265,6 +294,11 @@ Config.setDisplayCrossfader = function (enabled)
     Config.displayCrossfaderSetting.set (enabled ? "On" : "Off");
 };
 
+Config.setDefaultDeviceMode = function (mode)
+{
+    Config.defaultDeviceModeSetting.set (Config.DEFAULT_DEVICE_MODE_VALUES[mode]);
+};
+
 Config.setVelocityCurve = function (value)
 {
     Config.velocityCurve = Math.max (0, Math.min (value, PUSH_PAD_CURVES_NAME.length - 1));
@@ -282,7 +316,7 @@ Config.setPadThreshold = function (value)
 // ------------------------------
 
 Config.listeners = [];
-for (var i = 0; i <= Config.CONVERT_AFTERTOUCH; i++)
+for (var i = 0; i <= Config.DEFAULT_DEVICE_MODE; i++)
     Config.listeners[i] = [];
 
 Config.addPropertyListener = function (property, listener)

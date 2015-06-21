@@ -142,7 +142,6 @@ PlayView.prototype.usesButton = function (buttonID)
     switch (buttonID)
     {
         case PUSH_BUTTON_REPEAT:
-        case PUSH_BUTTON_ADD_EFFECT:
             return false;
     }
     return true;
