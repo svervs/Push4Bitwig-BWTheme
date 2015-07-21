@@ -136,7 +136,7 @@ DevicePresetsMode.prototype.updateDisplay = function ()
         case DevicePresetsMode.SELECTION_PRESET:
             // Preset column
             var results = this.session.getResultColumn ();
-            var selPos = -1; // TODO ???
+            var selPos = -1; // TODO: ???
             for (var i = 0; i < 16; i++)
                 d.setBlock (i % 4, Math.floor (i / 4), (i == selPos ? Display.RIGHT_ARROW : ' ') + results[i].name);
             break;
