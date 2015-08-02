@@ -89,7 +89,20 @@ AbstractView.prototype.onNew = function (event)
             if (!s.hasContent)
             {
                 var slots = tb.getClipLauncherSlots (t.index);
-                slots.createEmptyClip (sIndex, Math.pow (2, tb.getNewClipLength ()));
+                var newCLipLength = tb.getNewClipLength ();
+                var beats = 0;
+                switch (newCLipLength)
+                {
+                    case 0:
+                    case 1:
+                        beats = Math.pow (2, tb.getNewClipLength ());
+                        
+                        break;
+                    default:
+                        beats = Math.pow (2, (newCLipLength - 2)) * this.model.getQuartersPerMeasure ();
+                        break;
+                }
+                slots.createEmptyClip (sIndex, beats);
                 if (slotIndex != sIndex)
                     slots.select (sIndex);
                 slots.launch (sIndex);
