@@ -79,7 +79,11 @@ DevicePresetsMode.prototype.onFirstRow = function (index)
     for (var i = 0; i < count; i++)
     {
         if (index < 2)
+        {
             this.session.selectPreviousResult ();
+            if (this.session.getSelectedResultIndex () == 0)
+                this.session.previousResultPage ();
+        }
         else
         {
             this.filterColumn = index - 2;
@@ -94,7 +98,11 @@ DevicePresetsMode.prototype.onSecondRow = function (index)
     for (var i = 0; i < count; i++)
     {
         if (index < 2)
+        {
             this.session.selectNextResult ();
+            if (this.session.getSelectedResultIndex () == this.session.numResults - 1)
+                this.session.nextResultPage ();
+        }
         else
         {
             this.filterColumn = index - 2;

@@ -103,6 +103,26 @@ BrowserSessionProxy.prototype.getSelectedResult = function ()
     return this.selectedResult;
 };
 
+BrowserSessionProxy.prototype.getSelectedResultIndex = function ()
+{
+    for (var i = 0; i < this.numResults; i++)
+    {
+        if (this.resultData[i].isSelected)
+            return i;
+    }
+    return -1;
+};
+
+BrowserSessionProxy.prototype.previousResultPage = function ()
+{
+    this.resultsItemBank.scrollPageUp ();
+};
+
+BrowserSessionProxy.prototype.nextResultPage = function ()
+{
+    this.resultsItemBank.scrollPageDown ();
+};
+
 //--------------------------------------
 // Private
 //--------------------------------------
