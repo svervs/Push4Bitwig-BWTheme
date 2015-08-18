@@ -122,7 +122,9 @@ DevicePresetsMode.prototype.updateDisplay = function ()
     switch (this.selectionMode)
     {
         case DevicePresetsMode.SELECTION_OFF:
+            var selectedResult = this.session.getSelectedResult ();
             d.setBlock (0, 0, this.isPresetSession () ? "Preset:" : "Device")
+             .setBlock (1, 0, selectedResult == null ? "None" : selectedResult)
              .setBlock (3, 0, "Selected Device:")
              .setBlock (3, 1, this.model.getSelectedDevice ().name);
             for (var i = 0; i < 6; i++)
@@ -134,11 +136,9 @@ DevicePresetsMode.prototype.updateDisplay = function ()
             break;
 
         case DevicePresetsMode.SELECTION_PRESET:
-            // Preset column
             var results = this.session.getResultColumn ();
-            var selPos = -1; // TODO: ???
             for (var i = 0; i < 16; i++)
-                d.setBlock (i % 4, Math.floor (i / 4), (i == selPos ? Display.RIGHT_ARROW : ' ') + results[i].name);
+                d.setBlock (i % 4, Math.floor (i / 4), (results[i].isSelected ? Display.RIGHT_ARROW : ' ') + results[i].name);
             break;
 
         case DevicePresetsMode.SELECTION_FILTER:
