@@ -14,8 +14,7 @@ function BrowserSessionProxy (session, textLength, numFilterColumns, numFilterCo
     this.isActive = false;    
     this.selectedResult = null;
     
-    // TODO Crashes Bitwig
-    // session.addIsActiveObserver (doObject (this, BrowserSessionProxy.prototype.handleIsActive));
+    session.addIsActiveObserver (doObject (this, BrowserSessionProxy.prototype.handleIsActive));
     
     this.filterColumnBank = session.createFilterBank (this.numFilterColumns);
     this.filterColumns = [];
@@ -86,6 +85,26 @@ BrowserSessionProxy.prototype.selectPreviousFilterItem = function (column)
 BrowserSessionProxy.prototype.selectNextFilterItem = function (column)
 {
 	this.cursorItems[column].selectNext ();
+};
+
+BrowserSessionProxy.prototype.previousFilterItemPage = function (column)
+{
+    this.filterColumnItemBanks[column].scrollPageUp ();
+};
+
+BrowserSessionProxy.prototype.nextFilterItemPage = function (column)
+{
+    this.filterColumnItemBanks[column].scrollPageDown ();
+};
+
+BrowserSessionProxy.prototype.getSelectedFilterItemIndex = function (column)
+{
+    for (var i = 0; i < this.numFilterColumnEntries; i++)
+    {
+        if (this.filterColumnData[column].items[i].isSelected)
+            return i;
+    }
+    return -1;
 };
 
 BrowserSessionProxy.prototype.selectPreviousResult = function ()
@@ -171,7 +190,6 @@ BrowserSessionProxy.prototype.createResultData = function (count)
 BrowserSessionProxy.prototype.handleIsActive = function (active)
 {
     this.isActive = active;
-    println(active);
 };
 
 BrowserSessionProxy.prototype.handleColumnExists = function (index, exists)

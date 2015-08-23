@@ -88,6 +88,8 @@ DevicePresetsMode.prototype.onFirstRow = function (index)
         {
             this.filterColumn = index - 2;
             this.session.selectPreviousFilterItem (this.filterColumn);
+            if (this.session.getSelectedFilterItemIndex (this.filterColumn) == 0)
+                this.session.previousFilterItemPage (this.filterColumn);
         }
     }
 };
@@ -107,6 +109,8 @@ DevicePresetsMode.prototype.onSecondRow = function (index)
         {
             this.filterColumn = index - 2;
             this.session.selectNextFilterItem (this.filterColumn);
+            if (this.session.getSelectedFilterItemIndex (this.filterColumn) == this.session.numFilterColumnEntries - 1)
+                this.session.nextFilterItemPage (this.filterColumn);
         }
     }
 };
@@ -119,10 +123,19 @@ DevicePresetsMode.prototype.isPresetSession = function ()
 DevicePresetsMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
-    if (this.isPresetSession () && !this.model.hasSelectedDevice ())
+    if (this.isPresetSession ())
     {
-        d.clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ').allDone ();
-        return;
+        if (!this.session.isActive)
+        {
+            d.clear ().setBlock (1, 1, '   No active Brow').setBlock (1, 2, 'sing Session.')
+                      .setBlock (2, 1, '            Press').setBlock (2, 2, 'Browse...').allDone ();
+            return;
+        }
+        if (!this.model.hasSelectedDevice ())
+        {
+            d.clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ').allDone ();
+            return;
+        }
     }
 
     d.clear ();
