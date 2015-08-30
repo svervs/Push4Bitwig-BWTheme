@@ -31,11 +31,21 @@ Config.GOTO_ZERO_ON_STOP     = 11;
 Config.DISPLAY_CROSSFADER    = 12;
 Config.CONVERT_AFTERTOUCH    = 13;
 Config.DEFAULT_DEVICE_MODE   = 14;
+Config.FOOTSWITCH_2          = 15;
 
 Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
 Config.RIBBON_MODE_CC_PB = 2;
 Config.RIBBON_MODE_PB_CC = 3;
+
+Config.FOOTSWITCH_2_TOGGLE_PLAY         = 0;
+Config.FOOTSWITCH_2_TOGGLE_RECORD       = 1;
+Config.FOOTSWITCH_2_STOP_ALL_CLIPS      = 2;
+Config.FOOTSWITCH_2_TOGGLE_CLIP_OVERDUB = 3;
+Config.FOOTSWITCH_2_UNDO                = 4;
+Config.FOOTSWITCH_2_TAP_TEMPO           = 5;
+Config.FOOTSWITCH_2_NEW_BUTTON          = 6;
+Config.FOOTSWITCH_2_CLIP_BASED_LOOPER   = 7;
 
 Config.accentActive      = false;                       // Accent button active
 Config.fixedAccentValue  = 127;                         // Fixed velocity value for accent
@@ -52,6 +62,7 @@ Config.gotoZeroOnStop    = false;
 Config.displayCrossfader = true;
 Config.convertAftertouch = 0;
 Config.defaultDeviceMode = 20; /*MODE_DEVICE_PARAMS;*/
+Config.footswitch2       = Config.FOOTSWITCH_2_NEW_BUTTON;
 
 Config.AFTERTOUCH_CONVERSION_VALUES = [ "Poly Aftertouch", "Channel Aftertouch" ];
 for (var i = 0; i < 128; i++)
@@ -184,7 +195,23 @@ Config.init = function ()
         }
         Config.notifyListeners (Config.DEFAULT_DEVICE_MODE);
     });
-
+    
+    Config.footswitch2Setting = prefs.getEnumSetting ("Footswitch 2", "Workflow", [ "Toggle Play", "Toggle Record", "Stop All Clips", "Toggle Clip Overdub", "Undo", "Tap Tempo", "New Button", "Clip Based Looper" ], "New Button");
+    Config.footswitch2Setting.addValueObserver (function (value)
+    {
+        switch (value)
+        {
+            case "Toggle Play":         Config.footswitch2 = Config.FOOTSWITCH_2_TOGGLE_PLAY; break;
+            case "Toggle Record":       Config.footswitch2 = Config.FOOTSWITCH_2_TOGGLE_RECORD; break;
+            case "Stop All Clips":      Config.footswitch2 = Config.FOOTSWITCH_2_STOP_ALL_CLIPS; break;
+            case "Toggle Clip Overdub": Config.footswitch2 = Config.FOOTSWITCH_2_TOGGLE_CLIP_OVERDUB; break;
+            case "Undo":                Config.footswitch2 = Config.FOOTSWITCH_2_UNDO; break;
+            case "Tap Tempo":           Config.footswitch2 = Config.FOOTSWITCH_2_TAP_TEMPO; break;
+            case "New Button":          Config.footswitch2 = Config.FOOTSWITCH_2_NEW_BUTTON; break;
+            case "Clip Based Looper":   Config.footswitch2 = Config.FOOTSWITCH_2_CLIP_BASED_LOOPER; break;
+        }
+        Config.notifyListeners (Config.RIBBON_MODE);
+    });
 
     ///////////////////////////
     // Pad Sensitivity

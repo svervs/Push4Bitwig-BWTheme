@@ -77,41 +77,28 @@ AbstractView.prototype.onNew = function (event)
     if (!event.isDown ())
         return;
     var tb = this.model.getCurrentTrackBank ();
-    var t = tb.getSelectedTrack ();
-    if (t != null)
+    var track = tb.getSelectedTrack ();
+    if (track == null)
     {
-        var slotIndexes = tb.getSelectedSlots (t.index);
-        var slotIndex = slotIndexes.length == 0 ? 0 : slotIndexes[0].index;
-        for (var i = 0; i < 8; i++)
-        {
-            var sIndex = (slotIndex + i) % 8;
-            var s = t.slots[sIndex];
-            if (!s.hasContent)
-            {
-                var slots = tb.getClipLauncherSlots (t.index);
-                var newCLipLength = tb.getNewClipLength ();
-                var beats = 0;
-                switch (newCLipLength)
-                {
-                    case 0:
-                    case 1:
-                        beats = Math.pow (2, tb.getNewClipLength ());
-                        
-                        break;
-                    default:
-                        beats = Math.pow (2, (newCLipLength - 2)) * this.model.getQuartersPerMeasure ();
-                        break;
-                }
-                slots.createEmptyClip (sIndex, beats);
-                if (slotIndex != sIndex)
-                    slots.select (sIndex);
-                slots.launch (sIndex);
-                this.model.getTransport ().setLauncherOverdub (true);
-                return;
-            }
-        }
+        displayNotification ("Please select an Instrument track first.");
+        return;
     }
-    displayNotification ("In the current selected grid view there is no empty slot. Please scroll down.");
+        
+    var selectedSlot = tb.getSelectedSlot (track.index);
+    var slotIndex = selectedSlot == null ? 0 : selectedSlot.index;
+    var slot = tb.getEmptySlot (track.index, slotIndex);
+    if (slot == null)
+    {
+        displayNotification ("In the current selected grid view there is no empty slot. Please scroll down.");
+        return;
+    }
+    
+    tb.createClip (track.index, slot.index, this.model.getQuartersPerMeasure ());
+    var slots = tb.getClipLauncherSlots (track.index);
+    if (slotIndex != slot.index)
+        slots.select (slot.index);
+    slots.launch (slot.index);
+    this.model.getTransport ().setLauncherOverdub (true);
 };
 
 AbstractView.prototype.onDuplicate = function (event)
@@ -458,7 +445,25 @@ AbstractView.prototype.onDeviceLeft = function (event)
 {
     if (!event.isDown ())
         return;
-
+// TODO Needs testing
+    var cm = this.surface.getCurrentMode ();
+    switch (cm)
+    {
+        case MODE_TRACK:
+        case MODE_VOLUME:
+        case MODE_PAN:
+        case MODE_CROSSFADER:
+        case MODE_SEND1:
+        case MODE_SEND2:
+        case MODE_SEND3:
+        case MODE_SEND4:
+        case MODE_SEND5:
+        case MODE_SEND6:
+            if (!this.model.isEffectTrackBankActive ())
+                this.model.getTrackBank ().selectChildren ();
+            return;
+    }
+    
     var cd = this.model.getCursorDevice ();
     if (!cd.hasSelectedDevice ())
         return;
@@ -484,7 +489,6 @@ AbstractView.prototype.onDeviceLeft = function (event)
         return;
 
     var isLayerMode = false;
-    var cm = this.surface.getCurrentMode ();
     switch (cm)
     {
         case MODE_DEVICE_LAYER:
@@ -527,9 +531,27 @@ AbstractView.prototype.onDeviceRight = function (event)
 {
     if (!event.isDown ())   
         return;
-    
+
+    var cm = this.surface.getCurrentMode ();
+    switch (cm)
+    {
+        case MODE_TRACK:
+        case MODE_VOLUME:
+        case MODE_PAN:
+        case MODE_CROSSFADER:
+        case MODE_SEND1:
+        case MODE_SEND2:
+        case MODE_SEND3:
+        case MODE_SEND4:
+        case MODE_SEND5:
+        case MODE_SEND6:
+            if (!this.model.isEffectTrackBankActive ())
+                this.model.getTrackBank ().selectParent ();
+            return;
+    }
+
     var cd = this.model.getCursorDevice ();
-    if (this.surface.getCurrentMode () == MODE_DEVICE_LAYER)
+    if (cm == MODE_DEVICE_LAYER)
     {
         this.surface.setPendingMode (this.lastAbstractDeviceMode);
         cd.selectChannel ();
@@ -781,7 +803,76 @@ AbstractView.prototype.onFootswitch1 = function (value) {};
 
 AbstractView.prototype.onFootswitch2 = function (value)
 {
-    this.onNew (new ButtonEvent (value == 127 ? ButtonEvent.DOWN : ButtonEvent.UP));
+    var event = new ButtonEvent (value == 127 ? ButtonEvent.DOWN : ButtonEvent.UP);
+    switch (Config.footswitch2)
+    {
+        case Config.FOOTSWITCH_2_TOGGLE_PLAY:
+            this.onPlay (event);
+            break;
+            
+        case Config.FOOTSWITCH_2_TOGGLE_RECORD:
+            this.onRecord (event);
+            break;
+            
+        case Config.FOOTSWITCH_2_STOP_ALL_CLIPS:
+            if (event.isDown ())
+                this.model.getCurrentTrackBank ().getClipLauncherScenes ().stop ();
+            break;
+            
+        case Config.FOOTSWITCH_2_TOGGLE_CLIP_OVERDUB:
+            if (event.isDown ())
+                this.model.getTransport ().toggleLauncherOverdub ();
+            break;
+            
+        case Config.FOOTSWITCH_2_UNDO:
+            this.onUndo (event);
+            break;
+            
+        case Config.FOOTSWITCH_2_TAP_TEMPO:
+            this.onTapTempo (event);
+            break;
+            
+        case Config.FOOTSWITCH_2_NEW_BUTTON:
+            this.onNew (event);
+            break;
+            
+        case Config.FOOTSWITCH_2_CLIP_BASED_LOOPER:
+            var tb = this.model.getCurrentTrackBank ();
+            var track = tb.getSelectedTrack ();
+            if (track == null)
+            {
+                displayNotification ("Please select an Instrument track first.");
+                return;
+            }
+
+            var selectedSlot = tb.getSelectedSlot (track.index);
+            var slot = selectedSlot == null ? track.slots[0] : selectedSlot;
+            var slots = tb.getClipLauncherSlots (track.index);
+            if (event.isDown ())
+            {
+                if (slot.hasContent)
+                {
+                    // If there is a clip in the selected slot, enable (not toggle) LauncherOverdub. 
+                    this.model.getTransport ().setLauncherOverdub (true);
+                }
+                else
+                {
+                    // If there is no clip in the selected slot, create a clip and begin record mode. 
+                    // Releasing it ends record mode.
+                    tb.createClip (track.index, slot.index, this.model.getQuartersPerMeasure ());
+                    slots.select (slot.index);
+                    this.model.getTransport ().setLauncherOverdub (true);
+                }
+            }
+            else
+            {
+                // Releasing it would turn off LauncherOverdub.
+                this.model.getTransport ().setLauncherOverdub (false);
+            }
+            // Start transport if not already playing
+            slots.launch (slot.index);
+            break;
+    }
 };
 
 
