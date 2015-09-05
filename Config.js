@@ -37,6 +37,7 @@ Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
 Config.RIBBON_MODE_CC_PB = 2;
 Config.RIBBON_MODE_PB_CC = 3;
+Config.RIBBON_MODE_FADER = 4;
 
 Config.FOOTSWITCH_2_TOGGLE_PLAY         = 0;
 Config.FOOTSWITCH_2_TOGGLE_RECORD       = 1;
@@ -95,15 +96,16 @@ Config.init = function ()
     ///////////////////////////
     // Ribbon
 
-    Config.ribbonModeSetting = prefs.getEnumSetting ("Mode", "Ribbon", [ "Pitch", "CC", "CC/Pitch", "Pitch/CC" ], "Pitch");
+    Config.ribbonModeSetting = prefs.getEnumSetting ("Mode", "Ribbon", [ "Pitch", "CC", "CC/Pitch", "Pitch/CC", "Fader" ], "Pitch");
     Config.ribbonModeSetting.addValueObserver (function (value)
     {
         switch (value)
         {
-            case "Pitch": Config.ribbonMode = 0; break;
-            case "CC": Config.ribbonMode = 1; break;
-            case "CC/Pitch": Config.ribbonMode = 2; break;
-            case "Pitch/CC": Config.ribbonMode = 3; break;
+            case "Pitch":    Config.ribbonMode = Config.RIBBON_MODE_PITCH; break;
+            case "CC":       Config.ribbonMode = Config.RIBBON_MODE_CC;    break;
+            case "CC/Pitch": Config.ribbonMode = Config.RIBBON_MODE_CC_PB; break;
+            case "Pitch/CC": Config.ribbonMode = Config.RIBBON_MODE_PB_CC; break;
+            case "Fader":    Config.ribbonMode = Config.RIBBON_MODE_FADER; break;
         }
         Config.notifyListeners (Config.RIBBON_MODE);
     });
@@ -278,6 +280,7 @@ Config.setRibbonMode = function (mode)
         case Config.RIBBON_MODE_CC: Config.ribbonModeSetting.set ("CC"); break;
         case Config.RIBBON_MODE_CC_PB: Config.ribbonModeSetting.set ("CC/Pitch"); break;
         case Config.RIBBON_MODE_PB_CC: Config.ribbonModeSetting.set ("Pitch/CC"); break;
+        case Config.RIBBON_MODE_FADER: Config.ribbonModeSetting.set ("Fader"); break;
     }
 };
 

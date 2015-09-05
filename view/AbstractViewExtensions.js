@@ -10,10 +10,85 @@ AbstractView.prototype.quitAutomationMode = false;
 AbstractView.prototype.quitMasterMode = false;
 AbstractView.prototype.selectedTrackBeforeMasterMode = -1;
 AbstractView.prototype.showDevices = true;
-
+AbstractView.prototype.pitchValue = 0;
 AbstractView.prototype.lastAbstractDeviceMode = 0;
 
-AbstractView.prototype.onPitchbend = function (data1, data2) {};
+AbstractView.prototype.onPitchbend = function (data1, data2)
+{
+    if (this.surface.isShiftPressed ())
+    {
+        if (this.surface.getCurrentMode () != MODE_RIBBON)
+            this.surface.setPendingMode (MODE_RIBBON);
+        return;
+    }
+
+    switch (Config.ribbonMode)
+    {
+        case Config.RIBBON_MODE_PITCH:
+            this.surface.sendMidiEvent (0xE0, data1, data2);
+            break;
+
+        case Config.RIBBON_MODE_CC:
+            this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, data2);
+            this.pitchValue = data2;
+            break;
+
+        case Config.RIBBON_MODE_CC_PB:
+            if (data2 > 64)
+                this.surface.sendMidiEvent (0xE0, data1, data2);
+            else if (data2 < 64)
+                this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, 127 - data2 * 2);
+            else
+            {
+                this.surface.sendMidiEvent (0xE0, data1, data2);
+                this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, 0);
+            }
+            break;
+
+        case Config.RIBBON_MODE_PB_CC:
+            if (data2 > 64)
+                this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, data2 * 2);
+            else if (data2 < 64)
+                this.surface.sendMidiEvent (0xE0, data1, data2);
+            else
+            {
+                this.surface.sendMidiEvent (0xE0, data1, data2);
+                this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, 0);
+            }
+            break;
+            
+        case Config.RIBBON_MODE_FADER:
+            var tb = this.model.getCurrentTrackBank ();
+            var selTrack = tb.getSelectedTrack ();
+            if (selTrack != null)
+                tb.setVolume (selTrack.index, data2);
+            break;
+    }
+
+    this.surface.output.sendPitchbend (data1, data2);
+};
+
+AbstractView.prototype.updateRibbonMode = function ()
+{
+    switch (Config.ribbonMode)
+    {
+        case Config.RIBBON_MODE_CC:
+            this.surface.setRibbonMode (PUSH_RIBBON_VOLUME);
+            this.surface.output.sendPitchbend (0, this.pitchValue);
+            break;
+
+        case Config.RIBBON_MODE_FADER:
+            this.surface.setRibbonMode (PUSH_RIBBON_VOLUME);
+            var selTrack = this.model.getCurrentTrackBank ().getSelectedTrack ();
+            this.surface.output.sendPitchbend (0, selTrack == null ? 0 : selTrack.volume);
+            break;
+
+        default:
+            this.surface.setRibbonMode (PUSH_RIBBON_PITCHBEND);
+            this.surface.output.sendPitchbend (0, 64);
+            break;
+    }
+};
 
 //--------------------------------------
 // Group 1
@@ -932,12 +1007,6 @@ AbstractView.prototype.updateArrows = function ()
     this.surface.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
     this.surface.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
     this.surface.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-};
-
-AbstractView.prototype.updateRibbonMode = function ()
-{
-    this.surface.setRibbonMode (PUSH_RIBBON_VOLUME);
-    this.surface.output.sendPitchbend (0, 0);
 };
 
 AbstractView.prototype.canSelectedTrackHoldNotes = function ()

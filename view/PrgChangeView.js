@@ -69,11 +69,6 @@ PrgChangeView.prototype.drawSceneButtons = function ()
         this.surface.setButton (PUSH_BUTTON_SCENE1 + i, this.bankNumber == (7 - i) ? (this.isToggled ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN) : PUSH_COLOR_BLACK);
 };
 
-PrgChangeView.prototype.onPitchbend = function (data1, data2)
-{
-    // Not used
-};
-
 PrgChangeView.prototype.drawGrid = function ()
 {
     var colors = this.isToggled ? PrgChangeView.YELLOWS : PrgChangeView.GREENS;
