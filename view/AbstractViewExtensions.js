@@ -520,7 +520,7 @@ AbstractView.prototype.onDeviceLeft = function (event)
 {
     if (!event.isDown ())
         return;
-// TODO Needs testing
+
     var cm = this.surface.getCurrentMode ();
     switch (cm)
     {
