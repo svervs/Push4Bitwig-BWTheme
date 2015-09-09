@@ -49,13 +49,13 @@ DeviceParamsMode.prototype.onValueKnobTouch = function (index, isTouched)
         {
             this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
             this.cursorDevice.resetParameter (index);
+            return;
         }
-        else
-        {
-            var param = this.cursorDevice.getFXParam (index);
-            displayNotification (param.name + ": " + param.valueStr);
-        }
+
+        var param = this.cursorDevice.getFXParam (index);
+        displayNotification (param.name + ": " + param.valueStr);
     }
+    this.cursorDevice.getParameter (index).touch (isTouched);
 };
 
 AbstractDeviceMode.prototype.onValueKnob = function (index, value)

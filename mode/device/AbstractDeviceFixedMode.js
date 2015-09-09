@@ -62,14 +62,14 @@ AbstractDeviceFixedMode.prototype.onValueKnobTouch = function (index, isTouched)
         {
             this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
             this.getParameter (index).reset ();
+            return;
         }
-        else
-        {
-            var values = this.getParameterValues (index);
-            if (values.name.length > 0)
-                displayNotification (values.name + ": " + values.valueStr);
-        }
+
+        var values = this.getParameterValues (index);
+        if (values.name.length > 0)
+            displayNotification (values.name + ": " + values.valueStr);
     }
+    this.getParameter (index).touch (isTouched);
 };
 
 AbstractDeviceFixedMode.prototype.onFirstRowBank = function (index)
