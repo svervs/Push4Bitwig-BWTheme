@@ -11,9 +11,8 @@ function Controller ()
     var input = new PushMidiInput ();
 
     this.scales = new Scales (36, 100, 8, 8);
-    this.model = new Model (PUSH_KNOB1, this.scales);
+    this.model = new Model (PUSH_KNOB1, this.scales, 8, 8, 6, 6, 16, 16, false);
     
-    // this.lastSlotSelection = null;
     this.model.getTrackBank ().addTrackSelectionListener (doObject (this, Controller.prototype.handleTrackChange));
     this.model.getMasterTrack ().addTrackSelectionListener (doObject (this, function (isSelected)
     {
@@ -229,10 +228,7 @@ Controller.prototype.handleTrackChange = function (index, isSelected)
 {
     var tb = this.model.getCurrentTrackBank ();
     if (!isSelected)
-    {
-        // this.lastSlotSelection = tb.getSelectedSlot (index);
         return;
-    }
 
     if (this.surface.isActiveMode (MODE_MASTER))
         this.surface.setPendingMode (MODE_TRACK);
@@ -246,16 +242,6 @@ Controller.prototype.handleTrackChange = function (index, isSelected)
     if (this.surface.isActiveView (VIEW_PLAY))
         this.surface.getActiveView ().updateNoteMapping ();
      
-    // Select the slot on the new track with the same index as on the previous track
-    // -> Removed because it has too many side effects
-    /* if (this.lastSlotSelection != null)
-        tb.showClipInEditor (index, this.lastSlotSelection.index);
-    else
-    {
-        var slot = tb.getSelectedSlot (index);
-        tb.showClipInEditor (index, slot != null ? slot.index : 0);
-    }*/
-    
     // Reset drum octave because the drum pad bank is also reset
     this.scales.setDrumOctave (0);
     this.surface.getView (VIEW_DRUM).updateNoteMapping ();
