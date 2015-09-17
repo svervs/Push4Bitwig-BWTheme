@@ -16,7 +16,7 @@ FixedMode.prototype = new BaseMode ();
 FixedMode.prototype.onFirstRow = function (index)
 {
     this.model.getCurrentTrackBank ().setNewClipLength (index);
-    this.surface.setPendingMode (this.surface.getPreviousMode ());
+    this.surface.restoreMode ();
 };
 
 FixedMode.prototype.updateDisplay = function ()

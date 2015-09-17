@@ -29,7 +29,7 @@ ViewSelectMode.prototype.onFirstRow = function (index)
         return;
     this.model.getCurrentTrackBank ().setPreferredView (view);
     this.surface.setActiveView (view);
-    this.surface.setPendingMode (this.surface.getPreviousMode ());
+    this.surface.restoreMode ();
 };
 
 ViewSelectMode.prototype.updateDisplay = function ()

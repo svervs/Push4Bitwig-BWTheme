@@ -207,7 +207,7 @@ AbstractView.prototype.onAutomation = function (event)
                 break;
             case ButtonEvent.UP:
                 if (this.quitAutomationMode)
-                    this.surface.setPendingMode (this.surface.getPreviousMode ());
+                    this.surface.restoreMode ();
                 else
                 {
                     var selectedTrack = this.model.getCurrentTrackBank ().getSelectedTrack ();
@@ -277,7 +277,7 @@ AbstractView.prototype.onSmallKnob1Touch = function (isTouched)
     if (isTouched)
         this.surface.setPendingMode (MODE_TRANSPORT);
     else
-        this.surface.setPendingMode (this.surface.getPreviousMode ());
+        this.surface.restoreMode ();
 };
 
 // Change time (play position)
@@ -291,7 +291,7 @@ AbstractView.prototype.onSmallKnob2Touch = function (isTouched)
     if (isTouched)
         this.surface.setPendingMode (MODE_TRANSPORT);
     else
-        this.surface.setPendingMode (this.surface.getPreviousMode ());
+        this.surface.restoreMode ();
 };
 
 //--------------------------------------
@@ -350,7 +350,7 @@ AbstractView.prototype.onValueKnob9Touch = function (isTouched)
     if (isTouched)
         this.surface.setPendingMode (MODE_MASTER_TEMP);
     else if (!isMasterMode)
-        this.surface.setPendingMode (this.surface.getPreviousMode ());
+        this.surface.restoreMode ();
 };
 
 AbstractView.prototype.onFirstRow = function (index)
@@ -381,14 +381,11 @@ AbstractView.prototype.onMaster = function (event)
 
         case ButtonEvent.UP:
             if (this.quitMasterMode)
-                this.surface.setPendingMode (this.surface.getPreviousMode ());
+                this.surface.restoreMode ();
             else            
             {
                 if (this.surface.getCurrentMode () == MODE_MASTER)
-                {
                     this.model.getCurrentTrackBank ().select (this.selectedTrackBeforeMasterMode);
-                    // this.surface.setPendingMode (this.surface.getPreviousMode ());
-                }
                 else
                 {
                     this.surface.setPendingMode (MODE_MASTER);
@@ -670,7 +667,7 @@ AbstractView.prototype.onScales = function (event)
             break;
         case ButtonEvent.UP:
             if (this.quitScalesMode)
-                this.surface.setPendingMode (this.surface.getPreviousMode ());
+                this.surface.restoreMode ();
             break;
     }
 };
@@ -680,7 +677,7 @@ AbstractView.prototype.onUser = function (event)
     if (event.isLong ())
         this.surface.setPendingMode (MODE_CONFIGURATION);
     else if (event.isUp ())
-        this.surface.setPendingMode (this.surface.getPreviousMode ());
+        this.surface.restoreMode ();
 };
 
 AbstractView.prototype.onRepeat = function (event) {};
@@ -698,7 +695,7 @@ AbstractView.prototype.onAccent = function (event)
             break;
         case ButtonEvent.UP:
             if (this.quitAccentMode)
-                this.surface.setPendingMode (this.surface.getPreviousMode ());
+                this.surface.restoreMode ();
             else
                 Config.setAccentEnabled (!Config.accentActive);
             break;

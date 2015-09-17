@@ -19,7 +19,7 @@ RibbonMode.prototype.onFirstRow = function (index)
     else if (index > 5)
         Config.setRibbonModeCC (RibbonMode.MIDI_CCS[index - 6]);
     else
-        this.surface.setPendingMode (this.surface.getPreviousMode ());
+        this.surface.restoreMode ();
 };
 
 RibbonMode.prototype.onSecondRow = function (index)
@@ -27,7 +27,7 @@ RibbonMode.prototype.onSecondRow = function (index)
     if (index > 5)
         Config.setRibbonModeCC (RibbonMode.MIDI_CCS[index - 4]);
     else
-        this.surface.setPendingMode (this.surface.getPreviousMode ());
+        this.surface.restoreMode ();
 };
 
 RibbonMode.prototype.onValueKnob = function (index, value)
