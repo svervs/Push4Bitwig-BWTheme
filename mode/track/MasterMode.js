@@ -32,15 +32,19 @@ MasterMode.prototype.onValueKnobTouch = function (index, isTouched)
                 this.model.getMasterTrack ().resetVolume ();
             else if (index == 1)
                 this.model.getMasterTrack ().resetPan ();
+            return;
         }
-        else
-        {
-            if (index == 0)
-                displayNotification ("Volume: " + this.model.getMasterTrack ().getVolumeString ());
-            else if (index == 1)
-                displayNotification ("Pan: " + this.model.getMasterTrack ().getPanString ());
-        }
-    }    
+
+        if (index == 0)
+            displayNotification ("Volume: " + this.model.getMasterTrack ().getVolumeString ());
+        else if (index == 1)
+            displayNotification ("Pan: " + this.model.getMasterTrack ().getPanString ());
+    }
+    
+    if (index == 0)
+        this.model.getMasterTrack ().touchVolume (isTouched);
+    else if (index == 1)
+        this.model.getMasterTrack ().touchPan (isTouched);
 };
 
 MasterMode.prototype.updateDisplay = function ()

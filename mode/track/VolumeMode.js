@@ -20,14 +20,17 @@ VolumeMode.prototype.onValueKnobTouch = function (index, isTouched)
     if (isTouched)
     {
         if (this.surface.isDeletePressed ())
-            this.model.getCurrentTrackBank ().resetVolume (index);
-        else
         {
-            var t = this.model.getCurrentTrackBank ().getTrack (index);
-            if (t.exists)
-                displayNotification("Volume: " + t.volumeStr);
+            this.model.getCurrentTrackBank ().resetVolume (index);
+            return;
         }
+
+        var t = this.model.getCurrentTrackBank ().getTrack (index);
+        if (t.exists)
+            displayNotification("Volume: " + t.volumeStr);
     }
+
+    this.model.getCurrentTrackBank ().touchVolume (index, isTouched);
 };
 
 VolumeMode.prototype.updateDisplay = function ()

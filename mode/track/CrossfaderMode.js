@@ -15,13 +15,14 @@ CrossfaderMode.prototype.onValueKnobTouch = function (index, isTouched)
     if (isTouched)
     {
         if (this.surface.isDeletePressed ())
-            this.model.getCurrentTrackBank ().setCrossfadeMode (index, 'AB');
-        else
         {
-            var t = this.model.getCurrentTrackBank ().getTrack (index);
-            if (t.exists)
-                displayNotification ("Crossfader: " + t.crossfadeMode);
+            this.model.getCurrentTrackBank ().setCrossfadeMode (index, 'AB');
+            return;
         }
+
+        var t = this.model.getCurrentTrackBank ().getTrack (index);
+        if (t.exists)
+            displayNotification ("Crossfader: " + t.crossfadeMode);
     }    
 };
 

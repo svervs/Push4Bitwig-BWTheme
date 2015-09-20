@@ -66,17 +66,19 @@ DeviceDirectMode.prototype.onValueKnobTouch = function (index, isTouched)
             this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
             /* TODO API extension required
             this.model.getCursorDevice ().resetParameter (index);*/
+            return;
         }
-        else
-        {
-            var cd = this.model.getCursorDevice ();
-            var params = cd.getDirectParameters ();
-            var pageOffset = cd.getSelectedDirectParameterPage () * 8;
-            var param = pageOffset + index >= params.length ? this.emptyParameter : params[pageOffset + index];
-            if (param.name.length > 0)
-                displayNotification (param.name + ": " + param.valueStr);
-        }
-    }    
+
+        var cd = this.model.getCursorDevice ();
+        var params = cd.getDirectParameters ();
+        var pageOffset = cd.getSelectedDirectParameterPage () * 8;
+        var param = pageOffset + index >= params.length ? this.emptyParameter : params[pageOffset + index];
+        if (param.name.length > 0)
+            displayNotification (param.name + ": " + param.valueStr);
+    }
+    
+    // Note: Direct parameters do not have parameter-objects and therefore cannot be
+    // used for touch-automation (p.touch())
 };
 
 DeviceDirectMode.prototype.onFirstRowBank = function (index)

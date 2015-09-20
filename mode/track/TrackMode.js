@@ -38,38 +38,37 @@ TrackMode.prototype.onValueKnob = function (index, value)
 
 TrackMode.prototype.onValueKnobTouch = function (index, isTouched)
 {
-    if (!isTouched)
-        return;
-
     var tb = this.model.getCurrentTrackBank ();
     var selectedTrack = tb.getSelectedTrack ();
     if (selectedTrack == null)
         return;
     
-    if (this.surface.isDeletePressed ())
+    if (isTouched)
     {
-        this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
-        switch (index)
+        if (this.surface.isDeletePressed ())
         {
-            case 0:
-                tb.resetVolume (selectedTrack.index);
-                break;
-            case 1:
-                tb.resetPan (selectedTrack.index);
-                break;
-            case 2:
-                if (Config.displayCrossfader)
-                    tb.setCrossfadeMode (selectedTrack.index, 'AB');
-                else
-                    tb.resetSend (selectedTrack.index, 0);
-                break;
-            default:
-                tb.resetSend (selectedTrack.index, index - (Config.displayCrossfader ? 3 : 2));
-                break;
+            this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+            switch (index)
+            {
+                case 0:
+                    tb.resetVolume (selectedTrack.index);
+                    break;
+                case 1:
+                    tb.resetPan (selectedTrack.index);
+                    break;
+                case 2:
+                    if (Config.displayCrossfader)
+                        tb.setCrossfadeMode (selectedTrack.index, 'AB');
+                    else
+                        tb.resetSend (selectedTrack.index, 0);
+                    break;
+                default:
+                    tb.resetSend (selectedTrack.index, index - (Config.displayCrossfader ? 3 : 2));
+                    break;
+            }
+            return;
         }
-    }
-    else
-    {
+
         switch (index)
         {
             case 0:
@@ -98,6 +97,24 @@ TrackMode.prototype.onValueKnobTouch = function (index, isTouched)
                     displayNotification ("Send " + name + ": " + selectedTrack.sends[sendIndex].volumeStr);
                 break;
         }
+    }
+    
+    switch (index)
+    {
+        case 0:
+            tb.touchVolume (selectedTrack.index, isTouched);
+            break;
+        case 1:
+            tb.touchPan (selectedTrack.index, isTouched);
+            break;
+        case 2:
+            if (!Config.displayCrossfader)
+                tb.touchSend (selectedTrack.index, 0, isTouched);
+            break;
+        default:
+            var sendIndex = index - (Config.displayCrossfader ? 3 : 2);
+            tb.touchSend (selectedTrack.index, sendIndex, isTouched);
+            break;
     }
 };
 

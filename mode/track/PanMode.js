@@ -20,14 +20,17 @@ PanMode.prototype.onValueKnobTouch = function (index, isTouched)
     if (isTouched)
     {
         if (this.surface.isDeletePressed ())
-            this.model.getCurrentTrackBank ().resetPan (index);
-        else
         {
-            var t = this.model.getCurrentTrackBank ().getTrack (index);
-            if (t.exists)
-                displayNotification ("Pan: " + t.panStr);
+            this.model.getCurrentTrackBank ().resetPan (index);
+            return;
         }
+
+        var t = this.model.getCurrentTrackBank ().getTrack (index);
+        if (t.exists)
+            displayNotification ("Pan: " + t.panStr);
     }    
+
+    this.model.getCurrentTrackBank ().touchPan (index, isTouched);
 };
 
 PanMode.prototype.updateDisplay = function ()
