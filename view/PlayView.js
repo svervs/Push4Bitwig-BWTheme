@@ -110,6 +110,10 @@ PlayView.prototype.onPolyAftertouch = function (note, value)
 {
     switch (Config.convertAftertouch)
     {
+        case -3:
+            // Filter poy aftertouch
+            break;
+        
         case -2:
             // Translate notes of Poly aftertouch to current note mapping
             this.surface.sendMidiEvent (0xA0, this.noteMap[note], value);

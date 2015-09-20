@@ -65,7 +65,7 @@ Config.convertAftertouch = 0;
 Config.defaultDeviceMode = 20; /*MODE_DEVICE_PARAMS;*/
 Config.footswitch2       = Config.FOOTSWITCH_2_NEW_BUTTON;
 
-Config.AFTERTOUCH_CONVERSION_VALUES = [ "Poly Aftertouch", "Channel Aftertouch" ];
+Config.AFTERTOUCH_CONVERSION_VALUES = [ "Off", "Poly Aftertouch", "Channel Aftertouch" ];
 for (var i = 0; i < 128; i++)
     Config.AFTERTOUCH_CONVERSION_VALUES.push ("CC " + i);
 
@@ -246,7 +246,7 @@ Config.init = function ()
         Config.notifyListeners (Config.PAD_THRESHOLD);
     });
     
-    Config.convertAftertouchSetting = prefs.getEnumSetting ("Convert Poly Aftertouch to", "Pads", Config.AFTERTOUCH_CONVERSION_VALUES, Config.AFTERTOUCH_CONVERSION_VALUES[0]);
+    Config.convertAftertouchSetting = prefs.getEnumSetting ("Convert Poly Aftertouch to", "Pads", Config.AFTERTOUCH_CONVERSION_VALUES, Config.AFTERTOUCH_CONVERSION_VALUES[1]);
     Config.convertAftertouchSetting.addValueObserver (function (value)
     {
         
@@ -254,7 +254,7 @@ Config.init = function ()
         {
             if (Config.AFTERTOUCH_CONVERSION_VALUES[i] == value)
             {
-                Config.convertAftertouch = i - 2;
+                Config.convertAftertouch = i - 3;
                 break;
             }
         }
