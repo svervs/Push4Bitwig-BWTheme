@@ -118,8 +118,9 @@ AbstractDeviceMode.prototype.updateSecondRow = function ()
     this.disableSecondRow ();
     if (!this.model.hasSelectedDevice ())
         return;
-    this.surface.setButton (102, this.model.getSelectedDevice ().enabled ? PUSH_COLOR2_GREEN : PUSH_COLOR2_GREY_LO);
-    this.surface.setButton (109, this.cursorDevice.isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO);
+    var selDevice = this.model.getSelectedDevice ();
+    this.surface.setButton (102, selDevice.enabled ? PUSH_COLOR2_GREEN : PUSH_COLOR2_GREY_LO);
+    this.surface.setButton (109, selDevice.isPlugin ? (this.cursorDevice.isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO) : PUSH_COLOR2_BLACK);
 };
 
 AbstractDeviceMode.prototype.updateDisplay = function () 
