@@ -8,6 +8,6 @@ Get the latest stable release from: http://www.mossgrabers.de/Software/Bitwig/Bi
 
 The version in GitHub might always be in an alpha or beta state, you have been warned!
 
-The GitHub Version is compatible with 1.2 Beta X. Note: THIS IS EXPERIMENTAL!
+The GitHub Version is compatible with 1.2 Beta X.
 
 The version on my Homepage is compatible with 1.1.x.
