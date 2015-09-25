@@ -21,13 +21,68 @@ TransportMode.prototype.onValueKnob = function (index, value)
     */
 };
 
+TransportMode.prototype.onFirstRow = function (index)
+{
+    if (index == 2)
+        this.model.getTransport ().setPreroll (TransportProxy.PREROLL_NONE);
+    else if (index == 3)
+        this.model.getTransport ().setPreroll (TransportProxy.PREROLL_2_BARS);
+    else if (index == 5)
+        this.model.getTransport ().togglePrerollClick ();
+};
+
+TransportMode.prototype.onSecondRow = function (index)
+{
+    if (index == 2)
+        this.model.getTransport ().setPreroll (TransportProxy.PREROLL_1_BAR);
+    else if (index == 3)
+        this.model.getTransport ().setPreroll (TransportProxy.PREROLL_4_BARS);
+};
+
+TransportMode.prototype.updateFirstRow = function ()
+{
+    var transport = this.model.getTransport ();
+    var preroll = transport.getPreroll ();
+    this.surface.setButton (20, PUSH_COLOR_BLACK);
+    this.surface.setButton (21, PUSH_COLOR_BLACK);
+    this.surface.setButton (22, preroll == TransportProxy.PREROLL_NONE ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO);
+    this.surface.setButton (23, preroll == TransportProxy.PREROLL_2_BARS ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO);
+    this.surface.setButton (24, PUSH_COLOR_BLACK);
+    this.surface.setButton (25, transport.isPrerollClickEnabled () ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO);
+    this.surface.setButton (26, PUSH_COLOR_BLACK);
+    this.surface.setButton (27, PUSH_COLOR_BLACK);
+};
+
+TransportMode.prototype.updateSecondRow = function ()
+{
+    var transport = this.model.getTransport ();
+    var preroll = transport.getPreroll ();
+    this.surface.setButton (102, PUSH_COLOR2_BLACK);
+    this.surface.setButton (103, PUSH_COLOR2_BLACK);
+    this.surface.setButton (104, preroll == TransportProxy.PREROLL_1_BAR ? PUSH_COLOR2_YELLOW_LO : PUSH_COLOR2_GREEN_LO);
+    this.surface.setButton (105, preroll == TransportProxy.PREROLL_4_BARS ? PUSH_COLOR2_YELLOW_LO : PUSH_COLOR2_GREEN_LO);
+    this.surface.setButton (106, PUSH_COLOR2_BLACK);
+    this.surface.setButton (107, PUSH_COLOR2_BLACK);
+    this.surface.setButton (108, PUSH_COLOR2_BLACK);
+    this.surface.setButton (109, PUSH_COLOR2_BLACK);
+};
+
 TransportMode.prototype.updateDisplay = function () 
 {
     var transport = this.model.getTransport ();
+    var preroll = transport.getPreroll ();
     this.surface.getDisplay ().clear ()
         .setCell (0, 0, "Tempo", Display.FORMAT_RAW)
         .setCell (1, 0, transport.getTempo (), Display.FORMAT_RAW)
         .setCell (2, 0, this.formatTempo (transport.getTempo ()), Display.FORMAT_RAW)
+        .setCell (0, 2, "Pre-Roll", Display.FORMAT_RAW)
+        .setCell (2, 2, (preroll == TransportProxy.PREROLL_NONE ? Display.RIGHT_ARROW : " ") + "None", Display.FORMAT_RAW)
+        .setCell (3, 2, (preroll == TransportProxy.PREROLL_1_BAR ? Display.RIGHT_ARROW : " ") + "1 Bar", Display.FORMAT_RAW)
+        .setCell (2, 3, (preroll == TransportProxy.PREROLL_2_BARS ? Display.RIGHT_ARROW : " ") + "2 Bars", Display.FORMAT_RAW)
+        .setCell (3, 3, (preroll == TransportProxy.PREROLL_4_BARS ? Display.RIGHT_ARROW : " ") + "4 Bars", Display.FORMAT_RAW)
+        .setBlock (0, 2, "Play Metronome", Display.FORMAT_RAW)
+        .setBlock (1, 2, "during Pre-Roll?", Display.FORMAT_RAW)
+        .setCell (3, 5, transport.isPrerollClickEnabled () ? "  Yes" : "  No", Display.FORMAT_RAW)
         .setBlock (0, 3, "Play Position", Display.FORMAT_RAW)
         .setBlock (1, 3, transport.getPositionText (), Display.FORMAT_RAW)
         .allDone ();
