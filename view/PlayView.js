@@ -111,7 +111,7 @@ PlayView.prototype.onPolyAftertouch = function (note, value)
     switch (Config.convertAftertouch)
     {
         case -3:
-            // Filter poy aftertouch
+            // Filter poly aftertouch
             break;
         
         case -2:
