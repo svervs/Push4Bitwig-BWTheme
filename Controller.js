@@ -226,7 +226,6 @@ Controller.prototype.updateIndication = function (mode)
 
 Controller.prototype.handleTrackChange = function (index, isSelected)
 {
-    var tb = this.model.getCurrentTrackBank ();
     if (!isSelected)
         return;
 
@@ -236,7 +235,7 @@ Controller.prototype.handleTrackChange = function (index, isSelected)
     // Recall last used view (if we are not in session mode)
     if (!this.surface.isActiveView (VIEW_SESSION))
     {
-        var viewID = tb.getPreferredView (index);
+        var viewID = this.model.getCurrentTrackBank ().getPreferredView (index);
         this.surface.setActiveView (viewID == null ? VIEW_PLAY : viewID);
     }
     if (this.surface.isActiveView (VIEW_PLAY))

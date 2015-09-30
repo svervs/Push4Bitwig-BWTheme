@@ -253,6 +253,7 @@ function Push (output, input)
     
     this.selectButtonId = PUSH_BUTTON_SELECT;
     this.shiftButtonId  = PUSH_BUTTON_SHIFT;
+    this.deleteButtonId = PUSH_BUTTON_DELETE;
 
     this.pads    = new Grid (output);
     this.display = new Display (output);
@@ -324,15 +325,6 @@ Push.prototype.updateButtons = function ()
     var view = this.getActiveView ();
     for (var i = 0; i < this.buttons.length; i++)
         this.setButton (this.buttons[i], view.usesButton (this.buttons[i]) ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
-};
-
-//--------------------------------------
-// Gesture
-//--------------------------------------
-
-Push.prototype.isDeletePressed = function ()
-{
-    return this.isPressed (PUSH_BUTTON_DELETE);
 };
 
 //--------------------------------------

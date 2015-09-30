@@ -15,7 +15,6 @@ PushMidiInput.prototype.createNoteInput = function ()
     var noteInput = this.port.createNoteInput ("Ableton Push", 
                                                "80????",  // Note off
                                                "90????",  // Note on
-                                               "A0????",  // Poly Aftertouch
                                                "B040??"); // Sustainpedal
     noteInput.setShouldConsumeEvents (false);
     return noteInput;
