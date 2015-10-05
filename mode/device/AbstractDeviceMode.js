@@ -115,11 +115,15 @@ AbstractDeviceMode.prototype.onSecondRow = function (index)
 
 AbstractDeviceMode.prototype.updateSecondRow = function ()
 {
-    this.disableSecondRow ();
     if (!this.model.hasSelectedDevice ())
+    {
+        this.disableSecondRow ();
         return;
+    }
     var selDevice = this.model.getSelectedDevice ();
     this.surface.setButton (102, selDevice.enabled ? PUSH_COLOR2_GREEN : PUSH_COLOR2_GREY_LO);
+    for (var i = 1; i < 7; i++)
+        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
     this.surface.setButton (109, selDevice.isPlugin ? (this.cursorDevice.isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO) : PUSH_COLOR2_BLACK);
 };
 
