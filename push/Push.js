@@ -259,6 +259,8 @@ function Push (output, input)
     this.display = new Display (output);
     
     this.showVU = false;
+    this.ribbonMode = -1;
+    this.ribbonValue = -1;
 }
 Push.prototype = new AbstractControlSurface ();
 
@@ -343,7 +345,18 @@ Push.prototype.toggleVU = function ()
 
 Push.prototype.setRibbonMode = function (mode)
 {
+    if (this.ribbonMode == mode)
+        return;
+    this.ribbonMode = mode;
     this.output.sendSysex ("F0 47 7F 15 63 00 01 0" + mode + " F7");
+};
+
+Push.prototype.setRibbonValue = function (value)
+{
+    if (this.ribbonValue == value)
+        return;
+    this.ribbonValue = value;
+    this.output.sendPitchbend (0, value);
 };
 
 Push.prototype.sendPadSensitivity = function ()

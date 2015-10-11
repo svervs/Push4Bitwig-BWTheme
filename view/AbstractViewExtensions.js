@@ -62,7 +62,7 @@ AbstractView.prototype.onPitchbend = function (data1, data2)
             var selTrack = tb.getSelectedTrack ();
             if (selTrack != null)
                 tb.setVolume (selTrack.index, data2);
-            break;
+            return;
     }
 
     this.surface.output.sendPitchbend (data1, data2);
@@ -74,18 +74,18 @@ AbstractView.prototype.updateRibbonMode = function ()
     {
         case Config.RIBBON_MODE_CC:
             this.surface.setRibbonMode (PUSH_RIBBON_VOLUME);
-            this.surface.output.sendPitchbend (0, this.pitchValue);
+            this.surface.setRibbonValue (this.pitchValue);
             break;
 
         case Config.RIBBON_MODE_FADER:
             this.surface.setRibbonMode (PUSH_RIBBON_VOLUME);
-            var selTrack = this.model.getCurrentTrackBank ().getSelectedTrack ();
-            this.surface.output.sendPitchbend (0, selTrack == null ? 0 : selTrack.volume);
+            var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
+            this.surface.setRibbonValue (t == null ? 0 : (this.surface.showVU ? t.vu : t.volume));
             break;
 
         default:
             this.surface.setRibbonMode (PUSH_RIBBON_PITCHBEND);
-            this.surface.output.sendPitchbend (0, 64);
+            this.surface.setRibbonValue (64);
             break;
     }
 };

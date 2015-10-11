@@ -23,13 +23,13 @@ SessionView.prototype.onPitchbend = function (data1, data2)
     if (this.surface.isShiftPressed ())
         data2 = 63;
     this.model.getTransport ().setCrossfade (data2);
-    this.surface.output.sendPitchbend (0, data2);
+    this.surface.setRibbonValue (data2);
 };
 
 SessionView.prototype.updateRibbonMode = function ()
 {
     this.surface.setRibbonMode (PUSH_RIBBON_PAN);
-    this.surface.output.sendPitchbend (0, this.model.getTransport ().getCrossfade ());
+    this.surface.setRibbonValue (this.model.getTransport ().getCrossfade ());
 };
 
 SessionView.prototype.drawSceneButtons = function ()
@@ -50,6 +50,14 @@ SessionView.prototype.drawSceneButtons = function ()
         else
             this.surface.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_SCENE_GREEN);
     }
+};
+
+SessionView.prototype.drawGrid = function ()
+{
+    AbstractSessionView.prototype.drawGrid.call (this);
+
+    // Also update the value of the ribbon
+    this.updateRibbonMode ();
 };
 
 SessionView.prototype.updateDevice = function ()

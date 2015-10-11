@@ -118,6 +118,9 @@ SequencerView.prototype.updateOctave = function (value)
 
 SequencerView.prototype.drawGrid = function ()
 {
+    // Also update the value of the ribbon
+    this.updateRibbonMode ();
+    
     var isKeyboardEnabled = this.canSelectedTrackHoldNotes ();
     var step = this.clip.getCurrentStep ();
     var hiStep = this.isInXRange (step) ? step % SequencerView.NUM_DISPLAY_COLS : -1;

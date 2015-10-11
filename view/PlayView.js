@@ -91,6 +91,9 @@ PlayView.prototype.drawGrid = function ()
             (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI) :
             this.scales.getColor (this.noteMap, i)) : PUSH_COLOR2_BLACK, null, false);
     }
+
+    // Also update the value of the ribbon
+    this.updateRibbonMode ();
 };
 
 PlayView.prototype.onGridNote = function (note, velocity)
