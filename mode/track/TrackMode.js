@@ -26,7 +26,7 @@ TrackMode.prototype.onValueKnob = function (index, value)
             break;
         case 2:
             if (Config.displayCrossfader)
-                tb.setCrossfadeModeAsNumber (selectedTrack.index, changeValue (value, tb.getCrossfadeModeAsNumber (selectedTrack.index), 1, 2));
+                tb.setCrossfadeModeAsNumber (selectedTrack.index, changeValue (value, tb.getCrossfadeModeAsNumber (selectedTrack.index), 1, 3));
             else
                 tb.changeSend (selectedTrack.index, 0, value, this.surface.getFractionValue ());
             break;
