@@ -145,7 +145,7 @@ TrackMode.prototype.updateDisplay = function ()
             sendCount = 5;
             d.setCell (0, 2, "Crossfdr", Display.FORMAT_RAW)
              .setCell (1, 2, t.crossfadeMode == 'A' ? 'A' : (t.crossfadeMode == 'B' ? '       B' : '   <> '), Display.FORMAT_RAW)
-             .setCell (2, 2, t.crossfadeMode == 'A' ? 0 : (t.crossfadeMode == 'B' ? 127 : 64), Display.FORMAT_PAN);
+             .setCell (2, 2, t.crossfadeMode == 'A' ? 0 : (t.crossfadeMode == 'B' ? Config.maxParameterValue : (Config.maxParameterValue / 2)), Display.FORMAT_PAN);
         }
         
         var fxTrackBank = this.model.getEffectTrackBank ();

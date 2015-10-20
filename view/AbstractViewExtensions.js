@@ -80,7 +80,7 @@ AbstractView.prototype.updateRibbonMode = function ()
         case Config.RIBBON_MODE_FADER:
             this.surface.setRibbonMode (PUSH_RIBBON_VOLUME);
             var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
-            this.surface.setRibbonValue (t == null ? 0 : (this.surface.showVU ? t.vu : t.volume));
+            this.surface.setRibbonValue (t == null ? 0 : Config.toMidiValue(this.surface.showVU ? t.vu : t.volume));
             break;
 
         default:

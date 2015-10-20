@@ -3,9 +3,9 @@
 // ------------------------------
 
 // Inc/Dec of knobs
-Config.fractionValue     = 1;
-Config.fractionMinValue  = 0.25;
-Config.maxParameterValue = 128;
+Config.fractionValue     = 10;
+Config.fractionMinValue  = 1;
+Config.maxParameterValue = 1024;
 
 // How fast the track and scene arrows scroll the banks/scenes
 Config.trackScrollInterval = 100;
@@ -359,6 +359,11 @@ Config.notifyListeners = function (property)
     var ls = Config.listeners[property];
     for (var i = 0; i < ls.length; i++)
         ls[i].call (null);
+};
+
+Config.toMidiValue = function (value)
+{
+    return Math.min (Math.round (value * 127 / (Config.maxParameterValue- 1)), 127);
 };
 
 function Config () {}
