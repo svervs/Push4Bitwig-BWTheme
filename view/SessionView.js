@@ -22,14 +22,14 @@ SessionView.prototype.onPitchbend = function (data1, data2)
 {
     if (this.surface.isShiftPressed ())
         data2 = 63;
-    this.model.getTransport ().setCrossfade (data2);
+    this.model.getTransport ().setCrossfade (Config.toDAWValue (data2));
     this.surface.setRibbonValue (data2);
 };
 
 SessionView.prototype.updateRibbonMode = function ()
 {
     this.surface.setRibbonMode (PUSH_RIBBON_PAN);
-    this.surface.setRibbonValue (this.model.getTransport ().getCrossfade ());
+    this.surface.setRibbonValue (Config.toMidiValue(this.model.getTransport ().getCrossfade ()));
 };
 
 SessionView.prototype.drawSceneButtons = function ()
