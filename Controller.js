@@ -132,6 +132,7 @@ function Controller ()
     this.surface.addView (VIEW_RAINDROPS, new RaindropsView (this.model));
     this.surface.addView (VIEW_PIANO, new PianoView (this.model));
     this.surface.addView (VIEW_PRG_CHANGE, new PrgChangeView (this.model));
+    this.surface.addView (VIEW_CLIP, new ClipView (this.model));
     
     scheduleTask (doObject (this, function ()
     {
@@ -235,8 +236,11 @@ Controller.prototype.handleTrackChange = function (index, isSelected)
     // Recall last used view (if we are not in session mode)
     if (!this.surface.isActiveView (VIEW_SESSION))
     {
-        var viewID = this.model.getCurrentTrackBank ().getPreferredView (index);
-        this.surface.setActiveView (viewID == null ? VIEW_PLAY : viewID);
+        var tb = this.model.getCurrentTrackBank ();
+        var viewID = tb.getPreferredView (index);
+        if (viewID == null)
+            viewID = tb.getTrack (index).canHoldNotes ? VIEW_PLAY : VIEW_CLIP;
+        this.surface.setActiveView (viewID);
     }
     if (this.surface.isActiveView (VIEW_PLAY))
         this.surface.getActiveView ().updateNoteMapping ();

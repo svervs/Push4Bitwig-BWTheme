@@ -11,6 +11,7 @@ var VIEW_DRUM       = 3;
 var VIEW_RAINDROPS  = 4;
 var VIEW_PIANO      = 5;
 var VIEW_PRG_CHANGE = 6;
+var VIEW_CLIP       = 7;
 
 load ("AbstractViewExtensions.js");
 load ("PlayView.js");
@@ -21,3 +22,4 @@ load ("DrumView.js");
 load ("RaindropsView.js");
 load ("PianoView.js");
 load ("PrgChangeView.js");
+load ("ClipView.js");

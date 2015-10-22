@@ -11,7 +11,7 @@ ViewSelectMode.VIEWS =
     { id: VIEW_RAINDROPS, name: 'Raindrp' },
     { id: VIEW_DRUM, name: 'Drum' },
     { id: null, name: '' },
-    { id: null, name: '' },
+    { id: VIEW_CLIP, name: 'Clip' },
     { id: VIEW_PRG_CHANGE, name: 'PrgChnge' }
 ];
 
