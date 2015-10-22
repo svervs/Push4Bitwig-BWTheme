@@ -12,9 +12,9 @@ AccentMode.prototype = new BaseMode ();
 
 AccentMode.prototype.onValueKnob = function (index, value)
 {
-    // will never need fine increments on accent velocity since they are integers
-    var v = changeValue (value, Config.fixedAccentValue, 1, Config.maxParameterValue);
-    Config.setAccentValue (v == 0 ? 1 : v);
+    // Will never need fine increments on accent velocity since they are integers
+    var accent = Math.max (1, changeValue (value, Config.fixedAccentValue, 1, 128));
+    Config.setAccentValue (accent);
 };
 
 AccentMode.prototype.updateDisplay = function () 
@@ -22,6 +22,6 @@ AccentMode.prototype.updateDisplay = function ()
     this.surface.getDisplay ().clear ()
         .setCell (0, 7, "Accent", Display.FORMAT_RAW)
         .setCell (1, 7, Config.fixedAccentValue, Display.FORMAT_RAW)
-        .setCell (2, 7, Config.fixedAccentValue, Display.FORMAT_VALUE)
+        .setCell (2, 7, Config.toDAWValue (Config.fixedAccentValue), Display.FORMAT_VALUE)
         .allDone ();
 };
