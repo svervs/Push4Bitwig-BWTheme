@@ -15,12 +15,30 @@ function ClipView (model)
 }
 ClipView.prototype = new AbstractSequencerView ();
 
-ClipView.prototype.updateArrowStates = function ()
+ClipView.prototype.scrollLeft = function (event)
 {
-    this.canScrollUp = false;
-    this.canScrollDown = false;
-    this.canScrollLeft = false;
-    this.canScrollRight = false;
+    AbstractView.prototype.scrollLeft.call (this, event);
+};
+ 
+ClipView.prototype.scrollRight = function (event)
+{
+    AbstractView.prototype.scrollRight.call (this, event);
+};
+
+ClipView.prototype.scrollUp = function (event)
+{
+    if (this.surface.isShiftPressed ())
+        this.model.getApplication ().arrowKeyLeft ();
+    else
+        this.model.getApplication ().arrowKeyUp ();
+};
+
+ClipView.prototype.scrollDown = function (event)
+{
+    if (this.surface.isShiftPressed ())
+        this.model.getApplication ().arrowKeyRight ();
+    else
+        this.model.getApplication ().arrowKeyDown ();
 };
 
 ClipView.prototype.updateNoteMapping = function ()
@@ -112,6 +130,3 @@ ClipView.prototype.getQuartersPerPad = function ()
 {
     return this.model.getQuartersPerMeasure () / this.padResolutions[this.padResolution];
 };
-
-ClipView.prototype.scrollLeft = function (event) {};
-ClipView.prototype.scrollRight = function (event) {};

@@ -3,6 +3,8 @@
 // (c) 2014-2015
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
+AbstractView.BUTTON_REPEAT_INTERVAL = 75;
+
 AbstractView.prototype.stopPressed = false;
 AbstractView.prototype.automationPressed = false;
 AbstractView.prototype.quitAccentMode = false;
@@ -813,7 +815,7 @@ AbstractView.prototype.scrollLeft = function (event)
                     return;
                 tb.scrollTracksPageUp ();
                 var newSel = index == -1 || sel == null ? 7 : sel.index;
-                scheduleTask (doObject (this, this.selectTrack), [ newSel ], 75);
+                scheduleTask (doObject (this, this.selectTrack), [ newSel ], AbstractView.BUTTON_REPEAT_INTERVAL);
                 return;
             }
             this.selectTrack (index);
@@ -859,7 +861,7 @@ AbstractView.prototype.scrollRight = function (event)
                     return;
                 tb.scrollTracksPageDown ();
                 var newSel = index == 8 || sel == null ? 0 : sel.index;
-                scheduleTask (doObject (this, this.selectTrack), [ newSel ], 75);
+                scheduleTask (doObject (this, this.selectTrack), [ newSel ], AbstractView.BUTTON_REPEAT_INTERVAL);
                 return;
             }
             this.selectTrack (index);
