@@ -46,7 +46,15 @@ var MODE_CONFIGURATION       = 37;
 var MODE_MASTER_TEMP         = 100;
 
 var DEVICE_MODES = [ MODE_DEVICE_PARAMS, MODE_DEVICE_COMMON, MODE_DEVICE_ENVELOPE, MODE_DEVICE_MODULATE, MODE_DEVICE_USER, MODE_DEVICE_MACRO, MODE_DEVICE_DIRECT ];
+var TRACK_MODES  = [ MODE_TRACK, MODE_VOLUME, MODE_PAN, MODE_CROSSFADER, MODE_SEND1, MODE_SEND2, MODE_SEND3, MODE_SEND4, MODE_SEND5, MODE_SEND6, MODE_CLIP ];
 
+function isTrackMode (mode)
+{
+    for (var i = 0; i < TRACK_MODES.length; i++)
+        if (TRACK_MODES[i] == mode)
+            return true;
+    return false;
+}
 
 load ("BaseMode.js");
 

@@ -521,21 +521,11 @@ AbstractView.prototype.onDeviceLeft = function (event)
         return;
 
     var cm = this.surface.getCurrentMode ();
-    switch (cm)
+    if (isTrackMode (cm))
     {
-        case MODE_TRACK:
-        case MODE_VOLUME:
-        case MODE_PAN:
-        case MODE_CROSSFADER:
-        case MODE_SEND1:
-        case MODE_SEND2:
-        case MODE_SEND3:
-        case MODE_SEND4:
-        case MODE_SEND5:
-        case MODE_SEND6:
-            if (!this.model.isEffectTrackBankActive ())
-                this.model.getTrackBank ().selectChildren ();
-            return;
+        if (!this.model.isEffectTrackBankActive ())
+            this.model.getTrackBank ().selectChildren ();
+        return;
     }
     
     var cd = this.model.getCursorDevice ();
@@ -607,21 +597,11 @@ AbstractView.prototype.onDeviceRight = function (event)
         return;
 
     var cm = this.surface.getCurrentMode ();
-    switch (cm)
+    if (isTrackMode (cm))
     {
-        case MODE_TRACK:
-        case MODE_VOLUME:
-        case MODE_PAN:
-        case MODE_CROSSFADER:
-        case MODE_SEND1:
-        case MODE_SEND2:
-        case MODE_SEND3:
-        case MODE_SEND4:
-        case MODE_SEND5:
-        case MODE_SEND6:
-            if (!this.model.isEffectTrackBankActive ())
-                this.model.getTrackBank ().selectParent ();
-            return;
+        if (!this.model.isEffectTrackBankActive ())
+            this.model.getTrackBank ().selectParent ();
+        return;
     }
 
     var cd = this.model.getCursorDevice ();
