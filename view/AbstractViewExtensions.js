@@ -521,13 +521,16 @@ AbstractView.prototype.onDeviceLeft = function (event)
         return;
 
     var cm = this.surface.getCurrentMode ();
+
+    // Group Navigation
     if (isTrackMode (cm))
     {
         if (!this.model.isEffectTrackBankActive ())
             this.model.getTrackBank ().selectChildren ();
         return;
     }
-    
+
+    // Layer / Device navigation
     var cd = this.model.getCursorDevice ();
     if (!cd.hasSelectedDevice ())
         return;
@@ -541,16 +544,13 @@ AbstractView.prototype.onDeviceLeft = function (event)
             this.setShowDevices (!this.showDevices);
         return;
     }
-    
-    
-    if (this.showDevices && isNoContainer)
-    {
-        this.setShowDevices (false);
-        return;
-    }
 
     if (isNoContainer)
+    {
+        if (this.showDevices)
+            this.setShowDevices (false);
         return;
+    }
 
     var isLayerMode = false;
     switch (cm)
@@ -597,6 +597,8 @@ AbstractView.prototype.onDeviceRight = function (event)
         return;
 
     var cm = this.surface.getCurrentMode ();
+
+    // Group Navigation
     if (isTrackMode (cm))
     {
         if (!this.model.isEffectTrackBankActive ())
@@ -604,11 +606,13 @@ AbstractView.prototype.onDeviceRight = function (event)
         return;
     }
 
+    // Layer / Device navigation
     var cd = this.model.getCursorDevice ();
     if (cm == MODE_DEVICE_LAYER)
     {
         this.surface.setPendingMode (this.lastAbstractDeviceMode);
         cd.selectChannel ();
+        this.setShowDevices (true);
     }
     else
     {
@@ -619,6 +623,7 @@ AbstractView.prototype.onDeviceRight = function (event)
                 cd.selectParent ();
                 this.surface.setPendingMode (MODE_DEVICE_LAYER);
                 this.setShowDevices (false);
+                cd.selectChannel ();
             }
         }
         else
