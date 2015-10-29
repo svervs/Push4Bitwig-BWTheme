@@ -7,6 +7,7 @@ function DeviceLayerMode (model)
 {
     BaseMode.call (this, model);
     this.id = MODE_DEVICE_LAYER;
+    this.isTemporary = false;
 }
 DeviceLayerMode.prototype = new BaseMode ();
 
