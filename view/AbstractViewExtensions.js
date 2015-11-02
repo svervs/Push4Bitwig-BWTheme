@@ -63,7 +63,7 @@ AbstractView.prototype.onPitchbend = function (data1, data2)
             var tb = this.model.getCurrentTrackBank ();
             var selTrack = tb.getSelectedTrack ();
             if (selTrack != null)
-                tb.setVolume (selTrack.index, data2);
+                tb.setVolume (selTrack.index, Config.toDAWValue (data2));
             return;
     }
 
