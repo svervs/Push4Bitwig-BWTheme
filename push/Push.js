@@ -198,6 +198,7 @@ var PUSH_PAD_THRESHOLDS_NAME =
 
 var PUSH_PAD_THRESHOLDS_DATA =
 [
+    // 4 Byte: peak_sampling_time, 4 Byte: aftertouch_gate_time
     '00 00 00 0A 00 00 00 0A', 
     '00 00 01 03 00 00 01 04',
     '00 00 01 0C 00 00 01 0E',
