@@ -499,16 +499,26 @@ AbstractView.prototype.onBrowse = function (event)
 {
     if (!event.isDown ())
         return;
-
     if (this.surface.isShiftPressed ())
-        this.model.getApplication ().toggleBrowserVisibility ();
-    else
     {
-        var browser = this.model.getBrowser ();
-        browser.browseForPresets ();
-        this.surface.getMode (MODE_DEVICE_PRESETS).setSession (browser.getPresetSession ());
-        this.surface.setPendingMode (MODE_DEVICE_PRESETS);
+        this.model.getApplication ().toggleBrowserVisibility ();
+        return;
     }
+
+    var browser = this.model.getBrowser ();
+
+    // Already browsing?
+    if (this.surface.isActiveMode (MODE_DEVICE_PRESETS))
+    {
+        browser.stopBrowsing (!this.surface.isSelectPressed ());
+        this.surface.restoreMode ();
+        return;
+    }
+    
+    // Browse for presets
+    browser.browseForPresets ();
+    this.surface.getMode (MODE_DEVICE_PRESETS).setSession (browser.getPresetSession ());
+    this.surface.setPendingMode (MODE_DEVICE_PRESETS);
 };
 
 //--------------------------------------
