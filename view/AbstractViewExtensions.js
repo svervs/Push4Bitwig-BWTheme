@@ -412,8 +412,7 @@ AbstractView.prototype.onStop = function (event)
         this.model.getCurrentTrackBank ().getClipLauncherScenes ().stop ();
         return;
     }
-    this.stopPressed = event.isDown ();
-    this.surface.setButton (PUSH_BUTTON_STOP, this.stopPressed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.stopPressed = !event.isUp ();
 };
 
 AbstractView.prototype.onScene = function (index) {};
@@ -953,8 +952,8 @@ AbstractView.prototype.updateButtons = function ()
 {
     var tb = this.model.getCurrentTrackBank ();
     var isMuteState = tb.isMuteState ();
-    this.surface.setButton (PUSH_BUTTON_MUTE, isMuteState ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_SOLO, !isMuteState ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_MUTE, isMuteState ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
+    this.surface.setButton (PUSH_BUTTON_SOLO, !isMuteState ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
     this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 

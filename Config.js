@@ -32,6 +32,7 @@ Config.DISPLAY_CROSSFADER    = 12;
 Config.CONVERT_AFTERTOUCH    = 13;
 Config.DEFAULT_DEVICE_MODE   = 14;
 Config.FOOTSWITCH_2          = 15;
+Config.SEND_PORT             = 16;
 
 Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
@@ -64,6 +65,7 @@ Config.displayCrossfader = true;
 Config.convertAftertouch = 0;
 Config.defaultDeviceMode = 20; /*MODE_DEVICE_PARAMS;*/
 Config.footswitch2       = Config.FOOTSWITCH_2_NEW_BUTTON;
+Config.sendPort          = 7000;
 
 Config.AFTERTOUCH_CONVERSION_VALUES = [ "Off", "Poly Aftertouch", "Channel Aftertouch" ];
 for (var i = 0; i < 128; i++)
@@ -75,6 +77,19 @@ Config.DEFAULT_DEVICE_MODE_VALUES = [];
 Config.init = function ()
 {
     var prefs = host.getPreferences ();
+
+    ///////////////////////////
+    // Network
+
+    if (Config.isPush2)
+    {
+        Config.sendPortSetting = prefs.getNumberSetting ('Port', 'Display', 0, 65535, 1, '', 7000);
+        Config.sendPortSetting.addRawValueObserver (function (value)
+        {
+            Config.sendPort = Math.floor (value);
+            Config.notifyListeners (Config.SEND_PORT);
+        });
+    }
 
     ///////////////////////////
     // Accent
@@ -346,7 +361,7 @@ Config.setPadThreshold = function (value)
 // ------------------------------
 
 Config.listeners = [];
-for (var i = 0; i <= Config.DEFAULT_DEVICE_MODE; i++)
+for (var i = 0; i <= Config.SEND_PORT; i++)
     Config.listeners[i] = [];
 
 Config.addPropertyListener = function (property, listener)
@@ -370,5 +385,3 @@ Config.toDAWValue = function (value)
 {
     return Math.round (value * (Config.maxParameterValue - 1) / 127);
 };
-
-function Config () {}

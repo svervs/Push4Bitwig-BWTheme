@@ -29,7 +29,7 @@ CrossfaderMode.prototype.onValueKnobTouch = function (index, isTouched)
 CrossfaderMode.prototype.onValueKnob = function (index, value)
 {
     var tb = this.model.getCurrentTrackBank ();
-    tb.setCrossfadeModeAsNumber (index, changeValue (value, tb.getCrossfadeModeAsNumber (index), 1, 2));
+    tb.setCrossfadeModeAsNumber (index, changeValue (value, tb.getCrossfadeModeAsNumber (index), 1, 3));
 };
 
 CrossfaderMode.prototype.updateDisplay = function ()
@@ -42,7 +42,7 @@ CrossfaderMode.prototype.updateDisplay = function ()
         var t = tb.getTrack (i);
         d.setCell (0, i, t.exists ? "Crossfdr" : "", Display.FORMAT_RAW)
          .setCell (1, i, t.exists ? (t.crossfadeMode == 'A' ? 'A' : (t.crossfadeMode == 'B' ? '       B' : '   <> ')) : "", Display.FORMAT_RAW)
-         .setCell (2, i, t.exists ? (t.crossfadeMode == 'A' ? 0 : (t.crossfadeMode == 'B' ? 127 : 64)) : "", t.exists ? Display.FORMAT_PAN : Display.FORMAT_RAW);
+         .setCell (2, i, t.exists ? (t.crossfadeMode == 'A' ? 0 : (t.crossfadeMode == 'B' ? Config.maxParameterValue : (Config.maxParameterValue / 2))) : "", t.exists ? Display.FORMAT_PAN : Display.FORMAT_RAW);
     }
     d.done (0).done (1).done (2);
 

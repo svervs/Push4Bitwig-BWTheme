@@ -79,18 +79,18 @@ var PUSH_FOOTSWITCH1 = 64;
 var PUSH_FOOTSWITCH2 = 69;
 
 var PUSH_BUTTON_STATE_OFF     = 0;
-var PUSH_BUTTON_STATE_ON      = 1;
-var PUSH_BUTTON_STATE_HI      = 4;
-var PUSH_BUTTON_STATE_REC_ON  = 1; 
-var PUSH_BUTTON_STATE_REC_HI  = 4;
-var PUSH_BUTTON_STATE_PLAY_ON = 1; 
-var PUSH_BUTTON_STATE_PLAY_HI = 4;
-var PUSH_BUTTON_STATE_MUTE_ON = 1; 
-var PUSH_BUTTON_STATE_MUTE_HI = 4;
-var PUSH_BUTTON_STATE_SOLO_ON = 1; 
-var PUSH_BUTTON_STATE_SOLO_HI = 4;
-var PUSH_BUTTON_STATE_STOP_ON = 1; 
-var PUSH_BUTTON_STATE_STOP_HI = 4;
+var PUSH_BUTTON_STATE_ON      = PUSH_COLOR2_RED;
+var PUSH_BUTTON_STATE_HI      = PUSH_COLOR2_GREY_LO;
+var PUSH_BUTTON_STATE_REC_ON  = PUSH_COLOR2_GREY_LO; 
+var PUSH_BUTTON_STATE_REC_HI  = PUSH_COLOR2_RED_HI;
+var PUSH_BUTTON_STATE_PLAY_ON = PUSH_COLOR2_GREY_LO; 
+var PUSH_BUTTON_STATE_PLAY_HI = PUSH_COLOR2_GREEN_HI;
+var PUSH_BUTTON_STATE_MUTE_ON = PUSH_COLOR2_GREY_LO; 
+var PUSH_BUTTON_STATE_MUTE_HI = PUSH_COLOR2_YELLOW_HI;
+var PUSH_BUTTON_STATE_SOLO_ON = PUSH_COLOR2_GREY_LO; 
+var PUSH_BUTTON_STATE_SOLO_HI = PUSH_COLOR2_BLUE;
+var PUSH_BUTTON_STATE_STOP_ON = PUSH_COLOR2_RED_LO; 
+var PUSH_BUTTON_STATE_STOP_HI = PUSH_COLOR2_RED_HI;
 
 
 var PUSH_BUTTONS_ALL =
@@ -306,9 +306,8 @@ Push.prototype.getSelectedVelocityCurve = function ()
 
 Push.prototype.shutdown = function ()
 {
-    // Clear display
-    for (var i = 0; i < 4; i++)
-        this.display.clearRow (i);
+    // Push 2: Shutdown Push2Display app
+    this.display.shutdown ();
 
     // Turn off all buttons
     for (var i = 0; i < this.buttons.length; i++)

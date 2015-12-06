@@ -148,14 +148,17 @@ Controller.prototype.flush = function ()
     
     var t = this.model.getTransport ();
     this.surface.setButton (PUSH_BUTTON_METRONOME, t.isClickOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_PLAY, t.isPlaying ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_RECORD, t.isRecording ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_PLAY, t.isPlaying ? PUSH_BUTTON_STATE_PLAY_HI : PUSH_BUTTON_STATE_PLAY_ON);
+    this.surface.setButton (PUSH_BUTTON_RECORD, t.isRecording ? PUSH_BUTTON_STATE_REC_HI : PUSH_BUTTON_STATE_REC_ON);
+    var view = this.surface.getActiveView ();
+    this.surface.setButton (PUSH_BUTTON_STOP, view && view.stopPressed ? PUSH_BUTTON_STATE_STOP_HI : PUSH_BUTTON_STATE_STOP_ON);
+    
     
     // Automation
     if (this.surface.isShiftPressed ())
-        this.surface.setButton (PUSH_BUTTON_AUTOMATION, t.isWritingClipLauncherAutomation ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+        this.surface.setButton (PUSH_BUTTON_AUTOMATION, t.isWritingClipLauncherAutomation ? PUSH_BUTTON_STATE_REC_HI : PUSH_BUTTON_STATE_REC_ON);
     else
-        this.surface.setButton (PUSH_BUTTON_AUTOMATION, t.isWritingArrangerAutomation ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+        this.surface.setButton (PUSH_BUTTON_AUTOMATION, t.isWritingArrangerAutomation ? PUSH_BUTTON_STATE_REC_HI : PUSH_BUTTON_STATE_REC_ON);
 };
 
 Controller.prototype.updateMode = function (mode)
