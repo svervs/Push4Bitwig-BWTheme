@@ -164,3 +164,17 @@ Display.prototype.formatStr = function (value, format)
             return value ? value.toString () : "";
     }
 };
+
+// 
+// Push 2 specific
+//
+
+Display.prototype.createMessage = function (command)
+{
+    return new DisplayMessage (command);    
+};
+
+Display.prototype.shutdown = function ()
+{
+    this.createMessage (DisplayMessage.DISPLAY_COMMAND_SHUTDOWN).send ();
+};

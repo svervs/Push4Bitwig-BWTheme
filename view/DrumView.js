@@ -38,7 +38,8 @@ DrumView.prototype.updateArrowStates = function ()
 
 DrumView.prototype.updateNoteMapping = function ()
 {
-    this.noteMap = this.canSelectedTrackHoldNotes () && !this.surface.isSelectPressed () ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
+    var turnOn = this.canSelectedTrackHoldNotes () && !this.surface.isSelectPressed () && !this.surface.isDeletePressed () && !this.surface.isPressed (PUSH_BUTTON_MUTE) && !this.surface.isPressed (PUSH_BUTTON_SOLO);
+    this.noteMap = turnOn ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
     this.surface.setKeyTranslationTable (this.noteMap);
 };
 
@@ -55,6 +56,23 @@ DrumView.prototype.usesButton = function (buttonID)
 DrumView.prototype.onSelect = function (event)
 {
     this.updateNoteMapping ();
+};
+
+DrumView.prototype.onDelete = function (event)
+{
+    this.updateNoteMapping ();
+};
+
+DrumView.prototype.onMute = function (event)
+{
+    this.updateNoteMapping ();
+    AbstractSequencerView.prototype.onMute.call (this, event);
+};
+
+DrumView.prototype.onSolo = function (event)
+{
+    this.updateNoteMapping ();
+    AbstractSequencerView.prototype.onSolo.call (this, event);
 };
 
 DrumView.prototype.onGridNote = function (note, velocity)
@@ -93,7 +111,6 @@ DrumView.prototype.onGridNote = function (note, velocity)
         if (this.surface.isDeletePressed ())
         {
             // Delete all of the notes on that 'pad'
-            this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
             this.clip.clearRow (this.offsetY + this.selectedPad);
         }
         else if (this.surface.isPressed (PUSH_BUTTON_MUTE))

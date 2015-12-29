@@ -7,8 +7,8 @@ ViewSelectMode.VIEWS =
 [
     { id: VIEW_PLAY, name: 'Play' },
     { id: VIEW_PIANO, name: 'Piano' },
-    { id: VIEW_SEQUENCER, name: 'Squencr' },
-    { id: VIEW_RAINDROPS, name: 'Raindrp' },
+    { id: VIEW_SEQUENCER, name: 'Sequencer' },
+    { id: VIEW_RAINDROPS, name: 'Raindrop' },
     { id: VIEW_DRUM, name: 'Drum' },
     { id: null, name: '' },
     { id: VIEW_CLIP, name: 'Clip' },
@@ -35,14 +35,30 @@ ViewSelectMode.prototype.onFirstRow = function (index)
 ViewSelectMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
-    d.clear ().setBlock (1, 0, 'Track input:');
-    for (var i = 0; i < ViewSelectMode.VIEWS.length; i++)
-        d.setCell (3, i, (ViewSelectMode.VIEWS[i].id != null && this.surface.isActiveView (ViewSelectMode.VIEWS[i].id) ? Display.RIGHT_ARROW : '') + ViewSelectMode.VIEWS[i].name);
-    d.allDone ();
+    
+    if (Config.isPush2)
+    {
+        var message = d.createMessage (DisplayMessage.DISPLAY_COMMAND_GRID);
+        for (var i = 0; i < ViewSelectMode.VIEWS.length; i++)
+        {
+            var view = ViewSelectMode.VIEWS[i];
+            message.addOptionElement ("", "", false, i == 0 ? "Track input" : "",
+                                      view.id == null ? "" : view.name, 
+                                      view.id != null && this.surface.isActiveView (view.id));
+        }
+        message.send ();
+    }
+    else
+    {
+        d.clear ().setBlock (1, 0, 'Track input:');
+        for (var i = 0; i < ViewSelectMode.VIEWS.length; i++)
+            d.setCell (3, i, (ViewSelectMode.VIEWS[i].id != null && this.surface.isActiveView (ViewSelectMode.VIEWS[i].id) ? Display.RIGHT_ARROW : '') + ViewSelectMode.VIEWS[i].name);
+        d.allDone ();
+    }
 };
 
 ViewSelectMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, ViewSelectMode.VIEWS[i].id == null ? PUSH_COLOR_BLACK : (this.surface.isActiveView (ViewSelectMode.VIEWS[i].id) ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO));
+        this.surface.setButton (20 + i, ViewSelectMode.VIEWS[i].id == null ? AbstractMode.BUTTON_COLOR_OFF : (this.surface.isActiveView (ViewSelectMode.VIEWS[i].id) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON));
 };

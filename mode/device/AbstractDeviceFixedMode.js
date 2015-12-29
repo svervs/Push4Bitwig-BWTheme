@@ -56,6 +56,8 @@ AbstractDeviceFixedMode.prototype.onValueKnob = function (index, value)
 
 AbstractDeviceFixedMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
+    this.isKnobTouched[index] = isTouched;
+    
     if (isTouched)
     {
         if (this.surface.isDeletePressed ())
@@ -101,6 +103,16 @@ AbstractDeviceFixedMode.prototype.updateParameters = function (d)
 
 AbstractDeviceFixedMode.prototype.updateBanks = function (d)
 {
+    if (Config.isPush2)
+    {
+        var banks = [];
+        for (var i = 0; i < AbstractDeviceFixedMode.FIXED_BANKS_NAMES.length; i++)
+            banks.push ({ name: AbstractDeviceFixedMode.FIXED_BANKS_NAMES[i], selected: this.page == i });
+        for (var i = AbstractDeviceFixedMode.FIXED_BANKS_NAMES.length; i < 8; i++)
+            banks.push ({ name: "", selected: false });
+        return banks;
+    }
+    
     for (var i = 0; i < AbstractDeviceFixedMode.FIXED_BANKS_NAMES.length; i++)
         d.setCell (3, i, (this.page == i ? Display.RIGHT_ARROW : "") + AbstractDeviceFixedMode.FIXED_BANKS_NAMES[i]);
 };
@@ -108,4 +120,10 @@ AbstractDeviceFixedMode.prototype.updateBanks = function (d)
 AbstractDeviceFixedMode.prototype.calcBank = function ()
 {
     return { pages: AbstractDeviceFixedMode.FIXED_BANKS_NAMES, page: this.page, offset: 0 };
+};
+
+// Push 2
+AbstractDeviceFixedMode.prototype.getParameterAttributes = function (index)
+{
+    return this.getParameterValues (index);
 };

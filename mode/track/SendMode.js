@@ -20,6 +20,8 @@ SendMode.prototype.onValueKnobTouch = function (index, isTouched)
 {
     var sendIndex = this.getCurrentSendIndex ();
         
+    this.isKnobTouched[index] = isTouched;
+    
     if (isTouched)
     {
         if (this.surface.isDeletePressed ())
@@ -44,6 +46,47 @@ SendMode.prototype.updateDisplay = function ()
     var tb = this.model.getCurrentTrackBank ();
     var fxTrackBank = this.model.getEffectTrackBank ();
 
+    if (Config.isPush2)
+    {
+        this.updateTrackMenu ();
+
+        var message = d.createMessage (DisplayMessage.DISPLAY_COMMAND_GRID);
+
+        var sendOffset = Config.sendsAreToggled ? 4 : 0;
+        for (var i = 0; i < 8; i++)
+        {
+            var t = tb.getTrack (i);
+
+            message.addByte (DisplayMessage.GRID_ELEMENT_CHANNEL_SENDS);
+            
+            // The menu item
+            message.addString (this.menu[i]);
+            message.addBoolean (i > 3 && i - 4 + sendOffset == sendIndex);
+            
+            // Channel info
+            message.addString (t.name);
+            message.addString (t.type);
+            message.addColor (AbstractTrackBankProxy.getColorEntry (t.color));
+            message.addByte (t.selected ? 1 : 0);
+
+            for (var j = 0; j < 4; j++)
+            {
+                var sendPos = sendOffset + j;
+                var send = t.sends[sendPos];
+                message.addString (fxTrackBank == null ? send.name : fxTrackBank.getTrack (sendPos).name);
+                message.addString (send && sendIndex == sendPos && this.isKnobTouched[i] ? send.volumeStr : "");
+                message.addInteger(send ? send.volume : "");
+                message.addByte (sendIndex == sendPos ? 1 : 0);
+            }
+            
+            // Signal Track mode off
+            message.addBoolean (false);
+        }
+        
+        message.send ();
+        return;
+    }
+    
     for (var i = 0; i < 8; i++)
     {
         var t = tb.getTrack (i);

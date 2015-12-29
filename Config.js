@@ -11,6 +11,13 @@ Config.maxParameterValue = 1024;
 Config.trackScrollInterval = 100;
 Config.sceneScrollInterval = 100;
 
+//------------------------------
+// Global stati
+//------------------------------
+
+Config.wasMuteLongPressed = false;
+Config.wasSoloLongPressed = false;
+Config.isMuteSoloLocked   = false;
 
 // ------------------------------
 // Editable configurations
@@ -33,6 +40,7 @@ Config.CONVERT_AFTERTOUCH    = 13;
 Config.DEFAULT_DEVICE_MODE   = 14;
 Config.FOOTSWITCH_2          = 15;
 Config.SEND_PORT             = 16;
+Config.FLIP_SESSION          = 17;
 
 Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
@@ -66,6 +74,10 @@ Config.convertAftertouch = 0;
 Config.defaultDeviceMode = 20; /*MODE_DEVICE_PARAMS;*/
 Config.footswitch2       = Config.FOOTSWITCH_2_NEW_BUTTON;
 Config.sendPort          = 7000;
+Config.flipSession       = false;
+
+// Push 2
+Config.sendsAreToggled = false;
 
 Config.AFTERTOUCH_CONVERSION_VALUES = [ "Off", "Poly Aftertouch", "Channel Aftertouch" ];
 for (var i = 0; i < 128; i++)
@@ -229,7 +241,14 @@ Config.init = function ()
         }
         Config.notifyListeners (Config.RIBBON_MODE);
     });
-
+    
+    Config.flipSessionSetting = prefs.getEnumSetting ("Flip Session", "Workflow", [ "Off", "On" ], "Off");
+    Config.flipSessionSetting.addValueObserver (function (value)
+    {
+        Config.flipSession = value == "On";
+        Config.notifyListeners (Config.FLIP_SESSION);
+    });
+    
     ///////////////////////////
     // Pad Sensitivity
 
@@ -344,6 +363,11 @@ Config.setDefaultDeviceMode = function (mode)
     Config.defaultDeviceModeSetting.set (Config.DEFAULT_DEVICE_MODE_VALUES[mode]);
 };
 
+Config.setFlipSession = function (enabled)
+{
+    Config.flipSessionSetting.set (enabled ? "On" : "Off");
+};
+
 Config.setVelocityCurve = function (value)
 {
     Config.velocityCurve = Math.max (0, Math.min (value, PUSH_PAD_CURVES_NAME.length - 1));
@@ -361,7 +385,7 @@ Config.setPadThreshold = function (value)
 // ------------------------------
 
 Config.listeners = [];
-for (var i = 0; i <= Config.SEND_PORT; i++)
+for (var i = 0; i <= Config.FLIP_SESSION; i++)
     Config.listeners[i] = [];
 
 Config.addPropertyListener = function (property, listener)

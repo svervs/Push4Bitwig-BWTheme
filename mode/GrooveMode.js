@@ -12,6 +12,8 @@ GrooveMode.prototype = new BaseMode ();
 
 GrooveMode.prototype.onValueKnob = function (index, value)
 {
+    if (index >= GrooveValue.Kind.values ().length)
+        return;
     var v = this.model.getGroove ().getValue (index);
     v.value = this.surface.changeValue (value, v.value);
     this.model.getGroove ().getRangedValue (index).set (v.value, Config.maxParameterValue);
@@ -30,22 +32,52 @@ GrooveMode.prototype.onFirstRow = function (index)
 GrooveMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
-    var g = this.model.getGroove ();
+    var groove = this.model.getGroove ();
 
-    d.clear ();
-
-    var kinds = GrooveValue.Kind.values ();
-    for (var i = 0; i < kinds.length; i++)
+    if (Config.isPush2)
     {
-        var v = g.getValue (i);
-        d.setCell (0, i, v.name, Display.FORMAT_RAW)
-         .setCell (1, i, v.valueString, Display.FORMAT_RAW)
-         .setCell (2, i, v.value, Display.FORMAT_VALUE);
+        var message = d.createMessage (DisplayMessage.DISPLAY_COMMAND_GRID);
+        var length = GrooveValue.Kind.values ().length;
+        for (var i = 0; i < length; i++)
+        {
+            message.addByte (DisplayMessage.GRID_ELEMENT_PARAMETERS);
+            message.addString ("");
+            message.addBoolean (false);
+            message.addString ("");
+            message.addString ("");
+            message.addColor (0);
+            message.addBoolean (false);
+            
+            var v = groove.getValue (i);
+            message.addString (v.name);
+            message.addInteger (v.value);
+            message.addString (v.valueString);
+            message.addBoolean (this.isKnobTouched[i]);
+        }
+        
+        for (var i = length; i < 8; i++)
+        {
+            message.addOptionElement ("", "", false, i == 6 ? "Global Groove" : "", 
+                                      i == 7 ? (groove.isEnabled () ? 'Enabled' : 'Disabled') : "", 
+                                      i == 7 ? groove.isEnabled () : false);
+        }
+        
+        message.send ();
     }
-
-    d.setBlock (3, 0, "Global Groove:")
-     .setCell (3, 7, g.isEnabled () ? 'Enabled' : 'Disabled')
-     .allDone ();
+    else
+    {
+        d.clear ();
+        for (var i = 0; i < GrooveValue.Kind.values ().length; i++)
+        {
+            var v = groove.getValue (i);
+            d.setCell (0, i, v.name, Display.FORMAT_RAW)
+             .setCell (1, i, v.valueString, Display.FORMAT_RAW)
+             .setCell (2, i, v.value, Display.FORMAT_VALUE);
+        }
+        d.setBlock (2, 3, "Global Groove:")
+         .setCell (3, 7, groove.isEnabled () ? 'Enabled' : 'Disabled')
+         .allDone ();
+    }
 };
 
 GrooveMode.prototype.updateFirstRow = function ()
@@ -53,5 +85,5 @@ GrooveMode.prototype.updateFirstRow = function ()
     this.disableFirstRow ();
 
     var g = this.model.getGroove ();
-    this.surface.setButton (27, g.isEnabled () ? PUSH_COLOR_GREEN_LO : PUSH_COLOR_BLACK);
+    this.surface.setButton (27, g.isEnabled () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
 };

@@ -43,6 +43,8 @@ DeviceParamsMode.prototype.nextPageBank = function ()
 
 DeviceParamsMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
+    this.isKnobTouched[index] = isTouched;
+    
     if (isTouched)
     {
         if (this.surface.isDeletePressed ())
@@ -114,4 +116,10 @@ DeviceParamsMode.prototype.calcBank = function ()
     if (page >= pages.length || page < 0)
         page = 0;
     return { pages: pages, page: page, offset: Math.floor (page / 8) * 8 };
+};
+
+// Push 2
+DeviceParamsMode.prototype.getParameterAttributes = function (index)
+{
+    return this.cursorDevice.getFXParam (index);
 };

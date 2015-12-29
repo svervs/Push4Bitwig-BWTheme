@@ -8,7 +8,7 @@ Config.isPush2 = true;
 loadAPI (1);
 load ("Config.js");
 load ("framework/ClassLoader.js");
-load ("push2/ClassLoader.js");
+load ("push/ClassLoader.js");
 load ("view/ClassLoader.js");
 load ("mode/ClassLoader.js");
 load ("Controller.js");
@@ -16,7 +16,7 @@ load ("Controller.js");
 // This is the only global variable, do not use it.
 var controller = null;
 
-host.defineController ("Ableton", "Push 2", "6.00", "B7621FC0-9223-11E5-A837-0800200C9A66", "Jürgen Moßgraber");
+host.defineController ("Ableton", "Push 2", "7.00", "B7621FC0-9223-11E5-A837-0800200C9A66", "Jürgen Moßgraber");
 host.defineMidiPorts (1, 1);
 host.platformIsWindows () && host.addDeviceNameBasedDiscoveryPair (["Ableton Push 2"], ["Ableton Push 2"]);
 host.platformIsLinux () && host.addDeviceNameBasedDiscoveryPair (["Ableton Push 2 MIDI 1"], ["Ableton Push 2 MIDI 1"]);

@@ -44,6 +44,11 @@ var PUSH_BUTTON_DOUBLE          = 117;
 var PUSH_BUTTON_DELETE          = 118;
 var PUSH_BUTTON_UNDO            = 119;
 
+//Push 2 specific
+var PUSH_BUTTON_SETUP           = 30;
+var PUSH_BUTTON_LAYOUT          = 31;
+var PUSH_BUTTON_CONVERT         = 35;
+
 var PUSH_BUTTON_SCENE1          = 36;    // 1/4
 var PUSH_BUTTON_SCENE2          = 37;    
 var PUSH_BUTTON_SCENE3          = 38;
@@ -79,19 +84,20 @@ var PUSH_FOOTSWITCH1 = 64;
 var PUSH_FOOTSWITCH2 = 69;
 
 var PUSH_BUTTON_STATE_OFF     = 0;
-var PUSH_BUTTON_STATE_ON      = 1;
-var PUSH_BUTTON_STATE_HI      = 4;
-var PUSH_BUTTON_STATE_REC_ON  = 1; 
-var PUSH_BUTTON_STATE_REC_HI  = 4;
-var PUSH_BUTTON_STATE_PLAY_ON = 1; 
-var PUSH_BUTTON_STATE_PLAY_HI = 4;
-var PUSH_BUTTON_STATE_MUTE_ON = 1; 
-var PUSH_BUTTON_STATE_MUTE_HI = 4;
-var PUSH_BUTTON_STATE_SOLO_ON = 1; 
-var PUSH_BUTTON_STATE_SOLO_HI = 4;
-var PUSH_BUTTON_STATE_STOP_ON = 1; 
-var PUSH_BUTTON_STATE_STOP_HI = 4;
-
+// Monochrome buttons
+var PUSH_BUTTON_STATE_ON      = Config.isPush2 ? 8 : 1;
+var PUSH_BUTTON_STATE_HI      = Config.isPush2 ? 127 : 4;
+// Color buttons
+var PUSH_BUTTON_STATE_REC_ON  = Config.isPush2 ? PUSH_COLOR2_GREY_LO : 1; 
+var PUSH_BUTTON_STATE_REC_HI  = Config.isPush2 ? PUSH_COLOR2_RED_HI : 4;
+var PUSH_BUTTON_STATE_PLAY_ON = Config.isPush2 ? PUSH_COLOR2_GREY_LO : 1; 
+var PUSH_BUTTON_STATE_PLAY_HI = Config.isPush2 ? PUSH_COLOR2_GREEN_HI : 4;
+var PUSH_BUTTON_STATE_MUTE_ON = Config.isPush2 ? PUSH_COLOR2_GREY_LO : 1; 
+var PUSH_BUTTON_STATE_MUTE_HI = Config.isPush2 ? PUSH_COLOR2_AMBER_LO : 4;
+var PUSH_BUTTON_STATE_SOLO_ON = Config.isPush2 ? PUSH_COLOR2_GREY_LO : 1; 
+var PUSH_BUTTON_STATE_SOLO_HI = Config.isPush2 ? PUSH_COLOR2_YELLOW : 4;
+var PUSH_BUTTON_STATE_STOP_ON = Config.isPush2 ? PUSH_COLOR2_RED_LO : 1; 
+var PUSH_BUTTON_STATE_STOP_HI = Config.isPush2 ? PUSH_COLOR2_RED_HI : 4;
 
 var PUSH_BUTTONS_ALL =
 [
@@ -134,8 +140,21 @@ var PUSH_BUTTONS_ALL =
     PUSH_BUTTON_QUANTIZE,
     PUSH_BUTTON_DOUBLE,
     PUSH_BUTTON_DELETE,
-    PUSH_BUTTON_UNDO
+    PUSH_BUTTON_UNDO,
+    PUSH_BUTTON_SETUP,
+    PUSH_BUTTON_LAYOUT,
+    PUSH_BUTTON_CONVERT
 ];
+
+var PUSH_BUTTON_UPDATE = initArray (true, 127);
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_MUTE] = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_SOLO] = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_ACCENT] = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_METRONOME] = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_PLAY] = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_RECORD] = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_STOP] = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_AUTOMATION] = false;
 
 var PUSH_RIBBON_PITCHBEND = 0;
 var PUSH_RIBBON_VOLUME    = 1;
@@ -306,9 +325,17 @@ Push.prototype.getSelectedVelocityCurve = function ()
 
 Push.prototype.shutdown = function ()
 {
-    // Clear display
-    for (var i = 0; i < 4; i++)
-        this.display.clearRow (i);
+    if (Config.isPush2)
+    {
+        // Push 2: Shutdown Push2Display app
+        this.display.shutdown ();
+    }
+    else
+    {
+        // Clear display
+        for (var i = 0; i < 4; i++)
+            this.display.clearRow (i);
+    }
 
     // Turn off all buttons
     for (var i = 0; i < this.buttons.length; i++)
@@ -338,7 +365,10 @@ Push.prototype.updateButtons = function ()
 {
     var view = this.getActiveView ();
     for (var i = 0; i < this.buttons.length; i++)
-        this.setButton (this.buttons[i], view.usesButton (this.buttons[i]) ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
+    {
+        if (PUSH_BUTTON_UPDATE[this.buttons[i]])
+            this.setButton (this.buttons[i], view.usesButton (this.buttons[i]) ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
+    }
 };
 
 //--------------------------------------
@@ -656,6 +686,21 @@ Push.prototype.handleEvent = function (cc, value)
         // Undo
         case PUSH_BUTTON_UNDO:
             view.onUndo (event);
+            break;
+            
+        // Layout - Push 2
+        case PUSH_BUTTON_LAYOUT:
+            view.onLayout (event);
+            break;
+           
+		// Setup - Push 2 
+        case PUSH_BUTTON_SETUP:
+            // Currently not used
+            break;
+            
+		// Convert - Push 2 
+        case PUSH_BUTTON_CONVERT:
+            // Currently not used
             break;
             
         // Note: Sustain already directly send to the DAW

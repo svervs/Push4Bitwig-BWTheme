@@ -21,6 +21,13 @@ DeviceMacroMode.prototype.getParameter = function (index)
 
 DeviceMacroMode.prototype.onSecondRow = function (index)
 {
+    if (Config.isPush2)
+    {
+        // No support for macro mapping on Push 2, the buttons are required for navigation
+        AbstractDeviceMode.prototype.onSecondRow.call (this, index);
+        return;
+    }
+    
     var macro = this.cursorDevice.getMacro (index);
     if (macro)
         macro.getModulationSource ().toggleIsMapping ();
@@ -28,6 +35,13 @@ DeviceMacroMode.prototype.onSecondRow = function (index)
 
 DeviceMacroMode.prototype.updateSecondRow = function ()
 {
+    if (Config.isPush2)
+    {
+        // No support for macro mapping on Push 2, the buttons are required for navigation
+        AbstractDeviceMode.prototype.updateSecondRow.call (this);
+        return;
+    }
+    
     for (var i = 0; i < 8; i++)
         this.surface.setButton (102 + i, this.cursorDevice.isMacroMapping (i) ? PUSH_COLOR2_GREEN_SPRING : PUSH_COLOR2_BLACK);
 };

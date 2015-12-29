@@ -49,7 +49,7 @@ AbstractView.prototype.onPitchbend = function (data1, data2)
 
         case Config.RIBBON_MODE_PB_CC:
             if (data2 > 64)
-                this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, data2 * 2);
+                this.surface.sendMidiEvent (0xB0, Config.ribbonModeCCVal, (data2 - 64) * 2);
             else if (data2 < 64)
                 this.surface.sendMidiEvent (0xE0, data1, data2);
             else
@@ -264,6 +264,18 @@ AbstractView.prototype.onUndo = function (event)
         this.model.getApplication ().undo ();
 };
 
+// Push 2 specific
+
+AbstractView.prototype.onLayout = function (event)
+{
+    if (!event.isDown ())
+        return;
+    if (this.surface.getCurrentMode () == MODE_TRACK)
+        this.surface.setPendingMode (MODE_VOLUME);
+    else
+        this.surface.setPendingMode (MODE_TRACK);
+};
+
 //--------------------------------------
 // Group 3
 //--------------------------------------
@@ -469,10 +481,37 @@ AbstractView.prototype.onTrack = function (event)
         return;
     }
         
-    if (this.surface.isActiveMode (MODE_TRACK))
-        this.model.toggleCurrentTrackBank ();
+    if (Config.isPush2)
+    {
+        if (this.surface.isActiveMode (MODE_TRACK) ||
+            this.surface.isActiveMode (MODE_VOLUME) ||
+            this.surface.isActiveMode (MODE_CROSSFADER) ||
+            this.surface.isActiveMode (MODE_PAN))
+        {
+            this.model.toggleCurrentTrackBank ();
+        }
+        else if (this.surface.isActiveMode (MODE_SEND1) ||
+                 this.surface.isActiveMode (MODE_SEND2) ||
+                 this.surface.isActiveMode (MODE_SEND3) ||
+                 this.surface.isActiveMode (MODE_SEND4) ||
+                 this.surface.isActiveMode (MODE_SEND5) ||
+                 this.surface.isActiveMode (MODE_SEND6) ||
+                 this.surface.isActiveMode (MODE_SEND7) ||
+                 this.surface.isActiveMode (MODE_SEND8))
+        {
+            this.surface.setPendingMode (MODE_TRACK);
+            this.model.toggleCurrentTrackBank ();
+        }
+        else
+            this.surface.setPendingMode (MODE_TRACK);
+    }
     else
-        this.surface.setPendingMode (MODE_TRACK);
+    {
+        if (this.surface.isActiveMode (MODE_TRACK))
+            this.model.toggleCurrentTrackBank ();
+        else
+            this.surface.setPendingMode (MODE_TRACK);
+    }
     
     var tb = this.model.getCurrentTrackBank ();
     var track = tb.getSelectedTrack ();
@@ -491,7 +530,8 @@ AbstractView.prototype.onDevice = function (event)
     if (!event.isDown ())
         return;
     var deviceMode = this.surface.getMode (MODE_DEVICE_MODE_SELECT).selectedMode;
-    this.surface.setPendingMode (this.surface.getCurrentMode () == deviceMode ? MODE_DEVICE_MODE_SELECT : deviceMode);
+    // Device mode selection for Push2 is directly available in the Device mode
+    this.surface.setPendingMode (this.surface.getCurrentMode () == deviceMode && !Config.isPush2 ? MODE_DEVICE_MODE_SELECT : deviceMode);
 };
 
 AbstractView.prototype.onBrowse = function (event)
@@ -642,12 +682,149 @@ AbstractView.prototype.onDeviceRight = function (event)
 
 AbstractView.prototype.onMute = function (event)
 {
-    this.model.getCurrentTrackBank ().setTrackState (TrackState.MUTE);
+    if (!Config.isPush2)
+    {
+        this.model.getCurrentTrackBank ().setTrackState (TrackState.MUTE);
+        return;
+    }
+
+    // Toggle mute lock mode
+    if (this.surface.isShiftPressed ())
+    {
+        if (event.isUp ())
+            Config.isMuteSoloLocked = !Config.isMuteSoloLocked;
+        return;
+    }
+    
+    // Behaviour like Push 1
+    if (Config.isMuteSoloLocked)
+    {
+        this.model.getCurrentTrackBank ().setTrackState (TrackState.MUTE);
+        return;
+    }
+    
+    if (event.isDown ())
+    {
+        Config.wasMuteLongPressed = false;
+        return;
+    }
+
+    if (event.isLong ())
+    {
+        Config.wasMuteLongPressed = true;
+        this.model.getCurrentTrackBank ().setTrackState (TrackState.MUTE);
+        return;
+    }
+    
+    if (!event.isUp () || Config.wasMuteLongPressed)
+    {
+        Config.wasMuteLongPressed = false;
+        return;
+    }
+    
+    switch (this.surface.activeModeId)
+    {
+        case MODE_TRACK:
+        case MODE_VOLUME:
+        case MODE_CROSSFADER:
+        case MODE_PAN:
+        case MODE_SEND1:
+        case MODE_SEND2:
+        case MODE_SEND3:
+        case MODE_SEND4:
+        case MODE_SEND5:
+        case MODE_SEND6:
+        case MODE_SEND7:
+        case MODE_SEND8:
+            var tb = this.model.getCurrentTrackBank ();
+            var selTrack = tb.getSelectedTrack ();
+            if (selTrack != null)
+                tb.toggleMute (selTrack.index);
+            break;
+            
+        case MODE_MASTER:
+            this.model.getMasterTrack ().toggleMute ();
+            break;
+            
+        case MODE_DEVICE_LAYER:
+            var cd = this.model.getCursorDevice ();
+            var layer = cd.getSelectedLayerOrDrumPad ();
+            if (layer != null)
+                cd.toggleLayerOrDrumPadMute (layer.index);
+            break;
+    }
 };
 
 AbstractView.prototype.onSolo = function (event)
 {
-    this.model.getCurrentTrackBank ().setTrackState (TrackState.SOLO);
+    if (!Config.isPush2)
+    {
+        this.model.getCurrentTrackBank ().setTrackState (TrackState.SOLO);
+        return;
+    }
+    
+    if (this.surface.isShiftPressed ())
+    {
+        if (event.isUp ())
+            Config.isMuteSoloLocked = !Config.isMuteSoloLocked;
+        return;
+    }
+    
+    if (Config.isMuteSoloLocked)
+    {
+        this.model.getCurrentTrackBank ().setTrackState (TrackState.SOLO);
+        return;
+    }
+    
+    if (event.isDown ())
+    {
+        Config.wasSoloLongPressed = false;
+        return;
+    }
+
+    if (event.isLong ())
+    {
+        Config.wasSoloLongPressed = true;
+        this.model.getCurrentTrackBank ().setTrackState (TrackState.SOLO);
+        return;
+    }
+    
+    if (!event.isUp () || Config.wasSoloLongPressed)
+    {
+        Config.wasSoloLongPressed = false;
+        return;
+    }
+    
+    switch (this.surface.activeModeId)
+    {
+        case MODE_TRACK:
+        case MODE_VOLUME:
+        case MODE_CROSSFADER:
+        case MODE_PAN:
+        case MODE_SEND1:
+        case MODE_SEND2:
+        case MODE_SEND3:
+        case MODE_SEND4:
+        case MODE_SEND5:
+        case MODE_SEND6:
+        case MODE_SEND7:
+        case MODE_SEND8:
+            var tb = this.model.getCurrentTrackBank ();
+            var selTrack = tb.getSelectedTrack ();
+            if (selTrack != null)
+                tb.toggleSolo (selTrack.index);
+            
+        case MODE_MASTER:
+            this.model.getMasterTrack ().toggleSolo ();
+            break;
+            
+        case MODE_DEVICE_LAYER:
+            var cd = this.model.getCursorDevice ();
+            var layer = cd.getSelectedLayerOrDrumPad ();
+            if (layer != null)
+                cd.toggleLayerOrDrumPadSolo (layer.index);
+            break;
+    }
 };
 
 AbstractView.prototype.onScales = function (event)
@@ -768,7 +945,7 @@ AbstractView.prototype.onShift = function (event)
     if (event.isDown () && cm == MODE_SCALES)
         this.surface.setPendingMode (MODE_SCALE_LAYOUT);
     else if (event.isUp () && cm == MODE_SCALE_LAYOUT)
-        this.surface.setPendingMode (MODE_SCALES);
+        this.surface.restoreMode ();
 };
 
 AbstractView.prototype.scrollLeft = function (event)
@@ -950,11 +1127,31 @@ AbstractView.prototype.onFootswitch2 = function (value)
 
 AbstractView.prototype.updateButtons = function ()
 {
+    this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+
+    if (Config.isPush2)
+    {
+        if (this.surface.isActiveMode (MODE_DEVICE_LAYER))
+        {
+            var cd = this.model.getCursorDevice ();
+            var layer = cd.getSelectedLayerOrDrumPad ();
+            this.surface.setButton (PUSH_BUTTON_MUTE, layer != null && layer.mute ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
+            this.surface.setButton (PUSH_BUTTON_SOLO, layer != null && layer.solo ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
+        }
+        else
+        {
+            var tb = this.model.getCurrentTrackBank ();
+            var selTrack = this.surface.isActiveMode (MODE_MASTER) ? this.model.getMasterTrack () : tb.getSelectedTrack ();
+            this.surface.setButton (PUSH_BUTTON_MUTE, selTrack != null && selTrack.mute ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
+            this.surface.setButton (PUSH_BUTTON_SOLO, selTrack != null && selTrack.solo ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
+        }
+        return;
+    }
+    
     var tb = this.model.getCurrentTrackBank ();
     var isMuteState = tb.isMuteState ();
     this.surface.setButton (PUSH_BUTTON_MUTE, isMuteState ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
     this.surface.setButton (PUSH_BUTTON_SOLO, !isMuteState ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
-    this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 AbstractView.prototype.updateArrowStates = function ()

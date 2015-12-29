@@ -17,6 +17,8 @@ PanMode.prototype.onValueKnob = function (index, value)
 
 PanMode.prototype.onValueKnobTouch = function (index, isTouched)
 {
+    this.isKnobTouched[index] = isTouched;
+    
     if (isTouched)
     {
         if (this.surface.isDeletePressed ())
@@ -35,6 +37,12 @@ PanMode.prototype.onValueKnobTouch = function (index, isTouched)
 
 PanMode.prototype.updateDisplay = function ()
 {
+    if (Config.isPush2)
+    {
+        this.updateChannelDisplay (DisplayMessage.GRID_ELEMENT_CHANNEL_PAN, false, true);
+        return;
+    }
+    
     var d = this.surface.getDisplay ();
     var tb = this.model.getCurrentTrackBank ();
 

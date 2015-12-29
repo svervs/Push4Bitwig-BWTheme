@@ -38,7 +38,7 @@ SessionView.prototype.drawSceneButtons = function ()
     var color = PUSH_COLOR_BLACK;
     for (var i = 0; i < 8; i++)
     {
-        if (this.flip)
+        if (Config.flipSession)
         {
             var track = tb.getTrack (i);
             if (tb.isMuteState ())
@@ -69,7 +69,7 @@ SessionView.prototype.updateDevice = function ()
         m.updateFirstRow ();
     }
 
-    if (this.flip && !m.hasSecondRowPriority)
+    if (Config.flipSession && !m.hasSecondRowPriority)
     {
         for (var i = 0; i < 8; i++)
             this.surface.setButton (102 + i, PUSH_COLOR2_GREEN);
@@ -116,7 +116,7 @@ SessionView.prototype.onSession = function (event)
     }
     else if (event.isDown ())
     {
-        this.flip = !this.flip;
+        Config.setFlipSession (!Config.flipSession);
         var dUp   = this.canScrollUp;
         var dDown = this.canScrollDown;
         this.canScrollUp = this.canScrollLeft;
@@ -129,7 +129,7 @@ SessionView.prototype.onSession = function (event)
 
 SessionView.prototype.onScene = function (scene)
 {
-    this.sceneOrSecondRowButtonPressed (scene, !this.flip);
+    this.sceneOrSecondRowButtonPressed (scene, !Config.flipSession);
 };
 
 SessionView.prototype.onSecondRow = function (index)
@@ -137,7 +137,7 @@ SessionView.prototype.onSecondRow = function (index)
     if (this.surface.getActiveMode ().hasSecondRowPriority)
         AbstractView.prototype.onSecondRow.call (this, index);
     else
-        this.sceneOrSecondRowButtonPressed (index, this.flip);
+        this.sceneOrSecondRowButtonPressed (index, Config.flipSession);
 };
 
 SessionView.prototype.sceneOrSecondRowButtonPressed = function (index, isScene)
@@ -152,7 +152,7 @@ SessionView.prototype.sceneOrSecondRowButtonPressed = function (index, isScene)
             this.model.getCurrentTrackBank ().returnToArrangement (index);
         else
         {
-            if (this.flip)
+            if (Config.flipSession)
             {
                 // Only execute Solo or Mute
                 this.surface.getMode (MODE_TRACK).onSecondRow (index);

@@ -3,10 +3,6 @@
 // (c) 2014-2015
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
-DeviceModeSelectMode.firstRowButtonColorUp = PUSH_COLOR_GREEN_LO;
-DeviceModeSelectMode.firstRowButtonColorSelected = PUSH_COLOR_YELLOW_LO;
-
-
 function DeviceModeSelectMode (model)
 {
     BaseMode.call (this, model);
@@ -33,18 +29,18 @@ DeviceModeSelectMode.prototype.updateDisplay = function ()
 
 DeviceModeSelectMode.prototype.updateFirstRow = function ()
 {
-    this.surface.setButton (20, this.selectedMode == MODE_DEVICE_PARAMS ? DeviceModeSelectMode.firstRowButtonColorSelected : DeviceModeSelectMode.firstRowButtonColorUp);
-    this.surface.setButton (21, this.selectedMode == MODE_DEVICE_COMMON || this.selectedMode == MODE_DEVICE_ENVELOPE || this.selectedMode == MODE_DEVICE_MACRO || this.selectedMode == MODE_DEVICE_MODULATE || this.selectedMode == MODE_DEVICE_USER ? DeviceModeSelectMode.firstRowButtonColorSelected : DeviceModeSelectMode.firstRowButtonColorUp);
-    this.surface.setButton (22, this.selectedMode == MODE_DEVICE_DIRECT ? DeviceModeSelectMode.firstRowButtonColorSelected : DeviceModeSelectMode.firstRowButtonColorUp);
+    this.surface.setButton (20, this.selectedMode == MODE_DEVICE_PARAMS ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.setButton (21, this.selectedMode == MODE_DEVICE_COMMON || this.selectedMode == MODE_DEVICE_ENVELOPE || this.selectedMode == MODE_DEVICE_MACRO || this.selectedMode == MODE_DEVICE_MODULATE || this.selectedMode == MODE_DEVICE_USER ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.setButton (22, this.selectedMode == MODE_DEVICE_DIRECT ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
     
-    this.surface.setButton (23, PUSH_COLOR_BLACK);
+    this.surface.setButton (23, AbstractMode.BUTTON_COLOR_OFF);
 
     var cd = this.model.getCursorDevice ();
-    this.surface.setButton (24, cd.isExpanded () ? DeviceModeSelectMode.firstRowButtonColorSelected : DeviceModeSelectMode.firstRowButtonColorUp);
-    this.surface.setButton (25, cd.isMacroSectionVisible () ? DeviceModeSelectMode.firstRowButtonColorSelected : DeviceModeSelectMode.firstRowButtonColorUp);
-    this.surface.setButton (26, cd.isParameterPageSectionVisible () ? DeviceModeSelectMode.firstRowButtonColorSelected : DeviceModeSelectMode.firstRowButtonColorUp);
+    this.surface.setButton (24, cd.isExpanded () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.setButton (25, cd.isMacroSectionVisible () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.setButton (26, cd.isParameterPageSectionVisible () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
 
-    this.surface.setButton (27, PUSH_COLOR_BLACK);
+    this.surface.setButton (27, AbstractMode.BUTTON_COLOR_OFF);
 };
 
 DeviceModeSelectMode.prototype.setMode = function (mode)

@@ -16,14 +16,36 @@ TrackMode.prototype.onValueKnob = function (index, value)
     var selectedTrack = tb.getSelectedTrack ();
     if (selectedTrack == null)
         return;
+
     switch (index)
     {
         case 0:
             tb.changeVolume (selectedTrack.index, value, this.surface.getFractionValue ());
-            break;
+            return;
         case 1:
             tb.changePan (selectedTrack.index, value, this.surface.getFractionValue ());
-            break;
+            return;
+    }
+    
+    if (Config.isPush2)
+    {
+        switch (index)
+        {
+            case 2:
+                tb.setCrossfadeModeAsNumber (selectedTrack.index, changeValue (value, tb.getCrossfadeModeAsNumber (selectedTrack.index), 1, 3));
+                break;
+            case 3:
+                break;
+            default:
+                var sendOffset = Config.sendsAreToggled ? 0 : 4;
+                tb.changeSend (selectedTrack.index, index - sendOffset, value, this.surface.getFractionValue ());
+                break;
+        }
+        return;
+    }
+    
+    switch (index)
+    {
         case 2:
             if (Config.displayCrossfader)
                 tb.setCrossfadeModeAsNumber (selectedTrack.index, changeValue (value, tb.getCrossfadeModeAsNumber (selectedTrack.index), 1, 3));
@@ -43,6 +65,83 @@ TrackMode.prototype.onValueKnobTouch = function (index, isTouched)
     if (selectedTrack == null)
         return;
     
+    this.isKnobTouched[index] = isTouched;
+    
+    if (Config.isPush2)
+    {
+        if (isTouched)
+        {
+            if (this.surface.isDeletePressed ())
+            {
+                this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
+                switch (index)
+                {
+                    case 0:
+                        tb.resetVolume (selectedTrack.index);
+                        break;
+                    case 1:
+                        tb.resetPan (selectedTrack.index);
+                        break;
+                    case 2:
+                        tb.setCrossfadeMode (selectedTrack.index, 'AB');
+                        break;
+                    case 3:
+                        // Not used
+                        break;
+                    default:
+                        tb.resetSend (selectedTrack.index, index - 4);
+                        break;
+                }
+                return;
+            }
+
+            switch (index)
+            {
+                case 0:
+                    displayNotification ("Volume: " + selectedTrack.volumeStr);
+                    break;
+                case 1:
+                    displayNotification ("Pan: " + selectedTrack.panStr);
+                    break;
+                case 2:
+                    displayNotification ("Crossfader: " + selectedTrack.crossfadeMode);
+                    break;
+                case 3:
+                    // Not used
+                    break;
+                default:
+                    var sendIndex = index - 4;
+                    var fxTrackBank = this.model.getEffectTrackBank ();
+                    var name = (fxTrackBank == null ? selectedTrack.sends[sendIndex].name : fxTrackBank.getTrack (sendIndex).name);
+                    if (name.length > 0)
+                        displayNotification ("Send " + name + ": " + selectedTrack.sends[sendIndex].volumeStr);
+                    break;
+            }
+        }
+        
+        switch (index)
+        {
+            case 0:
+                tb.touchVolume (selectedTrack.index, isTouched);
+                break;
+            case 1:
+                tb.touchPan (selectedTrack.index, isTouched);
+                break;
+            case 2:
+                break;
+            case 3:
+                // Not used
+                break;
+            default:
+                var sendIndex = index - 4;
+                tb.touchSend (selectedTrack.index, sendIndex, isTouched);
+                break;
+        }
+        
+        return;
+    }
+    
+
     if (isTouched)
     {
         if (this.surface.isDeletePressed ())
@@ -120,6 +219,12 @@ TrackMode.prototype.onValueKnobTouch = function (index, isTouched)
 
 TrackMode.prototype.updateDisplay = function ()
 {
+    if (Config.isPush2)
+    {
+        this.updateDisplay2 ();
+        return;
+    }
+    
     var currentTrackBank = this.model.getCurrentTrackBank ();
     var t = currentTrackBank.getSelectedTrack ();
     var d = this.surface.getDisplay ();
@@ -177,4 +282,87 @@ TrackMode.prototype.updateDisplay = function ()
     }
 
     this.drawRow4 ();
+};
+
+TrackMode.prototype.updateDisplay2 = function ()
+{
+    var tb = this.model.getCurrentTrackBank ();
+    var selectedTrack = tb.getSelectedTrack ();
+    
+    // Get the index at which to draw the Sends element
+    var selectedIndex = selectedTrack == null ? -1 : selectedTrack.index;
+    var sendsIndex = selectedTrack == null || this.model.isEffectTrackBankActive () ? -1 : selectedTrack.index + 1;
+    if (sendsIndex == 8)
+        sendsIndex = 6;
+    
+    var d = this.surface.getDisplay ();
+    
+    this.updateTrackMenu ();
+
+    var message = d.createMessage (DisplayMessage.DISPLAY_COMMAND_GRID);
+
+    for (var i = 0; i < 8; i++)
+    {
+        var t = tb.getTrack (i);
+
+        if (sendsIndex == i)
+            message.addByte (DisplayMessage.GRID_ELEMENT_CHANNEL_SENDS);
+        else
+            message.addByte (t.selected ? DisplayMessage.GRID_ELEMENT_CHANNEL_ALL : DisplayMessage.GRID_ELEMENT_CHANNEL_SELECTION);
+        
+        // The menu item
+        if (Config.wasMuteLongPressed || (Config.isMuteSoloLocked && tb.isMuteState ()))
+        {
+            message.addString (t.exists ? "Mute" : "");
+            message.addBoolean (t.mute);
+        }
+        else if (Config.wasSoloLongPressed || (Config.isMuteSoloLocked && tb.isSoloState ()))
+        {
+            message.addString ( t.exists ? "Solo" : "");
+            message.addBoolean (t.solo);
+        }
+        else
+        {
+            message.addString (this.menu[i]);
+            message.addBoolean (false);
+        }        
+        
+        // Channel info
+        message.addString (t.name);
+        message.addString (t.type);
+        message.addColor (AbstractTrackBankProxy.getColorEntry (t.color));
+        message.addByte (t.selected ? 1 : 0);
+        
+        if (t.selected)
+        {
+            message.addInteger (t.volume);
+            message.addString (this.isKnobTouched[0] ? t.volumeStr : "");
+            message.addInteger (t.pan);
+            message.addString (this.isKnobTouched[1] ? t.panStr : "");
+            message.addInteger (this.surface.showVU ? t.vu : 0);
+            message.addBoolean (t.mute);
+            message.addBoolean (t.solo);
+            message.addBoolean (t.recarm);
+            message.addByte (t.crossfadeMode == 'A' ? 0 : (t.crossfadeMode == 'B' ? 2 : 1));
+        }
+        else if (sendsIndex == i)
+        {
+            var fxTrackBank = this.model.getEffectTrackBank ();
+            var selTrack = tb.getTrack (selectedIndex);
+            for (var j = 0; j < 4; j++)
+            {
+                var sendOffset = Config.sendsAreToggled ? 4 : 0;
+                var sendPos = sendOffset + j;
+                var send = selTrack.sends[sendPos];
+                message.addString (fxTrackBank == null ? send.name : fxTrackBank.getTrack (sendPos).name);
+                message.addString (send && this.isKnobTouched[4 + j] ? send.volumeStr : "");
+                message.addInteger(send ? send.volume : 0);
+                message.addByte (1);
+            }
+            // Signal Track mode
+            message.addBoolean (true);
+        }
+    }
+    
+    message.send ();
 };

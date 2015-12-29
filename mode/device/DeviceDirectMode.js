@@ -59,6 +59,8 @@ DeviceDirectMode.prototype.nextPageBank = function ()
 
 DeviceDirectMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
+    this.isKnobTouched[index] = isTouched;
+    
     if (isTouched)
     {
         if (this.surface.isDeletePressed ())
@@ -131,4 +133,14 @@ DeviceDirectMode.prototype.calcBank = function ()
         return null;
     var currentPage = cd.getSelectedDirectParameterPage ();
     return { pages: cd.directParameterPageNames, page: currentPage, offset: Math.floor (currentPage / 8) * 8 };
+};
+
+//Push 2
+DeviceDirectMode.prototype.getParameterAttributes = function (index)
+{
+ var cd = this.model.getCursorDevice ();
+ var params = cd.getDirectParameters ();
+ var pageOffset = cd.getSelectedDirectParameterPage () * 8;
+ var param = pageOffset + index >= params.length ? this.emptyParameter : params[pageOffset + index];
+ return { name: param.name, valueStr: param.valueStr, value: param.value * (Config.maxParameterValue - 1) };
 };

@@ -21,20 +21,27 @@ ScaleLayoutMode.prototype.onFirstRow = function (index)
 ScaleLayoutMode.prototype.updateDisplay = function ()
 {
     var d = this.surface.getDisplay ();
-    d.clear ().setBlock (1, 0, 'Scale layout:');
-
     var sl = this.scales.getScaleLayout ();
-    for (var i = 0; i < Scales.LAYOUT_NAMES.length; i++)
+    
+    if (Config.isPush2)
     {
-        var isSel = sl == i;
-        d.setCell (3, i, (isSel ? Display.RIGHT_ARROW : ' ') + Scales.LAYOUT_NAMES[i]);
+        var message = d.createMessage (DisplayMessage.DISPLAY_COMMAND_GRID);
+        for (var i = 0; i < 8; i++)
+            message.addOptionElement ("", "", false, i == 0 ? "Scale layout" : "", Scales.LAYOUT_NAMES[i], sl == i);
+        message.send ();
     }
-    d.allDone ();
+    else
+    {
+        d.clear ().setBlock (1, 0, 'Scale layout:');
+        for (var i = 0; i < Scales.LAYOUT_NAMES.length; i++)
+            d.setCell (3, i, (sl == i ? Display.RIGHT_ARROW : ' ') + Scales.LAYOUT_NAMES[i]);
+        d.allDone ();
+    }
 };
 
 ScaleLayoutMode.prototype.updateFirstRow = function ()
 {
     var sl = this.scales.getScaleLayout ();
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, sl == i ? PUSH_COLOR_YELLOW_LO : PUSH_COLOR_GREEN_LO);
+        this.surface.setButton (20 + i, sl == i ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
 };

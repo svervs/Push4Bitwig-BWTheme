@@ -11,7 +11,14 @@ function Controller ()
     var input = new PushMidiInput ();
 
     this.scales = new Scales (36, 100, 8, 8);
-    this.model = new Model (PUSH_KNOB1, this.scales, 8, 8, 6, 6, 16, 16, false);
+    this.model = new Model (PUSH_KNOB1, this.scales,
+                            8,                        // The number of track to monitor (per track bank)
+                            8,                        // The number of scenes to monitor (per scene bank)
+                            Config.isPush2 ? 8 : 6,   // The number of sends to monitor
+                            6,                        // The number of filters columns in the browser to monitor
+                            Config.isPush2 ? 48 : 16, // The number of entries in one filter column to monitor
+                            Config.isPush2 ? 48 : 16, // The number of search results in the browser to monitor
+                            false);                   // Don't navigate groups, all tracks are flat
     
     this.model.getTrackBank ().addTrackSelectionListener (doObject (this, Controller.prototype.handleTrackChange));
     this.model.getMasterTrack ().addTrackSelectionListener (doObject (this, function (isSelected)
@@ -32,6 +39,11 @@ function Controller ()
     this.surface.addMode (MODE_SEND4, modeSend);
     this.surface.addMode (MODE_SEND5, modeSend);
     this.surface.addMode (MODE_SEND6, modeSend);
+    if (Config.isPush2)
+    {
+        this.surface.addMode (MODE_SEND7, modeSend);
+        this.surface.addMode (MODE_SEND8, modeSend);
+    }
     this.surface.addMode (MODE_MASTER, new MasterMode (this.model, false));
     this.surface.addMode (MODE_MASTER_TEMP, new MasterMode (this.model, true));    
 
@@ -124,6 +136,11 @@ function Controller ()
         if (currentMode < Config.DEFAULT_DEVICE_MODE_VALUES.length && Config.DEFAULT_DEVICE_MODE_VALUES[currentMode])
             this.surface.setPendingMode (Config.defaultDeviceMode);
     }));
+    Config.addPropertyListener (Config.FLIP_SESSION, doObject (this, function ()
+    {
+        var view = this.surface.getView (VIEW_SESSION);
+        view.flip = Config.flipSession;
+    }));
     
     this.surface.addView (VIEW_PLAY, new PlayView (this.model));
     this.surface.addView (VIEW_SESSION, new SessionView (this.model));
@@ -153,37 +170,37 @@ Controller.prototype.flush = function ()
     var view = this.surface.getActiveView ();
     this.surface.setButton (PUSH_BUTTON_STOP, view && view.stopPressed ? PUSH_BUTTON_STATE_STOP_HI : PUSH_BUTTON_STATE_STOP_ON);
     
-    
     // Automation
     if (this.surface.isShiftPressed ())
         this.surface.setButton (PUSH_BUTTON_AUTOMATION, t.isWritingClipLauncherAutomation ? PUSH_BUTTON_STATE_REC_HI : PUSH_BUTTON_STATE_REC_ON);
     else
         this.surface.setButton (PUSH_BUTTON_AUTOMATION, t.isWritingArrangerAutomation ? PUSH_BUTTON_STATE_REC_HI : PUSH_BUTTON_STATE_REC_ON);
+
+    this.updateMode (this.surface.getCurrentMode ());
 };
 
 Controller.prototype.updateMode = function (mode)
 {
-    var isMaster       = mode == MODE_MASTER;
-    var isTrack        = mode == MODE_TRACK;
-    var isVolume       = mode == MODE_VOLUME;
-    var isScales       = mode == MODE_SCALES;
-    var isFixed        = mode == MODE_FIXED;
-    var isPreset       = mode == MODE_DEVICE_PRESETS;
-    var isFrame        = mode == MODE_FRAME;
-
-    var isBankDevice   = mode == MODE_DEVICE_PARAMS;
-    var isBankMacro    = mode == MODE_DEVICE_MACRO;
-
     this.updateIndication (mode);
+    
+    var isMasterOn = mode == MODE_MASTER || mode == MODE_FRAME;
+    var isVolumeOn = mode == MODE_VOLUME || mode == MODE_CROSSFADER;  
+    var isPanOn    = mode >= MODE_PAN && mode <= MODE_SEND8;
+    var isDeviceOn = mode >= MODE_DEVICE_PARAMS && mode <= MODE_DEVICE_LAYER;
 
-    this.surface.setButton (PUSH_BUTTON_MASTER, isMaster || isFrame ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_TRACK, isTrack ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_VOLUME, isVolume ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_PAN_SEND, mode >= MODE_PAN && mode <= MODE_SEND6 ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_DEVICE, isBankDevice || isBankMacro ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_SCALES, isScales ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_FIXED_LENGTH, isFixed ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_BROWSE, isPreset ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    var isMixOn = mode == MODE_TRACK;
+    if (Config.isPush2)
+        isMixOn = isMixOn || isVolumeOn || isPanOn;
+
+    this.surface.setButton (PUSH_BUTTON_MASTER, isMasterOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_TRACK, isMixOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_VOLUME, isVolumeOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_PAN_SEND, isPanOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_DEVICE, isDeviceOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_SCALES, mode == MODE_SCALES ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_FIXED_LENGTH, mode == MODE_FIXED ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_BROWSE, mode == MODE_DEVICE_PRESETS ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.setButton (PUSH_BUTTON_CLIP, mode == MODE_CLIP ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 Controller.prototype.updateIndication = function (mode)

@@ -13,6 +13,8 @@ function AbstractDeviceMode (model)
     this.isTemporary = false;
     this.showDevices = true;
     this.cursorDevice = this.model.getCursorDevice ();
+    
+    this.menu = [ "On", "Device", "Fixed", "Direct", "Expanded", "Macros", "Parameters", "Window" ];
 }
 AbstractDeviceMode.prototype = new BaseMode ();
 
@@ -107,10 +109,33 @@ AbstractDeviceMode.prototype.onSecondRow = function (index)
 {
     if (!this.model.hasSelectedDevice ())
         return;
-    if (index == 0)
-        this.cursorDevice.toggleEnabledState ();
-    else if (index == 7)
-        this.cursorDevice.toggleWindowOpen ();
+    switch (index)
+    {
+        case 0:
+            this.cursorDevice.toggleEnabledState ();
+            break;
+        case 1:
+            this.surface.getMode (MODE_DEVICE_MODE_SELECT).setMode (MODE_DEVICE_PARAMS);
+            break;
+        case 2:
+            this.surface.getMode (MODE_DEVICE_MODE_SELECT).setMode (MODE_DEVICE_COMMON);
+            break;
+        case 3:
+            this.surface.getMode (MODE_DEVICE_MODE_SELECT).setMode (MODE_DEVICE_DIRECT);
+            break;
+        case 4:
+            this.model.getCursorDevice ().toggleExpanded ();
+            break;
+        case 5:
+            this.model.getCursorDevice ().toggleMacroSectionVisible ();
+            break;
+        case 6:
+            this.model.getCursorDevice ().toggleParameterPageSectionVisible ();
+            break;
+        case 7:
+            this.cursorDevice.toggleWindowOpen ();
+            break;
+    }
 };
 
 AbstractDeviceMode.prototype.updateSecondRow = function ()
@@ -122,18 +147,36 @@ AbstractDeviceMode.prototype.updateSecondRow = function ()
     }
     var selDevice = this.model.getSelectedDevice ();
     this.surface.setButton (102, selDevice.enabled ? PUSH_COLOR2_GREEN : PUSH_COLOR2_GREY_LO);
-    for (var i = 1; i < 7; i++)
-        this.surface.setButton (102 + i, PUSH_COLOR2_BLACK);
+    
+    var cd = this.model.getCursorDevice ();
+    var selectedMode = this.surface.getMode (MODE_DEVICE_MODE_SELECT).selectedMode;
+    
+    this.surface.setButton (103, selectedMode == MODE_DEVICE_PARAMS ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+    this.surface.setButton (104, selectedMode == MODE_DEVICE_COMMON || selectedMode == MODE_DEVICE_ENVELOPE || selectedMode == MODE_DEVICE_MACRO || selectedMode == MODE_DEVICE_MODULATE || selectedMode == MODE_DEVICE_USER ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+    this.surface.setButton (105, selectedMode == MODE_DEVICE_DIRECT ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+    
+    this.surface.setButton (106, cd.isExpanded () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+    this.surface.setButton (107, cd.isMacroSectionVisible () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+    this.surface.setButton (108, cd.isParameterPageSectionVisible () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+    
     this.surface.setButton (109, selDevice.isPlugin ? (this.cursorDevice.isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO) : PUSH_COLOR2_BLACK);
 };
 
 AbstractDeviceMode.prototype.updateDisplay = function () 
 {
+    if (Config.isPush2)
+    {
+        this.updateDisplay2 ();
+        return;
+    }
+    
     var d = this.surface.getDisplay ();
     d.clear ();
     
     if (!this.model.hasSelectedDevice ())
     {
+        // TODO Improve: Check if there is a selected track, check if it has devices, display them
+        
         d.setBlock (1, 1, '    Please select').setBlock (1, 2, 'a device...    ').allDone ();
         return;
     }
@@ -149,12 +192,93 @@ AbstractDeviceMode.prototype.updateDisplay = function ()
         this.drawBanks (d, this.calcDeviceBank ());
     else
         this.updateBanks (d);
-        
+
     d.allDone ();
+};
+
+AbstractDeviceMode.prototype.updateDisplay2 = function () 
+{
+    if (!this.model.hasSelectedDevice ())
+    {
+        // TODO Improve: Check if there is a selected track, check if it has devices, display them
+        
+        DisplayMessage.sendMessage (3, 'Please select a device...');
+        return;
+    }
+
+    var banks = this.showDevices ? this.getBanks (d, this.calcDeviceBank ()) : this.updateBanks (d);
+    var selDevice = this.model.getSelectedDevice ();
+    var selectedMode = this.surface.getMode (MODE_DEVICE_MODE_SELECT).selectedMode;
+    var tb = this.model.getCurrentTrackBank ();
+    var selectedTrack = tb.getSelectedTrack ();
+    var color = selectedTrack == null ? 0 : AbstractTrackBankProxy.getColorEntry (selectedTrack.color);
+    
+    var d = this.surface.getDisplay ();
+    var message = d.createMessage (DisplayMessage.DISPLAY_COMMAND_GRID);
+    
+    for (var i = 0; i < 8; i++)
+    {
+        message.addByte (DisplayMessage.GRID_ELEMENT_PARAMETERS);
+        
+        // The menu item
+        message.addString (i == 7 && !selDevice.isPlugin ? null :  this.menu[i]);
+        
+        switch (i)
+        {
+            case 0:
+                message.addBoolean (selDevice.enabled);
+                break;
+            case 1:
+                message.addBoolean (selectedMode == MODE_DEVICE_PARAMS);
+                break;
+            case 2:
+                message.addBoolean (selectedMode == MODE_DEVICE_COMMON || selectedMode == MODE_DEVICE_ENVELOPE || selectedMode == MODE_DEVICE_MACRO || selectedMode == MODE_DEVICE_MODULATE || selectedMode == MODE_DEVICE_USER);
+                break;
+            case 3:
+                message.addBoolean (selectedMode == MODE_DEVICE_DIRECT);
+                break;
+            case 4:
+                var cd = this.model.getCursorDevice ();
+                message.addBoolean (cd.isExpanded ());
+                break;
+            case 5:
+                var cd = this.model.getCursorDevice ();
+                message.addBoolean (cd.isMacroSectionVisible ());
+                break;
+            case 6:
+                var cd = this.model.getCursorDevice ();
+                message.addBoolean (cd.isParameterPageSectionVisible ());
+                break;
+            case 7:
+                message.addBoolean (selDevice.isPlugin  && this.cursorDevice.isWindowOpen ());
+                break;
+        }
+
+        message.addString (banks == null ? "" : banks[i].name);
+        // TODO API extension required, add an icon if the type of the plugin is known
+        message.addString ("");
+        message.addColor (color);
+        message.addBoolean (banks == null ? false : banks[i].selected);
+
+        var param = this.getParameterAttributes (i);
+        
+        message.addString (param == null ? "" : param.name);
+        message.addInteger (param == null ? 0 : param.value);
+        message.addString (param == null ? "" : param.valueStr);
+        message.addBoolean (this.isKnobTouched[i]);
+    }
+
+    message.send ();
 };
 
 AbstractDeviceMode.prototype.updateBanks = function (d)
 {
+    if (Config.isPush2)
+    {
+        var bank = this.calcBank ();
+        return bank == null ? null : this.getBanks (d, bank);
+    }
+    
     var bank = this.calcBank ();
     if (bank != null)
         this.drawBanks (d, bank);
@@ -176,3 +300,17 @@ AbstractDeviceMode.prototype.calcDeviceBank = function ()
         pages.push (this.cursorDevice.getSiblingDeviceName (i));
     return { pages: pages, page: this.cursorDevice.getPositionInBank (), offset: 0 };
 };
+
+//Push 2
+AbstractDeviceMode.prototype.getBanks = function (d, bank)
+{
+    var banks = [];
+    for (var p = 0; p < 8; p++)
+    {
+        var index = bank.offset + p;
+        banks.push ({ name: index < bank.pages.length ? bank.pages[index] : "", selected: index < bank.pages.length && index == bank.page });
+    }
+    return banks;
+};
+
+AbstractDeviceMode.prototype.getParameterAttributes = function (index) {};

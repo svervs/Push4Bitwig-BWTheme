@@ -6,6 +6,8 @@
 function BaseMode (model)
 {
     AbstractMode.call (this, model);
+    
+    this.isKnobTouched = initArray (false, 8);
 }
 BaseMode.prototype = new AbstractMode ();
 
