@@ -11,10 +11,10 @@ DeviceEnvelopeMode.prototype = new AbstractDeviceFixedMode ();
 
 DeviceEnvelopeMode.prototype.getParameterValues = function (index)
 {
-    return this.cursorDevice.getEnvelopeParam (index);
+    return this.model.getDevice ().getEnvelopeParam (index);
 };
 
 DeviceEnvelopeMode.prototype.getParameter = function (index)
 {
-    return this.cursorDevice.getEnvelopeParameter (index);
+    return this.model.getDevice ().getEnvelopeParameter (index);
 };

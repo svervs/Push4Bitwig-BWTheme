@@ -35,7 +35,7 @@ DeviceModeSelectMode.prototype.updateFirstRow = function ()
     
     this.surface.setButton (23, AbstractMode.BUTTON_COLOR_OFF);
 
-    var cd = this.model.getCursorDevice ();
+    var cd = this.model.getDevice ();
     this.surface.setButton (24, cd.isExpanded () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
     this.surface.setButton (25, cd.isMacroSectionVisible () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
     this.surface.setButton (26, cd.isParameterPageSectionVisible () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
@@ -65,13 +65,13 @@ DeviceModeSelectMode.prototype.onFirstRow = function (index)
             break;
             
         case 4:
-            this.model.getCursorDevice ().toggleExpanded ();
+            this.model.getDevice ().toggleExpanded ();
             break;
         case 5:
-            this.model.getCursorDevice ().toggleMacroSectionVisible ();
+            this.model.getDevice ().toggleMacroSectionVisible ();
             break;
         case 6:
-            this.model.getCursorDevice ().toggleParameterPageSectionVisible ();
+            this.model.getDevice ().toggleParameterPageSectionVisible ();
             break;
     }
 };

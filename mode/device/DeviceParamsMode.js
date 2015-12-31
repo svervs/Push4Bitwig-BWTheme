@@ -13,70 +13,74 @@ DeviceParamsMode.prototype = new AbstractDeviceMode ();
 
 DeviceParamsMode.prototype.hasPreviousPage = function ()
 {
-    return this.cursorDevice.hasPreviousParameterPage ();
+    return this.model.getDevice ().hasPreviousParameterPage ();
 };
 
 DeviceParamsMode.prototype.hasNextPage = function ()
 {
-    return this.cursorDevice.hasNextParameterPage ();
+    return this.model.getDevice ().hasNextParameterPage ();
 };
 
 DeviceParamsMode.prototype.previousPage = function ()
 {
-    this.cursorDevice.previousParameterPage ();
+    this.model.getDevice ().previousParameterPage ();
 };
 
 DeviceParamsMode.prototype.nextPage = function ()
 {
-    this.cursorDevice.nextParameterPage ();
+    this.model.getDevice ().nextParameterPage ();
 };
 
 DeviceParamsMode.prototype.previousPageBank = function ()
 {
-    this.cursorDevice.setSelectedParameterPage (Math.max (this.cursorDevice.getSelectedParameterPage () - 8, 0));
+    var cd = this.model.getDevice ();
+    cd.setSelectedParameterPage (Math.max (cd.getSelectedParameterPage () - 8, 0));
 };
 
 DeviceParamsMode.prototype.nextPageBank = function ()
 {
-    this.cursorDevice.setSelectedParameterPage (Math.min (this.cursorDevice.getSelectedParameterPage () + 8, this.cursorDevice.getParameterPageNames ().length - 1));
+    var cd = this.model.getDevice ();
+    cd.setSelectedParameterPage (Math.min (cd.getSelectedParameterPage () + 8, cd.getParameterPageNames ().length - 1));
 };
 
 DeviceParamsMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
     this.isKnobTouched[index] = isTouched;
     
+    var cd = this.model.getDevice ();
     if (isTouched)
     {
         if (this.surface.isDeletePressed ())
         {
             this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
-            this.cursorDevice.resetParameter (index);
+            cd.resetParameter (index);
             return;
         }
 
-        var param = this.cursorDevice.getFXParam (index);
+        var param = cd.getFXParam (index);
         displayNotification (param.name + ": " + param.valueStr);
     }
-    this.cursorDevice.getParameter (index).touch (isTouched);
+    cd.getParameter (index).touch (isTouched);
 };
 
 DeviceParamsMode.prototype.onValueKnob = function (index, value)
 {
-    var param = this.cursorDevice.getFXParam (index);
+    var cd = this.model.getDevice ();
+    var param = cd.getFXParam (index);
     param.value = this.surface.changeValue (value, param.value);
-    this.cursorDevice.setParameter (index, param.value);
+    cd.setParameter (index, param.value);
 };
 
 DeviceParamsMode.prototype.onFirstRowBank = function (index)
 {
     var bank = this.calcBank ();
     if (bank != null)
-        this.cursorDevice.setSelectedParameterPage (bank.offset + index);
+        this.model.getDevice ().setSelectedParameterPage (bank.offset + index);
 };
 
 DeviceParamsMode.prototype.updateFirstRowBank = function ()
 {
-    if (!this.model.hasSelectedDevice ())
+    if (!this.model.getDevice ().hasSelectedDevice ())
     {
         this.disableFirstRow ();
         return;
@@ -98,9 +102,10 @@ DeviceParamsMode.prototype.updateFirstRowBank = function ()
 
 DeviceParamsMode.prototype.updateParameters = function (d)
 {
+    var cd = this.model.getDevice ();
     for (var i = 0; i < 8; i++)
     {
-        var param = this.cursorDevice.getFXParam (i);
+        var param = cd.getFXParam (i);
         d.setCell (0, i, param.name, Display.FORMAT_RAW)
          .setCell (1, i, param.valueStr, Display.FORMAT_RAW);
     }
@@ -108,7 +113,7 @@ DeviceParamsMode.prototype.updateParameters = function (d)
 
 DeviceParamsMode.prototype.calcBank = function ()
 {
-    var device = this.cursorDevice;
+    var device = this.model.getDevice ();
     var pages = device.getParameterPageNames ();
     var page = device.getSelectedParameterPage ();
     if (pages.length == 0)
@@ -121,5 +126,5 @@ DeviceParamsMode.prototype.calcBank = function ()
 // Push 2
 DeviceParamsMode.prototype.getParameterAttributes = function (index)
 {
-    return this.cursorDevice.getFXParam (index);
+    return this.model.getDevice ().getFXParam (index);
 };

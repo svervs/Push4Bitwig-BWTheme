@@ -11,12 +11,12 @@ DeviceModulationMode.prototype = new AbstractDeviceFixedMode ();
 
 DeviceModulationMode.prototype.getParameterValues = function (index)
 {
-    return this.cursorDevice.getModulationParam (index);
+    return this.model.getDevice ().getModulationParam (index);
 };
 
 DeviceModulationMode.prototype.getParameter = function (index)
 {
-    return this.cursorDevice.getModulationSource (index);
+    return this.model.getDevice ().getModulationSource (index);
 };
 
 DeviceModulationMode.prototype.onValueKnob = function (index, value)

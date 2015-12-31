@@ -12,7 +12,6 @@ function AbstractDeviceMode (model)
     
     this.isTemporary = false;
     this.showDevices = true;
-    this.cursorDevice = this.model.getCursorDevice ();
     
     this.menu = [ "On", "Device", "Fixed", "Direct", "Expanded", "Macros", "Parameters", "Window" ];
 }
@@ -37,18 +36,18 @@ AbstractDeviceMode.prototype.updateFirstRowBank = function () {};
 
 AbstractDeviceMode.prototype.canSelectPreviousPage = function ()
 {
-    return this.showDevices ? this.cursorDevice.canSelectPreviousFX () : this.hasPreviousPage ();
+    return this.showDevices ? this.model.getDevice ().canSelectPreviousFX () : this.hasPreviousPage ();
 };
  
 AbstractDeviceMode.prototype.canSelectNextPage = function ()
 {
-    return this.showDevices ? this.cursorDevice.canSelectNextFX () : this.hasNextPage ();
+    return this.showDevices ? this.model.getDevice ().canSelectNextFX () : this.hasNextPage ();
 };
 
 AbstractDeviceMode.prototype.selectPreviousPage = function ()
 {
     if (this.showDevices)
-        this.cursorDevice.selectPrevious ();
+        this.model.getDevice ().selectPrevious ();
     else
         this.previousPage ();
 };
@@ -56,7 +55,7 @@ AbstractDeviceMode.prototype.selectPreviousPage = function ()
 AbstractDeviceMode.prototype.selectNextPage = function ()
 {
     if (this.showDevices)
-        this.cursorDevice.selectNext ();
+        this.model.getDevice ().selectNext ();
     else
         this.nextPage ();
 };
@@ -64,7 +63,7 @@ AbstractDeviceMode.prototype.selectNextPage = function ()
 AbstractDeviceMode.prototype.selectPreviousPageBank = function ()
 {
     if (this.showDevices)
-        this.cursorDevice.selectPreviousBank ();
+        this.model.getDevice ().selectPreviousBank ();
     else
         this.previousPageBank ();
 };
@@ -72,24 +71,25 @@ AbstractDeviceMode.prototype.selectPreviousPageBank = function ()
 AbstractDeviceMode.prototype.selectNextPageBank = function ()
 {
     if (this.showDevices)
-        this.cursorDevice.selectNextBank ();
+        this.model.getDevice ().selectNextBank ();
     else
         this.nextPageBank ();
 };
 
 AbstractDeviceMode.prototype.onFirstRow = function (index)
 {
-    if (!this.model.hasSelectedDevice ())
+    var device = this.model.getDevice ();
+    if (!device.hasSelectedDevice ())
         return;
     if (this.showDevices)
-        this.cursorDevice.selectSibling (index);
+        device.selectSibling (index);
     else
         this.onFirstRowBank (index);
 };
 
 AbstractDeviceMode.prototype.updateFirstRow = function ()
 {
-    if (!this.model.hasSelectedDevice ())
+    if (!this.model.getDevice ().hasSelectedDevice ())
     {
         this.disableFirstRow ();
         return;
@@ -107,12 +107,13 @@ AbstractDeviceMode.prototype.updateFirstRow = function ()
 
 AbstractDeviceMode.prototype.onSecondRow = function (index)
 {
-    if (!this.model.hasSelectedDevice ())
+    var device = this.model.getDevice ();
+    if (!device.hasSelectedDevice ())
         return;
     switch (index)
     {
         case 0:
-            this.cursorDevice.toggleEnabledState ();
+            device.toggleEnabledState ();
             break;
         case 1:
             this.surface.getMode (MODE_DEVICE_MODE_SELECT).setMode (MODE_DEVICE_PARAMS);
@@ -124,31 +125,31 @@ AbstractDeviceMode.prototype.onSecondRow = function (index)
             this.surface.getMode (MODE_DEVICE_MODE_SELECT).setMode (MODE_DEVICE_DIRECT);
             break;
         case 4:
-            this.model.getCursorDevice ().toggleExpanded ();
+            device.toggleExpanded ();
             break;
         case 5:
-            this.model.getCursorDevice ().toggleMacroSectionVisible ();
+            device.toggleMacroSectionVisible ();
             break;
         case 6:
-            this.model.getCursorDevice ().toggleParameterPageSectionVisible ();
+            device.toggleParameterPageSectionVisible ();
             break;
         case 7:
-            this.cursorDevice.toggleWindowOpen ();
+            device.toggleWindowOpen ();
             break;
     }
 };
 
 AbstractDeviceMode.prototype.updateSecondRow = function ()
 {
-    if (!this.model.hasSelectedDevice ())
+    var cd = this.model.getDevice ();
+    if (!cd.hasSelectedDevice ())
     {
         this.disableSecondRow ();
         return;
     }
-    var selDevice = this.model.getSelectedDevice ();
+    var selDevice = cd.getSelectedDevice ();
     this.surface.setButton (102, selDevice.enabled ? PUSH_COLOR2_GREEN : PUSH_COLOR2_GREY_LO);
     
-    var cd = this.model.getCursorDevice ();
     var selectedMode = this.surface.getMode (MODE_DEVICE_MODE_SELECT).selectedMode;
     
     this.surface.setButton (103, selectedMode == MODE_DEVICE_PARAMS ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
@@ -159,33 +160,36 @@ AbstractDeviceMode.prototype.updateSecondRow = function ()
     this.surface.setButton (107, cd.isMacroSectionVisible () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
     this.surface.setButton (108, cd.isParameterPageSectionVisible () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
     
-    this.surface.setButton (109, selDevice.isPlugin ? (this.cursorDevice.isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO) : PUSH_COLOR2_BLACK);
+    this.surface.setButton (109, selDevice.isPlugin ? (cd.isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO) : PUSH_COLOR2_BLACK);
 };
 
 AbstractDeviceMode.prototype.updateDisplay = function () 
 {
-    if (Config.isPush2)
+    if (!this.model.getDevice ().hasSelectedDevice ())
     {
-        this.updateDisplay2 ();
+        if (Config.isPush2)
+            DisplayMessage.sendMessage (3, 'Please select a device...');
+        else
+            this.surface.getDisplay ().clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ').clearRow (3).allDone ();
         return;
     }
     
+    if (Config.isPush2)
+        this.updateDisplay2 ();
+    else
+        this.updateDisplay1 ();
+};
+
+AbstractDeviceMode.prototype.updateDisplay1 = function () 
+{
     var d = this.surface.getDisplay ();
     d.clear ();
     
-    if (!this.model.hasSelectedDevice ())
-    {
-        // TODO Improve: Check if there is a selected track, check if it has devices, display them
-        
-        d.setBlock (1, 1, '    Please select').setBlock (1, 2, 'a device...    ').allDone ();
-        return;
-    }
-
     // Row 1 & 2
     this.updateParameters (d);
     
     // Row 3
-    d.setBlock (2, 0, 'Selected Device:').setBlock (2, 1, this.model.getSelectedDevice ().name);
+    d.setBlock (2, 0, 'Selected Device:').setBlock (2, 1, this.model.getDevice ().getSelectedDevice ().name);
     
     // Row 4
     if (this.showDevices)
@@ -198,16 +202,8 @@ AbstractDeviceMode.prototype.updateDisplay = function ()
 
 AbstractDeviceMode.prototype.updateDisplay2 = function () 
 {
-    if (!this.model.hasSelectedDevice ())
-    {
-        // TODO Improve: Check if there is a selected track, check if it has devices, display them
-        
-        DisplayMessage.sendMessage (3, 'Please select a device...');
-        return;
-    }
-
     var banks = this.showDevices ? this.getBanks (d, this.calcDeviceBank ()) : this.updateBanks (d);
-    var selDevice = this.model.getSelectedDevice ();
+    var cd = this.model.getDevice ();
     var selectedMode = this.surface.getMode (MODE_DEVICE_MODE_SELECT).selectedMode;
     var tb = this.model.getCurrentTrackBank ();
     var selectedTrack = tb.getSelectedTrack ();
@@ -221,12 +217,12 @@ AbstractDeviceMode.prototype.updateDisplay2 = function ()
         message.addByte (DisplayMessage.GRID_ELEMENT_PARAMETERS);
         
         // The menu item
-        message.addString (i == 7 && !selDevice.isPlugin ? null :  this.menu[i]);
+        message.addString (i == 7 && !cd.isPlugin ? null :  this.menu[i]);
         
         switch (i)
         {
             case 0:
-                message.addBoolean (selDevice.enabled);
+                message.addBoolean (cd.enabled);
                 break;
             case 1:
                 message.addBoolean (selectedMode == MODE_DEVICE_PARAMS);
@@ -238,19 +234,17 @@ AbstractDeviceMode.prototype.updateDisplay2 = function ()
                 message.addBoolean (selectedMode == MODE_DEVICE_DIRECT);
                 break;
             case 4:
-                var cd = this.model.getCursorDevice ();
                 message.addBoolean (cd.isExpanded ());
                 break;
             case 5:
-                var cd = this.model.getCursorDevice ();
                 message.addBoolean (cd.isMacroSectionVisible ());
                 break;
             case 6:
-                var cd = this.model.getCursorDevice ();
                 message.addBoolean (cd.isParameterPageSectionVisible ());
                 break;
             case 7:
-                message.addBoolean (selDevice.isPlugin  && this.cursorDevice.isWindowOpen ());
+                var selDevice = cd.getSelectedDevice ();
+                message.addBoolean (selDevice.isPlugin  && cd.isWindowOpen ());
                 break;
         }
 
@@ -296,9 +290,10 @@ AbstractDeviceMode.prototype.drawBanks = function (d, bank)
 AbstractDeviceMode.prototype.calcDeviceBank = function ()
 {
     var pages = [];
+    var cd = this.model.getDevice ();
     for (var i = 0; i < 8; i++)
-        pages.push (this.cursorDevice.getSiblingDeviceName (i));
-    return { pages: pages, page: this.cursorDevice.getPositionInBank (), offset: 0 };
+        pages.push (cd.getSiblingDeviceName (i));
+    return { pages: pages, page: cd.getPositionInBank (), offset: 0 };
 };
 
 //Push 2

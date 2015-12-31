@@ -45,6 +45,18 @@ var MODE_AUTOMATION          = 35;
 var MODE_TRANSPORT           = 36;
 var MODE_CONFIGURATION       = 37;
 
+var MODE_DEVICE_LAYER_VOLUME = 40;
+var MODE_DEVICE_LAYER_PAN    = 41;
+var MODE_DEVICE_LAYER_SEND1  = 42;
+var MODE_DEVICE_LAYER_SEND2  = 43;
+var MODE_DEVICE_LAYER_SEND3  = 44;
+var MODE_DEVICE_LAYER_SEND4  = 45;
+var MODE_DEVICE_LAYER_SEND5  = 46;
+var MODE_DEVICE_LAYER_SEND6  = 47;
+var MODE_DEVICE_LAYER_SEND7  = 48;
+var MODE_DEVICE_LAYER_SEND8  = 49;
+var MODE_DEVICE_LAYER_SEND   = 50;
+
 var MODE_MASTER_TEMP         = 100;
 
 var DEVICE_MODES = [ MODE_DEVICE_PARAMS, MODE_DEVICE_COMMON, MODE_DEVICE_ENVELOPE, MODE_DEVICE_MODULATE, MODE_DEVICE_USER, MODE_DEVICE_MACRO, MODE_DEVICE_DIRECT ];
@@ -93,4 +105,7 @@ load ("device/DeviceUserMode.js");
 
 load ("device/DeviceModeSelectMode.js");
 load ("device/DeviceLayerMode.js");
+load ("device/DeviceLayerModeVolume.js");
+load ("device/DeviceLayerModePan.js");
+load ("device/DeviceLayerModeSend.js");
 load ("device/DevicePresetsMode.js");

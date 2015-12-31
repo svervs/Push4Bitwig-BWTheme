@@ -14,47 +14,47 @@ DeviceDirectMode.prototype = new AbstractDeviceMode ();
 
 DeviceDirectMode.prototype.onActivate = function ()
 {
-    this.cursorDevice.enableDirectParameterObservation (true);
+    this.model.getDevice ().enableDirectParameterObservation (true);
 };
 
 DeviceDirectMode.prototype.onDeactivate = function ()
 {
-    this.cursorDevice.enableDirectParameterObservation (false);
+    this.model.getDevice ().enableDirectParameterObservation (false);
 };
 
 DeviceDirectMode.prototype.onValueKnob = function (index, value)
 {
-    this.model.getCursorDevice ().changeDirectPageParameter (index, value, this.surface.getFractionValue ());
+    this.model.getDevice ().changeDirectPageParameter (index, value, this.surface.getFractionValue ());
 };
 
 DeviceDirectMode.prototype.hasPreviousPage = function ()
 {
-    return this.model.getCursorDevice ().hasPreviousDirectParameterPage ();
+    return this.model.getDevice ().hasPreviousDirectParameterPage ();
 };
 
 DeviceDirectMode.prototype.hasNextPage = function ()
 {
-    return this.model.getCursorDevice ().hasNextDirectParameterPage ();
+    return this.model.getDevice ().hasNextDirectParameterPage ();
 };
 
 DeviceDirectMode.prototype.previousPage = function ()
 {
-    this.model.getCursorDevice ().previousDirectParameterPage ();
+    this.model.getDevice ().previousDirectParameterPage ();
 };
 
 DeviceDirectMode.prototype.nextPage = function ()
 {
-    this.model.getCursorDevice ().nextDirectParameterPage ();
+    this.model.getDevice ().nextDirectParameterPage ();
 };
 
 DeviceDirectMode.prototype.previousPageBank = function ()
 {
-    this.model.getCursorDevice ().previousDirectParameterPageBank ();
+    this.model.getDevice ().previousDirectParameterPageBank ();
 };
 
 DeviceDirectMode.prototype.nextPageBank = function ()
 {
-    this.model.getCursorDevice ().nextDirectParameterPageBank ();
+    this.model.getDevice ().nextDirectParameterPageBank ();
 };
 
 DeviceDirectMode.prototype.onValueKnobTouch = function (index, isTouched) 
@@ -63,15 +63,16 @@ DeviceDirectMode.prototype.onValueKnobTouch = function (index, isTouched)
     
     if (isTouched)
     {
+        var cd = this.model.getDevice ();
+        
         if (this.surface.isDeletePressed ())
         {
             this.surface.setButtonConsumed (PUSH_BUTTON_DELETE);
             /* TODO API extension required
-            this.model.getCursorDevice ().resetParameter (index);*/
+            cd.resetParameter (index);*/
             return;
         }
 
-        var cd = this.model.getCursorDevice ();
         var params = cd.getDirectParameters ();
         var pageOffset = cd.getSelectedDirectParameterPage () * 8;
         var param = pageOffset + index >= params.length ? this.emptyParameter : params[pageOffset + index];
@@ -87,12 +88,12 @@ DeviceDirectMode.prototype.onFirstRowBank = function (index)
 {
     var bank = this.calcBank ();
     if (bank != null)
-        this.cursorDevice.setSelectedDirectParameterPage (bank.offset + index);
+        this.model.getDevice ().setSelectedDirectParameterPage (bank.offset + index);
 };
 
 DeviceDirectMode.prototype.updateFirstRowBank = function ()
 {
-    if (!this.model.hasSelectedDevice ())
+    if (!this.model.getDevice ().hasSelectedDevice ())
     {
         this.disableFirstRow ();
         return;
@@ -113,7 +114,7 @@ DeviceDirectMode.prototype.updateFirstRowBank = function ()
 
 DeviceDirectMode.prototype.updateParameters = function (d)
 {
-    var cd = this.model.getCursorDevice ();
+    var cd = this.model.getDevice ();
     var params = cd.getDirectParameters ();
     var pageOffset = cd.getSelectedDirectParameterPage () * 8;
     d.clearRow (2);
@@ -127,7 +128,7 @@ DeviceDirectMode.prototype.updateParameters = function (d)
 
 DeviceDirectMode.prototype.calcBank = function ()
 {
-    var cd = this.model.getCursorDevice ();
+    var cd = this.model.getDevice ();
     var params = cd.getDirectParameters ();
     if (params.length == 0)
         return null;
@@ -138,9 +139,9 @@ DeviceDirectMode.prototype.calcBank = function ()
 //Push 2
 DeviceDirectMode.prototype.getParameterAttributes = function (index)
 {
- var cd = this.model.getCursorDevice ();
- var params = cd.getDirectParameters ();
- var pageOffset = cd.getSelectedDirectParameterPage () * 8;
- var param = pageOffset + index >= params.length ? this.emptyParameter : params[pageOffset + index];
- return { name: param.name, valueStr: param.valueStr, value: param.value * (Config.maxParameterValue - 1) };
+    var cd = this.model.getDevice ();
+    var params = cd.getDirectParameters ();
+    var pageOffset = cd.getSelectedDirectParameterPage () * 8;
+    var param = pageOffset + index >= params.length ? this.emptyParameter : params[pageOffset + index];
+    return { name: param.name, valueStr: param.valueStr, value: param.value * (Config.maxParameterValue - 1) };
 };

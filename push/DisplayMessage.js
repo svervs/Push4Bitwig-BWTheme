@@ -51,7 +51,17 @@ DisplayMessage.prototype.addString = function (text)
     if (text)
     {
         for (var i = 0; i < text.length; i++)
-            this.array.push (text.charCodeAt(i));
+        {
+            var character = text.charCodeAt(i);
+            if (character < 128)
+                this.array.push (character);
+            else
+            {
+                // Split up non-ASII characters into 3 bytes
+                this.array.push (-1);
+                this.addInteger (character);
+            }
+        }
     }
     this.array.push (0);
 };

@@ -15,7 +15,7 @@ DeviceLayerMode.prototype = new BaseMode ();
 
 DeviceLayerMode.prototype.onValueKnob = function (index, value)
 {
-    var cd = this.model.getCursorDevice ();
+    var cd = this.model.getDevice ();
     var selectedDeviceLayer = cd.getSelectedLayerOrDrumPad ();
     if (selectedDeviceLayer == null)
         return;
@@ -38,7 +38,7 @@ DeviceLayerMode.prototype.onValueKnob = function (index, value)
 
 DeviceLayerMode.prototype.onValueKnobTouch = function (index, isTouched) 
 {
-    var cd = this.model.getCursorDevice ();
+    var cd = this.model.getDevice ();
     var l = cd.getSelectedLayerOrDrumPad ();
         
     this.isKnobTouched[index] = isTouched;
@@ -105,7 +105,7 @@ DeviceLayerMode.prototype.onValueKnobTouch = function (index, isTouched)
 
 DeviceLayerMode.prototype.onFirstRow = function (index)
 {
-    var cd = this.model.getCursorDevice ();
+    var cd = this.model.getDevice ();
     var offset = cd.hasDrumPads () && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
     var layer = cd.getLayerOrDrumPad (offset + index);
     if (layer.exists)
@@ -116,7 +116,7 @@ DeviceLayerMode.prototype.onSecondRow = function (index)
 {
     if (!Config.isPush2 || Config.wasMuteLongPressed || Config.wasSoloLongPressed || Config.isMuteSoloLocked)
     {
-        var cd = this.model.getCursorDevice ();
+        var cd = this.model.getDevice ();
         var offset = cd.hasDrumPads () && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
         if (this.model.getCurrentTrackBank ().isMuteState ())
             cd.toggleLayerOrDrumPadMute (offset + index);
@@ -127,28 +127,24 @@ DeviceLayerMode.prototype.onSecondRow = function (index)
         
     switch (index)
     {
-    // TODO Implement Volume, Pan & Sends modes
-//            case 0:
-//                if (this.surface.isActiveMode (MODE_VOLUME))
-//                    this.surface.setPendingMode (MODE_TRACK);
-//                else
-//                    this.surface.setPendingMode (MODE_VOLUME);
-//                break;
-    //
-//            case 1:
-//                if (this.surface.isActiveMode (MODE_PAN))
-//                    this.surface.setPendingMode (MODE_TRACK);
-//                else
-//                    this.surface.setPendingMode (MODE_PAN);
-//                break;
-    //
-//            case 2:
-//                if (this.surface.isActiveMode (MODE_CROSSFADER))
-//                    this.surface.setPendingMode (MODE_TRACK);
-//                else
-//                    this.surface.setPendingMode (MODE_CROSSFADER);
-//                break;
-                
+        case 0:
+            if (this.surface.isActiveMode (MODE_DEVICE_LAYER_VOLUME))
+                this.surface.setPendingMode (MODE_DEVICE_LAYER);
+            else
+                this.surface.setPendingMode (MODE_DEVICE_LAYER_VOLUME);
+            break;
+
+        case 1:
+            if (this.surface.isActiveMode (MODE_DEVICE_LAYER_PAN))
+                this.surface.setPendingMode (MODE_DEVICE_LAYER);
+            else
+                this.surface.setPendingMode (MODE_DEVICE_LAYER_PAN);
+            break;
+
+        case 2:
+            // Not used
+            break;
+            
         case 3:
             if (!this.model.isEffectTrackBankActive ())
             {
@@ -161,49 +157,53 @@ DeviceLayerMode.prototype.onSecondRow = function (index)
                 }
                 Config.sendsAreToggled = !Config.sendsAreToggled;
     
-//                    if (!this.surface.isActiveMode (MODE_TRACK))
-//                        this.surface.setPendingMode (MODE_SEND1 + (Config.sendsAreToggled ? 4 : 0));
+                if (!this.surface.isActiveMode (MODE_DEVICE_LAYER))
+                    this.surface.setPendingMode (MODE_DEVICE_LAYER_SEND1 + (Config.sendsAreToggled ? 4 : 0));
             }
             break;
             
         default:
-//                if (!this.model.isEffectTrackBankActive ())
-//                {
-//                    var sendOffset = Config.sendsAreToggled ? 0 : 4;
-//                    var sendIndex = index - sendOffset;
-//                    var fxTrackBank = this.model.getEffectTrackBank ();
-//                    if (fxTrackBank.getTrack (sendIndex).exists)
-//                    {
-//                        var si = MODE_SEND1 + sendIndex;
-//                        if (this.surface.isActiveMode (si))
-//                            this.surface.setPendingMode (MODE_TRACK);
-//                        else
-//                            this.surface.setPendingMode (si);
-//                    }
-//                }
+            if (!this.model.isEffectTrackBankActive ())
+            {
+                var sendOffset = Config.sendsAreToggled ? 0 : 4;
+                var sendIndex = index - sendOffset;
+                var fxTrackBank = this.model.getEffectTrackBank ();
+                if (fxTrackBank.getTrack (sendIndex).exists)
+                {
+                    var si = MODE_DEVICE_LAYER_SEND1 + sendIndex;
+                    if (this.surface.isActiveMode (si))
+                        this.surface.setPendingMode (MODE_DEVICE_LAYER);
+                    else
+                        this.surface.setPendingMode (si);
+                }
+            }
             break;
     }
 };
 
 DeviceLayerMode.prototype.updateDisplay = function () 
 {
-    if (Config.isPush2)
+    if (!this.model.getDevice ().hasSelectedDevice ())
     {
-        this.updateDisplay2 ();
+        if (Config.isPush2)
+            DisplayMessage.sendMessage (3, 'Please select a device...');
+        else
+            this.surface.getDisplay ().clear ().setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ').clearRow (3).allDone ();
         return;
     }
     
+    if (Config.isPush2)
+        this.updateDisplay2 ();
+    else
+        this.updateDisplay1 ();
+};
+
+DeviceLayerMode.prototype.updateDisplay1 = function () 
+{
     var d = this.surface.getDisplay ();
     d.clear ();
 
-    if (!this.model.hasSelectedDevice ())
-    {
-        d.setBlock (1, 1, '    Please select').setBlock (1, 2, 'a Device...    ').clearRow (3);
-        d.allDone ();
-        return;
-    }
-    
-    var cd = this.model.getCursorDevice ();
+    var cd = this.model.getDevice ();
     var l = cd.getSelectedLayerOrDrumPad ();
     if (l == null)
     {
@@ -246,28 +246,25 @@ DeviceLayerMode.prototype.updateDisplay = function ()
         }
     }
     
-    var selIndex = l == null ? -1 : l.index;
+    this.drawRow4 (d, cd);
+};
+
+DeviceLayerMode.prototype.drawRow4 = function (d, cd) 
+{
     // Drum Pad Bank has size of 16, layers only 8
     var offset = cd.hasDrumPads () && cd.getSelectedDrumPad () != null && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
     for (var i = 0; i < 8; i++)
     {
         var layer = cd.getLayerOrDrumPad (offset + i);
-        var isSel = offset + i == selIndex;
-        var n = optimizeName (layer.name, isSel ? 7 : 8);
-        d.setCell (3, i, isSel ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
+        var n = optimizeName (layer.name, layer.selected ? 7 : 8);
+        d.setCell (3, i, layer.selected ? Display.RIGHT_ARROW + n : n, Display.FORMAT_RAW);
     }
     d.allDone ();
 };
 
-DeviceLayerMode.prototype.updateDisplay2 = function () 
+DeviceLayerMode.prototype.updateDisplay2 = function ()
 {
-    if (!this.model.hasSelectedDevice ())
-    {
-        DisplayMessage.sendMessage (3, 'Please select a device...');
-        return;
-    }
-    
-    var cd = this.model.getCursorDevice ();
+    var cd = this.model.getDevice ();
     var l = cd.getSelectedLayerOrDrumPad ();
     if (l == null)
     {
@@ -277,6 +274,11 @@ DeviceLayerMode.prototype.updateDisplay2 = function ()
     
     this.updateMenu ();
 
+    this.updateDisplayElements (cd, l);
+};
+
+DeviceLayerMode.prototype.updateDisplayElements = function (cd, l)
+{
     // Drum Pad Bank has size of 16, layers only 8
     var offset = cd.hasDrumPads () && cd.getSelectedDrumPad () != null && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
     
@@ -297,7 +299,7 @@ DeviceLayerMode.prototype.updateDisplay2 = function ()
         else
             message.addByte (layer.selected ? DisplayMessage.GRID_ELEMENT_CHANNEL_ALL : DisplayMessage.GRID_ELEMENT_CHANNEL_SELECTION);
 
-        // Empty menu
+        // The menu
         if (Config.wasMuteLongPressed || (Config.isMuteSoloLocked && this.model.getCurrentTrackBank ().isMuteState ()))
         {
             message.addString (layer.exists ? "Mute" : "");
@@ -352,15 +354,78 @@ DeviceLayerMode.prototype.updateDisplay2 = function ()
     message.send ();
 };
 
+//Called from sub-classes
+DeviceLayerMode.prototype.updateChannelDisplay = function (cd, l, selectedMenu, isVolume, isPan)
+{
+    var d = this.surface.getDisplay ();
+
+    this.updateMenu ();
+    
+    var message = d.createMessage (DisplayMessage.DISPLAY_COMMAND_GRID);
+
+    // Drum Pad Bank has size of 16, layers only 8
+    var offset = cd.hasDrumPads () && cd.getSelectedDrumPad () != null && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
+
+    for (var i = 0; i < 8; i++)
+    {
+        var layer = cd.getLayerOrDrumPad (offset + i);
+
+        message.addByte (selectedMenu);
+        
+        // The menu item
+        if (Config.wasMuteLongPressed || (Config.isMuteSoloLocked && tb.isMuteState ()))
+        {
+            message.addString (layer.exists ? "Mute" : "");
+            message.addBoolean (layer.mute);
+        }
+        else if (Config.wasSoloLongPressed || (Config.isMuteSoloLocked && tb.isSoloState ()))
+        {
+            message.addString ( layer.exists ? "Solo" : "");
+            message.addBoolean (layer.solo);
+        }
+        else
+        {
+            message.addString (this.menu[i]);
+            message.addBoolean (i == selectedMenu - 1);
+        }
+        
+        // Channel info
+        message.addString (layer.name);
+        message.addString ("layer");
+        message.addColor ( AbstractTrackBankProxy.getColorEntry (layer.color));
+        message.addByte (layer.selected ? 1 : 0);
+        message.addInteger (layer.volume);
+        message.addString (isVolume && this.isKnobTouched[i] ? layer.volumeStr : "");
+        message.addInteger (layer.pan);
+        message.addString (isPan && this.isKnobTouched[i] ? layer.panStr : "");
+        message.addInteger (this.surface.showVU ? layer.vu : 0);
+        message.addBoolean (layer.mute);
+        message.addBoolean (layer.solo);
+        message.addBoolean (false);
+        message.addByte (0);
+    }
+    
+    message.send ();
+};
+
+DeviceLayerMode.prototype.updateMenu = function ()
+{
+    var fxTrackBank = this.model.getEffectTrackBank ();
+    var sendOffset = Config.sendsAreToggled ? 4 : 0;
+    for (var i = 0; i < 4; i++)
+        this.menu[4 + i] = fxTrackBank.getTrack (sendOffset + i).name;
+    this.menu[3] = Config.sendsAreToggled ? "Sends 5-8" : "Sends 1-4";
+};
+
 DeviceLayerMode.prototype.updateFirstRow = function ()
 {
-    if (!this.model.hasSelectedDevice () || !this.model.getCursorDevice ().hasLayers ())
+    var cd = this.model.getDevice ();
+    if (cd == null || !cd.hasLayers ())
     {
         this.disableFirstRow ();
         return;
     }
     
-    var cd = this.model.getCursorDevice ();
     var offset = cd.hasDrumPads () && cd.getSelectedDrumPad () != null && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
     for (var i = 0; i < 8; i++)
     {
@@ -371,12 +436,12 @@ DeviceLayerMode.prototype.updateFirstRow = function ()
 
 DeviceLayerMode.prototype.updateSecondRow = function ()
 {
+    var cd = this.model.getDevice ();
+    
     if (Config.isPush2)
     {
         if (Config.wasMuteLongPressed || Config.wasSoloLongPressed || Config.isMuteSoloLocked)
         {
-            var cd = this.model.getCursorDevice ();
-            
             // Drum Pad Bank has size of 16, layers only 8
             var offset = cd.hasDrumPads () && cd.getSelectedDrumPad () != null && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
             
@@ -404,26 +469,23 @@ DeviceLayerMode.prototype.updateSecondRow = function ()
             return;
         }
         
-        // TODO Implement Volume, Pan & Sends modes
-        this.surface.setButton (102, /*this.surface.isActiveMode (MODE_VOLUME) ? PUSH_COLOR2_WHITE :*/ PUSH_COLOR_BLACK);
-        this.surface.setButton (103, /*this.surface.isActiveMode (MODE_PAN) ? PUSH_COLOR2_WHITE :*/ PUSH_COLOR_BLACK);
+        this.surface.setButton (102, this.surface.isActiveMode (MODE_DEVICE_LAYER_VOLUME) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.setButton (103, this.surface.isActiveMode (MODE_DEVICE_LAYER_PAN) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
         this.surface.setButton (104, PUSH_COLOR_BLACK);
         this.surface.setButton (105, PUSH_COLOR_BLACK);
-        this.surface.setButton (106, /*this.surface.isActiveMode (Config.sendsAreToggled ? MODE_SEND5 : MODE_SEND1) ? PUSH_COLOR2_WHITE :*/ PUSH_COLOR_BLACK);
-        this.surface.setButton (107, /*this.surface.isActiveMode (Config.sendsAreToggled ? MODE_SEND6 : MODE_SEND2) ? PUSH_COLOR2_WHITE :*/ PUSH_COLOR_BLACK);
-        this.surface.setButton (108, /*this.surface.isActiveMode (Config.sendsAreToggled ? MODE_SEND7 : MODE_SEND3) ? PUSH_COLOR2_WHITE :*/ PUSH_COLOR_BLACK);
-        this.surface.setButton (109, /*this.surface.isActiveMode (Config.sendsAreToggled ? MODE_SEND8 : MODE_SEND4) ? PUSH_COLOR2_WHITE :*/ PUSH_COLOR_BLACK);
-        
+        this.surface.setButton (106, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_DEVICE_LAYER_SEND5 : MODE_DEVICE_LAYER_SEND1) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.setButton (107, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_DEVICE_LAYER_SEND6 : MODE_DEVICE_LAYER_SEND2) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.setButton (108, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_DEVICE_LAYER_SEND7 : MODE_DEVICE_LAYER_SEND3) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.setButton (109, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_DEVICE_LAYER_SEND8 : MODE_DEVICE_LAYER_SEND4) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
         return;
     }
         
-    if (!this.model.hasSelectedDevice () || !this.model.getCursorDevice ().hasLayers ())
+    if (cd == null || !cd.hasLayers ())
     {
         this.disableSecondRow ();
         return;
     }
     
-    var cd = this.model.getCursorDevice ();
     var muteState = this.model.getCurrentTrackBank ().isMuteState ();
     var offset = cd.hasDrumPads () && cd.getSelectedDrumPad () != null && cd.getSelectedDrumPad ().index > 7 ? 8 : 0;
     for (var i = 0; i < 8; i++)
@@ -442,13 +504,4 @@ DeviceLayerMode.prototype.updateSecondRow = function ()
         }
         this.surface.setButton (102 + i, color);
     }
-};
-
-DeviceLayerMode.prototype.updateMenu = function ()
-{
-    var fxTrackBank = this.model.getEffectTrackBank ();
-    var sendOffset = Config.sendsAreToggled ? 4 : 0;
-    for (var i = 0; i < 4; i++)
-        this.menu[4 + i] = fxTrackBank.getTrack (sendOffset + i).name;
-    this.menu[3] = Config.sendsAreToggled ? "Sends 5-8" : "Sends 1-4";
 };

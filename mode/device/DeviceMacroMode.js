@@ -11,12 +11,12 @@ DeviceMacroMode.prototype = new AbstractDeviceFixedMode ();
 
 DeviceMacroMode.prototype.getParameterValues = function (index)
 {
-    return this.cursorDevice.getMacroParam (index);
+    return this.model.getDevice ().getMacroParam (index);
 };
 
 DeviceMacroMode.prototype.getParameter = function (index)
 {
-    return this.cursorDevice.getMacro (index).getAmount ();
+    return this.model.getDevice ().getMacro (index).getAmount ();
 };
 
 DeviceMacroMode.prototype.onSecondRow = function (index)
@@ -28,7 +28,7 @@ DeviceMacroMode.prototype.onSecondRow = function (index)
         return;
     }
     
-    var macro = this.cursorDevice.getMacro (index);
+    var macro = this.model.getDevice ().getMacro (index);
     if (macro)
         macro.getModulationSource ().toggleIsMapping ();
 };
@@ -43,5 +43,5 @@ DeviceMacroMode.prototype.updateSecondRow = function ()
     }
     
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (102 + i, this.cursorDevice.isMacroMapping (i) ? PUSH_COLOR2_GREEN_SPRING : PUSH_COLOR2_BLACK);
+        this.surface.setButton (102 + i, this.model.getDevice ().isMacroMapping (i) ? PUSH_COLOR2_GREEN_SPRING : PUSH_COLOR2_BLACK);
 };

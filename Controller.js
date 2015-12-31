@@ -74,6 +74,21 @@ function Controller ()
     this.surface.addMode (MODE_DEVICE_DIRECT, new DeviceDirectMode (this.model, MODE_DEVICE_DIRECT, 'Direct'));
     this.surface.addMode (MODE_DEVICE_PRESETS, new DevicePresetsMode (this.model));
     
+    this.surface.addMode (MODE_DEVICE_LAYER_VOLUME, new DeviceLayerModeVolume (this.model));
+    this.surface.addMode (MODE_DEVICE_LAYER_PAN, new DeviceLayerModePan (this.model));
+    var modeLayerSend = new DeviceLayerModeSend (this.model);
+    this.surface.addMode (MODE_DEVICE_LAYER_SEND1, modeLayerSend);
+    this.surface.addMode (MODE_DEVICE_LAYER_SEND2, modeLayerSend);
+    this.surface.addMode (MODE_DEVICE_LAYER_SEND3, modeLayerSend);
+    this.surface.addMode (MODE_DEVICE_LAYER_SEND4, modeLayerSend);
+    this.surface.addMode (MODE_DEVICE_LAYER_SEND5, modeLayerSend);
+    this.surface.addMode (MODE_DEVICE_LAYER_SEND6, modeLayerSend);
+    if (Config.isPush2)
+    {
+        this.surface.addMode (MODE_DEVICE_LAYER_SEND7, modeLayerSend);
+        this.surface.addMode (MODE_DEVICE_LAYER_SEND8, modeLayerSend);
+    }
+    
     this.surface.addModeListener (doObject (this, function (oldMode, newMode)
     {
         this.updateMode (-1);
@@ -186,7 +201,7 @@ Controller.prototype.updateMode = function (mode)
     var isMasterOn = mode == MODE_MASTER || mode == MODE_FRAME;
     var isVolumeOn = mode == MODE_VOLUME || mode == MODE_CROSSFADER;  
     var isPanOn    = mode >= MODE_PAN && mode <= MODE_SEND8;
-    var isDeviceOn = mode >= MODE_DEVICE_PARAMS && mode <= MODE_DEVICE_LAYER;
+    var isDeviceOn = mode >= (MODE_DEVICE_PARAMS && mode <= MODE_DEVICE_LAYER) || (mode >= MODE_DEVICE_LAYER_VOLUME && mode <= MODE_DEVICE_LAYER_SEND);
 
     var isMixOn = mode == MODE_TRACK;
     if (Config.isPush2)
@@ -234,7 +249,7 @@ Controller.prototype.updateIndication = function (mode)
             );
         }
 
-        var cd = this.model.getCursorDevice ();
+        var cd = this.model.getDevice ();
         cd.getParameter (i).setIndication (mode == MODE_DEVICE_PARAMS);
         cd.getCommonParameter (i).setIndication (mode == MODE_DEVICE_COMMON);
         cd.getEnvelopeParameter (i).setIndication (mode == MODE_DEVICE_ENVELOPE);

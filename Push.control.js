@@ -17,7 +17,7 @@ load ("Controller.js");
 // This is the only global variable, do not use it.
 var controller = null;
 
-host.defineController ("Ableton", "Push", "7.00", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66", "Jürgen Moßgraber & Michael Schmalle");
+host.defineController ("Ableton", "Push", "7.10", "D69AFBF0-B71E-11E3-A5E2-0800200C9A66", "Jürgen Moßgraber & Michael Schmalle");
 host.defineMidiPorts (1, 1);
 host.platformIsWindows () && host.addDeviceNameBasedDiscoveryPair (["MIDIIN2 (Ableton Push)"], ["MIDIOUT2 (Ableton Push)"]);
 host.platformIsLinux () && host.addDeviceNameBasedDiscoveryPair (["Ableton Push MIDI 2"], ["Ableton Push MIDI 2"]);

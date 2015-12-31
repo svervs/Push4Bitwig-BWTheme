@@ -152,7 +152,7 @@ DevicePresetsMode.prototype.updateDisplay = function ()
     var d = this.surface.getDisplay ();
     if (this.isPresetSession ())
     {
-        if (!this.session.isActive || !this.model.hasSelectedDevice ())
+        if (!this.session.isActive || !this.model.getDevice ().hasSelectedDevice ())
         {
             d.clear ().setBlock (1, 1, '   No active Brow').setBlock (1, 2, 'sing Session.')
                       .setBlock (2, 1, 'Select device and').setBlock (2, 2, 'press Browse...').allDone ();
@@ -210,7 +210,7 @@ DevicePresetsMode.prototype.updateDisplayPush2 = function ()
     
     if (this.isPresetSession ())
     {
-        if (!this.session.isActive || !this.model.hasSelectedDevice ())
+        if (!this.session.isActive || !this.model.getDevice ().hasSelectedDevice ())
         {
             DisplayMessage.sendMessage (1, "No active Browsing Session. Select a device and press Browse...");
             return;

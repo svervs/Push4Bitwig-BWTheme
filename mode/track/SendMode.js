@@ -60,8 +60,21 @@ SendMode.prototype.updateDisplay = function ()
             message.addByte (DisplayMessage.GRID_ELEMENT_CHANNEL_SENDS);
             
             // The menu item
-            message.addString (this.menu[i]);
-            message.addBoolean (i > 3 && i - 4 + sendOffset == sendIndex);
+            if (Config.wasMuteLongPressed || (Config.isMuteSoloLocked && tb.isMuteState ()))
+            {
+                message.addString (t.exists ? "Mute" : "");
+                message.addBoolean (t.mute);
+            }
+            else if (Config.wasSoloLongPressed || (Config.isMuteSoloLocked && tb.isSoloState ()))
+            {
+                message.addString ( t.exists ? "Solo" : "");
+                message.addBoolean (t.solo);
+            }
+            else
+            {
+                message.addString (this.menu[i]);
+                message.addBoolean (i > 3 && i - 4 + sendOffset == sendIndex);
+            }
             
             // Channel info
             message.addString (t.name);

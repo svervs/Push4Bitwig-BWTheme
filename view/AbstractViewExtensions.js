@@ -438,7 +438,19 @@ AbstractView.prototype.onVolume = function (event)
     if (!event.isDown ())
         return;
     
-    if (this.surface.getCurrentMode () == MODE_VOLUME)
+    var currentMode = this.surface.getCurrentMode ();
+    
+    // Layer mode selection for Push 1
+    if (!Config.isPush2 && this.surface.isSelectPressed ())
+    {
+        if (currentMode == MODE_DEVICE_LAYER || currentMode >= MODE_DEVICE_LAYER_VOLUME && currentMode <= MODE_DEVICE_LAYER_SEND6)
+        {
+            this.surface.setPendingMode (MODE_DEVICE_LAYER_VOLUME);
+            return;
+        }
+    }    
+    
+    if (currentMode == MODE_VOLUME)
         this.surface.setPendingMode (MODE_CROSSFADER);
     else
         this.surface.setPendingMode (MODE_VOLUME);
@@ -448,9 +460,36 @@ AbstractView.prototype.onPanAndSend = function (event)
 {
     if (!event.isDown ())
         return;
-     
+
     var mode = -1;
     var fxTrackBank = this.model.getEffectTrackBank ();
+    var currentMode = this.surface.getCurrentMode ();
+    
+    // Layer mode selection for Push 1
+    if (!Config.isPush2 && this.surface.isSelectPressed ())
+    {
+        if (currentMode == MODE_DEVICE_LAYER || currentMode >= MODE_DEVICE_LAYER_VOLUME && currentMode <= MODE_DEVICE_LAYER_SEND6)
+        {
+            if (this.model.getCurrentTrackBank () === fxTrackBank)
+            {
+                // No Sends on FX tracks
+                mode = MODE_DEVICE_LAYER_PAN;
+            }
+            else
+            {
+                mode = currentMode + 1;
+                // Wrap
+                if (mode < MODE_DEVICE_LAYER_PAN || mode > MODE_DEVICE_LAYER_SEND6)
+                    mode = MODE_DEVICE_LAYER_PAN;
+                // Check if Send channel exists
+                if (mode >= MODE_DEVICE_LAYER_SEND1 && mode <= MODE_DEVICE_LAYER_SEND6 && (fxTrackBank != null && !fxTrackBank.getTrack (mode - MODE_DEVICE_LAYER_SEND1).exists))
+                    mode = MODE_DEVICE_LAYER_PAN;
+            }
+            this.surface.setPendingMode (mode);
+            return;
+        }
+    }    
+    
     if (this.model.getCurrentTrackBank () === fxTrackBank)
     {
         // No Sends on FX tracks
@@ -458,7 +497,7 @@ AbstractView.prototype.onPanAndSend = function (event)
     }
     else
     {
-        mode = this.surface.getCurrentMode () + 1;
+        mode = currentMode + 1;
         // Wrap
         if (mode < MODE_PAN || mode > MODE_SEND6)
             mode = MODE_PAN;
@@ -481,23 +520,15 @@ AbstractView.prototype.onTrack = function (event)
         return;
     }
         
+    var currentMode = this.surface.getCurrentMode ();
+    
     if (Config.isPush2)
     {
-        if (this.surface.isActiveMode (MODE_TRACK) ||
-            this.surface.isActiveMode (MODE_VOLUME) ||
-            this.surface.isActiveMode (MODE_CROSSFADER) ||
-            this.surface.isActiveMode (MODE_PAN))
+        if (currentMode == MODE_TRACK || currentMode == MODE_VOLUME || currentMode == MODE_CROSSFADER || currentMode == MODE_PAN)
         {
             this.model.toggleCurrentTrackBank ();
         }
-        else if (this.surface.isActiveMode (MODE_SEND1) ||
-                 this.surface.isActiveMode (MODE_SEND2) ||
-                 this.surface.isActiveMode (MODE_SEND3) ||
-                 this.surface.isActiveMode (MODE_SEND4) ||
-                 this.surface.isActiveMode (MODE_SEND5) ||
-                 this.surface.isActiveMode (MODE_SEND6) ||
-                 this.surface.isActiveMode (MODE_SEND7) ||
-                 this.surface.isActiveMode (MODE_SEND8))
+        else if (currentMode >= MODE_SEND1 && currentMode <= MODE_SEND8)
         {
             this.surface.setPendingMode (MODE_TRACK);
             this.model.toggleCurrentTrackBank ();
@@ -507,7 +538,17 @@ AbstractView.prototype.onTrack = function (event)
     }
     else
     {
-        if (this.surface.isActiveMode (MODE_TRACK))
+        // Layer mode selection for Push 1
+        if (this.surface.isSelectPressed ())
+        {
+            if (currentMode == MODE_DEVICE_LAYER || currentMode >= MODE_DEVICE_LAYER_VOLUME && currentMode <= MODE_DEVICE_LAYER_SEND6)
+            {
+                this.surface.setPendingMode (MODE_DEVICE_LAYER);
+                return;
+            }
+        }    
+        
+        if (currentMode == MODE_TRACK)
             this.model.toggleCurrentTrackBank ();
         else
             this.surface.setPendingMode (MODE_TRACK);
@@ -580,7 +621,7 @@ AbstractView.prototype.onDeviceLeft = function (event)
     }
 
     // Layer / Device navigation
-    var cd = this.model.getCursorDevice ();
+    var cd = this.model.getDevice ();
     if (!cd.hasSelectedDevice ())
         return;
         
@@ -656,7 +697,7 @@ AbstractView.prototype.onDeviceRight = function (event)
     }
 
     // Layer / Device navigation
-    var cd = this.model.getCursorDevice ();
+    var cd = this.model.getDevice ();
     if (cm == MODE_DEVICE_LAYER)
     {
         this.surface.setPendingMode (this.lastAbstractDeviceMode);
@@ -747,7 +788,17 @@ AbstractView.prototype.onMute = function (event)
             break;
             
         case MODE_DEVICE_LAYER:
-            var cd = this.model.getCursorDevice ();
+        case MODE_DEVICE_LAYER_VOLUME:
+        case MODE_DEVICE_LAYER_PAN:
+        case MODE_DEVICE_LAYER_SEND1:
+        case MODE_DEVICE_LAYER_SEND2:
+        case MODE_DEVICE_LAYER_SEND3:
+        case MODE_DEVICE_LAYER_SEND4:
+        case MODE_DEVICE_LAYER_SEND5:
+        case MODE_DEVICE_LAYER_SEND6:
+        case MODE_DEVICE_LAYER_SEND7:
+        case MODE_DEVICE_LAYER_SEND8:
+            var cd = this.model.getDevice ();
             var layer = cd.getSelectedLayerOrDrumPad ();
             if (layer != null)
                 cd.toggleLayerOrDrumPadMute (layer.index);
@@ -813,13 +864,24 @@ AbstractView.prototype.onSolo = function (event)
             var selTrack = tb.getSelectedTrack ();
             if (selTrack != null)
                 tb.toggleSolo (selTrack.index);
+            break;
             
         case MODE_MASTER:
             this.model.getMasterTrack ().toggleSolo ();
             break;
             
         case MODE_DEVICE_LAYER:
-            var cd = this.model.getCursorDevice ();
+        case MODE_DEVICE_LAYER_VOLUME:
+        case MODE_DEVICE_LAYER_PAN:
+        case MODE_DEVICE_LAYER_SEND1:
+        case MODE_DEVICE_LAYER_SEND2:
+        case MODE_DEVICE_LAYER_SEND3:
+        case MODE_DEVICE_LAYER_SEND4:
+        case MODE_DEVICE_LAYER_SEND5:
+        case MODE_DEVICE_LAYER_SEND6:
+        case MODE_DEVICE_LAYER_SEND7:
+        case MODE_DEVICE_LAYER_SEND8:
+            var cd = this.model.getDevice ();
             var layer = cd.getSelectedLayerOrDrumPad ();
             if (layer != null)
                 cd.toggleLayerOrDrumPadSolo (layer.index);
@@ -884,13 +946,14 @@ AbstractView.prototype.onOctaveUp = function (event) {};
 
 AbstractView.prototype.onAddEffect = function (event)
 {
-    if (!event.isDown ())
-        return;
-    
-    var browser = this.model.getBrowser ();
-    browser.browseForDevices ();
-    this.surface.getMode (MODE_DEVICE_PRESETS).setSession (browser.getDeviceSession ());
-    this.surface.setPendingMode (MODE_DEVICE_PRESETS);
+    // TODO API extension required
+    //    if (!event.isDown ())
+    //        return;
+    //    
+    //    var browser = this.model.getBrowser ();
+    //    browser.browseForDevices ();
+    //    this.surface.getMode (MODE_DEVICE_PRESETS).setSession (browser.getDeviceSession ());
+    //    this.surface.setPendingMode (MODE_DEVICE_PRESETS);
 };
 
 AbstractView.prototype.onAddTrack = function (event)
@@ -950,7 +1013,7 @@ AbstractView.prototype.onShift = function (event)
 
 AbstractView.prototype.scrollLeft = function (event)
 {
-    var cd = this.model.getCursorDevice ();
+    var cd = this.model.getDevice ();
     switch (this.surface.getCurrentMode ())
     {
         case MODE_DEVICE_PARAMS:
@@ -996,7 +1059,7 @@ AbstractView.prototype.scrollLeft = function (event)
 
 AbstractView.prototype.scrollRight = function (event)
 {
-    var cd = this.model.getCursorDevice ();
+    var cd = this.model.getDevice ();
     switch (this.surface.getCurrentMode ())
     {
         case MODE_DEVICE_PARAMS:
@@ -1133,7 +1196,7 @@ AbstractView.prototype.updateButtons = function ()
     {
         if (this.surface.isActiveMode (MODE_DEVICE_LAYER))
         {
-            var cd = this.model.getCursorDevice ();
+            var cd = this.model.getDevice ();
             var layer = cd.getSelectedLayerOrDrumPad ();
             this.surface.setButton (PUSH_BUTTON_MUTE, layer != null && layer.mute ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
             this.surface.setButton (PUSH_BUTTON_SOLO, layer != null && layer.solo ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
@@ -1176,7 +1239,7 @@ AbstractView.prototype.updateArrowStates = function ()
             break;
     
         case MODE_DEVICE_LAYER:
-            var cd = this.model.getCursorDevice ();
+            var cd = this.model.getDevice ();
             this.canScrollLeft = cd.canScrollLayersUp ();
             this.canScrollRight = cd.canScrollLayersDown ();
             break;

@@ -11,10 +11,10 @@ DeviceCommonMode.prototype = new AbstractDeviceFixedMode ();
 
 DeviceCommonMode.prototype.getParameterValues = function (index)
 {
-    return this.cursorDevice.getCommonParam (index);
+    return this.model.getDevice ().getCommonParam (index);
 };
 
 DeviceCommonMode.prototype.getParameter = function (index)
 {
-    return this.cursorDevice.getCommonParameter (index);
+    return this.model.getDevice ().getCommonParameter (index);
 };
