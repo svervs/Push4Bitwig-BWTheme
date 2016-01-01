@@ -212,17 +212,19 @@ AbstractDeviceMode.prototype.updateDisplay2 = function ()
     var d = this.surface.getDisplay ();
     var message = d.createMessage (DisplayMessage.DISPLAY_COMMAND_GRID);
     
+    var selectedDevice = cd.getSelectedDevice ();
+    
     for (var i = 0; i < 8; i++)
     {
         message.addByte (DisplayMessage.GRID_ELEMENT_PARAMETERS);
         
         // The menu item
-        message.addString (i == 7 && !cd.isPlugin ? null :  this.menu[i]);
+        message.addString (i == 7 && !selectedDevice.isPlugin ? null :  this.menu[i]);
         
         switch (i)
         {
             case 0:
-                message.addBoolean (cd.enabled);
+                message.addBoolean (selectedDevice.enabled);
                 break;
             case 1:
                 message.addBoolean (selectedMode == MODE_DEVICE_PARAMS);
