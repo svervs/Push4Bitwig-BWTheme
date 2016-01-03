@@ -1,6 +1,6 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
 //            Michael Schmalle - teotigraphix.com
-// (c) 2014-2015
+// (c) 2014-2016
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 var PUSH_BUTTON_TAP             = 3;
@@ -147,6 +147,7 @@ var PUSH_BUTTONS_ALL =
 ];
 
 var PUSH_BUTTON_UPDATE = initArray (true, 127);
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_SETUP] = false;
 PUSH_BUTTON_UPDATE[PUSH_BUTTON_MUTE] = false;
 PUSH_BUTTON_UPDATE[PUSH_BUTTON_SOLO] = false;
 PUSH_BUTTON_UPDATE[PUSH_BUTTON_ACCENT] = false;
@@ -274,6 +275,17 @@ var PUSH_PAD_THRESHOLDS_DATA =
 
 var PUSH_LOW_THRESHOLD_WARNING = '         Warning:Low threshold maycause stuck pads                  ';
 
+Push.MAXW        = [ 1700, 1660, 1590, 1510, 1420, 1300, 1170, 1030,  860,  640,  400 ];
+Push.PUSH2_CPMIN = [ 1650, 1580, 1500, 1410, 1320, 1220, 1110, 1000,  900,  800,  700 ];
+Push.PUSH2_CPMAX = [ 2050, 1950, 1850, 1750, 1650, 1570, 1490, 1400, 1320, 1240, 1180 ];
+Push.GAMMA       = [ 0.7, 0.64, 0.58, 0.54, 0.5, 0.46, 0.43, 0.4, 0.36, 0.32, 0.25 ];
+Push.MINV        = [ 1, 1, 1, 1, 1, 1, 3, 6, 12, 24, 36 ];
+Push.MAXV        = [ 96, 102, 116, 121, 124, 127, 127, 127, 127, 127, 127 ];
+Push.ALPHA       = [ 90, 70, 54, 40, 28, 20, 10, -5, -25, -55, -90 ];
+
+Push.PAD_VELOCITY_CURVE_CHUNK_SIZE = 16;
+Push.NUM_VELOCITY_CURVE_ENTRIES    = 128;
+
 
 function Push (output, input)
 {
@@ -289,29 +301,21 @@ function Push (output, input)
     this.pads    = new Grid (output);
     this.display = new Display (output);
     
-    this.showVU = false;
-    this.ribbonMode = -1;
+    this.showVU      = false;
+    this.ribbonMode  = -1;
     this.ribbonValue = -1;
+    
+    this.majorVersion  = -1;
+    this.minorVersion  = -1;
+    this.buildNumber   = -1;
+    this.serialNumber  = -1;
+    this.boardRevision = -1;
+
+    this.input.setSysexCallback (doObject (this, this.handleSysEx));
+    // Send identity request
+    this.output.sendSysex ("F0 7E 7F 06 01 F7");
 }
 Push.prototype = new AbstractControlSurface ();
-
-Push.prototype.changePadThreshold = function (increase)
-{
-    if (increase)
-        Config.setPadThreshold (Config.padThreshold + 1);
-    else
-        Config.setPadThreshold (Config.padThreshold - 1);
-    this.sendPadSensitivity ();
-};
-
-Push.prototype.changeVelocityCurve = function (increase)
-{
-    if (increase)
-        Config.setVelocityCurve (Config.velocityCurve + 1);
-    else
-        Config.setVelocityCurve (Config.velocityCurve - 1);
-    this.sendPadSensitivity ();
-};
 
 Push.prototype.getSelectedPadThreshold = function ()
 {
@@ -401,9 +405,144 @@ Push.prototype.setRibbonValue = function (value)
     this.output.sendPitchbend (0, value);
 };
 
+//--------------------------------------
+// Push 1
+//--------------------------------------
+
 Push.prototype.sendPadSensitivity = function ()
 {
     this.output.sendSysex ("F0 47 7F 15 5D 00 20 " + PUSH_PAD_THRESHOLDS_DATA[Config.padThreshold] + " " + PUSH_PAD_CURVES_DATA[Config.velocityCurve] + " F7");
+};
+
+//--------------------------------------
+// Push 2
+//--------------------------------------
+
+Push.prototype.sendPadVelocityCurve = function ()
+{
+    var velocities = this.generateVelocityCurve (Config.padSensitivity, Config.padGain, Config.padDynamics);
+    for (var index = 0; index < velocities.length; index += Push.PAD_VELOCITY_CURVE_CHUNK_SIZE)
+    {
+        var args = new Array ();
+        args.push (32);
+        args.push (index);
+        for (var i = 0; i < Push.PAD_VELOCITY_CURVE_CHUNK_SIZE; i++)
+            args.push (velocities[index + i]);
+        this.sendPush2SysEx (args);    
+    }    
+};
+
+Push.prototype.generateVelocityCurve = function (sensitivity, gain, dynamics)
+{
+    var minw = 160;
+    var maxw = Push.MAXW[sensitivity];
+    var minv = Push.MINV[gain];
+    var maxv = Push.MAXV[gain];
+    var result = this.calculatePoints (Push.ALPHA[dynamics]);
+    var p1x = result[0];
+    var p1y = result[1];
+    var p2x = result[2];
+    var p2y = result[3];
+    var curve = [];
+    var minwIndex = minw / 32;
+    var maxwIndex = maxw / 32;
+    var t = 0.0;
+    
+    var w;
+    for (var index = 0; index < Push.NUM_VELOCITY_CURVE_ENTRIES; index++)
+    {
+        w = index * 32.0;
+        if (w <= minw)
+            velocity = 1.0 + (minv - 1.0) * index / minwIndex;
+        else if (w >= maxw)
+            velocity = maxv + (127.0 - maxv) * (index - maxwIndex) / (128 - maxwIndex);
+        else
+        {
+            wnorm = (w - minw) / (maxw - minw);
+            var bez = this.bezier(wnorm, t, p1x, p1y, p2x, p2y);
+            b = bez[0]; 
+            t = bez[1];
+            velonorm = this.gammaFunc (b, Push.GAMMA[gain]);
+            velocity = minv + velonorm * (maxv - minv);
+        }
+        curve.push (Math.min (Math.max (Math.floor (Math.round (velocity)), 1), 127));
+    }
+    return curve;
+};
+
+Push.prototype.bezier = function (x, t, p1x, p1y, p2x, p2y)
+{
+    var p0x = 0.0;
+    var p0y = 0.0;
+    var p3x = 1.0;
+    var p3y = 1.0;
+    var s;
+    var t2;
+    var t3;
+    var s2;
+    var s3;
+    var xt;
+    while (t <= 1.0)
+    {
+        s = 1 - t;
+        t2 = t * t;
+        t3 = t2 * t;
+        s2 = s * s;
+        s3 = s2 * s;
+        xt = s3 * p0x + 3 * t * s2 * p1x + 3 * t2 * s * p2x + t3 * p3x;
+        if (xt >= x)
+            return [ s3 * p0y + 3 * t * s2 * p1y + 3 * t2 * s * p2y + t3 * p3y, t ];
+        t += 0.0001;
+    }
+    return [ 1.0, t ];
+};
+
+Push.prototype.calculatePoints = function (alpha)
+{
+    var a1 = (225.0 - alpha) * Math.PI / 180.0;
+    var a2 = (45.0 - alpha) * Math.PI / 180.0;
+    var r = 0.4;
+    return [ 0.5 + r * Math.cos(a1), 0.5 + r * Math.sin(a1), 0.5 + r * Math.cos(a2), 0.5 + r * Math.sin(a2) ];
+};
+
+Push.prototype.gammaFunc = function (x, gamma)
+{
+    return Math.pow (x, Math.exp (-4.0 + 8.0 * gamma));
+};
+
+Push.prototype.sendPadThreshold = function ()
+{
+    var args = new Array ();
+    args.push (27);
+    this.add7L5M (args, 33);                            // threshold0
+    this.add7L5M (args, 31);                            // threshold1
+    this.add7L5M (args, Push.PUSH2_CPMIN[Config.padSensitivity]); // cpmin
+    this.add7L5M (args, Push.PUSH2_CPMAX[Config.padSensitivity]); // cpmax
+    this.sendPush2SysEx (args);    
+};
+
+Push.prototype.add7L5M = function (array, value)
+{
+    array.push (value & 127);
+    array.push (value >> 7 & 31);
+};
+
+
+Push.prototype.sendDisplayBrightness = function ()
+{
+    var brightness = Math.round (Config.displayBrightness * 255 / 100);
+    this.sendPush2SysEx ([ 8, brightness & 127, brightness >> 7 & 1 ]);
+};
+
+Push.prototype.sendLEDBrightness = function ()
+{
+    var brightness = Math.round (Config.ledBrightness * 127 / 100);
+    this.sendPush2SysEx ([ 6, brightness ]);
+};
+
+Push.prototype.sendPush2SysEx = function (parameters)
+{
+    this.output.sendSysex ("F0 00 21 1D 01 01 " + toHexStr (parameters) + "F7");
 };
 
 //--------------------------------------
@@ -695,7 +834,8 @@ Push.prototype.handleEvent = function (cc, value)
            
 		// Setup - Push 2 
         case PUSH_BUTTON_SETUP:
-            // Currently not used
+            if (Config.isPush2)
+                view.onSetup (event);
             break;
             
 		// Convert - Push 2 
@@ -748,5 +888,65 @@ Push.prototype.handleTouch = function (knob, value)
         case PUSH_SMALL_KNOB2_TOUCH:
             view.onSmallKnob2Touch (value == 127);
             break;
+    }
+};
+
+Push.prototype.handleSysEx = function (data)
+{
+    if (Config.isPush2)
+    {
+        PUSH2_IDENTITY_MIN_LENGTH = 21;
+        PUSH2_ID = [ 0xF0, 0x7E, 0x01, 0x06, 0x02, 0x00 ];
+        
+        var byteLength = data.length / 2;
+        if (byteLength < PUSH2_IDENTITY_MIN_LENGTH)
+        {
+            println ("Wrong identifier length: " + byteLength);
+            return;
+        }
+    
+        for (var i = 0; i < PUSH2_ID.length; i++)
+        {
+            var value = data.hexByteAt (i);
+            if (value != PUSH2_ID[i])
+            {
+                println ("Wrong identifier value at index " + i + ": " + value +" : "+ PUSH2_ID[i]);
+                return;
+            }
+        }
+        
+        this.majorVersion = data.hexByteAt (12);
+        this.minorVersion = data.hexByteAt (13);
+        this.buildNumber = data.hexByteAt (14) + (data.hexByteAt (15) << 7);
+        this.serialNumber = data.hexByteAt (16) + (data.hexByteAt (17) << 7) + (data.hexByteAt (18) << 14) + (data.hexByteAt (19) << 21) + (data.hexByteAt (20) << 28);
+        this.boardRevision = byteLength > 21 ? data.hexByteAt (21) : 0;
+    }
+    else
+    {
+        PUSH1_IDENTITY_MIN_LENGTH = 35;
+        PUSH1_ID = [ 0xF0, 0x7E, 0x00, 0x06, 0x02, 0x47, 0x15 ];
+        
+        var byteLength = data.length / 2;
+        if (byteLength < PUSH1_IDENTITY_MIN_LENGTH)
+        {
+            println ("Wrong identifier length: " + byteLength);
+            return;
+        }
+    
+        for (var i = 0; i < PUSH1_ID.length; i++)
+        {
+            var value = data.hexByteAt (i);
+            if (value != PUSH1_ID[i])
+            {
+                println ("Wrong identifier value at index " + i + ": " + value +" : "+ PUSH1_ID[i]);
+                return;
+            }
+        }
+        
+        this.majorVersion  = data.hexByteAt (10);
+        this.minorVersion  = data.hexByteAt (12) + data.hexByteAt (11) * 10;
+        this.buildNumber   = 0;
+        this.serialNumber  = 0;
+        this.boardRevision = 0;        
     }
 };

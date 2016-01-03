@@ -1,6 +1,6 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
 //            Michael Schmalle - teotigraphix.com
-// (c) 2014-2015
+// (c) 2014-2016
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 function DeviceLayerMode (model)
@@ -341,9 +341,9 @@ DeviceLayerMode.prototype.updateDisplayElements = function (cd, l)
                 var sendOffset = Config.sendsAreToggled ? 4 : 0;
                 var sendPos = sendOffset + j;
                 var send = l.sends[sendPos];
-                message.addString (send.name);
-                message.addString (this.isKnobTouched[4 + j] ? send.volumeStr : "");
-                message.addInteger(send.volume);
+                message.addString (send ? send.name : "");
+                message.addString (send && this.isKnobTouched[4 + j] ? send.volumeStr : "");
+                message.addInteger(send ? send.volume : "");
                 message.addByte (1);
             }
             // Signal Track mode

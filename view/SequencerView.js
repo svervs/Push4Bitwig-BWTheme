@@ -1,5 +1,5 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
-// (c) 2014-2015
+// (c) 2014-2016
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 SequencerView.NUM_DISPLAY_ROWS = 7;
@@ -44,11 +44,14 @@ SequencerView.prototype.usesButton = function (buttonID)
     switch (buttonID)
     {
         case PUSH_BUTTON_REPEAT:
-        case PUSH_BUTTON_SETUP:
         case PUSH_BUTTON_CONVERT:
         case PUSH_BUTTON_ADD_EFFECT:
             return false;
     }
+    
+    if (Config.isPush2 && buttonID == PUSH_BUTTON_USER_MODE)
+        return false;
+    
     return true;
 };
 

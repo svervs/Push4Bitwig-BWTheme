@@ -41,6 +41,11 @@ Config.DEFAULT_DEVICE_MODE   = 14;
 Config.FOOTSWITCH_2          = 15;
 Config.SEND_PORT             = 16;
 Config.FLIP_SESSION          = 17;
+Config.DISPLAY_BRIGHTNESS    = 18;
+Config.LED_BRIGHTNESS        = 19;
+Config.PAD_SENSITIVITY       = 20;
+Config.PAD_GAIN              = 21;
+Config.PAD_DYNAMICS          = 22;
 
 Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
@@ -66,8 +71,6 @@ Config.scaleBase         = 'C';
 Config.scaleInKey        = true;
 Config.scaleLayout       = '4th ^';
 Config.enableVUMeters    = false;
-Config.velocityCurve     = 1;
-Config.padThreshold      = 20;
 Config.gotoZeroOnStop    = false;
 Config.displayCrossfader = true;
 Config.convertAftertouch = 0;
@@ -76,8 +79,17 @@ Config.footswitch2       = Config.FOOTSWITCH_2_NEW_BUTTON;
 Config.sendPort          = 7000;
 Config.flipSession       = false;
 
+//Push 1
+Config.velocityCurve     = 1;
+Config.padThreshold      = 20;
+
 // Push 2
-Config.sendsAreToggled = false;
+Config.sendsAreToggled   = false;
+Config.displayBrightness = 255;
+Config.ledBrightness     = 127;
+Config.padSensitivity    = 5;
+Config.padGain           = 5;
+Config.padDynamics       = 5;
 
 Config.AFTERTOUCH_CONVERSION_VALUES = [ "Off", "Poly Aftertouch", "Channel Aftertouch" ];
 for (var i = 0; i < 128; i++)
@@ -91,15 +103,29 @@ Config.init = function ()
     var prefs = host.getPreferences ();
 
     ///////////////////////////
-    // Network
+    // Push 2 Hardware
 
     if (Config.isPush2)
     {
-        Config.sendPortSetting = prefs.getNumberSetting ('Port', 'Display', 0, 65535, 1, '', 7000);
+        Config.sendPortSetting = prefs.getNumberSetting ('Display Port', 'Hardware Setup', 0, 65535, 1, '', 7000);
         Config.sendPortSetting.addRawValueObserver (function (value)
         {
             Config.sendPort = Math.floor (value);
             Config.notifyListeners (Config.SEND_PORT);
+        });
+        
+        Config.displayBrightnessSetting = prefs.getNumberSetting ('Display Brightness', 'Hardware Setup', 0, 100, 1, '%', 100);
+        Config.displayBrightnessSetting.addRawValueObserver (function (value)
+        {
+            Config.displayBrightness = Math.floor (value);
+            Config.notifyListeners (Config.DISPLAY_BRIGHTNESS);
+        });
+        
+        Config.ledBrightnessSetting = prefs.getNumberSetting ('LED Brightness', 'Hardware Setup', 0, 100, 1, '%', 100);
+        Config.ledBrightnessSetting.addRawValueObserver (function (value)
+        {
+            Config.ledBrightness = Math.floor (value);
+            Config.notifyListeners (Config.LED_BRIGHTNESS);
         });
     }
 
@@ -252,33 +278,59 @@ Config.init = function ()
     ///////////////////////////
     // Pad Sensitivity
 
-    Config.velocityCurveSetting = prefs.getEnumSetting ("Velocity Curve", "Pads", PUSH_PAD_CURVES_NAME, PUSH_PAD_CURVES_NAME[1]);
-    Config.velocityCurveSetting.addValueObserver (function (value)
+    if (Config.isPush2)
     {
-        for (var i = 0; i < PUSH_PAD_CURVES_NAME.length; i++)
+        Config.padSensitivitySetting = prefs.getNumberSetting ('Sensitivity', "Pads", 0, 10, 1, '', 5);
+        Config.padSensitivitySetting.addRawValueObserver (function (value)
         {
-            if (PUSH_PAD_CURVES_NAME[i] === value)
-            {
-                Config.velocityCurve = i;
-                break;
-            }
-        }
-        Config.notifyListeners (Config.VELOCITY_CURVE);
-    });
-
-    Config.padThresholdSetting = prefs.getEnumSetting ("Pad Threshold", "Pads", PUSH_PAD_THRESHOLDS_NAME, PUSH_PAD_THRESHOLDS_NAME[20]);
-    Config.padThresholdSetting.addValueObserver (function (value)
+            Config.padSensitivity = Math.floor (value);
+            Config.notifyListeners (Config.PAD_SENSITIVITY);
+        });
+    
+        Config.padGainSetting = prefs.getNumberSetting ('Gain', "Pads", 0, 10, 1, '', 5);
+        Config.padGainSetting.addRawValueObserver (function (value)
+        {
+            Config.padGain = Math.floor (value);
+            Config.notifyListeners (Config.PAD_GAIN);
+        });
+        
+        Config.padDynamicsSetting = prefs.getNumberSetting ('Dynamics', "Pads", 0, 10, 1, '', 5);
+        Config.padDynamicsSetting.addRawValueObserver (function (value)
+        {
+            Config.padDynamics = Math.floor (value);
+            Config.notifyListeners (Config.PAD_DYNAMICS);
+        });
+    }
+    else
     {
-        for (var i = 0; i < PUSH_PAD_THRESHOLDS_NAME.length; i++)
+        Config.velocityCurveSetting = prefs.getEnumSetting ("Velocity Curve", "Pads", PUSH_PAD_CURVES_NAME, PUSH_PAD_CURVES_NAME[1]);
+        Config.velocityCurveSetting.addValueObserver (function (value)
         {
-            if (PUSH_PAD_THRESHOLDS_NAME[i] === value)
+            for (var i = 0; i < PUSH_PAD_CURVES_NAME.length; i++)
             {
-                Config.padThreshold = i;
-                break;
+                if (PUSH_PAD_CURVES_NAME[i] === value)
+                {
+                    Config.velocityCurve = i;
+                    break;
+                }
             }
-        }
-        Config.notifyListeners (Config.PAD_THRESHOLD);
-    });
+            Config.notifyListeners (Config.VELOCITY_CURVE);
+        });
+    
+        Config.padThresholdSetting = prefs.getEnumSetting ("Pad Threshold", "Pads", PUSH_PAD_THRESHOLDS_NAME, PUSH_PAD_THRESHOLDS_NAME[20]);
+        Config.padThresholdSetting.addValueObserver (function (value)
+        {
+            for (var i = 0; i < PUSH_PAD_THRESHOLDS_NAME.length; i++)
+            {
+                if (PUSH_PAD_THRESHOLDS_NAME[i] === value)
+                {
+                    Config.padThreshold = i;
+                    break;
+                }
+            }
+            Config.notifyListeners (Config.PAD_THRESHOLD);
+        });
+    }
     
     Config.convertAftertouchSetting = prefs.getEnumSetting ("Convert Poly Aftertouch to", "Pads", Config.AFTERTOUCH_CONVERSION_VALUES, Config.AFTERTOUCH_CONVERSION_VALUES[1]);
     Config.convertAftertouchSetting.addValueObserver (function (value)
@@ -368,24 +420,52 @@ Config.setFlipSession = function (enabled)
     Config.flipSessionSetting.set (enabled ? "On" : "Off");
 };
 
-Config.setVelocityCurve = function (value)
+Config.changePadThreshold = function (control)
 {
+    var value = changeValue (control, Config.padThreshold, 1, PUSH_PAD_THRESHOLDS_NAME.length);
+    Config.padThreshold = Math.max (0, Math.min (value, PUSH_PAD_THRESHOLDS_NAME.length - 1));
+    Config.padThresholdSetting.set (PUSH_PAD_THRESHOLDS_NAME[Config.padThreshold]);
+};
+
+Config.changeVelocityCurve = function (control)
+{
+    var value = changeValue (control, Config.velocityCurve, 1, PUSH_PAD_CURVES_NAME.length);
     Config.velocityCurve = Math.max (0, Math.min (value, PUSH_PAD_CURVES_NAME.length - 1));
     Config.velocityCurveSetting.set (PUSH_PAD_CURVES_NAME[Config.velocityCurve]);
 };
 
-Config.setPadThreshold = function (value)
+Config.changeDisplayBrightness = function (control)
 {
-    Config.padThreshold = Math.max (0, Math.min (value, PUSH_PAD_THRESHOLDS_NAME.length - 1));
-    Config.padThresholdSetting.set (PUSH_PAD_THRESHOLDS_NAME[Config.padThreshold]);
+    Config.displayBrightnessSetting.setRaw (changeValue (control, Config.displayBrightness, 1, 101));
 };
+
+Config.changeLEDBrightness = function (control)
+{
+    Config.ledBrightnessSetting.setRaw (changeValue (control, Config.ledBrightness, 1, 101));
+};
+
+Config.changePadSensitivity = function (control)
+{
+    Config.padSensitivitySetting.setRaw (changeValue (control, Config.padSensitivity, 1, 11));
+};
+
+Config.changePadGain = function (control)
+{
+    Config.padGainSetting.setRaw (changeValue (control, Config.padGain, 1, 11));
+};
+
+Config.changePadDynamics  = function (control)
+{
+    Config.padDynamicsSetting.setRaw (changeValue (control, Config.padDynamics, 1, 11));
+};
+
 
 // ------------------------------
 // Property listeners
 // ------------------------------
 
 Config.listeners = [];
-for (var i = 0; i <= Config.FLIP_SESSION; i++)
+for (var i = 0; i <= Config.PAD_DYNAMICS; i++)
     Config.listeners[i] = [];
 
 Config.addPropertyListener = function (property, listener)

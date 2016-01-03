@@ -1,6 +1,6 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
 //            Michael Schmalle - teotigraphix.com
-// (c) 2014-2015
+// (c) 2014-2016
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 function Controller ()
@@ -32,6 +32,7 @@ function Controller ()
     this.surface.addMode (MODE_VOLUME, new VolumeMode (this.model));
     this.surface.addMode (MODE_PAN, new PanMode (this.model));
     this.surface.addMode (MODE_CROSSFADER, new CrossfaderMode (this.model));
+
     var modeSend = new SendMode (this.model);
     this.surface.addMode (MODE_SEND1, modeSend);
     this.surface.addMode (MODE_SEND2, modeSend);
@@ -39,11 +40,7 @@ function Controller ()
     this.surface.addMode (MODE_SEND4, modeSend);
     this.surface.addMode (MODE_SEND5, modeSend);
     this.surface.addMode (MODE_SEND6, modeSend);
-    if (Config.isPush2)
-    {
-        this.surface.addMode (MODE_SEND7, modeSend);
-        this.surface.addMode (MODE_SEND8, modeSend);
-    }
+
     this.surface.addMode (MODE_MASTER, new MasterMode (this.model, false));
     this.surface.addMode (MODE_MASTER_TEMP, new MasterMode (this.model, true));    
 
@@ -59,7 +56,6 @@ function Controller ()
     this.surface.addMode (MODE_VIEW_SELECT, new ViewSelectMode (this.model));
     this.surface.addMode (MODE_AUTOMATION, new AutomationMode (this.model));
     this.surface.addMode (MODE_TRANSPORT, new TransportMode (this.model));
-    this.surface.addMode (MODE_CONFIGURATION, new ConfigurationMode (this.model));
 
     this.surface.addMode (MODE_DEVICE_MODE_SELECT, new DeviceModeSelectMode (this.model));
     this.surface.addMode (MODE_DEVICE_PARAMS, new DeviceParamsMode (this.model));
@@ -83,10 +79,52 @@ function Controller ()
     this.surface.addMode (MODE_DEVICE_LAYER_SEND4, modeLayerSend);
     this.surface.addMode (MODE_DEVICE_LAYER_SEND5, modeLayerSend);
     this.surface.addMode (MODE_DEVICE_LAYER_SEND6, modeLayerSend);
+    
     if (Config.isPush2)
     {
+        this.surface.addMode (MODE_SEND7, modeSend);
+        this.surface.addMode (MODE_SEND8, modeSend);
         this.surface.addMode (MODE_DEVICE_LAYER_SEND7, modeLayerSend);
         this.surface.addMode (MODE_DEVICE_LAYER_SEND8, modeLayerSend);
+        this.surface.addMode (MODE_SETUP, new SetupMode (this.model));
+        this.surface.addMode (MODE_INFO, new InfoMode (this.model));
+        
+        Config.addPropertyListener (Config.DISPLAY_BRIGHTNESS, doObject (this, function ()
+        {
+            this.surface.sendDisplayBrightness ();
+        }));
+        Config.addPropertyListener (Config.LED_BRIGHTNESS, doObject (this, function ()
+        {
+            this.surface.sendLEDBrightness ();
+        }));
+        Config.addPropertyListener (Config.PAD_SENSITIVITY, doObject (this, function ()
+        {
+            this.surface.sendPadVelocityCurve ();
+            this.surface.sendPadThreshold ();
+        }));
+        Config.addPropertyListener (Config.PAD_GAIN, doObject (this, function ()
+        {
+            this.surface.sendPadVelocityCurve ();
+            this.surface.sendPadThreshold ();
+        }));
+        Config.addPropertyListener (Config.PAD_DYNAMICS, doObject (this, function ()
+        {
+            this.surface.sendPadVelocityCurve ();
+            this.surface.sendPadThreshold ();
+        }));
+    }
+    else
+    {
+        this.surface.addMode (MODE_CONFIGURATION, new ConfigurationMode (this.model));
+        
+        Config.addPropertyListener (Config.VELOCITY_CURVE, doObject (this, function ()
+        {
+            this.surface.sendPadSensitivity ();
+        }));
+        Config.addPropertyListener (Config.PAD_THRESHOLD, doObject (this, function ()
+        {
+            this.surface.sendPadSensitivity ();
+        }));
     }
     
     this.surface.addModeListener (doObject (this, function (oldMode, newMode)
@@ -132,14 +170,6 @@ function Controller ()
     Config.addPropertyListener (Config.ENABLE_VU_METERS, doObject (this, function ()
     {
         this.surface.showVU = Config.enableVUMeters;
-    }));
-    Config.addPropertyListener (Config.VELOCITY_CURVE, doObject (this, function ()
-    {
-        this.surface.sendPadSensitivity ();
-    }));
-    Config.addPropertyListener (Config.PAD_THRESHOLD, doObject (this, function ()
-    {
-        this.surface.sendPadSensitivity ();
     }));
     Config.addPropertyListener (Config.DEFAULT_DEVICE_MODE, doObject (this, function ()
     {
@@ -216,6 +246,9 @@ Controller.prototype.updateMode = function (mode)
     this.surface.setButton (PUSH_BUTTON_FIXED_LENGTH, mode == MODE_FIXED ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     this.surface.setButton (PUSH_BUTTON_BROWSE, mode == MODE_DEVICE_PRESETS ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     this.surface.setButton (PUSH_BUTTON_CLIP, mode == MODE_CLIP ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    
+    if (Config.isPush2)
+        this.surface.setButton (PUSH_BUTTON_SETUP, mode == MODE_SETUP ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 Controller.prototype.updateIndication = function (mode)

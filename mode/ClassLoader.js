@@ -1,6 +1,6 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
 //            Michael Schmalle - teotigraphix.com
-// (c) 2014-2015
+// (c) 2014-2016
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 // Display Modes
@@ -44,6 +44,8 @@ var MODE_VIEW_SELECT         = 34;
 var MODE_AUTOMATION          = 35;
 var MODE_TRANSPORT           = 36;
 var MODE_CONFIGURATION       = 37;
+var MODE_SETUP               = 38;
+var MODE_INFO                = 39;
 
 var MODE_DEVICE_LAYER_VOLUME = 40;
 var MODE_DEVICE_LAYER_PAN    = 41;
@@ -82,7 +84,14 @@ load ("ScalesMode.js");
 load ("ScaleLayoutMode.js");
 load ("ViewSelectMode.js");
 load ("TransportMode.js");
-load ("ConfigurationMode.js");
+
+if (Config.isPush2)
+{
+    load ("SetupMode.js");
+    load ("InfoMode.js");
+}
+else
+    load ("ConfigurationMode.js");
 
 load ("track/AbstractTrackMode.js");
 load ("track/ClipMode.js");

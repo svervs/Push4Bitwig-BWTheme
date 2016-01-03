@@ -1,6 +1,6 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
 //            Michael Schmalle - teotigraphix.com
-// (c) 2014-2015
+// (c) 2014-2016
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 AbstractView.BUTTON_REPEAT_INTERVAL = 75;
@@ -907,10 +907,24 @@ AbstractView.prototype.onScales = function (event)
     }
 };
 
+AbstractView.prototype.onSetup = function (event)
+{
+    if (!event.isDown ())
+        return;
+    
+    if (this.surface.isActiveMode (MODE_SETUP))
+        this.surface.restoreMode ();
+    else
+        this.surface.setPendingMode (MODE_SETUP);
+};
+
 AbstractView.prototype.onUser = function (event)
 {
     if (event.isLong ())
-        this.surface.setPendingMode (MODE_CONFIGURATION);
+    {
+        if (!Config.isPush2)
+            this.surface.setPendingMode (MODE_CONFIGURATION);
+    }
     else if (event.isUp ())
         this.surface.restoreMode ();
 };

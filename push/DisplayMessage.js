@@ -35,7 +35,7 @@ DisplayMessage.sendMessage = function (column, text)
     message.send ();
 };
 
-DisplayMessage.prototype.addOptionElement = function (headerTopName, menuTopName, isMenuTopSelected, headerBottomName, menuBottomName, isMenuBottomSelected)
+DisplayMessage.prototype.addOptionElement = function (headerTopName, menuTopName, isMenuTopSelected, headerBottomName, menuBottomName, isMenuBottomSelected, useSmallTopMenu)
 {
     this.addByte (DisplayMessage.GRID_ELEMENT_OPTIONS);
     this.addString (headerTopName);
@@ -44,6 +44,7 @@ DisplayMessage.prototype.addOptionElement = function (headerTopName, menuTopName
     this.addString (headerBottomName);
     this.addString (menuBottomName);
     this.addBoolean (isMenuBottomSelected);
+    this.addBoolean (useSmallTopMenu);
 };
 
 DisplayMessage.prototype.addString = function (text)

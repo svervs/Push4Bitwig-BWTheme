@@ -1,6 +1,6 @@
 // Written by Jürgen Moßgraber - mossgrabers.de
 //            Michael Schmalle - teotigraphix.com
-// (c) 2014-2015
+// (c) 2014-2016
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
 PrgChangeView.GREENS = [ PUSH_COLOR2_GREEN_HI, PUSH_COLOR2_GREEN, PUSH_COLOR2_GREEN_LO, PUSH_COLOR2_GREEN_SPRING, PUSH_COLOR2_GREEN_HI, PUSH_COLOR2_GREEN, PUSH_COLOR2_GREEN_LO, PUSH_COLOR2_GREEN_SPRING ];
@@ -41,11 +41,14 @@ PrgChangeView.prototype.usesButton = function (buttonID)
         case PUSH_BUTTON_REPEAT:
         case PUSH_BUTTON_OCTAVE_UP:
         case PUSH_BUTTON_OCTAVE_DOWN:
-        case PUSH_BUTTON_SETUP:
         case PUSH_BUTTON_CONVERT:
         case PUSH_BUTTON_ADD_EFFECT:
             return false;
     }
+    
+    if (Config.isPush2 && buttonID == PUSH_BUTTON_USER_MODE)
+        return false;
+    
     return true;
 };
 
