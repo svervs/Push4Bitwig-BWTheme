@@ -21,6 +21,10 @@ function DisplayMessage (command)
 
 DisplayMessage.prototype.send = function ()
 {
+    // Workaround for Linux bug: All config values are set to 0 when closing a song
+    if (Config.sendPort < 1)
+        return;
+    
     var data = [ -16, this.command ];    // -16 = 0xF0
     data = data.concat (this.array);
     data = data.concat ([ -9 ]);    // -9  = 0xF7

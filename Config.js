@@ -107,7 +107,7 @@ Config.init = function ()
 
     if (Config.isPush2)
     {
-        Config.sendPortSetting = prefs.getNumberSetting ('Display Port', 'Hardware Setup', 0, 65535, 1, '', 7000);
+        Config.sendPortSetting = prefs.getNumberSetting ('Display Port', 'Hardware Setup', 1, 65535, 1, '', 7000);
         Config.sendPortSetting.addRawValueObserver (function (value)
         {
             Config.sendPort = Math.floor (value);
