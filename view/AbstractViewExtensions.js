@@ -615,8 +615,13 @@ AbstractView.prototype.onDeviceLeft = function (event)
     // Group Navigation
     if (isTrackMode (cm))
     {
-        if (!this.model.isEffectTrackBankActive ())
-            this.model.getTrackBank ().selectChildren ();
+        var tb = this.model.getCurrentTrackBank ();
+        var selTrack = tb.getSelectedTrack ();
+        // If it is not a group jump into device mode, otherwise display child channels of group
+        if (selTrack != null && !selTrack.isGroup)
+            this.onDevice (event);
+        else if (!this.model.isEffectTrackBankActive ())
+            tb.selectChildren ();
         return;
     }
 
@@ -625,17 +630,22 @@ AbstractView.prototype.onDeviceLeft = function (event)
     if (!cd.hasSelectedDevice ())
         return;
         
-    var isNoContainer = !cd.hasLayers ();
+    var isContainer = cd.hasLayers ();
     
     // Workaround for multi output VSTs
-    if (this.surface.isShiftPressed ())
+    if (this.surface.isShiftPressed () || (isContainer && cd.hasZeroLayers ()))
     {
-        if (!isNoContainer)
-            this.setShowDevices (!this.showDevices);
+        if (isContainer)
+        {
+            if (cd.hasZeroLayers ())
+                this.setShowDevices (false);
+            else
+                this.setShowDevices (!this.showDevices);
+        }
         return;
     }
 
-    if (isNoContainer)
+    if (!isContainer)
     {
         if (this.showDevices)
             this.setShowDevices (false);
@@ -695,30 +705,43 @@ AbstractView.prototype.onDeviceRight = function (event)
             this.model.getTrackBank ().selectParent ();
         return;
     }
-
+    
     // Layer / Device navigation
+    
     var cd = this.model.getDevice ();
+    
+    // There is no device on the track move upwards to the track view
+    if (!cd.hasSelectedDevice ())
+    {
+        this.onTrack (event);
+        return;
+    }
+        
     if (cm == MODE_DEVICE_LAYER)
     {
         this.surface.setPendingMode (this.lastAbstractDeviceMode);
         cd.selectChannel ();
         this.setShowDevices (true);
+        return;
     }
-    else
+
+    if (this.showDevices)
     {
-        if (this.showDevices)
+        if (cd.isNested ())
         {
-            if (cd.isNested ())
-            {
-                cd.selectParent ();
-                this.surface.setPendingMode (MODE_DEVICE_LAYER);
-                this.setShowDevices (false);
-                cd.selectChannel ();
-            }
+            cd.selectParent ();
+            this.surface.setPendingMode (MODE_DEVICE_LAYER);
+            this.setShowDevices (false);
+            cd.selectChannel ();
         }
         else
-            this.setShowDevices (true);
+        {
+            // Move up to the track
+            this.onTrack (event);
+        }
     }
+    else
+        this.setShowDevices (true);
 };
 
 AbstractView.prototype.onMute = function (event)
