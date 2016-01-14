@@ -930,6 +930,22 @@ AbstractView.prototype.onScales = function (event)
     }
 };
 
+AbstractView.prototype.onConvert = function (event)
+{
+    if (!event.isDown ())
+        return;
+
+    
+    var application = this.model.getApplication ();
+    var action = application.getAction (this.surface.isShiftPressed () ? "slice_to_multi_sampler_track" : "slice_to_drum_track");
+    if (action == null)
+    {
+        errorln ("Slice action not found.");
+        return;
+    }
+    action.invoke ();
+};
+
 AbstractView.prototype.onSetup = function (event)
 {
     if (!event.isDown ())
@@ -1245,6 +1261,9 @@ AbstractView.prototype.updateButtons = function ()
             this.surface.setButton (PUSH_BUTTON_MUTE, selTrack != null && selTrack.mute ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
             this.surface.setButton (PUSH_BUTTON_SOLO, selTrack != null && selTrack.solo ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
         }
+        
+        
+        this.surface.setButton (PUSH_BUTTON_CONVERT,  this.canConvertAudio () ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
         return;
     }
     
@@ -1252,6 +1271,33 @@ AbstractView.prototype.updateButtons = function ()
     var isMuteState = tb.isMuteState ();
     this.surface.setButton (PUSH_BUTTON_MUTE, isMuteState ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
     this.surface.setButton (PUSH_BUTTON_SOLO, !isMuteState ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
+};
+
+AbstractView.prototype.canConvertAudio = function ()
+{
+    // TODO Uncomment the printlns to test https://github.com/teotigraphix/Framework4Bitwig/issues/109
+    
+    var tb = this.model.getCurrentTrackBank ();
+    var selectedTrack = tb.getSelectedTrack ();
+    if (selectedTrack == null || !selectedTrack.canHoldAudioData)
+    {
+        // println("No track");        
+        return false;
+    }
+    var slots = tb.getSelectedSlots (selectedTrack.index);
+    if (slots.length == 0)
+    {
+        // println("No selected slots on: " + selectedTrack.index);        
+        return false;
+    }
+    for (var i = 0; i < slots.length; i++)
+    {
+        if (slots[0].hasContent)
+            return true;
+    }
+
+    // println("No slot with content");        
+    return false;
 };
 
 AbstractView.prototype.updateArrowStates = function ()

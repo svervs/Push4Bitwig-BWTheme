@@ -147,15 +147,16 @@ var PUSH_BUTTONS_ALL =
 ];
 
 var PUSH_BUTTON_UPDATE = initArray (true, 127);
-PUSH_BUTTON_UPDATE[PUSH_BUTTON_SETUP] = false;
-PUSH_BUTTON_UPDATE[PUSH_BUTTON_MUTE] = false;
-PUSH_BUTTON_UPDATE[PUSH_BUTTON_SOLO] = false;
-PUSH_BUTTON_UPDATE[PUSH_BUTTON_ACCENT] = false;
-PUSH_BUTTON_UPDATE[PUSH_BUTTON_METRONOME] = false;
-PUSH_BUTTON_UPDATE[PUSH_BUTTON_PLAY] = false;
-PUSH_BUTTON_UPDATE[PUSH_BUTTON_RECORD] = false;
-PUSH_BUTTON_UPDATE[PUSH_BUTTON_STOP] = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_SETUP]      = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_MUTE]       = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_SOLO]       = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_ACCENT]     = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_METRONOME]  = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_PLAY]       = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_RECORD]     = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_STOP]       = false;
 PUSH_BUTTON_UPDATE[PUSH_BUTTON_AUTOMATION] = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_CONVERT]    = false;
 
 var PUSH_RIBBON_PITCHBEND = 0;
 var PUSH_RIBBON_VOLUME    = 1;
@@ -840,7 +841,8 @@ Push.prototype.handleEvent = function (cc, value)
             
 		// Convert - Push 2 
         case PUSH_BUTTON_CONVERT:
-            // Currently not used
+            if (Config.isPush2)
+                view.onConvert (event);
             break;
             
         // Note: Sustain already directly send to the DAW

@@ -48,7 +48,6 @@ DrumView.prototype.usesButton = function (buttonID)
     switch (buttonID)
     {
         case PUSH_BUTTON_REPEAT:
-        case PUSH_BUTTON_CONVERT:
         case PUSH_BUTTON_ADD_EFFECT:
             return false;
     }
