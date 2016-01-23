@@ -330,24 +330,21 @@ Push.prototype.getSelectedVelocityCurve = function ()
 
 Push.prototype.shutdown = function ()
 {
+    // Clear display
     if (Config.isPush2)
     {
         // Push 2: Shutdown Push2Display app
         this.display.shutdown ();
     }
     else
-    {
-        // Clear display
-        for (var i = 0; i < 4; i++)
-            this.display.clearRow (i);
-    }
+        this.display.clear ().allDone().flush();
 
     // Turn off all buttons
     for (var i = 0; i < this.buttons.length; i++)
         this.setButton (this.buttons[i], PUSH_BUTTON_STATE_OFF);
 
     // Turn off 1st/2nd row buttons
-    for (var i = 20; i < 27; i++)
+    for (var i = 20; i < 28; i++)
         this.setButton (i, PUSH_BUTTON_STATE_OFF);
     for (var i = 102; i < 110; i++)
         this.setButton (i, PUSH_BUTTON_STATE_OFF);

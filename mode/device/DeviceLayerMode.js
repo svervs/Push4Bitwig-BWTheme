@@ -221,7 +221,17 @@ DeviceLayerMode.prototype.updateDisplay1 = function ()
          .setCell (2, 1, l.pan, Display.FORMAT_PAN);
      
         var fxTrackBank = this.model.getEffectTrackBank ();
-        if (fxTrackBank != null)
+        if (fxTrackBank == null)
+        {
+            for (var i = 0; i < 6; i++)
+            {
+                var pos = 2 + i;
+                d.setCell (0, pos, l.sends[i].name, Display.FORMAT_RAW)
+                 .setCell (1, pos, l.sends[i].volumeStr, Display.FORMAT_RAW)
+                 .setCell (2, pos, l.sends[i].volume, Display.FORMAT_VALUE);
+            }
+        }
+        else
         {
             var isFX = this.model.isEffectTrackBankActive ();
             for (var i = 0; i < 6; i++)
@@ -232,16 +242,6 @@ DeviceLayerMode.prototype.updateDisplay1 = function ()
                 d.setCell (0, pos, isEmpty ? "" : fxTrack.name, Display.FORMAT_RAW)
                  .setCell (1, pos, isEmpty ? "" : l.sends[i].volumeStr, Display.FORMAT_RAW)
                  .setCell (2, pos, isEmpty ? "" : l.sends[i].volume, isEmpty ? Display.FORMAT_RAW : Display.FORMAT_VALUE);
-            }
-        }
-        else
-        {
-            for (var i = 0; i < 6; i++)
-            {
-                var pos = 2 + i;
-                d.setCell (0, pos, l.sends[i].name, Display.FORMAT_RAW)
-                 .setCell (1, pos, l.sends[i].volumeStr, Display.FORMAT_RAW)
-                 .setCell (2, pos, l.sends[i].volume, Display.FORMAT_VALUE);
             }
         }
     }
