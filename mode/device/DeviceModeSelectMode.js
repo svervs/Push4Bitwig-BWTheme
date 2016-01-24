@@ -29,18 +29,18 @@ DeviceModeSelectMode.prototype.updateDisplay = function ()
 
 DeviceModeSelectMode.prototype.updateFirstRow = function ()
 {
-    this.surface.setButton (20, this.selectedMode == MODE_DEVICE_PARAMS ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-    this.surface.setButton (21, this.selectedMode == MODE_DEVICE_COMMON || this.selectedMode == MODE_DEVICE_ENVELOPE || this.selectedMode == MODE_DEVICE_MACRO || this.selectedMode == MODE_DEVICE_MODULATE || this.selectedMode == MODE_DEVICE_USER ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-    this.surface.setButton (22, this.selectedMode == MODE_DEVICE_DIRECT ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.updateButton (20, this.selectedMode == MODE_DEVICE_PARAMS ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.updateButton (21, this.selectedMode == MODE_DEVICE_COMMON || this.selectedMode == MODE_DEVICE_ENVELOPE || this.selectedMode == MODE_DEVICE_MACRO || this.selectedMode == MODE_DEVICE_MODULATE || this.selectedMode == MODE_DEVICE_USER ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.updateButton (22, this.selectedMode == MODE_DEVICE_DIRECT ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
     
-    this.surface.setButton (23, AbstractMode.BUTTON_COLOR_OFF);
+    this.surface.updateButton (23, AbstractMode.BUTTON_COLOR_OFF);
 
     var cd = this.model.getDevice ();
-    this.surface.setButton (24, cd.isExpanded () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-    this.surface.setButton (25, cd.isMacroSectionVisible () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-    this.surface.setButton (26, cd.isParameterPageSectionVisible () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.updateButton (24, cd.isExpanded () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.updateButton (25, cd.isMacroSectionVisible () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.updateButton (26, cd.isParameterPageSectionVisible () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
 
-    this.surface.setButton (27, AbstractMode.BUTTON_COLOR_OFF);
+    this.surface.updateButton (27, AbstractMode.BUTTON_COLOR_OFF);
 };
 
 DeviceModeSelectMode.prototype.setMode = function (mode)

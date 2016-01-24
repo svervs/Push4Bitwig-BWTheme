@@ -99,7 +99,7 @@ AbstractDeviceMode.prototype.updateFirstRow = function ()
     {
         var bank = this.calcDeviceBank ();
         for (var i = 0; i < 8; i++)
-            this.surface.setButton (20 + i, i < bank.pages.length && bank.pages[i].length > 0 ? (i == bank.page ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
+            this.surface.updateButton (20 + i, i < bank.pages.length && bank.pages[i].length > 0 ? (i == bank.page ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
     }
     else
         this.updateFirstRowBank ();
@@ -148,19 +148,19 @@ AbstractDeviceMode.prototype.updateSecondRow = function ()
         return;
     }
     var selDevice = cd.getSelectedDevice ();
-    this.surface.setButton (102, selDevice.enabled ? PUSH_COLOR2_GREEN : PUSH_COLOR2_GREY_LO);
+    this.surface.updateButton (102, selDevice.enabled ? PUSH_COLOR2_GREEN : PUSH_COLOR2_GREY_LO);
     
     var selectedMode = this.surface.getMode (MODE_DEVICE_MODE_SELECT).selectedMode;
     
-    this.surface.setButton (103, selectedMode == MODE_DEVICE_PARAMS ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-    this.surface.setButton (104, selectedMode == MODE_DEVICE_COMMON || selectedMode == MODE_DEVICE_ENVELOPE || selectedMode == MODE_DEVICE_MACRO || selectedMode == MODE_DEVICE_MODULATE || selectedMode == MODE_DEVICE_USER ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-    this.surface.setButton (105, selectedMode == MODE_DEVICE_DIRECT ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+    this.surface.updateButton (103, selectedMode == MODE_DEVICE_PARAMS ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+    this.surface.updateButton (104, selectedMode == MODE_DEVICE_COMMON || selectedMode == MODE_DEVICE_ENVELOPE || selectedMode == MODE_DEVICE_MACRO || selectedMode == MODE_DEVICE_MODULATE || selectedMode == MODE_DEVICE_USER ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+    this.surface.updateButton (105, selectedMode == MODE_DEVICE_DIRECT ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
     
-    this.surface.setButton (106, cd.isExpanded () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-    this.surface.setButton (107, cd.isMacroSectionVisible () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-    this.surface.setButton (108, cd.isParameterPageSectionVisible () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+    this.surface.updateButton (106, cd.isExpanded () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+    this.surface.updateButton (107, cd.isMacroSectionVisible () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+    this.surface.updateButton (108, cd.isParameterPageSectionVisible () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
     
-    this.surface.setButton (109, selDevice.isPlugin ? (cd.isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO) : PUSH_COLOR2_BLACK);
+    this.surface.updateButton (109, selDevice.isPlugin ? (cd.isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO) : PUSH_COLOR2_BLACK);
 };
 
 AbstractDeviceMode.prototype.updateDisplay = function () 

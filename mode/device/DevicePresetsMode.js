@@ -272,11 +272,11 @@ DevicePresetsMode.prototype.updateDisplayPush2 = function ()
 DevicePresetsMode.prototype.updateFirstRow = function ()
 {
     for (var i = 20; i < 28; i++)
-        this.surface.setButton (i, i == 21 ? AbstractMode.BUTTON_COLOR_OFF : AbstractMode.BUTTON_COLOR_ON);
+        this.surface.updateButton (i, i == 21 ? AbstractMode.BUTTON_COLOR_OFF : AbstractMode.BUTTON_COLOR_ON);
 };
 
 DevicePresetsMode.prototype.updateSecondRow = function ()
 {
     for (var i = 102; i < 110; i++)
-        this.surface.setButton (i, i == 103 ? AbstractMode.BUTTON_COLOR_OFF : AbstractMode.BUTTON_COLOR2_ON);
+        this.surface.updateButton (i, i == 103 ? AbstractMode.BUTTON_COLOR_OFF : AbstractMode.BUTTON_COLOR2_ON);
 };

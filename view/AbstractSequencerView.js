@@ -25,9 +25,9 @@ AbstractSequencerView.prototype.onActivate = function ()
 {
     AbstractView.prototype.onActivate.call (this);
 
-    this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
-    this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
+    this.surface.updateButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     this.model.getCurrentTrackBank ().setIndication (false);
     this.drawSceneButtons ();
 
@@ -64,12 +64,12 @@ AbstractSequencerView.prototype.drawSceneButtons = function ()
     if (this.canSelectedTrackHoldNotes ())
     {
         for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-            this.surface.setButton (i, i == PUSH_BUTTON_SCENE1 + this.selectedIndex ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN);
+            this.surface.updateButton (i, i == PUSH_BUTTON_SCENE1 + this.selectedIndex ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN);
     }
     else
     {
         for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-            this.surface.setButton (i, PUSH_BUTTON_STATE_OFF);
+            this.surface.updateButton (i, PUSH_BUTTON_STATE_OFF);
     }
 };
 

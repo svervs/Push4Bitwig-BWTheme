@@ -43,5 +43,5 @@ DeviceMacroMode.prototype.updateSecondRow = function ()
     }
     
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (102 + i, this.model.getDevice ().isMacroMapping (i) ? PUSH_COLOR2_GREEN_SPRING : PUSH_COLOR2_BLACK);
+        this.surface.updateButton (102 + i, this.model.getDevice ().isMacroMapping (i) ? PUSH_COLOR2_GREEN_SPRING : PUSH_COLOR2_BLACK);
 };

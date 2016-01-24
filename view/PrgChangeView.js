@@ -27,9 +27,9 @@ PrgChangeView.prototype.onActivate = function ()
     this.noteMap = this.model.getScales ().getEmptyMatrix ();
     this.surface.setKeyTranslationTable (this.noteMap);
     
-    this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
-    this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
+    this.surface.updateButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     
     this.drawSceneButtons ();
 };
@@ -71,7 +71,7 @@ PrgChangeView.prototype.onScene = function (index)
 PrgChangeView.prototype.drawSceneButtons = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (PUSH_BUTTON_SCENE1 + i, this.bankNumber == (7 - i) ? (this.isToggled ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN) : PUSH_COLOR_BLACK);
+        this.surface.updateButton (PUSH_BUTTON_SCENE1 + i, this.bankNumber == (7 - i) ? (this.isToggled ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN) : PUSH_COLOR_BLACK);
 };
 
 PrgChangeView.prototype.drawGrid = function ()

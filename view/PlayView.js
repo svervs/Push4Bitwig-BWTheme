@@ -55,9 +55,9 @@ PlayView.prototype.onActivate = function ()
 {
     AbstractView.prototype.onActivate.call (this);
 
-    this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
-    this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_HI);
+    this.surface.updateButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     this.model.getCurrentTrackBank ().setIndication (false);
     this.updateSceneButtons ();
     this.initMaxVelocity ();
@@ -68,7 +68,7 @@ PlayView.prototype.onActivate = function ()
 PlayView.prototype.updateSceneButtons = function (buttonID)
 {
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_BLACK);
+        this.surface.updateButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_BLACK);
 };
 
 PlayView.prototype.usesButton = function (buttonID)

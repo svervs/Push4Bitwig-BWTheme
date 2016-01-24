@@ -47,5 +47,5 @@ FixedMode.prototype.updateFirstRow = function ()
 {
     var tb = this.model.getCurrentTrackBank ();
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, tb.getNewClipLength () == i ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+        this.surface.updateButton (20 + i, tb.getNewClipLength () == i ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
 };

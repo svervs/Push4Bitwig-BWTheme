@@ -104,17 +104,17 @@ RibbonMode.prototype.updateDisplay = function ()
 RibbonMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 5; i++)
-        this.surface.setButton (20 + i, Config.ribbonMode == Config.RIBBON_MODE_PITCH + i ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+        this.surface.updateButton (20 + i, Config.ribbonMode == Config.RIBBON_MODE_PITCH + i ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
     if (Config.isPush2)
     {
         for (var i = 5; i < 8; i++)
-            this.surface.setButton (20 + i, AbstractMode.BUTTON_COLOR_OFF);
+            this.surface.updateButton (20 + i, AbstractMode.BUTTON_COLOR_OFF);
     }
     else
     {
-        this.surface.setButton (25, AbstractMode.BUTTON_COLOR_OFF);
+        this.surface.updateButton (25, AbstractMode.BUTTON_COLOR_OFF);
         for (var i = 6; i < 8; i++)
-            this.surface.setButton (20 + i, AbstractMode.BUTTON_COLOR_ON);
+            this.surface.updateButton (20 + i, AbstractMode.BUTTON_COLOR_ON);
     }
 };
 
@@ -123,16 +123,16 @@ RibbonMode.prototype.updateSecondRow = function ()
     if (Config.isPush2)
     {
         for (var i = 0; i < 2; i++)
-            this.surface.setButton (102 + i, AbstractMode.BUTTON_COLOR_OFF);
+            this.surface.updateButton (102 + i, AbstractMode.BUTTON_COLOR_OFF);
         for (var i = 3; i < 7; i++)
-            this.surface.setButton (102 + i, AbstractMode.BUTTON_COLOR2_ON);
-        this.surface.setButton (109, AbstractMode.BUTTON_COLOR_OFF);
+            this.surface.updateButton (102 + i, AbstractMode.BUTTON_COLOR2_ON);
+        this.surface.updateButton (109, AbstractMode.BUTTON_COLOR_OFF);
     }
     else
     {
         for (var i = 0; i < 6; i++)
-            this.surface.setButton (102 + i, AbstractMode.BUTTON_COLOR_OFF);
+            this.surface.updateButton (102 + i, AbstractMode.BUTTON_COLOR_OFF);
         for (var i = 6; i < 8; i++)
-            this.surface.setButton (102 + i, AbstractMode.BUTTON_COLOR2_ON);
+            this.surface.updateButton (102 + i, AbstractMode.BUTTON_COLOR2_ON);
     }
 };

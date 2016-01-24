@@ -85,5 +85,5 @@ GrooveMode.prototype.updateFirstRow = function ()
     this.disableFirstRow ();
 
     var g = this.model.getGroove ();
-    this.surface.setButton (27, g.isEnabled () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.updateButton (27, g.isEnabled () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
 };

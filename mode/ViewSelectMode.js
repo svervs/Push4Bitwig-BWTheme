@@ -60,5 +60,5 @@ ViewSelectMode.prototype.updateDisplay = function ()
 ViewSelectMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, ViewSelectMode.VIEWS[i].id == null ? AbstractMode.BUTTON_COLOR_OFF : (this.surface.isActiveView (ViewSelectMode.VIEWS[i].id) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON));
+        this.surface.updateButton (20 + i, ViewSelectMode.VIEWS[i].id == null ? AbstractMode.BUTTON_COLOR_OFF : (this.surface.isActiveView (ViewSelectMode.VIEWS[i].id) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON));
 };

@@ -12,8 +12,8 @@ SessionView.prototype = new AbstractSessionView ();
 SessionView.prototype.onActivate = function ()
 {
     AbstractSessionView.prototype.onActivate.call (this);
-    this.surface.setButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
+    this.surface.updateButton (PUSH_BUTTON_NOTE, PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_SESSION, PUSH_BUTTON_STATE_HI);
 
     this.updateRibbonMode ();
 };
@@ -45,10 +45,10 @@ SessionView.prototype.drawSceneButtons = function ()
                 color = track.mute ? PUSH_COLOR_BLACK : PUSH_COLOR_SCENE_YELLOW_HI;
             else
                 color = track.solo ? PUSH_COLOR_SCENE_RED : PUSH_COLOR_BLACK;
-            this.surface.setButton (PUSH_BUTTON_SCENE1 + (7 - i), track.exists ? color : PUSH_COLOR_BLACK);
+            this.surface.updateButton (PUSH_BUTTON_SCENE1 + (7 - i), track.exists ? color : PUSH_COLOR_BLACK);
         }
         else
-            this.surface.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_SCENE_GREEN);
+            this.surface.updateButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_SCENE_GREEN);
     }
 };
 
@@ -72,7 +72,7 @@ SessionView.prototype.updateDevice = function ()
     if (Config.flipSession && !m.hasSecondRowPriority)
     {
         for (var i = 0; i < 8; i++)
-            this.surface.setButton (102 + i, PUSH_COLOR2_GREEN);
+            this.surface.updateButton (102 + i, PUSH_COLOR2_GREEN);
     }
     else
         m.updateSecondRow ();

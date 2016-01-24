@@ -85,7 +85,7 @@ AbstractDeviceFixedMode.prototype.onFirstRowBank = function (index)
 AbstractDeviceFixedMode.prototype.updateFirstRowBank = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, i < AbstractDeviceFixedMode.FIXED_BANKS.length ? (this.page == i ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
+        this.surface.updateButton (20 + i, i < AbstractDeviceFixedMode.FIXED_BANKS.length ? (this.page == i ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
 };
 
 AbstractDeviceFixedMode.prototype.updateParameters = function (d)

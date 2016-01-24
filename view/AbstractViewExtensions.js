@@ -1058,7 +1058,7 @@ AbstractView.prototype.onSelect = function (event) {};
 
 AbstractView.prototype.onShift = function (event)
 {
-    this.surface.setButton (PUSH_BUTTON_SHIFT, event.isUp () ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_HI);
+    this.surface.updateButton (PUSH_BUTTON_SHIFT, event.isUp () ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_HI);
     
     var cm = this.surface.getCurrentMode ();
     if (event.isDown () && cm == MODE_SCALES)
@@ -1246,7 +1246,7 @@ AbstractView.prototype.onFootswitch2 = function (value)
 
 AbstractView.prototype.updateButtons = function ()
 {
-    this.surface.setButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_ACCENT, Config.accentActive ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 
     if (Config.isPush2)
     {
@@ -1254,26 +1254,25 @@ AbstractView.prototype.updateButtons = function ()
         {
             var cd = this.model.getDevice ();
             var layer = cd.getSelectedLayerOrDrumPad ();
-            this.surface.setButton (PUSH_BUTTON_MUTE, layer != null && layer.mute ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
-            this.surface.setButton (PUSH_BUTTON_SOLO, layer != null && layer.solo ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
+            this.surface.updateButton (PUSH_BUTTON_MUTE, layer != null && layer.mute ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
+            this.surface.updateButton (PUSH_BUTTON_SOLO, layer != null && layer.solo ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
         }
         else
         {
             var tb = this.model.getCurrentTrackBank ();
             var selTrack = this.surface.isActiveMode (MODE_MASTER) ? this.model.getMasterTrack () : tb.getSelectedTrack ();
-            this.surface.setButton (PUSH_BUTTON_MUTE, selTrack != null && selTrack.mute ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
-            this.surface.setButton (PUSH_BUTTON_SOLO, selTrack != null && selTrack.solo ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
+            this.surface.updateButton (PUSH_BUTTON_MUTE, selTrack != null && selTrack.mute ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
+            this.surface.updateButton (PUSH_BUTTON_SOLO, selTrack != null && selTrack.solo ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
         }
         
-        
-        this.surface.setButton (PUSH_BUTTON_CONVERT,  this.canConvertAudio () ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
+        this.surface.updateButton (PUSH_BUTTON_CONVERT,  this.canConvertAudio () ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
         return;
     }
     
     var tb = this.model.getCurrentTrackBank ();
     var isMuteState = tb.isMuteState ();
-    this.surface.setButton (PUSH_BUTTON_MUTE, isMuteState ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
-    this.surface.setButton (PUSH_BUTTON_SOLO, !isMuteState ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
+    this.surface.updateButton (PUSH_BUTTON_MUTE, isMuteState ? PUSH_BUTTON_STATE_MUTE_HI : PUSH_BUTTON_STATE_MUTE_ON);
+    this.surface.updateButton (PUSH_BUTTON_SOLO, !isMuteState ? PUSH_BUTTON_STATE_SOLO_HI : PUSH_BUTTON_STATE_SOLO_ON);
 };
 
 AbstractView.prototype.canConvertAudio = function ()
@@ -1342,10 +1341,10 @@ AbstractView.prototype.updateArrowStates = function ()
 AbstractView.prototype.updateArrows = function ()
 {
     this.updateArrowStates ();
-    this.surface.setButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-    this.surface.setButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-    this.surface.setButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-    this.surface.setButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+    this.surface.updateButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+    this.surface.updateButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+    this.surface.updateButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+    this.surface.updateButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
 };
 
 AbstractView.prototype.canSelectedTrackHoldNotes = function ()

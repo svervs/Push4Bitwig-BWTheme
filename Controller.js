@@ -209,17 +209,17 @@ Controller.prototype.flush = function ()
     AbstractController.prototype.flush.call (this);
     
     var t = this.model.getTransport ();
-    this.surface.setButton (PUSH_BUTTON_METRONOME, t.isClickOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_PLAY, t.isPlaying ? PUSH_BUTTON_STATE_PLAY_HI : PUSH_BUTTON_STATE_PLAY_ON);
-    this.surface.setButton (PUSH_BUTTON_RECORD, t.isRecording ? PUSH_BUTTON_STATE_REC_HI : PUSH_BUTTON_STATE_REC_ON);
+    this.surface.updateButton (PUSH_BUTTON_METRONOME, t.isClickOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_PLAY, t.isPlaying ? PUSH_BUTTON_STATE_PLAY_HI : PUSH_BUTTON_STATE_PLAY_ON);
+    this.surface.updateButton (PUSH_BUTTON_RECORD, t.isRecording ? PUSH_BUTTON_STATE_REC_HI : PUSH_BUTTON_STATE_REC_ON);
     var view = this.surface.getActiveView ();
-    this.surface.setButton (PUSH_BUTTON_STOP, view && view.stopPressed ? PUSH_BUTTON_STATE_STOP_HI : PUSH_BUTTON_STATE_STOP_ON);
+    this.surface.updateButton (PUSH_BUTTON_STOP, view && view.stopPressed ? PUSH_BUTTON_STATE_STOP_HI : PUSH_BUTTON_STATE_STOP_ON);
     
     // Automation
     if (this.surface.isShiftPressed ())
-        this.surface.setButton (PUSH_BUTTON_AUTOMATION, t.isWritingClipLauncherAutomation ? PUSH_BUTTON_STATE_REC_HI : PUSH_BUTTON_STATE_REC_ON);
+        this.surface.updateButton (PUSH_BUTTON_AUTOMATION, t.isWritingClipLauncherAutomation ? PUSH_BUTTON_STATE_REC_HI : PUSH_BUTTON_STATE_REC_ON);
     else
-        this.surface.setButton (PUSH_BUTTON_AUTOMATION, t.isWritingArrangerAutomation ? PUSH_BUTTON_STATE_REC_HI : PUSH_BUTTON_STATE_REC_ON);
+        this.surface.updateButton (PUSH_BUTTON_AUTOMATION, t.isWritingArrangerAutomation ? PUSH_BUTTON_STATE_REC_HI : PUSH_BUTTON_STATE_REC_ON);
 
     this.updateMode (this.surface.getCurrentMode ());
 };
@@ -237,18 +237,18 @@ Controller.prototype.updateMode = function (mode)
     if (Config.isPush2)
         isMixOn = isMixOn || isVolumeOn || isPanOn;
 
-    this.surface.setButton (PUSH_BUTTON_MASTER, isMasterOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_TRACK, isMixOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_VOLUME, isVolumeOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_PAN_SEND, isPanOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_DEVICE, isDeviceOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_SCALES, mode == MODE_SCALES ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_FIXED_LENGTH, mode == MODE_FIXED ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_BROWSE, mode == MODE_DEVICE_PRESETS ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
-    this.surface.setButton (PUSH_BUTTON_CLIP, mode == MODE_CLIP ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_MASTER, isMasterOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_TRACK, isMixOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_VOLUME, isVolumeOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_PAN_SEND, isPanOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_DEVICE, isDeviceOn ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_SCALES, mode == MODE_SCALES ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_FIXED_LENGTH, mode == MODE_FIXED ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_BROWSE, mode == MODE_DEVICE_PRESETS ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+    this.surface.updateButton (PUSH_BUTTON_CLIP, mode == MODE_CLIP ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
     
     if (Config.isPush2)
-        this.surface.setButton (PUSH_BUTTON_SETUP, mode == MODE_SETUP ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
+        this.surface.updateButton (PUSH_BUTTON_SETUP, mode == MODE_SETUP ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_ON);
 };
 
 Controller.prototype.updateIndication = function (mode)

@@ -43,5 +43,5 @@ ScaleLayoutMode.prototype.updateFirstRow = function ()
 {
     var sl = this.scales.getScaleLayout ();
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, sl == i ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+        this.surface.updateButton (20 + i, sl == i ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
 };

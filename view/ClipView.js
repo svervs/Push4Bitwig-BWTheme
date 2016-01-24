@@ -125,9 +125,9 @@ ClipView.prototype.drawSceneButtons = function ()
     for (var i = 0; i < 8; i++)
     {
         if (i < 3)
-            this.surface.setButton (PUSH_BUTTON_SCENE1 + i, i == this.padResolution ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN);
+            this.surface.updateButton (PUSH_BUTTON_SCENE1 + i, i == this.padResolution ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN);
         else
-            this.surface.setButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_BLACK);
+            this.surface.updateButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_BLACK);
     }
 };
 

@@ -48,28 +48,28 @@ TransportMode.prototype.updateFirstRow = function ()
 {
     var transport = this.model.getTransport ();
     var preroll = transport.getPreroll ();
-    this.surface.setButton (20, PUSH_COLOR_BLACK);
-    this.surface.setButton (21, PUSH_COLOR_BLACK);
-    this.surface.setButton (22, preroll == TransportProxy.PREROLL_NONE ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-    this.surface.setButton (23, preroll == TransportProxy.PREROLL_2_BARS ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-    this.surface.setButton (24, PUSH_COLOR_BLACK);
-    this.surface.setButton (25, transport.isPrerollClickEnabled () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
-    this.surface.setButton (26, PUSH_COLOR_BLACK);
-    this.surface.setButton (27, PUSH_COLOR_BLACK);
+    this.surface.updateButton (20, PUSH_COLOR_BLACK);
+    this.surface.updateButton (21, PUSH_COLOR_BLACK);
+    this.surface.updateButton (22, preroll == TransportProxy.PREROLL_NONE ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.updateButton (23, preroll == TransportProxy.PREROLL_2_BARS ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.updateButton (24, PUSH_COLOR_BLACK);
+    this.surface.updateButton (25, transport.isPrerollClickEnabled () ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+    this.surface.updateButton (26, PUSH_COLOR_BLACK);
+    this.surface.updateButton (27, PUSH_COLOR_BLACK);
 };
 
 TransportMode.prototype.updateSecondRow = function ()
 {
     var transport = this.model.getTransport ();
     var preroll = transport.getPreroll ();
-    this.surface.setButton (102, PUSH_COLOR2_BLACK);
-    this.surface.setButton (103, PUSH_COLOR2_BLACK);
-    this.surface.setButton (104, preroll == TransportProxy.PREROLL_1_BAR ? AbstractMode.BUTTON_COLOR2_HI : AbstractMode.BUTTON_COLOR2_ON);
-    this.surface.setButton (105, preroll == TransportProxy.PREROLL_4_BARS ? AbstractMode.BUTTON_COLOR2_HI : AbstractMode.BUTTON_COLOR2_ON);
-    this.surface.setButton (106, PUSH_COLOR2_BLACK);
-    this.surface.setButton (107, PUSH_COLOR2_BLACK);
-    this.surface.setButton (108, PUSH_COLOR2_BLACK);
-    this.surface.setButton (109, PUSH_COLOR2_BLACK);
+    this.surface.updateButton (102, PUSH_COLOR2_BLACK);
+    this.surface.updateButton (103, PUSH_COLOR2_BLACK);
+    this.surface.updateButton (104, preroll == TransportProxy.PREROLL_1_BAR ? AbstractMode.BUTTON_COLOR2_HI : AbstractMode.BUTTON_COLOR2_ON);
+    this.surface.updateButton (105, preroll == TransportProxy.PREROLL_4_BARS ? AbstractMode.BUTTON_COLOR2_HI : AbstractMode.BUTTON_COLOR2_ON);
+    this.surface.updateButton (106, PUSH_COLOR2_BLACK);
+    this.surface.updateButton (107, PUSH_COLOR2_BLACK);
+    this.surface.updateButton (108, PUSH_COLOR2_BLACK);
+    this.surface.updateButton (109, PUSH_COLOR2_BLACK);
 };
 
 TransportMode.prototype.updateDisplay = function () 

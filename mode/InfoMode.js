@@ -20,10 +20,10 @@ InfoMode.prototype.onSecondRow = function (index)
 
 InfoMode.prototype.updateSecondRow = function ()
 {
-    this.surface.setButton (102, AbstractMode.BUTTON_COLOR_ON);
-    this.surface.setButton (103, AbstractMode.BUTTON_COLOR_HI);
+    this.surface.updateButton (102, AbstractMode.BUTTON_COLOR_ON);
+    this.surface.updateButton (103, AbstractMode.BUTTON_COLOR_HI);
     for (var i = 2; i < 8; i++)
-        this.surface.setButton (102 + i, AbstractMode.BUTTON_COLOR_OFF);
+        this.surface.updateButton (102 + i, AbstractMode.BUTTON_COLOR_OFF);
 };
 
 InfoMode.prototype.updateDisplay = function () 

@@ -47,9 +47,9 @@ AutomationMode.prototype.updateFirstRow = function ()
 {
     var writeMode = this.getWriteMode ();
     for (var i = 0; i < AutomationMode.MODES_VALUES.length; i++)
-        this.surface.setButton (20 + i, writeMode == AutomationMode.MODES_VALUES[i] ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+        this.surface.updateButton (20 + i, writeMode == AutomationMode.MODES_VALUES[i] ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
     for (var i = AutomationMode.MODES_VALUES.length; i < 8; i++)
-        this.surface.setButton (20 + i, AbstractMode.BUTTON_COLOR_OFF);
+        this.surface.updateButton (20 + i, AbstractMode.BUTTON_COLOR_OFF);
 };
 
 AutomationMode.prototype.getWriteMode = function ()

@@ -106,7 +106,7 @@ FrameMode.prototype.updateDisplay = function ()
 FrameMode.prototype.updateFirstRow = function ()
 {
     for (var i = 0; i < 8; i++)
-        this.surface.setButton (20 + i, this.getFirstRowButtonState (i) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
+        this.surface.updateButton (20 + i, this.getFirstRowButtonState (i) ? AbstractMode.BUTTON_COLOR_HI : AbstractMode.BUTTON_COLOR_ON);
 };
 
 FrameMode.prototype.getFirstRowButtonState = function (index)
@@ -129,7 +129,7 @@ FrameMode.prototype.updateSecondRow = function ()
     for (var i = 0; i < 8; i++) 
     {
         var state = this.getSecondRowButtonState (i);
-        this.surface.setButton (102 + i, state == 1 ? AbstractMode.BUTTON_COLOR2_HI : (state == 0 ? AbstractMode.BUTTON_COLOR2_ON : AbstractMode.BUTTON_COLOR_OFF));
+        this.surface.updateButton (102 + i, state == 1 ? AbstractMode.BUTTON_COLOR2_HI : (state == 0 ? AbstractMode.BUTTON_COLOR2_ON : AbstractMode.BUTTON_COLOR_OFF));
     }
 };
 

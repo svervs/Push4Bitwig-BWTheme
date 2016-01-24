@@ -117,7 +117,7 @@ AbstractTrackMode.prototype.updateFirstRow = function ()
     for (var i = 0; i < 8; i++)
     {
         // Light up selection and record buttons
-        this.surface.setButton (20 + i, this.getTrackButtonColor (tb.getTrack (i)));
+        this.surface.updateButton (20 + i, this.getTrackButtonColor (tb.getTrack (i)));
     }
 };
 
@@ -147,19 +147,19 @@ AbstractTrackMode.prototype.updateSecondRow = function ()
                         color = PUSH_COLOR2_YELLOW_HI;
                 }
 
-                this.surface.setButton (102 + i, color);
+                this.surface.updateButton (102 + i, color);
             }
             return;
         }
         
-        this.surface.setButton (102, this.surface.isActiveMode (MODE_VOLUME) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-        this.surface.setButton (103, this.surface.isActiveMode (MODE_PAN) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-        this.surface.setButton (104, this.surface.isActiveMode (MODE_CROSSFADER) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-        this.surface.setButton (105, PUSH_COLOR_BLACK);
-        this.surface.setButton (106, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_SEND5 : MODE_SEND1) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-        this.surface.setButton (107, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_SEND6 : MODE_SEND2) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-        this.surface.setButton (108, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_SEND7 : MODE_SEND3) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-        this.surface.setButton (109, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_SEND8 : MODE_SEND4) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (102, this.surface.isActiveMode (MODE_VOLUME) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (103, this.surface.isActiveMode (MODE_PAN) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (104, this.surface.isActiveMode (MODE_CROSSFADER) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (105, PUSH_COLOR_BLACK);
+        this.surface.updateButton (106, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_SEND5 : MODE_SEND1) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (107, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_SEND6 : MODE_SEND2) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (108, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_SEND7 : MODE_SEND3) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (109, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_SEND8 : MODE_SEND4) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
         return;
     }
     
@@ -183,7 +183,7 @@ AbstractTrackMode.prototype.updateSecondRow = function ()
                 color = t.solo ? PUSH_COLOR2_BLUE_HI : PUSH_COLOR2_GREY_LO;
         }
 
-        this.surface.setButton (102 + i, color);
+        this.surface.updateButton (102 + i, color);
     }
 };
 

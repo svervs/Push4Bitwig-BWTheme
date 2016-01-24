@@ -430,7 +430,7 @@ DeviceLayerMode.prototype.updateFirstRow = function ()
     for (var i = 0; i < 8; i++)
     {
         var dl = cd.getLayerOrDrumPad (offset + i);
-        this.surface.setButton (20 + i, dl.exists && dl.activated ? (dl.selected ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
+        this.surface.updateButton (20 + i, dl.exists && dl.activated ? (dl.selected ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
     }
 };
 
@@ -464,19 +464,19 @@ DeviceLayerMode.prototype.updateSecondRow = function ()
                         color = PUSH_COLOR2_YELLOW_HI;
                 }
 
-                this.surface.setButton (102 + i, color);
+                this.surface.updateButton (102 + i, color);
             }
             return;
         }
         
-        this.surface.setButton (102, this.surface.isActiveMode (MODE_DEVICE_LAYER_VOLUME) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-        this.surface.setButton (103, this.surface.isActiveMode (MODE_DEVICE_LAYER_PAN) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-        this.surface.setButton (104, PUSH_COLOR_BLACK);
-        this.surface.setButton (105, PUSH_COLOR_BLACK);
-        this.surface.setButton (106, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_DEVICE_LAYER_SEND5 : MODE_DEVICE_LAYER_SEND1) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-        this.surface.setButton (107, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_DEVICE_LAYER_SEND6 : MODE_DEVICE_LAYER_SEND2) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-        this.surface.setButton (108, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_DEVICE_LAYER_SEND7 : MODE_DEVICE_LAYER_SEND3) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
-        this.surface.setButton (109, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_DEVICE_LAYER_SEND8 : MODE_DEVICE_LAYER_SEND4) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (102, this.surface.isActiveMode (MODE_DEVICE_LAYER_VOLUME) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (103, this.surface.isActiveMode (MODE_DEVICE_LAYER_PAN) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (104, PUSH_COLOR_BLACK);
+        this.surface.updateButton (105, PUSH_COLOR_BLACK);
+        this.surface.updateButton (106, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_DEVICE_LAYER_SEND5 : MODE_DEVICE_LAYER_SEND1) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (107, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_DEVICE_LAYER_SEND6 : MODE_DEVICE_LAYER_SEND2) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (108, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_DEVICE_LAYER_SEND7 : MODE_DEVICE_LAYER_SEND3) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
+        this.surface.updateButton (109, this.surface.isActiveMode (Config.sendsAreToggled ? MODE_DEVICE_LAYER_SEND8 : MODE_DEVICE_LAYER_SEND4) ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
         return;
     }
         
@@ -502,6 +502,6 @@ DeviceLayerMode.prototype.updateSecondRow = function ()
             else
                 color = dl.solo ? PUSH_COLOR2_BLUE_HI : PUSH_COLOR2_GREY_LO;
         }
-        this.surface.setButton (102 + i, color);
+        this.surface.updateButton (102 + i, color);
     }
 };

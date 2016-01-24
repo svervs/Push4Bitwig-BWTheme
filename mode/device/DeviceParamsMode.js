@@ -96,7 +96,7 @@ DeviceParamsMode.prototype.updateFirstRowBank = function ()
     for (var p = 0; p < 8; p++)
     {
         var index = bank.offset + p;
-        this.surface.setButton (20 + p, index < bank.pages.length ? (index == bank.page ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
+        this.surface.updateButton (20 + p, index < bank.pages.length ? (index == bank.page ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
     }
 };
 

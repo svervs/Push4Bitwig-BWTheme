@@ -139,7 +139,7 @@ MasterMode.prototype.updateSecondRow = function ()
     if (Config.isPush2)
     {
         for (var i = 0; i < 8; i++)
-            this.surface.setButton (102 + i, PUSH_COLOR_BLACK);
+            this.surface.updateButton (102 + i, PUSH_COLOR_BLACK);
         return;    
     }
     
@@ -159,7 +159,7 @@ MasterMode.prototype.updateSecondRow = function ()
     else
         color = master.solo ? PUSH_COLOR2_BLUE_HI : PUSH_COLOR2_GREY_LO;
 
-    this.surface.setButton (102, color);
+    this.surface.updateButton (102, color);
     for (var i = 1; i < 8; i++)
-        this.surface.setButton (102 + i, PUSH_COLOR_BLACK);
+        this.surface.updateButton (102 + i, PUSH_COLOR_BLACK);
 };
