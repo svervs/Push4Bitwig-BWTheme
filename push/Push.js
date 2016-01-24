@@ -313,10 +313,13 @@ function Push (output, input)
     this.boardRevision = -1;
 
     this.input.setSysexCallback (doObject (this, this.handleSysEx));
-    // Send identity request
-    this.output.sendSysex ("F0 7E 7F 06 01 F7");
 }
 Push.prototype = new AbstractControlSurface ();
+
+Push.prototype.sendIdentityRequest = function ()
+{
+    this.output.sendSysex ("F0 7E 7F 06 01 F7");
+};
 
 Push.prototype.getSelectedPadThreshold = function ()
 {

@@ -482,7 +482,7 @@ Config.notifyListeners = function (property)
 
 Config.toMidiValue = function (value)
 {
-    return Math.min (Math.round (value * 127 / (Config.maxParameterValue- 1)), 127);
+    return Math.min (Math.round (value * 127 / (Config.maxParameterValue - 1)), 127);
 };
 
 Config.toDAWValue = function (value)

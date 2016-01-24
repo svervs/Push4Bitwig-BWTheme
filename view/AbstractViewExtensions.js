@@ -72,6 +72,9 @@ AbstractView.prototype.onPitchbend = function (data1, data2)
 
 AbstractView.prototype.updateRibbonMode = function ()
 {
+    // Reset current value
+    this.surface.setRibbonValue (0);
+    
     switch (Config.ribbonMode)
     {
         case Config.RIBBON_MODE_CC:
@@ -82,7 +85,7 @@ AbstractView.prototype.updateRibbonMode = function ()
         case Config.RIBBON_MODE_FADER:
             this.surface.setRibbonMode (PUSH_RIBBON_VOLUME);
             var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
-            this.surface.setRibbonValue (t == null ? 0 : Config.toMidiValue(this.surface.showVU ? t.vu : t.volume));
+            this.surface.setRibbonValue (t == null ? 0 : Config.toMidiValue (this.surface.showVU ? t.vu : t.volume));
             break;
 
         default:

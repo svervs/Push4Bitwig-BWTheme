@@ -29,7 +29,7 @@ VolumeMode.prototype.onValueKnobTouch = function (index, isTouched)
 
         var t = this.model.getCurrentTrackBank ().getTrack (index);
         if (t.exists)
-            displayNotification("Volume: " + t.volumeStr);
+            displayNotification ("Volume: " + t.volumeStr);
     }
 
     this.model.getCurrentTrackBank ().touchVolume (index, isTouched);

@@ -26,6 +26,7 @@ host.platformIsMac () && host.addDeviceNameBasedDiscoveryPair (["Ableton Push Us
 function init ()
 {
     controller = new Controller ();
+    controller.surface.sendIdentityRequest ();
     println ("Initialized.");
 }
 
