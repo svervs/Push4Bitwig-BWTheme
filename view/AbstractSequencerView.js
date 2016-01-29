@@ -64,7 +64,7 @@ AbstractSequencerView.prototype.drawSceneButtons = function ()
     if (this.canSelectedTrackHoldNotes ())
     {
         for (var i = PUSH_BUTTON_SCENE1; i <= PUSH_BUTTON_SCENE8; i++)
-            this.surface.updateButton (i, i == PUSH_BUTTON_SCENE1 + this.selectedIndex ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN);
+            this.surface.updateButton (i, i == PUSH_BUTTON_SCENE1 + this.selectedIndex ? PUSH_COLOR_SCENE_ORANGE_HI : PUSH_COLOR_SCENE_YELLOW); // BWS Color Theme
     }
     else
     {

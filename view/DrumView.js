@@ -233,7 +233,7 @@ DrumView.prototype.drawGrid = function ()
     var loopStartPad = Math.floor (Math.max (0, start) / quartersPerPad);
     var loopEndPad   = Math.ceil (Math.min (maxQuarters, start + this.clip.getLoopLength ()) / quartersPerPad);
     for (var pad = 0; pad < 16; pad++)
-        this.surface.pads.lightEx (4 + pad % 4, 4 + Math.floor (pad / 4), pad >= loopStartPad && pad < loopEndPad ? (pad == currentMeasure ? PUSH_COLOR2_GREEN : PUSH_COLOR2_WHITE) : PUSH_COLOR_BLACK, null, false);
+        this.surface.pads.lightEx (4 + pad % 4, 4 + Math.floor (pad / 4), pad >= loopStartPad && pad < loopEndPad ? (pad == currentMeasure ? PUSH_COLOR2_WHITE : PUSH_COLOR2_GREY_LO) : PUSH_COLOR_BLACK, null, false); // BWS Color Theme
  
     // Paint the sequencer steps
     var hiStep = this.isInXRange (step) ? step % DrumView.NUM_DISPLAY_COLS : -1;
@@ -243,7 +243,7 @@ DrumView.prototype.drawGrid = function ()
         var hilite = col == hiStep;
         var x = col % 8;
         var y = 7 - Math.floor (col / 8);
-        this.surface.pads.lightEx (x, 7 - y, isSet ? (hilite ? PUSH_COLOR2_GREEN_LO : PUSH_COLOR2_BLUE_HI) : hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLACK, null, false);
+        this.surface.pads.lightEx (x, 7 - y, isSet ? (hilite ? PUSH_COLOR2_SKY_HI : PUSH_COLOR2_OCEAN_HI) : hilite ? PUSH_COLOR2_WHITE : PUSH_COLOR2_BLACK, null, false); // BWS Color Theme
     }
 };
 
@@ -251,10 +251,10 @@ DrumView.prototype.getPadColor = function (index, primary, hasDrumPads, isSoloed
 {
     // Playing note?
     if (this.pressedKeys[this.offsetY + index] > 0)
-        return isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI;
+        return isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_WHITE; // BWS Color Theme
     // Selected?
     if (this.selectedPad == index)
-        return PUSH_COLOR2_BLUE_HI;
+        return PUSH_COLOR2_GREY_MD; // BWS Color Theme
     // Exists and active?
     var drumPad = primary.getDrumPad (index);
     if (!drumPad.exists || !drumPad.activated)

@@ -121,20 +121,20 @@ var PUSH_COLOR_SCENE_GREEN_HI_BLINK       = 23;
 var PUSH_COLOR_SCENE_GREEN_HI_BLINK_FAST  = 24;
 
 Scales.SCALE_COLOR_OFF          = PUSH_COLOR_BLACK;
-Scales.SCALE_COLOR_OCTAVE       = PUSH_COLOR2_OCEAN_HI;
-Scales.SCALE_COLOR_NOTE         = PUSH_COLOR2_WHITE;
+Scales.SCALE_COLOR_OCTAVE       = PUSH_COLOR2_AMBER; // BWS Color Theme
+Scales.SCALE_COLOR_NOTE         = PUSH_COLOR2_GREY_MD; // BWS Color Theme
 Scales.SCALE_COLOR_OUT_OF_SCALE = PUSH_COLOR_BLACK;
 
 AbstractMode.BUTTON_COLOR_OFF  = PUSH_COLOR_BLACK;
-AbstractMode.BUTTON_COLOR_ON   = PUSH_COLOR_GREEN_LO;
-AbstractMode.BUTTON_COLOR_HI   = PUSH_COLOR_YELLOW_MD;
-AbstractMode.BUTTON_COLOR2_ON  = PUSH_COLOR2_GREEN_LO;
-AbstractMode.BUTTON_COLOR2_HI  = PUSH_COLOR2_YELLOW_HI;
+AbstractMode.BUTTON_COLOR_ON   = PUSH_COLOR_RED_LO; // BWS Color Theme
+AbstractMode.BUTTON_COLOR_HI   = PUSH_COLOR_RED_HI; // BWS Color Theme
+AbstractMode.BUTTON_COLOR2_ON  = PUSH_COLOR2_RED_LO; // BWS Color Theme
+AbstractMode.BUTTON_COLOR2_HI  = PUSH_COLOR2_RED_HI; // BWS Color Theme
 
 AbstractSessionView.CLIP_COLOR_IS_RECORDING        = { color: PUSH_COLOR2_RED_HI, blink: PUSH_COLOR2_RED_HI, fast: false };
-AbstractSessionView.CLIP_COLOR_IS_RECORDING_QUEUED = { color: PUSH_COLOR2_RED_HI, blink: PUSH_COLOR2_BLACK,  fast: true  };
-AbstractSessionView.CLIP_COLOR_IS_PLAYING          = { color: PUSH_COLOR2_GREEN,  blink: PUSH_COLOR2_GREEN,  fast: false };
-AbstractSessionView.CLIP_COLOR_IS_PLAYING_QUEUED   = { color: PUSH_COLOR2_GREEN,  blink: PUSH_COLOR2_BLACK,  fast: true  };
+AbstractSessionView.CLIP_COLOR_IS_RECORDING_QUEUED = { color: PUSH_COLOR2_RED_HI, blink: PUSH_COLOR2_RED_LO,  fast: true  }; // BWS Color Theme
+AbstractSessionView.CLIP_COLOR_IS_PLAYING          = { color: PUSH_COLOR2_BLACK,  blink: PUSH_COLOR2_GREY_LO,  fast: false }; // BWS Color Theme
+AbstractSessionView.CLIP_COLOR_IS_PLAYING_QUEUED   = { color: PUSH_COLOR2_WHITE,  blink: PUSH_COLOR2_GREY_LO,  fast: true  }; // BWS Color Theme
 AbstractSessionView.CLIP_COLOR_HAS_CONTENT         = { color: PUSH_COLOR2_AMBER,  blink: null,               fast: false };
 AbstractSessionView.CLIP_COLOR_NO_CONTENT          = { color: PUSH_COLOR2_BLACK,  blink: null,               fast: false };
 AbstractSessionView.CLIP_COLOR_RECORDING_ARMED     = { color: PUSH_COLOR2_RED_LO, blink: null,               fast: false };

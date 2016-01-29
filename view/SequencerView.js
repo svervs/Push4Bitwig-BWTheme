@@ -137,7 +137,7 @@ SequencerView.prototype.drawGrid = function ()
             var isSet = this.clip.getStep (x, row);
             var hilite = x == hiStep;
             if (isKeyboardEnabled)
-                this.surface.pads.lightEx (x, 7 - y, isSet ? (hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLUE) : hilite ? PUSH_COLOR2_GREEN_HI : this.scales.getColor (this.noteMap, y), null, false);
+                this.surface.pads.lightEx (x, 7 - y, isSet ? (hilite ? PUSH_COLOR2_SKY_HI : PUSH_COLOR2_OCEAN_HI) : hilite ? PUSH_COLOR2_WHITE : this.scales.getColor (this.noteMap, y), null, false); // BWS Color Theme
             else
                 this.surface.pads.lightEx (x, 7 - y, PUSH_COLOR2_BLACK, null, false);
         }
@@ -154,7 +154,7 @@ SequencerView.prototype.drawGrid = function ()
     for (var pad = 0; pad < 8; pad++)
     {
         if (isKeyboardEnabled)
-            this.surface.pads.lightEx (pad, 0, pad >= loopStartPad && pad < loopEndPad ? (pad == currentMeasure ? PUSH_COLOR2_GREEN : PUSH_COLOR2_WHITE) : PUSH_COLOR_BLACK, null, false);
+            this.surface.pads.lightEx (pad, 0, pad >= loopStartPad && pad < loopEndPad ? (pad == currentMeasure ? PUSH_COLOR2_WHITE : PUSH_COLOR2_GREY_LO) : PUSH_COLOR_BLACK, null, false); // BWS Color Theme
         else
             this.surface.pads.lightEx (pad, 0, PUSH_COLOR2_BLACK, null, false);
     }

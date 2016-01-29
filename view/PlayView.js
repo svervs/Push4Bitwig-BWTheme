@@ -93,7 +93,7 @@ PlayView.prototype.drawGrid = function ()
     for (var i = 36; i < 100; i++)
     {
         this.surface.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ?
-            (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI) :
+            (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_OCEAN_HI) : // BWS Color Theme
             this.scales.getColor (this.noteMap, i)) : PUSH_COLOR2_BLACK, null, false);
     }
 

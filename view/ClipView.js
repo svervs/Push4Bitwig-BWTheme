@@ -108,7 +108,7 @@ ClipView.prototype.drawGrid = function ()
     var loopStartPad = Math.floor (Math.max (0, start) / quartersPerPad);
     var loopEndPad   = Math.ceil (Math.min (maxQuarters, start + this.clip.getLoopLength ()) / quartersPerPad);
     for (var pad = 0; pad < 64; pad++)
-        this.surface.pads.lightEx (pad % 8, Math.floor (pad / 8), pad >= loopStartPad && pad < loopEndPad ? (pad == currentMeasure ? PUSH_COLOR2_GREEN : PUSH_COLOR2_WHITE) : PUSH_COLOR_BLACK, null, false);
+        this.surface.pads.lightEx (pad % 8, Math.floor (pad / 8), pad >= loopStartPad && pad < loopEndPad ? (pad == currentMeasure ? PUSH_COLOR2_WHITE : PUSH_COLOR2_GREY_LO) : PUSH_COLOR_BLACK, null, false); // BWS Color Theme
 };
 
 ClipView.prototype.onScene = function (index)
@@ -125,7 +125,7 @@ ClipView.prototype.drawSceneButtons = function ()
     for (var i = 0; i < 8; i++)
     {
         if (i < 3)
-            this.surface.updateButton (PUSH_BUTTON_SCENE1 + i, i == this.padResolution ? PUSH_COLOR_SCENE_YELLOW : PUSH_COLOR_SCENE_GREEN);
+            this.surface.updateButton (PUSH_BUTTON_SCENE1 + i, i == this.padResolution ? PUSH_COLOR_SCENE_ORANGE_HI : PUSH_COLOR_SCENE_YELLOW); // BWS Color Theme
         else
             this.surface.updateButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_BLACK);
     }

@@ -144,9 +144,9 @@ RaindropsView.prototype.drawGrid = function ()
             if (isOn)
             {
                 if (y == distance)
-                    color = PUSH_COLOR2_BLUE;
+                    color = PUSH_COLOR2_OCEAN_HI; // BWS Color Theme
                 if ((left <= distance && y == left) || (left > distance && y == sum - left))
-                    color = PUSH_COLOR2_GREEN_HI;
+                    color = PUSH_COLOR2_WHITE; // BWS Color Theme
             }
             this.surface.pads.lightEx (x, 7 - y, color, null, false);
         }

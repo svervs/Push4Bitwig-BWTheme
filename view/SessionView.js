@@ -42,13 +42,13 @@ SessionView.prototype.drawSceneButtons = function ()
         {
             var track = tb.getTrack (i);
             if (tb.isMuteState ())
-                color = track.mute ? PUSH_COLOR_BLACK : PUSH_COLOR_SCENE_YELLOW_HI;
+                color = track.mute ? PUSH_COLOR_BLACK : PUSH_COLOR_SCENE_ORANGE_HI; // BWS Color Theme
             else
                 color = track.solo ? PUSH_COLOR_SCENE_RED : PUSH_COLOR_BLACK;
             this.surface.updateButton (PUSH_BUTTON_SCENE1 + (7 - i), track.exists ? color : PUSH_COLOR_BLACK);
         }
         else
-            this.surface.updateButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_SCENE_GREEN);
+            this.surface.updateButton (PUSH_BUTTON_SCENE1 + i, PUSH_COLOR_SCENE_YELLOW_HI); // BWS Color Theme
     }
 };
 
@@ -72,7 +72,7 @@ SessionView.prototype.updateDevice = function ()
     if (Config.flipSession && !m.hasSecondRowPriority)
     {
         for (var i = 0; i < 8; i++)
-            this.surface.updateButton (102 + i, PUSH_COLOR2_GREEN);
+            this.surface.updateButton (102 + i, PUSH_COLOR2_WHITE); // BWS Color Theme
     }
     else
         m.updateSecondRow ();

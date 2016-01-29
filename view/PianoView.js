@@ -28,7 +28,7 @@ PianoView.prototype.drawGrid = function ()
             for (var j = 0; j < 8; j++)
             {
                 var n = 36 + 8 * i + j;
-                this.surface.pads.light (n, this.pressedKeys[n] > 0 ? (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI) : PUSH_COLOR2_WHITE);
+                this.surface.pads.light (n, this.pressedKeys[n] > 0 ? (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_OCEAN_HI) : PUSH_COLOR2_WHITE); // BWS Color Theme
             }
         }
         else
@@ -39,7 +39,7 @@ PianoView.prototype.drawGrid = function ()
                 if (j == 0 || j == 3 || j == 7)
                     this.surface.pads.light (n, PUSH_COLOR2_BLACK);
                 else
-                    this.surface.pads.light (n, this.pressedKeys[n] > 0 ? (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI) : PUSH_COLOR2_GREY_LO);
+                    this.surface.pads.light (n, this.pressedKeys[n] > 0 ? (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_OCEAN_HI) : PUSH_COLOR2_GREY_LO); // BWS Color Theme
             }
         }
     }

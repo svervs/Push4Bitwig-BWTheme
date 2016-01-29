@@ -497,10 +497,10 @@ DeviceLayerMode.prototype.updateSecondRow = function ()
             if (muteState)
             {
                 if (!dl.mute)
-                    color = PUSH_COLOR2_YELLOW_HI;
+                    color = PUSH_COLOR2_GREY_LO; // BWS Color Theme
             }
             else
-                color = dl.solo ? PUSH_COLOR2_BLUE_HI : PUSH_COLOR2_GREY_LO;
+                color = dl.solo ? PUSH_COLOR2_YELLOW_HI : PUSH_COLOR2_YELLOW_LO; // BWS Color Theme
         }
         this.surface.updateButton (102 + i, color);
     }

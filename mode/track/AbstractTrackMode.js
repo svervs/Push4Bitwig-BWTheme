@@ -137,14 +137,14 @@ AbstractTrackMode.prototype.updateSecondRow = function ()
                 if (t.exists)
                 {
                     if (this.surface.isSelectPressed ())
-                        color = t.autoMonitor ? PUSH_COLOR2_GREEN_LO : PUSH_COLOR2_BLACK;
+                        color = t.autoMonitor ? PUSH_COLOR2_RED_LO : PUSH_COLOR2_BLACK; // BWS Color Theme
                     else if (muteState)
                     {
                         if (t.mute)
-                            color = PUSH_COLOR2_AMBER_LO;
+                            color = PUSH_COLOR2_AMBER; // BWS Color Theme
                     }
                     else if (t.solo)
-                        color = PUSH_COLOR2_YELLOW_HI;
+                        color = PUSH_COLOR2_YELLOW_HI; // BWS Color Theme
                 }
 
                 this.surface.updateButton (102 + i, color);
@@ -173,14 +173,14 @@ AbstractTrackMode.prototype.updateSecondRow = function ()
         if (t.exists)
         {
             if (this.surface.isSelectPressed ())
-                color = t.autoMonitor ? PUSH_COLOR2_GREEN_LO : PUSH_COLOR2_BLACK;
+                color = t.autoMonitor ? PUSH_COLOR2_RED_LO : PUSH_COLOR2_GREY_LO; // BWS Color Theme
             else if (muteState)
             {
                 if (!t.mute)
-                    color = PUSH_COLOR2_YELLOW_HI;
+                    color = PUSH_COLOR2_GREY_LO; // BWS Color Theme
             }
             else
-                color = t.solo ? PUSH_COLOR2_BLUE_HI : PUSH_COLOR2_GREY_LO;
+                color = t.solo ? PUSH_COLOR2_YELLOW_HI : PUSH_COLOR2_YELLOW_LO; // BWS Color Theme
         }
 
         this.surface.updateButton (102 + i, color);
@@ -215,7 +215,7 @@ AbstractTrackMode.prototype.getTrackButtonColor = function (track)
     var tb = this.model.getCurrentTrackBank ();
     
     if (this.surface.isSelectPressed ())
-        return track.monitor ? PUSH_COLOR_GREEN_HI : PUSH_COLOR_BLACK;
+        return track.monitor ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_BLACK; // BWS Color Theme
         
     var selTrack = tb.getSelectedTrack ();
     var selIndex = selTrack == null ? -1 : selTrack.index;
@@ -224,7 +224,7 @@ AbstractTrackMode.prototype.getTrackButtonColor = function (track)
     if (track.recarm)
         return isSel ? PUSH_COLOR_RED_HI : PUSH_COLOR_RED_LO;
 
-    return isSel ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO;
+    return isSel ? PUSH_COLOR_YELLOW_MD : PUSH_COLOR_YELLOW_LO; // BWS Color Theme
 };
 
 // Push 2

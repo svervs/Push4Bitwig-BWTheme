@@ -99,7 +99,7 @@ AbstractDeviceMode.prototype.updateFirstRow = function ()
     {
         var bank = this.calcDeviceBank ();
         for (var i = 0; i < 8; i++)
-            this.surface.updateButton (20 + i, i < bank.pages.length && bank.pages[i].length > 0 ? (i == bank.page ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_YELLOW_LO) : PUSH_COLOR_BLACK);
+            this.surface.updateButton (20 + i, i < bank.pages.length && bank.pages[i].length > 0 ? (i == bank.page ? PUSH_COLOR_ORANGE_HI : PUSH_COLOR_ORANGE_LO) : PUSH_COLOR_BLACK); // BWS Color Theme
     }
     else
         this.updateFirstRowBank ();
@@ -148,7 +148,7 @@ AbstractDeviceMode.prototype.updateSecondRow = function ()
         return;
     }
     var selDevice = cd.getSelectedDevice ();
-    this.surface.updateButton (102, selDevice.enabled ? PUSH_COLOR2_GREEN : PUSH_COLOR2_GREY_LO);
+    this.surface.updateButton (102, selDevice.enabled ? PUSH_COLOR2_OCEAN : PUSH_COLOR2_GREY_LO); // BWS Color Theme
     
     var selectedMode = this.surface.getMode (MODE_DEVICE_MODE_SELECT).selectedMode;
     
@@ -160,7 +160,7 @@ AbstractDeviceMode.prototype.updateSecondRow = function ()
     this.surface.updateButton (107, cd.isMacroSectionVisible () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
     this.surface.updateButton (108, cd.isParameterPageSectionVisible () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
     
-    this.surface.updateButton (109, selDevice.isPlugin ? (cd.isWindowOpen () ? PUSH_COLOR2_TURQUOISE_HI : PUSH_COLOR2_GREY_LO) : PUSH_COLOR2_BLACK);
+    this.surface.updateButton (109, selDevice.isPlugin ? (cd.isWindowOpen () ? PUSH_COLOR2_SKY_HI : PUSH_COLOR2_OCEAN_HI) : PUSH_COLOR2_BLACK); // BWS Color Theme
 };
 
 AbstractDeviceMode.prototype.updateDisplay = function () 
