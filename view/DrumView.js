@@ -60,22 +60,28 @@ DrumView.prototype.usesButton = function (buttonID)
 
 DrumView.prototype.onSelect = function (event)
 {
-    this.updateNoteMapping ();
+    if (!event.isLong ())
+        this.updateNoteMapping ();
 };
 
 DrumView.prototype.onDelete = function (event)
 {
-    this.updateNoteMapping ();
+    if (!event.isLong ())
+        this.updateNoteMapping ();
 };
 
 DrumView.prototype.onMute = function (event)
 {
+    if (event.isLong ())
+        return;
     this.updateNoteMapping ();
     AbstractSequencerView.prototype.onMute.call (this, event);
 };
 
 DrumView.prototype.onSolo = function (event)
 {
+    if (event.isLong ())
+        return;
     this.updateNoteMapping ();
     AbstractSequencerView.prototype.onSolo.call (this, event);
 };
@@ -128,12 +134,21 @@ DrumView.prototype.onGridNote = function (note, velocity)
             // Solo that 'pad'
             this.model.getTrackBank ().primaryDevice.toggleLayerOrDrumPadSolo (playedPad);
         }
-        else if (this.surface.isSelectPressed ())
+        else if (this.surface.isSelectPressed () || Config.autoSelectDrum == Config.AUTO_SELECT_DRUM_CHANNEL)
         {
             // Also select the matching device layer channel of the pad
             var primary = this.model.getTrackBank ().primaryDevice;
             if (!primary.hasDrumPads ())
                 return;
+
+            // Do not reselect
+            if (primary.getDrumPad (playedPad).selected)
+                return;
+            
+            var cd = this.model.getCursorDevice ();
+            if (cd.isNested())
+                cd.selectParent ();
+            
             this.surface.setPendingMode (MODE_DEVICE_LAYER);
             primary.selectDrumPad (playedPad);
         }

@@ -46,6 +46,7 @@ Config.LED_BRIGHTNESS        = 19;
 Config.PAD_SENSITIVITY       = 20;
 Config.PAD_GAIN              = 21;
 Config.PAD_DYNAMICS          = 22;
+Config.AUTO_SELECT_DRUM      = 23;
 
 Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
@@ -62,22 +63,26 @@ Config.FOOTSWITCH_2_TAP_TEMPO           = 5;
 Config.FOOTSWITCH_2_NEW_BUTTON          = 6;
 Config.FOOTSWITCH_2_CLIP_BASED_LOOPER   = 7;
 
-Config.accentActive      = false;                       // Accent button active
-Config.fixedAccentValue  = 127;                         // Fixed velocity value for accent
-Config.ribbonMode        = Config.RIBBON_MODE_PITCH;    // What does the ribbon send?
-Config.ribbonModeCCVal   = 1;
-Config.scale             = 'Major';
-Config.scaleBase         = 'C';
-Config.scaleInKey        = true;
-Config.scaleLayout       = '4th ^';
-Config.enableVUMeters    = false;
-Config.gotoZeroOnStop    = false;
-Config.displayCrossfader = true;
-Config.convertAftertouch = 0;
-Config.defaultDeviceMode = 20; /*MODE_DEVICE_PARAMS;*/
-Config.footswitch2       = Config.FOOTSWITCH_2_NEW_BUTTON;
-Config.sendPort          = 7000;
-Config.flipSession       = false;
+Config.AUTO_SELECT_DRUM_OFF      = 0;
+Config.AUTO_SELECT_DRUM_CHANNEL  = 1;
+
+Config.accentActive       = false;                       // Accent button active
+Config.fixedAccentValue   = 127;                         // Fixed velocity value for accent
+Config.ribbonMode         = Config.RIBBON_MODE_PITCH;    // What does the ribbon send?
+Config.ribbonModeCCVal    = 1;
+Config.scale              = 'Major';
+Config.scaleBase          = 'C';
+Config.scaleInKey         = true;
+Config.scaleLayout        = '4th ^';
+Config.enableVUMeters     = false;
+Config.gotoZeroOnStop     = false;
+Config.displayCrossfader  = true;
+Config.convertAftertouch  = 0;
+Config.defaultDeviceMode  = 20; /*MODE_DEVICE_PARAMS;*/
+Config.footswitch2        = Config.FOOTSWITCH_2_NEW_BUTTON;
+Config.sendPort           = 7000;
+Config.flipSession        = false;
+Config.autoSelectDrum     = Config.AUTO_SELECT_DRUM_OFF;
 
 //Push 1
 Config.velocityCurve     = 1;
@@ -275,6 +280,17 @@ Config.init = function ()
         Config.notifyListeners (Config.FLIP_SESSION);
     });
     
+    Config.autoSelectDrumSetting = prefs.getEnumSetting ("Auto-select drum settings", "Workflow", [ "Off", "Channel" ], "Off");
+    Config.autoSelectDrumSetting.addValueObserver (function (value)
+    {
+        switch (value)
+        {
+            case "Off":       Config.autoSelectDrum = Config.AUTO_SELECT_DRUM_OFF;      break;
+            case "Channel":   Config.autoSelectDrum = Config.AUTO_SELECT_DRUM_CHANNEL;  break;
+        }
+        Config.notifyListeners (Config.AUTO_SELECT_DRUM);
+    });
+    
     ///////////////////////////
     // Pad Sensitivity
 
@@ -465,7 +481,7 @@ Config.changePadDynamics  = function (control)
 // ------------------------------
 
 Config.listeners = [];
-for (var i = 0; i <= Config.PAD_DYNAMICS; i++)
+for (var i = 0; i <= Config.AUTO_SELECT_DRUM; i++)
     Config.listeners[i] = [];
 
 Config.addPropertyListener = function (property, listener)
