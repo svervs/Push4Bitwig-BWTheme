@@ -189,8 +189,9 @@ AbstractView.prototype.onDuplicate = function (event)
 
 AbstractView.prototype.onAutomation = function (event)
 {
-    if (this.surface.isSelectPressed ())
+    if (this.surface.isDeletePressed ())
     {
+        this.surface.setButtonConsumed (this.surface.deleteButtonId);
         if (event.isDown ())
             this.model.getTransport ().resetAutomationOverrides ();
     }
