@@ -332,7 +332,7 @@ Config.init = function ()
         });
     }
     
-    Config.convertAftertouchSetting = prefs.getEnumSetting ("Convert Poly Aftertouch to", "Pads", Config.AFTERTOUCH_CONVERSION_VALUES, Config.AFTERTOUCH_CONVERSION_VALUES[1]);
+    Config.convertAftertouchSetting = prefs.getEnumSetting ("Convert Poly (Push 1) / Channel (Push 2) Aftertouch to", "Pads", Config.AFTERTOUCH_CONVERSION_VALUES, Config.AFTERTOUCH_CONVERSION_VALUES[1]);
     Config.convertAftertouchSetting.addValueObserver (function (value)
     {
         

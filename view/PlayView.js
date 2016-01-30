@@ -30,11 +30,7 @@ function PlayView (model)
     tb.addNoteListener (doObject (this, function (pressed, note, velocity)
     {
         // Light notes send from the sequencer
-        for (var i = 0; i < 128; i++)
-        {
-            if (this.noteMap[i] == note)
-                this.pressedKeys[i] = pressed ? velocity : 0;
-        }
+        this.setPressedKeys (note, pressed, velocity);
     }));
     tb.addTrackSelectionListener (doObject (this, function (index, isSelected)
     {
@@ -103,15 +99,21 @@ PlayView.prototype.drawGrid = function ()
 
 PlayView.prototype.onGridNote = function (note, velocity)
 {
-    if (!this.canSelectedTrackHoldNotes () || this.noteMap[note] == -1)
-        return;
-    
     // Mark selected notes
-    for (var i = 0; i < 128; i++)
+    if (this.canSelectedTrackHoldNotes () && this.noteMap[note] != -1)
+        this.setPressedKeys (this.noteMap[note], true, velocity);
+};
+
+PlayView.prototype.onChannelAftertouch = function (value)
+{
+    if (Config.convertAftertouch == -2)
     {
-        if (this.noteMap[note] == this.noteMap[i])
-            this.pressedKeys[i] = velocity;
+        var keys = this.getPressedKeys ();
+        for (var i = 0; i < keys.length; i++)
+            this.onPolyAftertouch (keys[i], value);
     }
+    else
+        this.onPolyAftertouch (0, value);
 };
 
 PlayView.prototype.onPolyAftertouch = function (note, value)
@@ -186,6 +188,27 @@ PlayView.prototype.clearPressedKeys = function ()
 {
     for (var i = 0; i < 128; i++)
         this.pressedKeys[i] = 0;
+};
+
+PlayView.prototype.setPressedKeys = function (note, pressed, velocity)
+{
+    // Loop over all pads since the note can be present multiple time!
+    for (var i = 0; i < 128; i++)
+    {
+        if (this.noteMap[i] == note)
+            this.pressedKeys[i] = pressed ? velocity : 0;
+    }
+};
+
+PlayView.prototype.getPressedKeys = function ()
+{
+    var keys = new Array (); 
+    for (var i = 0; i < 128; i++)
+    {
+        if (this.pressedKeys[i] != 0)
+            keys.push (i);
+    }
+    return keys;
 };
 
 PlayView.prototype.delayedUpdateNoteMapping = function ()
