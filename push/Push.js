@@ -551,6 +551,12 @@ Push.prototype.sendLEDBrightness = function ()
     this.sendPush2SysEx ([ 6, brightness ]);
 };
 
+// Push 2 : 0 = Channel Afterouch, 1 = Poly Aftertouch
+Push.prototype.sendAftertouchMode = function (mode)
+{
+    this.sendPush2SysEx ([ 30, mode ]);
+};
+
 Push.prototype.sendPush2SysEx = function (parameters)
 {
     this.output.sendSysex ("F0 00 21 1D 01 01 " + toHexStr (parameters) + "F7");
