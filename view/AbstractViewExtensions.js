@@ -13,7 +13,7 @@ AbstractView.prototype.quitMasterMode = false;
 AbstractView.prototype.selectedTrackBeforeMasterMode = -1;
 AbstractView.prototype.showDevices = true;
 AbstractView.prototype.pitchValue = 0;
-AbstractView.prototype.lastAbstractDeviceMode = 0;
+AbstractView.prototype.lastAbstractDeviceMode = 20; // MODE_DEVICE_PARAMS;
 
 AbstractView.prototype.onPitchbend = function (data1, data2)
 {

@@ -231,7 +231,7 @@ Controller.prototype.updateMode = function (mode)
     var isMasterOn = mode == MODE_MASTER || mode == MODE_FRAME;
     var isVolumeOn = mode == MODE_VOLUME || mode == MODE_CROSSFADER;  
     var isPanOn    = mode >= MODE_PAN && mode <= MODE_SEND8;
-    var isDeviceOn = mode >= (MODE_DEVICE_PARAMS && mode <= MODE_DEVICE_LAYER) || (mode >= MODE_DEVICE_LAYER_VOLUME && mode <= MODE_DEVICE_LAYER_SEND);
+    var isDeviceOn = (mode >= MODE_DEVICE_PARAMS && mode <= MODE_DEVICE_LAYER) || (mode >= MODE_DEVICE_LAYER_VOLUME && mode <= MODE_DEVICE_LAYER_SEND);
 
     var isMixOn = mode == MODE_TRACK;
     if (Config.isPush2)
