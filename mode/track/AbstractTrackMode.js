@@ -293,8 +293,18 @@ AbstractTrackMode.prototype.updateTrackMenu = function ()
     }
     else
     {
-        for (var i = 0; i < 4; i++)
-            this.menu[4 + i] = fxTrackBank.getTrack (sendOffset + i).name;
+        if (fxTrackBank == null)
+        {
+            var selTrack = this.model.getTrackBank ().getSelectedTrack ();
+            for (var i = 0; i < 4; i++)
+                this.menu[4 + i] = selTrack == null ? "Send " + (sendOffset + i) : selTrack.sends[sendOffset + i].name;
+        }
+        else
+        {
+            for (var i = 0; i < 4; i++)
+                this.menu[4 + i] = fxTrackBank.getTrack (sendOffset + i).name;
+        }
+        
         this.menu[3] = Config.sendsAreToggled ? "Sends 5-8" : "Sends 1-4";
     }
 };

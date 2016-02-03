@@ -101,7 +101,7 @@ for (var i = 0; i < 128; i++)
     Config.AFTERTOUCH_CONVERSION_VALUES.push ("CC " + i);
 
 Config.DEFAULT_DEVICE_MODE_VALUES = [];
-    
+
 
 Config.init = function ()
 {

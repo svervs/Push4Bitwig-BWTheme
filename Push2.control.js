@@ -27,7 +27,7 @@ function init ()
     controller = new Controller ();
     controller.surface.sendIdentityRequest ();
     // Switch to Poly Aftertouch
-    controller.surface.sendPush2SysEx (1);
+    controller.surface.sendAftertouchMode (1);
     println ("Initialized.");
 }
 

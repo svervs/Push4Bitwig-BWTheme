@@ -28,6 +28,11 @@ DisplayMessage.prototype.send = function ()
     var data = [ -16, this.command ];    // -16 = 0xF0
     data = data.concat (this.array);
     data = data.concat ([ -9 ]);    // -9  = 0xF7
+    this.sendToDisplay (data);
+};
+
+DisplayMessage.prototype.sendToDisplay = function (data)
+{
     host.sendDatagramPacket ("127.0.0.1", Config.sendPort, data);
 };
 
