@@ -266,7 +266,6 @@ DevicePresetsMode.prototype.updateDisplayPush2 = function ()
     }
     
     message.send ();
-    
 };
 
 DevicePresetsMode.prototype.updateFirstRow = function ()

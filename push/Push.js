@@ -405,7 +405,10 @@ Push.prototype.setRibbonMode = function (mode)
     if (this.ribbonMode == mode)
         return;
     this.ribbonMode = mode;
-    this.output.sendSysex ("F0 47 7F 15 63 00 01 0" + mode + " F7");
+    if (Config.isPush2)
+        this.sendPush2SysEx ([ 23, mode == 0 ? 122 : 2 ]);
+    else
+        this.output.sendSysex ("F0 47 7F 15 63 00 01 0" + mode + " F7");
 };
 
 Push.prototype.setRibbonValue = function (value)

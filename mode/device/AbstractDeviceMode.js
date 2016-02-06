@@ -259,7 +259,7 @@ AbstractDeviceMode.prototype.updateDisplay2 = function ()
         var param = this.getParameterAttributes (i);
         
         message.addString (param == null ? "" : param.name);
-        message.addInteger (param == null ? 0 : param.value);
+        message.addInteger (Config.toDisplayValue (param == null ? 0 : param.value));
         message.addString (param == null ? "" : param.valueStr);
         message.addBoolean (this.isKnobTouched[i]);
     }

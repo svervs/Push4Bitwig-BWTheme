@@ -88,7 +88,7 @@ SendMode.prototype.updateDisplay = function ()
                 var send = t.sends[sendPos];
                 message.addString (fxTrackBank == null ? send.name : fxTrackBank.getTrack (sendPos).name);
                 message.addString (send && sendIndex == sendPos && this.isKnobTouched[i] ? send.volumeStr : "");
-                message.addInteger(send ? send.volume : "");
+                message.addInteger(Config.toDisplayValue (send ? send.volume : ""));
                 message.addByte (sendIndex == sendPos ? 1 : 0);
             }
             
