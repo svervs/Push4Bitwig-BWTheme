@@ -65,7 +65,7 @@ MasterMode.prototype.updateDisplay = function ()
         // Channel info
         message.addString (master.getName ());
         message.addString ("master");
-        message.addColor (AbstractTrackBankProxy.getColorEntry (master.color));
+        message.addColor (master.getColorEntry ());
         message.addByte (master.selected ? 1 : 0);
         message.addInteger (Config.toDisplayValue (master.volume));
         message.addString (this.isKnobTouched[0] ? master.getVolumeString () : "");

@@ -95,7 +95,7 @@ DeviceLayerModeSend.prototype.updateDisplayElements = function (cd, l)
         // Channel info
         message.addString (layer.name);
         message.addString ("layer");
-        message.addColor (AbstractTrackBankProxy.getColorEntry (layer.color));
+        message.addColor (cd.getLayerOrDrumPadColorEntry (offset + i));
         message.addByte (layer.selected ? 1 : 0);
 
         for (var j = 0; j < 4; j++)

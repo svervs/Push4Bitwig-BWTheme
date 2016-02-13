@@ -77,9 +77,9 @@ SendMode.prototype.updateDisplay = function ()
             }
             
             // Channel info
-            message.addString (t.name);
+            message.addString (t.exists ? t.name : "");
             message.addString (t.type);
-            message.addColor (AbstractTrackBankProxy.getColorEntry (t.color));
+            message.addColor (tb.getTrackColorEntry (i));
             message.addByte (t.selected ? 1 : 0);
 
             for (var j = 0; j < 4; j++)

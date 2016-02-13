@@ -263,9 +263,9 @@ AbstractTrackMode.prototype.updateChannelDisplay = function (selectedMenu, isVol
         }
         
         // Channel info
-        message.addString (t.name);
+        message.addString (t.exists ? t.name : "");
         message.addString (t.type);
-        message.addColor ( AbstractTrackBankProxy.getColorEntry (t.color));
+        message.addColor (tb.getTrackColorEntry (i));
         message.addByte (t.selected ? 1 : 0);
         message.addInteger (Config.toDisplayValue (t.volume));
         message.addString (isVolume && this.isKnobTouched[i] ? t.volumeStr : "");

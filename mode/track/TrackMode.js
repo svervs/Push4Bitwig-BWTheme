@@ -318,7 +318,7 @@ TrackMode.prototype.updateDisplay2 = function ()
         }
         else if (Config.wasSoloLongPressed || (Config.isMuteSoloLocked && tb.isSoloState ()))
         {
-            message.addString ( t.exists ? "Solo" : "");
+            message.addString (t.exists ? "Solo" : "");
             message.addBoolean (t.solo);
         }
         else
@@ -328,9 +328,9 @@ TrackMode.prototype.updateDisplay2 = function ()
         }        
         
         // Channel info
-        message.addString (t.name);
+        message.addString (t.exists ? t.name : "");
         message.addString (t.type);
-        message.addColor (AbstractTrackBankProxy.getColorEntry (t.color));
+        message.addColor (tb.getTrackColorEntry (i));
         message.addByte (t.selected ? 1 : 0);
         
         if (t.selected)

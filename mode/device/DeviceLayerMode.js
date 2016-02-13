@@ -319,7 +319,7 @@ DeviceLayerMode.prototype.updateDisplayElements = function (cd, l)
         // Channel info
         message.addString (layer.name);
         message.addString ("layer");
-        message.addColor (AbstractTrackBankProxy.getColorEntry (layer.color));
+        message.addColor (cd.getLayerOrDrumPadColorEntry (offset + i));
         message.addByte (layer.selected ? 1 : 0);
         
         if (layer.selected)
@@ -392,7 +392,7 @@ DeviceLayerMode.prototype.updateChannelDisplay = function (cd, l, selectedMenu, 
         // Channel info
         message.addString (layer.name);
         message.addString ("layer");
-        message.addColor ( AbstractTrackBankProxy.getColorEntry (layer.color));
+        message.addColor (cd.getLayerOrDrumPadColorEntry (offset + i));
         message.addByte (layer.selected ? 1 : 0);
         message.addInteger (Config.toDisplayValue (layer.volume));
         message.addString (isVolume && this.isKnobTouched[i] ? layer.volumeStr : "");

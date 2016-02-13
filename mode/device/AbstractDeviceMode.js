@@ -206,8 +206,7 @@ AbstractDeviceMode.prototype.updateDisplay2 = function ()
     var cd = this.model.getDevice ();
     var selectedMode = this.surface.getMode (MODE_DEVICE_MODE_SELECT).selectedMode;
     var tb = this.model.getCurrentTrackBank ();
-    var selectedTrack = tb.getSelectedTrack ();
-    var color = selectedTrack == null ? 0 : AbstractTrackBankProxy.getColorEntry (selectedTrack.color);
+    var color = tb.getSelectedTrackColorEntry ();
     
     var d = this.surface.getDisplay ();
     var message = d.createMessage (DisplayMessage.DISPLAY_COMMAND_GRID);
