@@ -101,7 +101,7 @@ for (var i = 0; i < 128; i++)
     Config.AFTERTOUCH_CONVERSION_VALUES.push ("CC " + i);
 
 Config.DEFAULT_DEVICE_MODE_VALUES = [];
-    
+
 
 Config.init = function ()
 {
@@ -438,41 +438,41 @@ Config.setFlipSession = function (enabled)
 
 Config.changePadThreshold = function (control)
 {
-    var value = changeValue (control, Config.padThreshold, 1, PUSH_PAD_THRESHOLDS_NAME.length);
+    var value = changeIntValue (control, Config.padThreshold, 1, PUSH_PAD_THRESHOLDS_NAME.length);
     Config.padThreshold = Math.max (0, Math.min (value, PUSH_PAD_THRESHOLDS_NAME.length - 1));
     Config.padThresholdSetting.set (PUSH_PAD_THRESHOLDS_NAME[Config.padThreshold]);
 };
 
 Config.changeVelocityCurve = function (control)
 {
-    var value = changeValue (control, Config.velocityCurve, 1, PUSH_PAD_CURVES_NAME.length);
+    var value = changeIntValue (control, Config.velocityCurve, 1, PUSH_PAD_CURVES_NAME.length);
     Config.velocityCurve = Math.max (0, Math.min (value, PUSH_PAD_CURVES_NAME.length - 1));
     Config.velocityCurveSetting.set (PUSH_PAD_CURVES_NAME[Config.velocityCurve]);
 };
 
 Config.changeDisplayBrightness = function (control)
 {
-    Config.displayBrightnessSetting.setRaw (changeValue (control, Config.displayBrightness, 1, 101));
+    Config.displayBrightnessSetting.setRaw (changeIntValue (control, Config.displayBrightness, 1, 101));
 };
 
 Config.changeLEDBrightness = function (control)
 {
-    Config.ledBrightnessSetting.setRaw (changeValue (control, Config.ledBrightness, 1, 101));
+    Config.ledBrightnessSetting.setRaw (changeIntValue (control, Config.ledBrightness, 1, 101));
 };
 
 Config.changePadSensitivity = function (control)
 {
-    Config.padSensitivitySetting.setRaw (changeValue (control, Config.padSensitivity, 1, 11));
+    Config.padSensitivitySetting.setRaw (changeIntValue (control, Config.padSensitivity, 1, 11));
 };
 
 Config.changePadGain = function (control)
 {
-    Config.padGainSetting.setRaw (changeValue (control, Config.padGain, 1, 11));
+    Config.padGainSetting.setRaw (changeIntValue (control, Config.padGain, 1, 11));
 };
 
 Config.changePadDynamics  = function (control)
 {
-    Config.padDynamicsSetting.setRaw (changeValue (control, Config.padDynamics, 1, 11));
+    Config.padDynamicsSetting.setRaw (changeIntValue (control, Config.padDynamics, 1, 11));
 };
 
 
@@ -504,4 +504,10 @@ Config.toMidiValue = function (value)
 Config.toDAWValue = function (value)
 {
     return Math.round (value * (Config.maxParameterValue - 1) / 127);
+};
+
+Config.toDisplayValue = function (value)
+{
+    // No conversion since the default value range of the script is the same as of the display application (1024)  
+    return value;
 };

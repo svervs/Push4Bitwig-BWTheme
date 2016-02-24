@@ -16,7 +16,7 @@ load ("Controller.js");
 // This is the only global variable, do not use it.
 var controller = null;
 
-host.defineController ("Ableton", "Push 2", "7.30", "B7621FC0-9223-11E5-A837-0800200C9A66", "Jürgen Moßgraber");
+host.defineController ("Ableton", "Push 2", "7.31", "B7621FC0-9223-11E5-A837-0800200C9A66", "Jürgen Moßgraber");
 host.defineMidiPorts (1, 1);
 host.platformIsWindows () && host.addDeviceNameBasedDiscoveryPair (["Ableton Push 2"], ["Ableton Push 2"]);
 host.platformIsLinux () && host.addDeviceNameBasedDiscoveryPair (["Ableton Push 2 MIDI 1"], ["Ableton Push 2 MIDI 1"]);
@@ -27,7 +27,7 @@ function init ()
     controller = new Controller ();
     controller.surface.sendIdentityRequest ();
     // Switch to Poly Aftertouch
-    controller.surface.sendPush2SysEx (1);
+    controller.surface.sendAftertouchMode (1);
     println ("Initialized.");
 }
 

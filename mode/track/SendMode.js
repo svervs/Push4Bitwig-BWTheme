@@ -77,9 +77,9 @@ SendMode.prototype.updateDisplay = function ()
             }
             
             // Channel info
-            message.addString (t.name);
+            message.addString (t.exists ? t.name : "");
             message.addString (t.type);
-            message.addColor (AbstractTrackBankProxy.getColorEntry (t.color));
+            message.addColor (tb.getTrackColorEntry (i));
             message.addByte (t.selected ? 1 : 0);
 
             for (var j = 0; j < 4; j++)
@@ -88,7 +88,7 @@ SendMode.prototype.updateDisplay = function ()
                 var send = t.sends[sendPos];
                 message.addString (fxTrackBank == null ? send.name : fxTrackBank.getTrack (sendPos).name);
                 message.addString (send && sendIndex == sendPos && this.isKnobTouched[i] ? send.volumeStr : "");
-                message.addInteger(send ? send.volume : "");
+                message.addInteger(Config.toDisplayValue (send ? send.volume : ""));
                 message.addByte (sendIndex == sendPos ? 1 : 0);
             }
             

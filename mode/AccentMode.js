@@ -43,7 +43,7 @@ AccentMode.prototype.updateDisplay = function ()
             message.addBoolean (false);
 
             message.addString (i == 7 ? "Accent" : "");
-            message.addInteger (i == 7 ? Config.toDAWValue (Config.fixedAccentValue) : 0);
+            message.addInteger (i == 7 ? Config.toDisplayValue (Config.toDAWValue (Config.fixedAccentValue)) : 0);
             message.addString (i == 7 ? "" + Config.fixedAccentValue : "");
             message.addBoolean (this.isKnobTouched[i]);
         }

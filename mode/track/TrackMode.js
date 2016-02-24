@@ -318,7 +318,7 @@ TrackMode.prototype.updateDisplay2 = function ()
         }
         else if (Config.wasSoloLongPressed || (Config.isMuteSoloLocked && tb.isSoloState ()))
         {
-            message.addString ( t.exists ? "Solo" : "");
+            message.addString (t.exists ? "Solo" : "");
             message.addBoolean (t.solo);
         }
         else
@@ -328,18 +328,18 @@ TrackMode.prototype.updateDisplay2 = function ()
         }        
         
         // Channel info
-        message.addString (t.name);
+        message.addString (t.exists ? t.name : "");
         message.addString (t.type);
-        message.addColor (AbstractTrackBankProxy.getColorEntry (t.color));
+        message.addColor (tb.getTrackColorEntry (i));
         message.addByte (t.selected ? 1 : 0);
         
         if (t.selected)
         {
-            message.addInteger (t.volume);
+            message.addInteger (Config.toDisplayValue (t.volume));
             message.addString (this.isKnobTouched[0] ? t.volumeStr : "");
-            message.addInteger (t.pan);
+            message.addInteger (Config.toDisplayValue (t.pan));
             message.addString (this.isKnobTouched[1] ? t.panStr : "");
-            message.addInteger (this.surface.showVU ? t.vu : 0);
+            message.addInteger (Config.toDisplayValue (this.surface.showVU ? t.vu : 0));
             message.addBoolean (t.mute);
             message.addBoolean (t.solo);
             message.addBoolean (t.recarm);
@@ -356,7 +356,7 @@ TrackMode.prototype.updateDisplay2 = function ()
                 var send = selTrack.sends[sendPos];
                 message.addString (fxTrackBank == null ? send.name : fxTrackBank.getTrack (sendPos).name);
                 message.addString (send && this.isKnobTouched[4 + j] ? send.volumeStr : "");
-                message.addInteger(send ? send.volume : 0);
+                message.addInteger(Config.toDisplayValue (send ? send.volume : 0));
                 message.addByte (1);
             }
             // Signal Track mode

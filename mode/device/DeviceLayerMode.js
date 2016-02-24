@@ -319,16 +319,16 @@ DeviceLayerMode.prototype.updateDisplayElements = function (cd, l)
         // Channel info
         message.addString (layer.name);
         message.addString ("layer");
-        message.addColor (AbstractTrackBankProxy.getColorEntry (layer.color));
+        message.addColor (cd.getLayerOrDrumPadColorEntry (offset + i));
         message.addByte (layer.selected ? 1 : 0);
         
         if (layer.selected)
         {
-            message.addInteger (layer.volume);
+            message.addInteger (Config.toDisplayValue (layer.volume));
             message.addString (this.isKnobTouched[0] ? layer.volumeStr : "");
-            message.addInteger (layer.pan);
+            message.addInteger (Config.toDisplayValue (layer.pan));
             message.addString (this.isKnobTouched[1] ? layer.panStr : "");
-            message.addInteger (this.surface.showVU ? layer.vu : 0);
+            message.addInteger (Config.toDisplayValue (this.surface.showVU ? layer.vu : 0));
             message.addBoolean (layer.mute);
             message.addBoolean (layer.solo);
             message.addBoolean (false);
@@ -392,13 +392,13 @@ DeviceLayerMode.prototype.updateChannelDisplay = function (cd, l, selectedMenu, 
         // Channel info
         message.addString (layer.name);
         message.addString ("layer");
-        message.addColor ( AbstractTrackBankProxy.getColorEntry (layer.color));
+        message.addColor (cd.getLayerOrDrumPadColorEntry (offset + i));
         message.addByte (layer.selected ? 1 : 0);
-        message.addInteger (layer.volume);
+        message.addInteger (Config.toDisplayValue (layer.volume));
         message.addString (isVolume && this.isKnobTouched[i] ? layer.volumeStr : "");
-        message.addInteger (layer.pan);
+        message.addInteger (Config.toDisplayValue (layer.pan));
         message.addString (isPan && this.isKnobTouched[i] ? layer.panStr : "");
-        message.addInteger (this.surface.showVU ? layer.vu : 0);
+        message.addInteger (Config.toDisplayValue (this.surface.showVU ? layer.vu : 0));
         message.addBoolean (layer.mute);
         message.addBoolean (layer.solo);
         message.addBoolean (false);

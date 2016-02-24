@@ -1342,10 +1342,10 @@ AbstractView.prototype.updateArrowStates = function ()
 AbstractView.prototype.updateArrows = function ()
 {
     this.updateArrowStates ();
-    this.surface.updateButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-    this.surface.updateButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-    this.surface.updateButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
-    this.surface.updateButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_HI : PUSH_BUTTON_STATE_OFF);
+    this.surface.updateButton (PUSH_BUTTON_LEFT, this.canScrollLeft ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
+    this.surface.updateButton (PUSH_BUTTON_RIGHT, this.canScrollRight ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
+    this.surface.updateButton (PUSH_BUTTON_UP, this.canScrollUp ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
+    this.surface.updateButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
 };
 
 AbstractView.prototype.canSelectedTrackHoldNotes = function ()

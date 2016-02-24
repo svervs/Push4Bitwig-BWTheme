@@ -3,6 +3,10 @@
 // (c) 2014-2016
 // Licensed under LGPLv3 - http://www.gnu.org/licenses/lgpl-3.0.txt
 
+TransportMode.MIN_TEMPO = 20;
+TransportMode.MAX_TEMPO = 666;
+
+
 function TransportMode (model)
 {
     BaseMode.call (this, model);
@@ -127,8 +131,8 @@ TransportMode.prototype.updateDisplay = function ()
 
 TransportMode.prototype.formatTempoBars = function (value)
 {
-    value = value - 20;
-    var noOfBars = Math.round (16 * value / 646);
+    value = value - TransportMode.MIN_TEMPO;
+    var noOfBars = Math.round (16 * value / (TransportMode.MAX_TEMPO - TransportMode.MIN_TEMPO));
     var n = '';
     for (var j = 0; j < Math.floor (noOfBars / 2); j++)
         n += Display.BARS_TWO;
@@ -139,8 +143,8 @@ TransportMode.prototype.formatTempoBars = function (value)
 
 TransportMode.prototype.convertTempo = function (value)
 {
-    value = value - 20;
-    return value * (Config.maxParameterValue - 1) / 646;
+    value = value - TransportMode.MIN_TEMPO;
+    return value * (Config.maxParameterValue - 1) / (TransportMode.MAX_TEMPO - TransportMode.MIN_TEMPO);
 };
 
 TransportMode.prototype.formatTempo = function (tempo)

@@ -91,7 +91,9 @@ if (Config.isPush2)
     load ("InfoMode.js");
 }
 else
+{
     load ("ConfigurationMode.js");
+}
 
 load ("track/AbstractTrackMode.js");
 load ("track/ClipMode.js");

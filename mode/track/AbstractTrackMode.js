@@ -82,7 +82,7 @@ AbstractTrackMode.prototype.onSecondRow = function (index)
                 if (!Config.sendsAreToggled)
                 {
                     var fxTrackBank = this.model.getEffectTrackBank ();
-                    if (!fxTrackBank.getTrack (4).exists)
+                    if (fxTrackBank == null || !fxTrackBank.getTrack (4).exists)
                         return;
                 }
                 Config.sendsAreToggled = !Config.sendsAreToggled;
@@ -98,7 +98,7 @@ AbstractTrackMode.prototype.onSecondRow = function (index)
                 var sendOffset = Config.sendsAreToggled ? 0 : 4;
                 var sendIndex = index - sendOffset;
                 var fxTrackBank = this.model.getEffectTrackBank ();
-                if (fxTrackBank.getTrack (sendIndex).exists)
+                if (fxTrackBank != null && fxTrackBank.getTrack (sendIndex).exists)
                 {
                     var si = MODE_SEND1 + sendIndex;
                     if (this.surface.isActiveMode (si))
@@ -263,15 +263,15 @@ AbstractTrackMode.prototype.updateChannelDisplay = function (selectedMenu, isVol
         }
         
         // Channel info
-        message.addString (t.name);
+        message.addString (t.exists ? t.name : "");
         message.addString (t.type);
-        message.addColor ( AbstractTrackBankProxy.getColorEntry (t.color));
+        message.addColor (tb.getTrackColorEntry (i));
         message.addByte (t.selected ? 1 : 0);
-        message.addInteger (t.volume);
+        message.addInteger (Config.toDisplayValue (t.volume));
         message.addString (isVolume && this.isKnobTouched[i] ? t.volumeStr : "");
-        message.addInteger (t.pan);
+        message.addInteger (Config.toDisplayValue (t.pan));
         message.addString (isPan && this.isKnobTouched[i] ? t.panStr : "");
-        message.addInteger (this.surface.showVU ? t.vu : 0);
+        message.addInteger (Config.toDisplayValue (this.surface.showVU ? t.vu : 0));
         message.addBoolean (t.mute);
         message.addBoolean (t.solo);
         message.addBoolean (t.recarm);
@@ -293,8 +293,18 @@ AbstractTrackMode.prototype.updateTrackMenu = function ()
     }
     else
     {
-        for (var i = 0; i < 4; i++)
-            this.menu[4 + i] = fxTrackBank.getTrack (sendOffset + i).name;
+        if (fxTrackBank == null)
+        {
+            var selTrack = this.model.getTrackBank ().getSelectedTrack ();
+            for (var i = 0; i < 4; i++)
+                this.menu[4 + i] = selTrack == null ? "Send " + (sendOffset + i) : selTrack.sends[sendOffset + i].name;
+        }
+        else
+        {
+            for (var i = 0; i < 4; i++)
+                this.menu[4 + i] = fxTrackBank.getTrack (sendOffset + i).name;
+        }
+        
         this.menu[3] = Config.sendsAreToggled ? "Sends 5-8" : "Sends 1-4";
     }
 };

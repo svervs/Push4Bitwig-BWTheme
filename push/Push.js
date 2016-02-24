@@ -166,6 +166,11 @@ PUSH_BUTTON_UPDATE[PUSH_BUTTON_SCALES]       = false;
 PUSH_BUTTON_UPDATE[PUSH_BUTTON_FIXED_LENGTH] = false;
 PUSH_BUTTON_UPDATE[PUSH_BUTTON_BROWSE]       = false;
 PUSH_BUTTON_UPDATE[PUSH_BUTTON_CLIP]         = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_LEFT]         = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_RIGHT]        = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_UP]           = false;
+PUSH_BUTTON_UPDATE[PUSH_BUTTON_DOWN]         = false;
+
 
 
 var PUSH_RIBBON_PITCHBEND = 0;
@@ -405,7 +410,10 @@ Push.prototype.setRibbonMode = function (mode)
     if (this.ribbonMode == mode)
         return;
     this.ribbonMode = mode;
-    this.output.sendSysex ("F0 47 7F 15 63 00 01 0" + mode + " F7");
+    if (Config.isPush2)
+        this.sendPush2SysEx ([ 23, mode == 0 ? 122 : 2 ]);
+    else
+        this.output.sendSysex ("F0 47 7F 15 63 00 01 0" + mode + " F7");
 };
 
 Push.prototype.setRibbonValue = function (value)
