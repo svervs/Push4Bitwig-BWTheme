@@ -160,7 +160,7 @@ AbstractDeviceMode.prototype.updateSecondRow = function ()
     this.surface.updateButton (107, cd.isMacroSectionVisible () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
     this.surface.updateButton (108, cd.isParameterPageSectionVisible () ? PUSH_COLOR2_WHITE : PUSH_COLOR_BLACK);
     
-    this.surface.updateButton (109, selDevice.isPlugin ? (cd.isWindowOpen () ? PUSH_COLOR2_SKY_HI : PUSH_COLOR2_OCEAN_HI) : PUSH_COLOR2_BLACK); // BWS Color Theme
+    this.surface.updateButton (109, selDevice.isPlugin ? (cd.isWindowOpen () ? PUSH_COLOR2_OCEAN_HI : PUSH_COLOR2_OCEAN) : PUSH_COLOR2_BLACK); // BWS Color Theme
 };
 
 AbstractDeviceMode.prototype.updateDisplay = function () 

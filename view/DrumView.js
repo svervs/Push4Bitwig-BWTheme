@@ -269,15 +269,15 @@ DrumView.prototype.getPadColor = function (index, primary, hasDrumPads, isSoloed
         return isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_WHITE; // BWS Color Theme
     // Selected?
     if (this.selectedPad == index)
-        return PUSH_COLOR2_GREY_MD; // BWS Color Theme
+        return PUSH_COLOR2_OCEAN_HI; // BWS Color Theme
     // Exists and active?
     var drumPad = primary.getDrumPad (index);
     if (!drumPad.exists || !drumPad.activated)
-        return PUSH_COLOR2_YELLOW_LO;
+        return PUSH_COLOR2_BLACK; // BWS Color Theme
     // Muted or soloed?
     if (drumPad.mute || (isSoloed && !drumPad.solo))
-        return PUSH_COLOR2_AMBER_LO;
-    return drumPad.color ? drumPad.color : PUSH_COLOR2_YELLOW_HI;
+        return PUSH_COLOR2_BLACK; // BWS Color Theme
+    return drumPad.color ? drumPad.color : PUSH_COLOR2_YELLOW_HI; 
 };
 
 DrumView.prototype.clearPressedKeys = function ()
