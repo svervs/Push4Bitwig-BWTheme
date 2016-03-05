@@ -1284,7 +1284,7 @@ AbstractView.prototype.canConvertAudio = function ()
     var selectedTrack = tb.getSelectedTrack ();
     if (selectedTrack == null || !selectedTrack.canHoldAudioData)
     {
-        // println("No track");        
+        // println("No track"); 
         return false;
     }
     var slots = tb.getSelectedSlots (selectedTrack.index);
