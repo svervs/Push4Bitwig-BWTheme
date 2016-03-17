@@ -1278,28 +1278,18 @@ AbstractView.prototype.updateButtons = function ()
 
 AbstractView.prototype.canConvertAudio = function ()
 {
-    // TODO Uncomment the printlns to test https://github.com/teotigraphix/Framework4Bitwig/issues/109
-    
     var tb = this.model.getCurrentTrackBank ();
     var selectedTrack = tb.getSelectedTrack ();
     if (selectedTrack == null || !selectedTrack.canHoldAudioData)
-    {
-        // println("No track"); 
         return false;
-    }
     var slots = tb.getSelectedSlots (selectedTrack.index);
     if (slots.length == 0)
-    {
-        // println("No selected slots on: " + selectedTrack.index);        
         return false;
-    }
     for (var i = 0; i < slots.length; i++)
     {
         if (slots[0].hasContent)
             return true;
     }
-
-    // println("No slot with content");        
     return false;
 };
 
