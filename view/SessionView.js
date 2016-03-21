@@ -52,8 +52,74 @@ SessionView.prototype.drawSceneButtons = function ()
     }
 };
 
+SessionView.prototype.onGridNote = function (note, velocity)
+{
+    if (this.surface.isShiftPressed ())
+    {
+        if (velocity == 0)
+            return;
+
+        var index = note - 36;
+        var x = index % this.columns;
+        var y = (this.rows - 1) - Math.floor (index / this.columns);
+
+        var tb = this.model.getCurrentTrackBank ();
+        
+        // Calculate page offsets
+        var trackPosition = Math.floor (tb.getTrack (0).position / tb.numTracks);
+        var scenePosition = Math.floor (tb.getScenePosition () / tb.numScenes);
+        var selX = this.flip ? scenePosition : trackPosition;
+        var selY = this.flip ? trackPosition : scenePosition;
+        var padsX = this.flip ? this.rows : this.columns;
+        var padsY = this.flip ? this.columns : this.rows;
+        var offsetX = Math.floor (selX / padsX) * padsX;
+        var offsetY = Math.floor (selY / padsY) * padsY;
+        
+        tb.scrollToChannel (offsetX * tb.numTracks + (this.flip ? y : x) * padsX);
+        tb.scrollToScene (offsetY * tb.numScenes + (this.flip ? x : y) * padsY);
+        
+        return;
+    }
+    
+    AbstractSessionView.prototype.onGridNote.call (this, note, velocity);
+};
+
 SessionView.prototype.drawGrid = function ()
 {
+    if (this.surface.isShiftPressed ())
+    {
+        var tb = this.model.getCurrentTrackBank ();
+        var maxScenePads = Math.ceil (this.model.getSceneBank ().getSceneCount () / tb.numScenes);
+        var maxTrackPads = Math.ceil (tb.getTrackCount () / tb.numTracks);
+        var trackPosition = Math.floor (tb.getTrack (0).position / tb.numTracks);
+        var scenePosition = Math.floor (tb.getScenePosition () / tb.numScenes);
+        var selX = this.flip ? scenePosition : trackPosition;
+        var selY = this.flip ? trackPosition : scenePosition;
+        var padsX = this.flip ? this.rows : this.columns;
+        var padsY = this.flip ? this.columns : this.rows;
+        var offsetX = Math.floor (selX / padsX) * padsX;
+        var offsetY = Math.floor (selY / padsY) * padsY;
+        var maxX = (this.flip ? maxScenePads : maxTrackPads) - offsetX; 
+        var maxY = (this.flip ? maxTrackPads : maxScenePads) - offsetY;
+        selX -= offsetX;
+        selY -= offsetY;
+        
+        var color = null;
+        for (var x = 0; x < this.columns; x++)
+        {
+            var rowColor = x < maxX ? AbstractSessionView.CLIP_COLOR_HAS_CONTENT : AbstractSessionView.CLIP_COLOR_NO_CONTENT; 
+            for (var y = 0; y < this.rows; y++)
+            {
+                color = y < maxY ? rowColor : AbstractSessionView.CLIP_COLOR_NO_CONTENT;
+                if (selX == x && selY == y)
+                    color = AbstractSessionView.CLIP_COLOR_IS_PLAYING;
+                this.surface.pads.lightEx (x, y, color.color, color.blink, color.fast);
+            }
+        }
+        
+        return;
+    }
+    
     AbstractSessionView.prototype.drawGrid.call (this);
 
     // Also update the value of the ribbon
