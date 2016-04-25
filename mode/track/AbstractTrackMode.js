@@ -25,7 +25,7 @@ AbstractTrackMode.prototype.onFirstRow = function (index)
             tb.toggleMonitor (index);
         return;
     }
-    
+
     var selTrack = tb.getSelectedTrack ();
     if ((selTrack != null && selTrack.index == index) || this.surface.isShiftPressed ())
         tb.toggleArm (index);
