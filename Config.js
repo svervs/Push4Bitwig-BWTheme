@@ -34,7 +34,7 @@ Config.SCALES_LAYOUT         = 7;
 Config.ENABLE_VU_METERS      = 8;
 Config.VELOCITY_CURVE        = 9;
 Config.PAD_THRESHOLD         = 10;
-Config.GOTO_ZERO_ON_STOP     = 11;
+Config.BEHAVIOUR_ON_STOP     = 11;
 Config.DISPLAY_CROSSFADER    = 12;
 Config.CONVERT_AFTERTOUCH    = 13;
 Config.DEFAULT_DEVICE_MODE   = 14;
@@ -63,6 +63,10 @@ Config.FOOTSWITCH_2_TAP_TEMPO           = 5;
 Config.FOOTSWITCH_2_NEW_BUTTON          = 6;
 Config.FOOTSWITCH_2_CLIP_BASED_LOOPER   = 7;
 
+Config.BEHAVIOUR_ON_STOP_MOVE_PLAY_CURSOR = 0;
+Config.BEHAVIOUR_ON_STOP_RETURN_TO_ZERO   = 1;
+Config.BEHAVIOUR_ON_STOP_PAUSE            = 2;
+
 Config.AUTO_SELECT_DRUM_OFF      = 0;
 Config.AUTO_SELECT_DRUM_CHANNEL  = 1;
 
@@ -75,7 +79,7 @@ Config.scaleBase          = 'C';
 Config.scaleInKey         = true;
 Config.scaleLayout        = '4th ^';
 Config.enableVUMeters     = false;
-Config.gotoZeroOnStop     = false;
+Config.behaviourOnStop    = Config.BEHAVIOUR_ON_STOP_MOVE_PLAY_CURSOR;
 Config.displayCrossfader  = true;
 Config.convertAftertouch  = 0;
 Config.defaultDeviceMode  = 20; /*MODE_DEVICE_PARAMS;*/
@@ -217,11 +221,24 @@ Config.init = function ()
         Config.notifyListeners (Config.ENABLE_VU_METERS);
     });
     
-    Config.gotoZeroOnStopSetting = prefs.getEnumSetting ("Return to Zero on Stop", "Workflow", [ "Off", "On" ], "Off");
-    Config.gotoZeroOnStopSetting.addValueObserver (function (value)
+    Config.behaviourOnStopSetting = prefs.getEnumSetting ("Behaviour on Stop", "Workflow", [ "Move play cursor", "Return to Zero", "Pause" ], "Move play cursor");
+    Config.behaviourOnStopSetting.addValueObserver (function (value)
     {
-        Config.gotoZeroOnStop = value == "On";
-        Config.notifyListeners (Config.GOTO_ZERO_ON_STOP);
+        switch (value)
+        {
+            case "Move play cursor":
+                Config.behaviourOnStop = Config.BEHAVIOUR_ON_STOP_MOVE_PLAY_CURSOR;
+                break;
+                
+            case "Return to Zero":
+                Config.behaviourOnStop = Config.BEHAVIOUR_ON_STOP_RETURN_TO_ZERO;
+                break;
+                
+            case "Pause":
+                Config.behaviourOnStop = Config.BEHAVIOUR_ON_STOP_PAUSE;
+                break;
+        }
+        Config.notifyListeners (Config.BEHAVIOUR_ON_STOP);
     });
     
     Config.displayCrossfaderSetting = prefs.getEnumSetting ("Display Crossfader on Track", "Workflow", [ "Off", "On" ], "On");
@@ -414,11 +431,6 @@ Config.setScaleLayout = function (scaleLayout)
 Config.setVUMetersEnabled = function (enabled)
 {
     Config.enableVUMetersSetting.set (enabled ? "On" : "Off");
-};
-
-Config.setGotoZeroOnStop = function (enabled)
-{
-    Config.gotoZeroOnStopSetting.set (enabled ? "On" : "Off");
 };
 
 Config.setDisplayCrossfader = function (enabled)
