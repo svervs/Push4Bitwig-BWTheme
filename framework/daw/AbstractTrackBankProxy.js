@@ -74,7 +74,7 @@ function AbstractTrackBankProxy (numTracks, numScenes, numSends)
     this.recCount = numTracks * numScenes;
     this.listeners = [];
     this.noteListeners = [];
-    this.prefferedViews = [];
+    this.preferedViews = [];
     this.primaryDevice = null;
     
     this.trackCount = 0;
@@ -566,14 +566,14 @@ AbstractTrackBankProxy.prototype.setPreferredView = function (view)
         return;
     var pos = this.getTrack (sel.index).position;
     if (pos != -1)
-        this.prefferedViews[pos] = view;
+        this.preferedViews[pos] = view;
 };
 
 // Get the stored view for the currently selected track or null
 AbstractTrackBankProxy.prototype.getPreferredView = function (index)
 {
     var pos = this.getTrack (index).position;
-    return typeof (this.prefferedViews[pos]) == 'undefined' ? null : this.prefferedViews[pos];
+    return typeof (this.preferedViews[pos]) == 'undefined' ? null : this.preferedViews[pos];
 };
 
 AbstractTrackBankProxy.prototype.createTracks = function (count)
