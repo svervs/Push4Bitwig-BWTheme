@@ -14,7 +14,7 @@ PianoView.prototype.drawGrid = function ()
     // Also update the value of the ribbon
     this.updateRibbonMode ();
     
-    if (!this.canSelectedTrackHoldNotes ())
+    if (!this.model.canSelectedTrackHoldNotes ())
     {
         this.surface.pads.turnOff ();
         return;
@@ -47,7 +47,7 @@ PianoView.prototype.drawGrid = function ()
 
 PianoView.prototype.onGridNote = function (note, velocity)
 {
-    if (!this.canSelectedTrackHoldNotes () || this.noteMap[note] == -1)
+    if (!this.model.canSelectedTrackHoldNotes () || this.noteMap[note] == -1)
         return;
 
     // Mark selected notes
@@ -86,6 +86,6 @@ PianoView.prototype.updateNoteMapping = function ()
 
 PianoView.prototype.delayedUpdateNoteMapping = function ()
 {
-    this.noteMap = this.canSelectedTrackHoldNotes () ? this.scales.getPianoMatrix () : this.scales.getEmptyMatrix ();
+    this.noteMap = this.model.canSelectedTrackHoldNotes () ? this.scales.getPianoMatrix () : this.scales.getEmptyMatrix ();
     this.surface.setKeyTranslationTable (this.noteMap);
 };

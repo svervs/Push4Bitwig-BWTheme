@@ -1348,12 +1348,6 @@ AbstractView.prototype.updateArrows = function ()
     this.surface.updateButton (PUSH_BUTTON_DOWN, this.canScrollDown ? PUSH_BUTTON_STATE_ON : PUSH_BUTTON_STATE_OFF);
 };
 
-AbstractView.prototype.canSelectedTrackHoldNotes = function ()
-{
-    var t = this.model.getCurrentTrackBank ().getSelectedTrack ();
-    return t != null && t.canHoldNotes;
-};
-
 AbstractView.prototype.setShowDevices = function (enable)
 {
     this.showDevices = enable;
