@@ -84,7 +84,7 @@ PlayView.prototype.usesButton = function (buttonID)
 
 PlayView.prototype.drawGrid = function ()
 {
-    var isKeyboardEnabled = this.canSelectedTrackHoldNotes ();
+    var isKeyboardEnabled = this.model.canSelectedTrackHoldNotes ();
     var isRecording = this.model.hasRecordingState ();
     for (var i = 36; i < 100; i++)
     {
@@ -100,7 +100,7 @@ PlayView.prototype.drawGrid = function ()
 PlayView.prototype.onGridNote = function (note, velocity)
 {
     // Mark selected notes
-    if (this.canSelectedTrackHoldNotes () && this.noteMap[note] != -1)
+    if (this.model.canSelectedTrackHoldNotes () && this.noteMap[note] != -1)
         this.setPressedKeys (this.noteMap[note], true, velocity);
 };
 
@@ -213,6 +213,6 @@ PlayView.prototype.getPressedKeys = function ()
 
 PlayView.prototype.delayedUpdateNoteMapping = function ()
 {
-    this.noteMap = this.canSelectedTrackHoldNotes () ? this.scales.getNoteMatrix () : this.scales.getEmptyMatrix ();
+    this.noteMap = this.model.canSelectedTrackHoldNotes () ? this.scales.getNoteMatrix () : this.scales.getEmptyMatrix ();
     this.surface.setKeyTranslationTable (this.noteMap);
 };

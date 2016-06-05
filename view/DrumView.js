@@ -38,7 +38,7 @@ DrumView.prototype.updateArrowStates = function ()
 
 DrumView.prototype.updateNoteMapping = function ()
 {
-    var turnOn = this.canSelectedTrackHoldNotes () && !this.surface.isSelectPressed () && !this.surface.isDeletePressed () && !this.surface.isPressed (PUSH_BUTTON_MUTE) && !this.surface.isPressed (PUSH_BUTTON_SOLO);
+    var turnOn = this.model.canSelectedTrackHoldNotes () && !this.surface.isSelectPressed () && !this.surface.isDeletePressed () && !this.surface.isPressed (PUSH_BUTTON_MUTE) && !this.surface.isPressed (PUSH_BUTTON_SOLO);
     this.noteMap = turnOn ? this.scales.getDrumMatrix () : this.scales.getEmptyMatrix ();
     this.surface.setKeyTranslationTable (this.noteMap);
 };
@@ -88,7 +88,7 @@ DrumView.prototype.onSolo = function (event)
 
 DrumView.prototype.onGridNote = function (note, velocity)
 {
-    if (!this.canSelectedTrackHoldNotes ())
+    if (!this.model.canSelectedTrackHoldNotes ())
         return;
 
     var index = note - 36;
@@ -207,7 +207,7 @@ DrumView.prototype.drawGrid = function ()
     // Also update the value of the ribbon
     this.updateRibbonMode ();
     
-    if (!this.canSelectedTrackHoldNotes ())
+    if (!this.model.canSelectedTrackHoldNotes ())
     {
         this.surface.pads.turnOff ();
         return;
