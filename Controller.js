@@ -316,4 +316,6 @@ Controller.prototype.handleTrackChange = function (index, isSelected)
     // Reset drum octave because the drum pad bank is also reset
     this.scales.setDrumOctave (0);
     this.surface.getView (VIEW_DRUM).updateNoteMapping ();
+    
+    this.surface.getActiveView ().updateRibbonModeValue ();
 };

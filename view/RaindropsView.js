@@ -117,7 +117,7 @@ RaindropsView.prototype.scrollLeft = function (event)
 RaindropsView.prototype.drawGrid = function ()
 {
     // Also update the value of the ribbon
-    this.updateRibbonMode ();
+    this.updateRibbonModeValue ();
     
     if (!this.model.canSelectedTrackHoldNotes ())
     {

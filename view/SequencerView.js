@@ -124,7 +124,7 @@ SequencerView.prototype.updateOctave = function (value)
 SequencerView.prototype.drawGrid = function ()
 {
     // Also update the value of the ribbon
-    this.updateRibbonMode ();
+    this.updateRibbonModeValue ();
     
     var tb = this.model.getCurrentTrackBank ();
     var selectedTrack = tb.getSelectedTrack ();

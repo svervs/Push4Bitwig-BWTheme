@@ -98,7 +98,7 @@ PlayView.prototype.drawGrid = function ()
     }
 
     // Also update the value of the ribbon
-    this.updateRibbonMode ();
+    this.updateRibbonModeValue ();
 };
 
 PlayView.prototype.onGridNote = function (note, velocity)

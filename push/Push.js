@@ -411,7 +411,24 @@ Push.prototype.setRibbonMode = function (mode)
         return;
     this.ribbonMode = mode;
     if (Config.isPush2)
-        this.sendPush2SysEx ([ 23, mode == 0 ? 122 : 2 ]);
+    {
+        // See section 2.10.1 in Push 2 programmer manual for status codes
+        var status = 0; 
+        switch (mode)
+        {
+            case Config.RIBBON_MODE_PITCH:
+            case Config.RIBBON_MODE_CC_PB:
+            case Config.RIBBON_MODE_PB_CC:
+                status = 122;
+                break;
+                
+            case Config.RIBBON_MODE_CC:
+            case Config.RIBBON_MODE_FADER:
+                status = 1;
+                break;
+        }
+        this.sendPush2SysEx ([ 23, status ]);
+    }
     else
         this.output.sendSysex ("F0 47 7F 15 63 00 01 0" + mode + " F7");
 };

@@ -77,7 +77,7 @@ PrgChangeView.prototype.drawSceneButtons = function ()
 PrgChangeView.prototype.drawGrid = function ()
 {
     // Also update the value of the ribbon
-    this.updateRibbonMode ();
+    this.updateRibbonModeValue ();
     
     var colors = this.isToggled ? PrgChangeView.YELLOWS : PrgChangeView.GREENS;
     var selPad = this.isToggled ? (this.programNumber >= 64 ? this.programNumber - 64 : -1) :
