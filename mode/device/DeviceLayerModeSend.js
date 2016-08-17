@@ -53,6 +53,7 @@ DeviceLayerModeSend.prototype.onValueKnobTouch = function (index, isTouched)
     }
     
     cd.touchLayerOrDrumPadSend (index, sendIndex, isTouched);
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 DeviceLayerModeSend.prototype.updateDisplayElements = function (cd, l)

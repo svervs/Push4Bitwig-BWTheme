@@ -101,6 +101,8 @@ DeviceLayerMode.prototype.onValueKnobTouch = function (index, isTouched)
             cd.touchLayerOrDrumPadSend (l.index, sendIndex, isTouched);
             break;
     }
+    
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 DeviceLayerMode.prototype.onFirstRow = function (index)

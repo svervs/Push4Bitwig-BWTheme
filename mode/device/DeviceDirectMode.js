@@ -82,6 +82,8 @@ DeviceDirectMode.prototype.onValueKnobTouch = function (index, isTouched)
     
     // Note: Direct parameters do not have parameter-objects and therefore cannot be
     // used for touch-automation (p.touch())
+    
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 DeviceDirectMode.prototype.onFirstRowBank = function (index)

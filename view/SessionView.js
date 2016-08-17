@@ -89,6 +89,11 @@ SessionView.prototype.onGridNote = function (note, velocity)
     AbstractSessionView.prototype.onGridNote.call (this, note, velocity);
 };
 
+SessionView.prototype.doSelectClipOnLaunch = function ()
+{
+    return Config.selectClipOnLaunch;
+};
+
 SessionView.prototype.drawGrid = function ()
 {
     if (this.surface.isShiftPressed ())

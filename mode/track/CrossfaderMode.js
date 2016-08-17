@@ -25,7 +25,9 @@ CrossfaderMode.prototype.onValueKnobTouch = function (index, isTouched)
         var t = this.model.getCurrentTrackBank ().getTrack (index);
         if (t.exists)
             displayNotification ("Crossfader: " + t.crossfadeMode);
-    }    
+    }
+
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 CrossfaderMode.prototype.onValueKnob = function (index, value)

@@ -45,6 +45,7 @@ DeviceLayerModePan.prototype.onValueKnobTouch = function (index, isTouched)
     }
     
     cd.touchLayerOrDrumPadPan (layer.index, isTouched);
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 DeviceLayerModePan.prototype.updateDisplay1 = function () 

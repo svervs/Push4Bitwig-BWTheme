@@ -35,3 +35,14 @@ BaseMode.prototype.disableSecondRow = function ()
     for (var i = 0; i < 8; i++)
         this.surface.updateButton (102 + i, PUSH_COLOR2_BLACK);
 };
+
+BaseMode.prototype.checkStopAutomationOnKnobRelease = function (isTouched)
+{
+    if (!Config.stopAutomationOnKnobRelease || isTouched)
+        return;
+    var transport = this.model.getTransport ();
+    if (transport.isWritingArrangerAutomation)
+        transport.toggleWriteArrangerAutomation ();
+    if (transport.isWritingClipLauncherAutomation)
+        transport.toggleWriteClipLauncherAutomation ();
+};
