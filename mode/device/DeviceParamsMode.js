@@ -61,6 +61,7 @@ DeviceParamsMode.prototype.onValueKnobTouch = function (index, isTouched)
         displayNotification (param.name + ": " + param.valueStr);
     }
     cd.getParameter (index).touch (isTouched);
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 DeviceParamsMode.prototype.onValueKnob = function (index, value)

@@ -33,6 +33,7 @@ PanMode.prototype.onValueKnobTouch = function (index, isTouched)
     }    
 
     this.model.getCurrentTrackBank ().touchPan (index, isTouched);
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 PanMode.prototype.updateDisplay = function ()

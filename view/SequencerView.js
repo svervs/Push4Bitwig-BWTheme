@@ -124,7 +124,10 @@ SequencerView.prototype.updateOctave = function (value)
 SequencerView.prototype.drawGrid = function ()
 {
     // Also update the value of the ribbon
-    this.updateRibbonMode ();
+    this.updateRibbonModeValue ();
+    
+    var tb = this.model.getCurrentTrackBank ();
+    var selectedTrack = tb.getSelectedTrack ();
     
     var isKeyboardEnabled = this.model.canSelectedTrackHoldNotes ();
     var step = this.clip.getCurrentStep ();
@@ -137,7 +140,11 @@ SequencerView.prototype.drawGrid = function ()
             var isSet = this.clip.getStep (x, row);
             var hilite = x == hiStep;
             if (isKeyboardEnabled)
+<<<<<<< HEAD
                 this.surface.pads.lightEx (x, 7 - y, isSet ? (hilite ? PUSH_COLOR2_SKY_HI : PUSH_COLOR2_OCEAN_HI) : hilite ? PUSH_COLOR2_WHITE : this.scales.getColor (this.noteMap, y), null, false); // BWS Color Theme
+=======
+                this.surface.pads.lightEx (x, 7 - y, isSet ? (hilite ? PUSH_COLOR2_GREEN_HI : PUSH_COLOR2_BLUE) : hilite ? PUSH_COLOR2_GREEN_HI : this.getColor (y, selectedTrack), null, false);
+>>>>>>> git-moss/master
             else
                 this.surface.pads.lightEx (x, 7 - y, PUSH_COLOR2_BLACK, null, false);
         }

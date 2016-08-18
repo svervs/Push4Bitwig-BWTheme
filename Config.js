@@ -23,30 +23,32 @@ Config.isMuteSoloLocked   = false;
 // Editable configurations
 // ------------------------------
 
-Config.ACTIVATE_FIXED_ACCENT = 0;
-Config.FIXED_ACCENT_VALUE    = 1;
-Config.RIBBON_MODE           = 2;
-Config.RIBBON_MODE_CC_VAL    = 3;
-Config.SCALES_SCALE          = 4;
-Config.SCALES_BASE           = 5;
-Config.SCALES_IN_KEY         = 6;
-Config.SCALES_LAYOUT         = 7;
-Config.ENABLE_VU_METERS      = 8;
-Config.VELOCITY_CURVE        = 9;
-Config.PAD_THRESHOLD         = 10;
-Config.BEHAVIOUR_ON_STOP     = 11;
-Config.DISPLAY_CROSSFADER    = 12;
-Config.CONVERT_AFTERTOUCH    = 13;
-Config.DEFAULT_DEVICE_MODE   = 14;
-Config.FOOTSWITCH_2          = 15;
-Config.SEND_PORT             = 16;
-Config.FLIP_SESSION          = 17;
-Config.DISPLAY_BRIGHTNESS    = 18;
-Config.LED_BRIGHTNESS        = 19;
-Config.PAD_SENSITIVITY       = 20;
-Config.PAD_GAIN              = 21;
-Config.PAD_DYNAMICS          = 22;
-Config.AUTO_SELECT_DRUM      = 23;
+Config.ACTIVATE_FIXED_ACCENT           = 0;
+Config.FIXED_ACCENT_VALUE              = 1;
+Config.RIBBON_MODE                     = 2;
+Config.RIBBON_MODE_CC_VAL              = 3;
+Config.SCALES_SCALE                    = 4;
+Config.SCALES_BASE                     = 5;
+Config.SCALES_IN_KEY                   = 6;
+Config.SCALES_LAYOUT                   = 7;
+Config.ENABLE_VU_METERS                = 8;
+Config.VELOCITY_CURVE                  = 9;
+Config.PAD_THRESHOLD                   = 10;
+Config.BEHAVIOUR_ON_STOP               = 11;
+Config.DISPLAY_CROSSFADER              = 12;
+Config.CONVERT_AFTERTOUCH              = 13;
+Config.DEFAULT_DEVICE_MODE             = 14;
+Config.FOOTSWITCH_2                    = 15;
+Config.SEND_PORT                       = 16;
+Config.FLIP_SESSION                    = 17;
+Config.DISPLAY_BRIGHTNESS              = 18;
+Config.LED_BRIGHTNESS                  = 19;
+Config.PAD_SENSITIVITY                 = 20;
+Config.PAD_GAIN                        = 21;
+Config.PAD_DYNAMICS                    = 22;
+Config.AUTO_SELECT_DRUM                = 23;
+Config.SELECT_CLIP_ON_LAUNCH           = 24;
+Config.STOP_AUTOMATION_ON_KNOB_RELEASE = 25;
 
 Config.RIBBON_MODE_PITCH = 0;
 Config.RIBBON_MODE_CC    = 1;
@@ -70,23 +72,25 @@ Config.BEHAVIOUR_ON_STOP_PAUSE            = 2;
 Config.AUTO_SELECT_DRUM_OFF      = 0;
 Config.AUTO_SELECT_DRUM_CHANNEL  = 1;
 
-Config.accentActive       = false;                       // Accent button active
-Config.fixedAccentValue   = 127;                         // Fixed velocity value for accent
-Config.ribbonMode         = Config.RIBBON_MODE_PITCH;    // What does the ribbon send?
-Config.ribbonModeCCVal    = 1;
-Config.scale              = 'Major';
-Config.scaleBase          = 'C';
-Config.scaleInKey         = true;
-Config.scaleLayout        = '4th ^';
-Config.enableVUMeters     = false;
-Config.behaviourOnStop    = Config.BEHAVIOUR_ON_STOP_MOVE_PLAY_CURSOR;
-Config.displayCrossfader  = true;
-Config.convertAftertouch  = 0;
-Config.defaultDeviceMode  = 20; /*MODE_DEVICE_PARAMS;*/
-Config.footswitch2        = Config.FOOTSWITCH_2_NEW_BUTTON;
-Config.sendPort           = 7000;
-Config.flipSession        = false;
-Config.autoSelectDrum     = Config.AUTO_SELECT_DRUM_OFF;
+Config.accentActive                = false;                       // Accent button active
+Config.fixedAccentValue            = 127;                         // Fixed velocity value for accent
+Config.ribbonMode                  = Config.RIBBON_MODE_PITCH;    // What does the ribbon send?
+Config.ribbonModeCCVal             = 1;
+Config.scale                       = 'Major';
+Config.scaleBase                   = 'C';
+Config.scaleInKey                  = true;
+Config.scaleLayout                 = '4th ^';
+Config.enableVUMeters              = false;
+Config.behaviourOnStop             = Config.BEHAVIOUR_ON_STOP_MOVE_PLAY_CURSOR;
+Config.displayCrossfader           = true;
+Config.convertAftertouch           = 0;
+Config.defaultDeviceMode           = 20; /*MODE_DEVICE_PARAMS;*/
+Config.footswitch2                 = Config.FOOTSWITCH_2_NEW_BUTTON;
+Config.sendPort                    = 7000;
+Config.flipSession                 = false;
+Config.autoSelectDrum              = Config.AUTO_SELECT_DRUM_OFF;
+Config.selectClipOnLaunch          = true;
+Config.stopAutomationOnKnobRelease = false;
 
 //Push 1
 Config.velocityCurve     = 1;
@@ -308,6 +312,21 @@ Config.init = function ()
         Config.notifyListeners (Config.AUTO_SELECT_DRUM);
     });
     
+    Config.selectClipOnLaunchSetting = prefs.getEnumSetting ("Select clip on launch", "Workflow", [ "Off", "On" ], "On");
+    Config.selectClipOnLaunchSetting.addValueObserver (function (value)
+    {
+        Config.selectClipOnLaunch = value == "On";
+        Config.notifyListeners (Config.SELECT_CLIP_ON_LAUNCH);
+    });
+    
+    Config.stopAutomationOnKnobReleaseSetting = prefs.getEnumSetting ("Stop automation recording on knob release", "Workflow", [ "Off", "On" ], "Off");
+    Config.stopAutomationOnKnobReleaseSetting.addValueObserver (function (value)
+    {
+        Config.stopAutomationOnKnobRelease = value == "On";
+        Config.notifyListeners (Config.STOP_AUTOMATION_ON_KNOB_RELEASE);
+    });
+    
+    
     ///////////////////////////
     // Pad Sensitivity
 
@@ -493,7 +512,7 @@ Config.changePadDynamics  = function (control)
 // ------------------------------
 
 Config.listeners = [];
-for (var i = 0; i <= Config.AUTO_SELECT_DRUM; i++)
+for (var i = 0; i <= Config.STOP_AUTOMATION_ON_KNOB_RELEASE; i++)
     Config.listeners[i] = [];
 
 Config.addPropertyListener = function (property, listener)

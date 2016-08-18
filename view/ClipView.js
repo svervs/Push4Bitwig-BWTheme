@@ -96,7 +96,7 @@ ClipView.prototype.onGridNote = function (note, velocity)
 ClipView.prototype.drawGrid = function ()
 {
     // Also update the value of the ribbon
-    this.updateRibbonMode ();
+    this.updateRibbonModeValue ();
     
     // Clip length/loop area
     var step = this.clip.getCurrentStep ();

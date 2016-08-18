@@ -86,15 +86,24 @@ PlayView.prototype.drawGrid = function ()
 {
     var isKeyboardEnabled = this.model.canSelectedTrackHoldNotes ();
     var isRecording = this.model.hasRecordingState ();
+    
+    var tb = this.model.getCurrentTrackBank ();
+    var selectedTrack = tb.getSelectedTrack ();
+    
     for (var i = 36; i < 100; i++)
     {
         this.surface.pads.light (i, isKeyboardEnabled ? (this.pressedKeys[i] > 0 ?
+<<<<<<< HEAD
             (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_OCEAN_HI) : // BWS Color Theme
             this.scales.getColor (this.noteMap, i)) : PUSH_COLOR2_BLACK, null, false);
+=======
+            (isRecording ? PUSH_COLOR2_RED_HI : PUSH_COLOR2_GREEN_HI) :
+            this.getColor (i, selectedTrack)) : PUSH_COLOR2_BLACK, null, false);
+>>>>>>> git-moss/master
     }
 
     // Also update the value of the ribbon
-    this.updateRibbonMode ();
+    this.updateRibbonModeValue ();
 };
 
 PlayView.prototype.onGridNote = function (note, velocity)

@@ -35,7 +35,8 @@ var PUSH_COLOR_GREEN_HI_FBLINK  = 24;
 // Second row & Pad button colors
 var PUSH_COLOR2_BLACK               = 0;
 var PUSH_COLOR2_GREY_LO             = 1;
-var PUSH_COLOR2_GREY_MD             = 2;
+var PUSH_COLOR2_GREY_MD             = 103;
+var PUSH_COLOR2_GREY_LT             = 2;
 var PUSH_COLOR2_WHITE               = 3;
 var PUSH_COLOR2_ROSE                = 4;
 var PUSH_COLOR2_RED_HI              = 5;
@@ -139,3 +140,7 @@ AbstractSessionView.CLIP_COLOR_HAS_CONTENT         = { color: PUSH_COLOR2_AMBER,
 AbstractSessionView.CLIP_COLOR_NO_CONTENT          = { color: PUSH_COLOR2_BLACK,  blink: null,               fast: false };
 AbstractSessionView.CLIP_COLOR_RECORDING_ARMED     = { color: PUSH_COLOR2_RED_LO, blink: null,               fast: false };
 AbstractSessionView.USE_CLIP_COLOR                 = true;
+
+AbstractTrackBankProxy.COLORS[1][3] = PUSH_COLOR2_GREY_MD;
+AbstractTrackBankProxy.COLORS[2][3] = PUSH_COLOR2_GREY_LT;
+AbstractTrackBankProxy.COLORS[8][3] = 81;

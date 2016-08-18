@@ -37,6 +37,7 @@ SendMode.prototype.onValueKnobTouch = function (index, isTouched)
     }
     
     this.model.getCurrentTrackBank ().touchSend (index, sendIndex, isTouched);
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 SendMode.prototype.updateDisplay = function ()

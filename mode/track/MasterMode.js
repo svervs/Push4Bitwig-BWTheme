@@ -47,6 +47,8 @@ MasterMode.prototype.onValueKnobTouch = function (index, isTouched)
         this.model.getMasterTrack ().touchVolume (isTouched);
     else if (index == 1)
         this.model.getMasterTrack ().touchPan (isTouched);
+
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 MasterMode.prototype.updateDisplay = function ()

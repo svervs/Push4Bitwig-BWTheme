@@ -72,6 +72,7 @@ AbstractDeviceFixedMode.prototype.onValueKnobTouch = function (index, isTouched)
             displayNotification (values.name + ": " + values.valueStr);
     }
     this.getParameter (index).touch (isTouched);
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 AbstractDeviceFixedMode.prototype.onFirstRowBank = function (index)

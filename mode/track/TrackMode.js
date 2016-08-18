@@ -138,6 +138,7 @@ TrackMode.prototype.onValueKnobTouch = function (index, isTouched)
                 break;
         }
         
+        this.checkStopAutomationOnKnobRelease (isTouched);
         return;
     }
     
@@ -215,6 +216,8 @@ TrackMode.prototype.onValueKnobTouch = function (index, isTouched)
             tb.touchSend (selectedTrack.index, sendIndex, isTouched);
             break;
     }
+
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 TrackMode.prototype.updateDisplay = function ()

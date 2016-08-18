@@ -45,6 +45,7 @@ DeviceLayerModeVolume.prototype.onValueKnobTouch = function (index, isTouched)
     }
     
     cd.touchLayerOrDrumPadVolume (layer.index, isTouched);
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 DeviceLayerModeVolume.prototype.updateDisplay1 = function () 

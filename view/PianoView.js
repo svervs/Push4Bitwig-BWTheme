@@ -12,7 +12,7 @@ PianoView.prototype = new PlayView ();
 PianoView.prototype.drawGrid = function ()
 {
     // Also update the value of the ribbon
-    this.updateRibbonMode ();
+    this.updateRibbonModeValue ();
     
     if (!this.model.canSelectedTrackHoldNotes ())
     {

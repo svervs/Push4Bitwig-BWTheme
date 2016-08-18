@@ -29,6 +29,11 @@ SessionView.prototype.onPitchbend = function (data1, data2)
 SessionView.prototype.updateRibbonMode = function ()
 {
     this.surface.setRibbonMode (PUSH_RIBBON_PAN);
+    this.updateRibbonModeValue ();
+};
+
+SessionView.prototype.updateRibbonModeValue = function ()
+{
     this.surface.setRibbonValue (Config.toMidiValue(this.model.getTransport ().getCrossfade ()));
 };
 
@@ -84,6 +89,11 @@ SessionView.prototype.onGridNote = function (note, velocity)
     AbstractSessionView.prototype.onGridNote.call (this, note, velocity);
 };
 
+SessionView.prototype.doSelectClipOnLaunch = function ()
+{
+    return Config.selectClipOnLaunch;
+};
+
 SessionView.prototype.drawGrid = function ()
 {
     if (this.surface.isShiftPressed ())
@@ -123,7 +133,7 @@ SessionView.prototype.drawGrid = function ()
     AbstractSessionView.prototype.drawGrid.call (this);
 
     // Also update the value of the ribbon
-    this.updateRibbonMode ();
+    this.updateRibbonModeValue ();
 };
 
 SessionView.prototype.updateDevice = function ()

@@ -33,6 +33,7 @@ VolumeMode.prototype.onValueKnobTouch = function (index, isTouched)
     }
 
     this.model.getCurrentTrackBank ().touchVolume (index, isTouched);
+    this.checkStopAutomationOnKnobRelease (isTouched);
 };
 
 VolumeMode.prototype.updateDisplay = function ()
